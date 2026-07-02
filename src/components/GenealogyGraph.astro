@@ -34,6 +34,11 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   data-i18n={JSON.stringify(graphStrings(lang))}
 >
   <div class="gg-legend" id="gg-legend"></div>
+  <div class="gg-timebar" id="gg-timebar" hidden>
+    <button class="gg-play" id="gg-play" type="button">▶</button>
+    <input class="gg-year-range" id="gg-year-range" type="range" min="0" step="1" />
+    <output class="gg-year-readout" id="gg-year-readout" for="gg-year-range"></output>
+  </div>
   <div class="gg-viewport" id="gg-viewport">
     <svg id="gg-svg" role="img" aria-label="Genealogy of 3D vision works over time"></svg>
     <div class="gg-tooltip" id="gg-tooltip" hidden></div>
@@ -146,6 +151,55 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     const viewport = document.getElementById('gg-viewport');
     const tooltip = document.getElementById('gg-tooltip');
     const svg = d3.select('#gg-svg').attr('height', viewH);
+
+    // ---- time machine: a cursor over the (compressed) year axis ----
+    // The slider walks the INDEX of the sorted years array, not raw years —
+    // the axis skips empty years, so a raw-year slider would have dead zones.
+    const yearIdx = new Map(years.map((y, i) => [y, i]));
+    let currentIdx = years.length - 1; // default: the whole genealogy
+    let applyYear = () => {}; // rebound by every renderTimeline() run
+
+    const timebar = document.getElementById('gg-timebar');
+    const playBtn = document.getElementById('gg-play');
+    const yearRange = document.getElementById('gg-year-range');
+    const yearReadout = document.getElementById('gg-year-readout');
+    timebar.hidden = false;
+    yearRange.max = String(years.length - 1);
+    // ?year=2005 → open the genealogy "as of 2005" (shareable snapshots in time)
+    const q = Number(new URLSearchParams(location.search).get('year'));
+    if (Number.isFinite(q) && q >= years[0]) {
+      currentIdx = Math.max(0, years.findLastIndex((y) => y <= q));
+    }
+    yearRange.value = String(currentIdx);
+    playBtn.setAttribute('aria-label', STR.play);
+    yearRange.setAttribute('aria-label', STR.play);
+
+    let playTimer = null;
+    function stopPlay() {
+      clearInterval(playTimer);
+      playTimer = null;
+      playBtn.textContent = '▶';
+      playBtn.setAttribute('aria-label', STR.play);
+    }
+    function setYearIdx(idx) {
+      currentIdx = Math.max(0, Math.min(years.length - 1, idx));
+      yearRange.value = String(currentIdx);
+      applyYear();
+    }
+    playBtn.addEventListener('click', () => {
+      if (playTimer) return stopPlay();
+      if (currentIdx >= years.length - 1) setYearIdx(0); // full view → restart from the first year
+      playBtn.textContent = '❚❚';
+      playBtn.setAttribute('aria-label', STR.pause);
+      playTimer = setInterval(() => {
+        if (currentIdx >= years.length - 1) return stopPlay();
+        setYearIdx(currentIdx + 1);
+      }, 800);
+    });
+    yearRange.addEventListener('input', () => {
+      stopPlay();
+      setYearIdx(Number(yearRange.value));
+    });
 
     // edges anchor on the marks' top/bottom within a year and bow slightly
     // left so they never cut through stacked nodes or labels
@@ -352,11 +406,17 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
         .text((y) => y);
 
       // ---- zoom/pan: main layer gets the full transform, gutter labels only their own axis
+      // label opacity mixes two concerns in ONE place (attr, not CSS): hidden
+      // behind the left gutter wins, then future years (time machine) dim
+      let lastT = d3.zoomIdentity;
       function applyTransform(t) {
+        lastT = t;
         g.attr('transform', t.toString());
         yearLabels
           .attr('x', (y) => t.applyX(yearX.get(y)))
-          .attr('opacity', (y) => (t.applyX(yearX.get(y)) < M.left - 10 ? 0 : 1));
+          .attr('opacity', (y) =>
+            t.applyX(yearX.get(y)) < M.left - 10 ? 0 : yearIdx.get(y) > currentIdx ? 0.25 : 1,
+          );
         laneLabels.attr('y', (l) => t.applyY(laneCenter.get(l.id)) + 4);
         // branch heading clamps to stay above its first lane's label at ANY zoom
         branchLabels.attr('y', (b) => {
@@ -410,6 +470,18 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
           <span class="legend-item"><svg width="14" height="14" aria-hidden="true"><circle cx="7" cy="7" r="5" fill="${tok('--surface')}" stroke="${sample}" stroke-width="2"/></svg>${esc(STR.seed)}</span>
           <span class="legend-item"><svg width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="4" fill="${sample}"/><circle cx="8" cy="8" r="7" fill="none" stroke="${tok('--award')}" stroke-width="1.6"/></svg>${esc(STR.award)}</span>
         </div>`;
+
+      // ---- time-machine filter: hide everything newer than the year cursor
+      applyYear = () => {
+        const future = (id) => yearIdx.get(nodeById.get(id).year) > currentIdx;
+        nodeSel.classed('gg-future', (n) => yearIdx.get(n.year) > currentIdx);
+        edgeSel.classed('gg-future', (e) => future(e.source) || future(e.target));
+        edgeHit.classed('gg-future', (e) => future(e.source) || future(e.target));
+        applyTransform(lastT); // refresh year-label dimming
+        const visible = data.nodes.filter((n) => yearIdx.get(n.year) <= currentIdx).length;
+        yearReadout.textContent = `${years[currentIdx]} · ${visible}/${data.nodes.length}`;
+      };
+      applyYear();
     }
 
     // ---- tooltip
@@ -488,11 +560,11 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
   .gg-edge {
     opacity: 0.7;
-    transition: opacity 0.15s;
+    transition: opacity 0.25s;
   }
 
   .gg-node {
-    transition: opacity 0.15s;
+    transition: opacity 0.25s;
   }
 
   .gg-node.gg-dim {
@@ -501,6 +573,21 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
   .gg-edge.gg-dim {
     opacity: 0.06;
+  }
+
+  /* time machine: future work stays hidden even under hover focus-mode */
+  .gg-node.gg-future,
+  .gg-edge.gg-future,
+  .gg-edge-hit.gg-future {
+    opacity: 0 !important;
+    pointer-events: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gg-node,
+    .gg-edge {
+      transition: none;
+    }
   }
 
   .gg-node-label {
@@ -598,6 +685,43 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     gap: 0.4em;
     font-size: 0.8rem;
     color: var(--muted);
+  }
+
+  .gg-timebar {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0 0.25rem 0.75rem;
+  }
+
+  .gg-play {
+    appearance: none;
+    background: transparent;
+    border: 1px solid var(--baseline);
+    border-radius: 8px;
+    color: var(--ink-2);
+    font-size: 0.72rem;
+    line-height: 1;
+    padding: 0.4rem 0.55rem;
+    cursor: pointer;
+  }
+
+  .gg-play:hover {
+    color: var(--ink);
+    border-color: var(--muted);
+  }
+
+  .gg-year-range {
+    flex: 1;
+    max-width: 420px;
+    accent-color: var(--accent);
+  }
+
+  .gg-year-readout {
+    color: var(--muted);
+    font-size: 0.8rem;
+    font-variant-numeric: tabular-nums;
+    min-width: 7ch;
   }
 
   .gg-hint {

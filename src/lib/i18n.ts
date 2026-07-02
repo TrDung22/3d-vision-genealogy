@@ -15,6 +15,7 @@ const dict: Record<Lang, Record<string, string>> = {
     'nav.about': 'About',
     'nav.genealogy': 'Genealogy',
     'nav.branches': 'Branches',
+    'nav.heresies': 'Heresies',
     'nav.blog': 'Blog',
     'footer.tagline':
       'A genealogy growing one node at a time — every node a work, every edge a named intellectual debt. Built with Astro + D3.',
@@ -48,6 +49,8 @@ const dict: Record<Lang, Record<string, string>> = {
     'graph.tipOpen': 'Click to open its page →',
     'graph.loading3d': 'Loading 3D view…',
     'graph.error3d': 'Could not load the 3D view.',
+    'graph.play': 'Play the years',
+    'graph.pause': 'Pause',
     'graph.standsOn': 'Stands on',
     'graph.followedBy': 'Followed by',
     'graph.openPage': 'Open page →',
@@ -77,6 +80,23 @@ const dict: Record<Lang, Record<string, string>> = {
     'blog.related': 'Related nodes:',
     'blog.all': '← All posts',
     'about.title': 'Why a "genealogy", not a "list of papers"?',
+    'heresies.title': 'Heresies, rivalries & revivals',
+    'heresies.meta':
+      'The heresies, rivalries and revivals of 3D vision — who challenged the mainstream, which ideas fell everywhere at once, and what came back from the dead.',
+    'heresies.intro':
+      'Every survey tells the fixes and builds-on story. This page collects the other three kinds of edges — the ones linear write-ups drop on the floor. Nothing below is written by hand: it is generated from the genealogy itself, and grows as the genealogy grows.',
+    'heresies.challenges.title': 'The heresies',
+    'heresies.challenges.intro':
+      'Papers that are great not because they added something, but because they proved an entire branch was fooling itself — questioning its assumptions, its benchmarks, or its conclusions.',
+    'heresies.independent.title': 'When an idea is ripe',
+    'heresies.independent.intro':
+      'Groups that never met, touching the same idea at the same moment. When an idea is ripe, it falls everywhere at once — the interesting question is what conditions made it ripe.',
+    'heresies.revives.title': 'Back from the dead',
+    'heresies.revives.intro':
+      'Directions the mainstream abandoned — sometimes for decades — until someone remembered. Orphaned branches have a habit of returning when nobody expects them.',
+    'heresies.gap': '{n} years later',
+    'heresies.crossBranch': 'Across branches',
+    'heresies.teaser': 'Meet the heresies, the parallel discoveries & the revivals',
   },
 
   vi: {
@@ -85,6 +105,7 @@ const dict: Record<Lang, Record<string, string>> = {
     'nav.about': 'Giới thiệu',
     'nav.genealogy': 'Gia phả',
     'nav.branches': 'Nhánh',
+    'nav.heresies': 'Nghịch dòng',
     'nav.blog': 'Blog',
     'footer.tagline':
       'Một gia phả lớn dần theo từng node — mỗi node là một công trình, mỗi cạnh là một món nợ trí tuệ có tên. Dựng bằng Astro + D3.',
@@ -118,6 +139,8 @@ const dict: Record<Lang, Record<string, string>> = {
     'graph.tipOpen': 'Bấm để mở trang →',
     'graph.loading3d': 'Đang tải view 3D…',
     'graph.error3d': 'Không tải được view 3D.',
+    'graph.play': 'Chạy dòng thời gian',
+    'graph.pause': 'Tạm dừng',
     'graph.standsOn': 'Đứng trên vai',
     'graph.followedBy': 'Được nối tiếp bởi',
     'graph.openPage': 'Mở trang →',
@@ -147,6 +170,23 @@ const dict: Record<Lang, Record<string, string>> = {
     'blog.related': 'Node liên quan:',
     'blog.all': '← Tất cả bài viết',
     'about.title': 'Vì sao là "gia phả", không phải "danh sách paper"?',
+    'heresies.title': 'Nghịch dòng, song song & hồi sinh',
+    'heresies.meta':
+      'Những nghịch dòng, song song và hồi sinh của 3D vision — ai chất vấn dòng chính, ý tưởng nào rơi xuống nhiều nơi cùng lúc, và điều gì đã sống lại từ cõi quên.',
+    'heresies.intro':
+      'Chuyện fixes và builds on thì survey nào cũng kể. Trang này gom ba loại quan hệ còn lại — thứ mà các tài liệu tuyến tính đánh rơi. Không có gì dưới đây được viết tay: tất cả sinh ra từ chính gia phả, và lớn dần cùng gia phả.',
+    'heresies.challenges.title': 'Những lời chất vấn',
+    'heresies.challenges.intro':
+      'Những paper vĩ đại không phải vì cộng thêm điều gì, mà vì chứng minh cả một nhánh đang tự lừa mình — chất vấn giả định, benchmark hoặc kết luận của nó.',
+    'heresies.independent.title': 'Khi một ý tưởng chín',
+    'heresies.independent.intro':
+      'Những nhóm chưa từng gặp nhau cùng chạm một ý tưởng tại cùng một thời điểm. Khi một ý tưởng chín, nó tự rụng ở nhiều nơi một lúc — câu hỏi thú vị là điều kiện gì làm nó chín.',
+    'heresies.revives.title': 'Sống lại từ cõi quên',
+    'heresies.revives.intro':
+      'Những hướng đi bị dòng chính bỏ rơi — có khi hàng thập kỷ — cho đến khi ai đó nhớ ra. Những nhánh mồ côi có thói quen quay lại khi không ai ngờ tới.',
+    'heresies.gap': '{n} năm sau',
+    'heresies.crossBranch': 'Xuyên nhánh',
+    'heresies.teaser': 'Gặp những lời chất vấn, những phát hiện song song & những cuộc hồi sinh',
   },
 
   ja: {
@@ -155,6 +195,7 @@ const dict: Record<Lang, Record<string, string>> = {
     'nav.about': 'はじめに',
     'nav.genealogy': '系譜',
     'nav.branches': '系統',
+    'nav.heresies': '異端',
     'nav.blog': 'ブログ',
     'footer.tagline':
       'ノードを一つずつ増やしながら育つ系譜 — すべてのノードは研究であり、すべてのエッジは名前を持つ知的負債です。Astro + D3 で構築。',
@@ -189,6 +230,8 @@ const dict: Record<Lang, Record<string, string>> = {
     'graph.tipOpen': 'クリックでページを開く →',
     'graph.loading3d': '3Dビューを読み込み中…',
     'graph.error3d': '3Dビューを読み込めませんでした。',
+    'graph.play': '年代を再生',
+    'graph.pause': '一時停止',
     'graph.standsOn': '土台となる研究',
     'graph.followedBy': '後続の研究',
     'graph.openPage': 'ページを開く →',
@@ -218,6 +261,23 @@ const dict: Record<Lang, Record<string, string>> = {
     'blog.related': '関連ノード:',
     'blog.all': '← すべての記事',
     'about.title': 'なぜ「論文リスト」ではなく「系譜」なのか?',
+    'heresies.title': '異端・並行・復活',
+    'heresies.meta':
+      '3Dビジョンの異端・並行・復活 — 誰が主流に異を唱え、どのアイデアが同時多発し、何が死から蘇ったのか。',
+    'heresies.intro':
+      'fixes と builds on の物語はどのサーベイも語ります。このページは残りの三種類のエッジを集めたもの — 線形な解説が取りこぼす部分です。以下に手書きの内容は一つもありません: すべて系譜そのものから生成され、系譜とともに育ちます。',
+    'heresies.challenges.title': '異端者たち',
+    'heresies.challenges.intro':
+      '何かを積み上げたからではなく、ある枝全体が自分を騙していたことを証明したからこそ偉大な論文たち — 前提・ベンチマーク・結論への問いかけ。',
+    'heresies.independent.title': 'アイデアが熟すとき',
+    'heresies.independent.intro':
+      '出会ったこともないグループが、同じ瞬間に同じアイデアに触れる。アイデアが熟せば、あちこちで同時に落ちる — 面白い問いは、どんな条件がそれを熟させたのか。',
+    'heresies.revives.title': '死からの帰還',
+    'heresies.revives.intro':
+      '主流が見捨てた方向性 — ときには何十年も — 誰かが思い出すまで。孤児になった枝は、誰も予想しないときに帰ってくるものです。',
+    'heresies.gap': '{n} 年後',
+    'heresies.crossBranch': '系統を越えて',
+    'heresies.teaser': '異端・並行発見・復活の物語はこちら',
   },
 };
 
@@ -236,6 +296,8 @@ export function graphStrings(lang: Lang) {
     'graph.tipOpen',
     'graph.loading3d',
     'graph.error3d',
+    'graph.play',
+    'graph.pause',
     'graph.standsOn',
     'graph.followedBy',
     'graph.openPage',

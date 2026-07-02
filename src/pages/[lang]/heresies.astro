@@ -1,0 +1,340 @@
+---
+/**
+ * The heresies page — everything on it is DERIVED from the genealogy's
+ * non-linear edges (challenges / independent / revives), never hand-written:
+ * adding such an edge to any node YAML grows this page automatically.
+ */
+import Base from '../../layouts/Base.astro';
+import { buildGraph, EDGE_TYPES } from '../../lib/graph';
+import { LOCALES, t, type Lang } from '../../lib/i18n';
+
+export function getStaticPaths() {
+  return LOCALES.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Lang;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const root = `${base}/${lang}`;
+
+const graph = await buildGraph();
+const nodeById = new Map(graph.nodes.map((n) => [n.id, n]));
+const branchById = new Map(graph.branches.map((b) => [b.id, b]));
+const colorOf = (nodeId: string) =>
+  branchById.get(nodeById.get(nodeId)?.branch ?? '')?.color ?? 'var(--muted)';
+
+type Edge = (typeof graph.edges)[number];
+
+// --- challenges, grouped by the challenger (the newer endpoint of the edge)
+const challengesBy = new Map<string, Edge[]>();
+for (const e of graph.edges) {
+  if (e.type !== 'challenges') continue;
+  challengesBy.set(e.target, [...(challengesBy.get(e.target) ?? []), e]);
+}
+const challengers = [...challengesBy.entries()]
+  .map(([id, edges]) => ({ node: nodeById.get(id)!, edges }))
+  .sort((a, b) => a.node.year - b.node.year);
+
+// --- independent edges → connected components = simultaneous "waves"
+const parent = new Map<string, string>();
+const find = (x: string): string => {
+  const p = parent.get(x);
+  if (p === undefined || p === x) return x;
+  const r = find(p);
+  parent.set(x, r);
+  return r;
+};
+const indep = graph.edges.filter((e) => e.type === 'independent');
+for (const e of indep) parent.set(find(e.source), find(e.target));
+const comps = new Map<string, { ids: Set<string>; edges: Edge[] }>();
+for (const e of indep) {
+  const r = find(e.source);
+  const c = comps.get(r) ?? { ids: new Set<string>(), edges: [] };
+  c.ids.add(e.source);
+  c.ids.add(e.target);
+  c.edges.push(e);
+  comps.set(r, c);
+}
+const waves = [...comps.values()]
+  .map((c) => {
+    const members = [...c.ids]
+      .map((id) => nodeById.get(id)!)
+      .sort((a, b) => a.year - b.year || a.short.localeCompare(b.short));
+    return { members, edges: c.edges, from: members[0].year, to: members[members.length - 1].year };
+  })
+  .sort((a, b) => a.from - b.from || a.to - b.to);
+
+// --- revives, led by the size of the gap each one closed
+const revivals = graph.edges
+  .filter((e) => e.type === 'revives')
+  .map((e) => ({ note: e.note, old: nodeById.get(e.source)!, reviver: nodeById.get(e.target)! }))
+  .sort((a, b) => a.reviver.year - b.reviver.year);
+
+const gapText = (n: number) => t(lang, 'heresies.gap').replace('{n}', String(n));
+const olderFirst = (e: Edge) =>
+  [nodeById.get(e.source)!, nodeById.get(e.target)!].sort((a, b) => a.year - b.year);
+
+// --- adaptive branch grouping: with one branch each section stays flat;
+// once a section involves several, cards get branch subheadings — and stories
+// SPANNING branches (the rare, good kind) get their own group instead of
+// being filed under one side arbitrarily.
+type Branch = (typeof graph.branches)[number];
+type Grouped<T> = { branch: Branch | null; items: T[] };
+
+const sameBranch = (ids: string[]): string | null => {
+  const set = new Set(ids.map((id) => nodeById.get(id)?.branch));
+  return set.size === 1 ? ([...set][0] ?? null) : null;
+};
+
+function groupByBranch<T>(items: T[], branchOf: (item: T) => string | null): Grouped<T>[] {
+  const buckets = new Map<string, T[]>();
+  for (const it of items) {
+    const k = branchOf(it) ?? '·cross·';
+    buckets.set(k, [...(buckets.get(k) ?? []), it]);
+  }
+  const groups: Grouped<T>[] = graph.branches
+    .filter((b) => buckets.has(b.id))
+    .map((b) => ({ branch: b, items: buckets.get(b.id)! }));
+  if (buckets.has('·cross·')) groups.push({ branch: null, items: buckets.get('·cross·')! });
+  return groups;
+}
+
+const challengerGroups = groupByBranch(challengers, (c) =>
+  sameBranch([c.node.id, ...c.edges.map((e) => e.source)]),
+);
+const waveGroups = groupByBranch(waves, (w) => sameBranch(w.members.map((m) => m.id)));
+const revivalGroups = groupByBranch(revivals, (r) => sameBranch([r.old.id, r.reviver.id]));
+---
+
+<Base title={t(lang, 'heresies.title')} lang={lang} description={t(lang, 'heresies.meta')}>
+  <article class="heresies">
+    <h1>{t(lang, 'heresies.title')}</h1>
+    <p class="muted intro">{t(lang, 'heresies.intro')}</p>
+
+    <section>
+      <h2>{t(lang, 'heresies.challenges.title')}</h2>
+      <p class="muted intro">{t(lang, 'heresies.challenges.intro')}</p>
+      {
+        challengerGroups.map((g) => (
+          <>
+            {challengerGroups.length > 1 && (
+              <h3 class="h-branch">
+                {g.branch ? (
+                  <span class="chip">
+                    <span class="dot" style={`background:${g.branch.color}`} />
+                    {g.branch.title}
+                  </span>
+                ) : (
+                  <span class="h-cross">{t(lang, 'heresies.crossBranch')}</span>
+                )}
+              </h3>
+            )}
+            {g.items.map(({ node, edges }) => (
+              <div class="panel h-card">
+                <p class="h-head">
+                  <a href={`${root}/nodes/${node.id}/`} class="chip">
+                    <span class="dot" style={`background:${colorOf(node.id)}`} />
+                    <strong>{node.short}</strong>
+                  </a>
+                  {node.venue && <span class="muted h-meta">{node.venue}</span>}
+                </p>
+                <p class="muted h-title">{node.title}</p>
+                <ul class="h-list">
+                  {edges.map((e) => (
+                    <li>
+                      <span class="rel">{EDGE_TYPES.challenges.label}</span>{' '}
+                      <a href={`${root}/nodes/${e.source}/`}>{nodeById.get(e.source)?.short}</a>
+                      {e.note && <p>{e.note}</p>}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </>
+        ))
+      }
+    </section>
+
+    <section>
+      <h2>{t(lang, 'heresies.independent.title')}</h2>
+      <p class="muted intro">{t(lang, 'heresies.independent.intro')}</p>
+      {
+        waveGroups.map((g) => (
+          <>
+            {waveGroups.length > 1 && (
+              <h3 class="h-branch">
+                {g.branch ? (
+                  <span class="chip">
+                    <span class="dot" style={`background:${g.branch.color}`} />
+                    {g.branch.title}
+                  </span>
+                ) : (
+                  <span class="h-cross">{t(lang, 'heresies.crossBranch')}</span>
+                )}
+              </h3>
+            )}
+            {g.items.map((w) => (
+              <div class="panel h-card">
+                <p class="h-head">
+                  <strong class="h-years">{w.from === w.to ? w.from : `${w.from}–${w.to}`}</strong>
+                  <span class="h-members">
+                    {w.members.map((m) => (
+                      <a href={`${root}/nodes/${m.id}/`} class="chip">
+                        <span class="dot" style={`background:${colorOf(m.id)}`} />
+                        {m.short}
+                      </a>
+                    ))}
+                  </span>
+                </p>
+                <ul class="h-list">
+                  {w.edges.map((e) => (
+                    <li>
+                      {w.members.length > 2 && (
+                        <span class="rel">{olderFirst(e).map((n) => n.short).join(' ∥ ')}</span>
+                      )}
+                      {e.note && <p>{e.note}</p>}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </>
+        ))
+      }
+    </section>
+
+    <section>
+      <h2>{t(lang, 'heresies.revives.title')}</h2>
+      <p class="muted intro">{t(lang, 'heresies.revives.intro')}</p>
+      {
+        revivalGroups.map((g) => (
+          <>
+            {revivalGroups.length > 1 && (
+              <h3 class="h-branch">
+                {g.branch ? (
+                  <span class="chip">
+                    <span class="dot" style={`background:${g.branch.color}`} />
+                    {g.branch.title}
+                  </span>
+                ) : (
+                  <span class="h-cross">{t(lang, 'heresies.crossBranch')}</span>
+                )}
+              </h3>
+            )}
+            {g.items.map((r) => (
+              <div class="panel h-card">
+                <p class="h-head">
+                  <strong class="h-years">{gapText(r.reviver.year - r.old.year)}</strong>
+                  <span>
+                    <a href={`${root}/nodes/${r.reviver.id}/`}>{r.reviver.short}</a>
+                    <span class="rel"> {EDGE_TYPES.revives.label} </span>
+                    <a href={`${root}/nodes/${r.old.id}/`}>{r.old.short}</a>
+                  </span>
+                </p>
+                {r.note && <p class="h-note">{r.note}</p>}
+              </div>
+            ))}
+          </>
+        ))
+      }
+    </section>
+  </article>
+</Base>
+
+<style>
+  .heresies {
+    max-width: 860px;
+  }
+
+  .intro {
+    max-width: 760px;
+  }
+
+  .heresies section {
+    margin: 2.5rem 0;
+  }
+
+  .h-card {
+    margin: 1.1rem 0;
+    padding: 1rem 1.25rem;
+  }
+
+  /* branch subheading — only rendered once a section spans several branches */
+  .h-branch {
+    margin: 1.8rem 0 0.2rem;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .h-branch .chip {
+    font-size: inherit;
+    color: var(--muted);
+  }
+
+  .h-cross {
+    color: var(--accent);
+  }
+
+  .h-head {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem 1rem;
+    flex-wrap: wrap;
+    margin: 0;
+  }
+
+  .h-head .chip strong {
+    color: var(--ink);
+    font-size: 1rem;
+  }
+
+  .h-meta {
+    font-size: 0.8rem;
+  }
+
+  .h-title {
+    margin: 0.25rem 0 0;
+    font-size: 0.85rem;
+  }
+
+  .h-years {
+    color: var(--accent);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .h-members {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 1.1rem;
+  }
+
+  .h-list {
+    list-style: none;
+    padding: 0;
+    margin: 0.7rem 0 0;
+  }
+
+  .h-list li {
+    margin: 0.6rem 0;
+    padding-left: 0.8rem;
+    border-left: 2px solid var(--baseline);
+  }
+
+  .h-list p,
+  .h-note {
+    margin: 0.15rem 0 0;
+    color: var(--ink-2);
+    font-size: 0.92rem;
+  }
+
+  .h-note {
+    margin-top: 0.5rem;
+  }
+
+  .rel {
+    color: var(--accent);
+    font-style: italic;
+  }
+</style>
