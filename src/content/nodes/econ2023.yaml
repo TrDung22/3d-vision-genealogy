@@ -1,0 +1,30 @@
+title: "ECON: Explicit Clothed humans Optimized via Normal integration"
+short: "ECON (2023)"
+authors: "Yuliang Xiu, Jinlong Yang, Xu Cao, Dimitrios Tzionas, Michael J. Black"
+venue: "CVPR 2023"
+year: 2023
+branch: single-image-3d
+lane: human
+links:
+  arxiv: "https://arxiv.org/abs/2212.07422"
+  code: "https://github.com/YuliangXiu/ECON"
+problem: >
+  The implicit human line breaks where it matters: loose clothing and unusual
+  poses yield non-human blobs, because nothing anchors the surface to a body.
+solution: >
+  A hybrid: keep the explicit SMPL-X body as scaffold, predict front/back
+  normal maps, then integrate them into detailed surfaces (d-BiNI) that are
+  stitched onto the body — implicit-level detail with explicit-level
+  robustness, even for flowing garments.
+limitations: >
+  Reconstruction-only and per-image optimization; texture and the fully unseen
+  regions still need generative help — pointing straight at the generative
+  convergence that SAM 3D Body later embodied.
+relations:
+  - node: pifuhd2020
+    type: fixes
+    note: >
+      Repairs the no-body-prior failure mode: where pure pixel-aligned
+      implicits hallucinate broken anatomy, ECON's explicit SMPL-X scaffold
+      guarantees a human underneath the details.
+status: seed

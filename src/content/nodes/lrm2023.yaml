@@ -1,0 +1,34 @@
+title: "LRM: Large Reconstruction Model for Single Image to 3D"
+short: "LRM (2023)"
+authors: "Yicong Hong, Kai Zhang, Jiuxiang Gu, Sai Bi, Yang Zhou, Difan Liu, Feng Liu, Kalyan Sunkavalli, Trung Bui, Hao Tan"
+venue: "ICLR 2024 (Oral)"
+year: 2023
+branch: single-image-3d
+lane: generative
+links:
+  arxiv: "https://arxiv.org/abs/2311.04400"
+  project: "https://yiconghong.me/LRM/"
+problem: >
+  The Zero-1-to-3 line's per-object optimization is too slow for real
+  applications: we need one image → 3D in a single forward pass.
+solution: >
+  A half-billion-parameter transformer predicting a triplane-NeRF DIRECTLY from
+  the image, trained end-to-end on Objaverse + MVImgNet — single-image 3D's
+  "GPT moment": replace the optimization pipeline with one large model trained
+  on large data.
+limitations: >
+  Blurry back sides (a probabilistic problem squeezed into one deterministic
+  prediction), weak fine texture, and a closed model — the community could not
+  immediately reproduce it.
+relations:
+  - node: zero123-2023
+    type: fixes
+    note: >
+      Repairs exactly the speed bottleneck: drops per-object SDS optimization
+      for a single ~1-second forward pass.
+  - node: nerf2020
+    type: builds-on
+    note: >
+      The output is a triplane radiance field — NeRF infrastructure, but
+      PREDICTED rather than optimized.
+status: seed

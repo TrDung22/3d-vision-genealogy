@@ -1,0 +1,22 @@
+title: "Shape from Shading: A Method for Obtaining the Shape of a Smooth Opaque Object from One View"
+short: "Shape from Shading (Horn 1970)"
+authors: "Berthold K. P. Horn"
+venue: "PhD thesis, MIT, 1970"
+year: 1970
+branch: single-image-3d
+lane: priors
+problem: >
+  Inferring 3D surface shape from ONE image — the earliest statement of the
+  ill-posed problem: infinitely many different surfaces can produce the same
+  observed image.
+solution: >
+  No learning from data; instead, model the physics of image formation: assume
+  Lambertian reflectance and a known light source, then invert the shading
+  equation with the method of characteristic strips.
+limitations: >
+  The physical assumptions (reflectance, illumination, smooth surfaces) almost
+  never hold for natural images. This physics-prior line was abandoned by the
+  mainstream for decades as statistical learning and then deep learning took
+  over — a classic "orphaned branch".
+relations: []
+status: seed

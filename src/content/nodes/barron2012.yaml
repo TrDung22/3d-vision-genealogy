@@ -1,0 +1,27 @@
+title: "Shape, Illumination, and Reflectance from Shading (SIRFS)"
+short: "SIRFS (Barron 2012)"
+authors: "Jonathan T. Barron, Jitendra Malik"
+venue: "TPAMI 2015"
+year: 2012
+branch: single-image-3d
+lane: priors
+problem: >
+  Solving the full intrinsic-images problem: recover shape, illumination, and
+  reflectance simultaneously from one image — the most complete version of the
+  shape-from-shading dream.
+solution: >
+  Optimization with statistical priors learned separately for each component
+  (shape smoothness, natural-illumination statistics, reflectance sparsity) —
+  shape-from-shading rearmed with modern tools.
+limitations: >
+  Still needs a segmented object and a simple illumination model. It arrived
+  exactly as the end-to-end CNN wave broke, and was quickly eclipsed — the
+  physics line's second "revived, then forgotten again".
+relations:
+  - node: horn1970
+    type: revives
+    note: >
+      A direct revival of Horn's research program with modern statistical
+      priors — just as the mainstream turned decisively to deep learning on
+      large data.
+status: seed

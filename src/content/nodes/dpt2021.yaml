@@ -1,0 +1,28 @@
+title: "Vision Transformers for Dense Prediction"
+short: "DPT (2021)"
+authors: "René Ranftl, Alexey Bochkovskiy, Vladlen Koltun"
+venue: "ICCV 2021"
+year: 2021
+branch: single-image-3d
+lane: depth
+links:
+  arxiv: "https://arxiv.org/abs/2103.13413"
+  code: "https://github.com/isl-org/DPT"
+problem: >
+  A CNN's local receptive field limits whole-scene geometric reasoning — the
+  depth of one point depends on the layout of the entire frame.
+solution: >
+  Replace the CNN backbone with a Vision Transformer for dense prediction:
+  global attention at every stage, feature resolution that never collapses —
+  a large quality jump for the MiDaS line.
+limitations: >
+  The architecture changed, but the quality ceiling now sits in the DATA:
+  however many labeled depth images exist, it is too few for the diversity of
+  the real world.
+relations:
+  - node: midas2020
+    type: builds-on
+    note: >
+      Same authors, same dataset-mixing recipe, upgrading the architecture
+      axis: CNN → ViT.
+status: seed

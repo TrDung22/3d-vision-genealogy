@@ -1,0 +1,30 @@
+title: "Neural Rendering"
+tagline: "Scene representations as neural networks + differentiable rendering — the infrastructure of a whole generation"
+description: >
+  This branch is still a sapling (planted early to demonstrate cross-branch
+  relations): NeRF does not solve the single-image problem, but its radiance
+  field / triplane representations became the backbone of one-image generative
+  3D models. As it grows, this branch will reach back to 1990s volume rendering,
+  SRN, DVR... and forward to 3D Gaussian Splatting.
+i18n:
+  vi:
+    tagline: "Biểu diễn cảnh bằng mạng nơ-ron + render khả vi — hạ tầng của cả một thế hệ"
+    description: >
+      Nhánh này hiện mới là một mầm cây (đặt sẵn để minh họa quan hệ liên-nhánh):
+      NeRF không giải bài toán single-image, nhưng biểu diễn radiance field / triplane
+      của nó trở thành xương sống cho các mô hình generative 3D một-ảnh. Khi mở rộng,
+      nhánh này sẽ ngược về volume rendering thập niên 90, SRN, DVR... và xuôi tới
+      3D Gaussian Splatting.
+  ja:
+    tagline: "ニューラルネットによるシーン表現 + 微分可能レンダリング — 一世代まるごとのインフラ"
+    description: >
+      この枝はまだ苗木です(枝をまたぐ関係を示すために早めに植えました): NeRF は
+      single-image 問題を解くものではありませんが、その radiance field / triplane 表現は
+      一枚画像からの生成的3Dモデルの背骨になりました。成長すれば、この枝は90年代の
+      ボリュームレンダリング、SRN、DVR まで遡り、3D Gaussian Splatting へと続きます。
+color: "#199e70" # categorical slot 2 (dark)
+order: 2
+status: active
+lanes:
+  - id: radiance-fields
+    title: "Radiance fields"

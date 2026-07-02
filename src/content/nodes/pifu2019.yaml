@@ -1,0 +1,30 @@
+title: "PIFu: Pixel-Aligned Implicit Function for High-Resolution Clothed Human Digitization"
+short: "PIFu (2019)"
+authors: "Shunsuke Saito, Zeng Huang, Ryota Natsume, Shigeo Morishima, Angjoo Kanazawa, Hao Li"
+venue: "ICCV 2019"
+year: 2019
+branch: single-image-3d
+lane: human
+links:
+  arxiv: "https://arxiv.org/abs/1905.05172"
+  project: "https://shunsukesaito.github.io/PIFu/"
+problem: >
+  Digitize a clothed human — hair, garments, occluded back — from one photo,
+  where parametric body models (SMPL) can only offer a naked mannequin.
+solution: >
+  The pixel-aligned implicit function: instead of one global latent code,
+  query each 3D point against the image feature at its 2D projection —
+  marrying the implicit-function idea to spatially-aligned image evidence, and
+  reconstructing surface AND texture including unseen regions.
+limitations: >
+  Bounded by input resolution (fine detail lost), no body prior means broken
+  anatomy under hard poses — the two debts PIFuHD and the hybrid line each
+  took on. Its pixel-aligned trick, though, escaped the human niche entirely.
+relations:
+  - node: occnet2019
+    type: independent
+    note: >
+      The fourth member of the 2019 implicit wave (OccNet, DeepSDF, IM-Net,
+      PIFu — same year, independent): PIFu's twist is pixel-ALIGNED features,
+      and a target the others avoided — people in clothes.
+status: seed

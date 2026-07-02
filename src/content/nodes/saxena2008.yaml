@@ -1,0 +1,28 @@
+title: "Make3D: Learning 3D Scene Structure from a Single Still Image"
+short: "Make3D (Saxena 2008)"
+authors: "Ashutosh Saxena, Min Sun, Andrew Y. Ng"
+venue: "TPAMI 2009"
+year: 2008
+branch: single-image-3d
+lane: priors
+links:
+  project: "http://make3d.cs.cornell.edu/"
+problem: >
+  A continuous depth map (not just a few discrete geometric classes) for an
+  arbitrary scene, from a single image.
+solution: >
+  An MRF over superpixels with hand-crafted multi-scale features; regress the
+  orientation and depth of each small planar patch, then stitch them into the
+  scene surface.
+limitations: >
+  Hand-designed features and a rigid MRF — quality collapses the moment you
+  leave the training distribution. That "who designs the features?" limitation
+  is exactly the door deep learning walked through six years later.
+relations:
+  - node: hoiem2005
+    type: independent
+    note: >
+      The same 2005–2008 wave of statistical learning for single-image 3D,
+      developed in parallel: Pop-up chose geometric-class labeling, Make3D
+      chose continuous depth regression.
+status: seed

@@ -1,0 +1,35 @@
+title: "InstantMesh: Efficient 3D Mesh Generation from a Single Image with Sparse-view Large Reconstruction Models"
+short: "InstantMesh (2024)"
+authors: "Jiale Xu, Weihao Cheng, Yiming Gao, Xintao Wang, Shenghua Gao, Ying Shan (Tencent ARC)"
+venue: "arXiv 2024"
+year: 2024
+branch: single-image-3d
+lane: generative
+links:
+  arxiv: "https://arxiv.org/abs/2404.07191"
+  code: "https://github.com/TencentARC/InstantMesh"
+problem: >
+  LRM proved feed-forward 3D but stayed closed and output NeRFs; practitioners
+  needed an open pipeline that ends in a clean mesh.
+solution: >
+  Compose the two open threads: a multiview diffusion front-end (Zero123++
+  style) imagines sparse views, an LRM-style transformer reconstructs from
+  them, and differentiable iso-surface extraction (FlexiCubes) trains the
+  model to output meshes directly — open weights, ~10 seconds per asset.
+limitations: >
+  Quality is bounded by the multiview front-end's consistency; geometry is
+  smooth-biased; and like all Objaverse-trained models it lives in clean
+  object-centric imagery.
+relations:
+  - node: lrm2023
+    type: builds-on
+    note: >
+      Opens and extends the LRM recipe: sparse imagined views instead of one
+      image, and mesh-native training instead of NeRF output.
+  - node: triposr2024
+    type: independent
+    note: >
+      Two open LRM descendants weeks apart: TripoSR optimizes for raw speed
+      from a single image, InstantMesh for mesh quality via multiview
+      conditioning.
+status: seed

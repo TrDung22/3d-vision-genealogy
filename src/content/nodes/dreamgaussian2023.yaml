@@ -1,0 +1,31 @@
+title: "DreamGaussian: Generative Gaussian Splatting for Efficient 3D Content Creation"
+short: "DreamGaussian (2023)"
+authors: "Jiaxiang Tang, Jiawei Ren, Hang Zhou, Ziwei Liu, Gang Zeng"
+venue: "ICLR 2024 (Oral)"
+year: 2023
+branch: single-image-3d
+lane: generative
+links:
+  arxiv: "https://arxiv.org/abs/2309.16653"
+  code: "https://github.com/dreamgaussian/dreamgaussian"
+problem: >
+  The SDS optimization loop of the Zero-1-to-3 era took hours per object —
+  because it was distilling into a NeRF, the slowest possible canvas.
+solution: >
+  Swap the canvas: run score distillation into 3D Gaussians instead of a NeRF.
+  Progressive densification converges dramatically faster for generation, and
+  a mesh-extraction + UV texture-refinement stage outputs a usable textured
+  mesh in ~2 minutes — a ~10x speedup.
+limitations: >
+  Inherits SDS's mode-seeking artifacts (saturation, Janus faces); Gaussians
+  make optimization fast but geometry extraction lossy — the quality ceiling
+  still belongs to slower pipelines.
+relations:
+  - node: zero123-2023
+    type: fixes
+    note: >
+      Repairs the speed bottleneck of per-object distillation: hours of
+      NeRF-SDS become ~2 minutes by adopting 3D Gaussian Splatting (the
+      neural-rendering branch's 2023 breakthrough) as the target
+      representation — an explicit cross-branch import.
+status: seed

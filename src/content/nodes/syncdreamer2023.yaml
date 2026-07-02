@@ -1,0 +1,29 @@
+title: "SyncDreamer: Generating Multiview-consistent Images from a Single-view Image"
+short: "SyncDreamer (2023)"
+authors: "Yuan Liu, Cheng Lin, Zijiao Zeng, Xiaoxiao Long, Lingjie Liu, Taku Komura, Wenping Wang"
+venue: "ICLR 2024"
+year: 2023
+branch: single-image-3d
+lane: generative
+links:
+  arxiv: "https://arxiv.org/abs/2309.03453"
+  project: "https://liuyuan-pal.github.io/SyncDreamer/"
+problem: >
+  Zero-1-to-3's imagined views each look plausible alone but contradict each
+  other in 3D — reconstruction from them inherits the contradictions.
+solution: >
+  Synchronize the imagination: a multiview diffusion model that denoises all
+  target views jointly, correlating their noise states through a 3D-aware
+  attention so the generated views agree with one another by construction.
+limitations: >
+  Consistency is enforced at feature level, not guaranteed geometrically;
+  resolution and view counts are fixed; and per-object reconstruction is still
+  a separate downstream step.
+relations:
+  - node: zero123-2023
+    type: fixes
+    note: >
+      Repairs the multi-view inconsistency at its source: instead of
+      generating views one by one, denoise them together with synchronized
+      noise states.
+status: seed

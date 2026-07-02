@@ -1,0 +1,33 @@
+title: "TripoSG: High-Fidelity 3D Shape Synthesis using Large-Scale Rectified Flow Models"
+short: "TripoSG (2025)"
+authors: "VAST AI Research (Yangguang Li, Zi-Xin Zou, et al.)"
+venue: "arXiv 2025 (VAST AI)"
+year: 2025
+branch: single-image-3d
+lane: generative
+links:
+  code: "https://github.com/VAST-AI-Research/TripoSG"
+problem: >
+  The fast feed-forward line (TripoSR-style) hit a fidelity ceiling: speed was
+  solved, but sharp geometric detail from one image was not.
+solution: >
+  Scale the generative side properly: a large rectified-flow transformer over
+  high-resolution SDF latents, trained on aggressively curated data — trading
+  a bit of speed for a clear step up in geometric fidelity, and releasing
+  weights openly.
+limitations: >
+  Geometry-first: appearance/material still needs downstream stages; and like
+  the rest of the wave, its world is the curated object dataset, not scenes.
+relations:
+  - node: triposr2024
+    type: builds-on
+    note: >
+      Same organization, next bet: after democratizing speed with TripoSR,
+      chase fidelity — replacing the feed-forward regressor with a scaled
+      rectified-flow generator.
+  - node: hunyuan3d2-2025
+    type: independent
+    note: >
+      Parallel entries in the 2025 industrial shape-generation race, both
+      flow-based, developed independently.
+status: seed

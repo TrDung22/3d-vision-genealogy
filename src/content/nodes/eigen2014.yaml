@@ -1,0 +1,27 @@
+title: "Depth Map Prediction from a Single Image using a Multi-Scale Deep Network"
+short: "Eigen et al. 2014"
+authors: "David Eigen, Christian Puhrsch, Rob Fergus"
+venue: "NeurIPS 2014"
+year: 2014
+branch: single-image-3d
+lane: depth
+links:
+  arxiv: "https://arxiv.org/abs/1406.2283"
+problem: >
+  Regress a depth map directly from an image, without humans designing the
+  features or the graphical model.
+solution: >
+  A two-stage coarse-to-fine CNN predicting depth end-to-end, plus a
+  scale-invariant loss that separates structural error from scale error —
+  the milestone that opened the deep-learning era of monocular depth.
+limitations: >
+  Trained and evaluated inside a single dataset (NYU Depth / KITTI): the model
+  learned "NYU-style rooms", not "the world". That in-domain ceiling hung over
+  the field for six years, until MiDaS.
+relations:
+  - node: saxena2008
+    type: fixes
+    note: >
+      Repairs exactly the weakness Make3D left behind: hand-crafted features +
+      MRF replaced by representations learned end-to-end from data.
+status: seed

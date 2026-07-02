@@ -1,0 +1,19 @@
+{
+  "name": "3d-vision-genealogy",
+  "version": "0.1.0",
+  "description": "An interactive genealogy of 3D computer vision research lineages",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^4.0.0",
+    "3d-force-graph": "^1.73.0",
+    "astro": "^5.7.0",
+    "d3": "^7.9.0",
+    "three-spritetext": "^1.8.2"
+  }
+}

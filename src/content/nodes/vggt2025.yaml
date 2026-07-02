@@ -1,0 +1,31 @@
+title: "VGGT: Visual Geometry Grounded Transformer"
+short: "VGGT (2025)"
+authors: "Jianyuan Wang, Minghao Chen, Nikita Karaev, Andrea Vedaldi, Christian Rupprecht, David Novotny (Oxford VGG + Meta AI)"
+venue: "CVPR 2025 (Best Paper Award)"
+year: 2025
+branch: single-image-3d
+lane: scene
+links:
+  arxiv: "https://arxiv.org/abs/2503.11651"
+  code: "https://github.com/facebookresearch/vggt"
+problem: >
+  Scene geometry was still a pipeline: SfM for cameras, MVS or per-scene
+  optimization for dense geometry — slow, brittle, and structurally unable to
+  run from a single image.
+solution: >
+  One feed-forward transformer that ingests 1 to hundreds of unposed images
+  and directly outputs cameras, depth maps, point maps, and 3D point tracks in
+  seconds — the DUSt3R line's "geometry as prediction, not optimization" bet
+  taken to its logical end, and CVPR 2025's Best Paper.
+limitations: >
+  A head per task and quadratic attention over views; static scenes only. Its
+  own succession came fast: Depth Anything 3 showed a single plain transformer
+  with one depth-ray target beats the multi-head design decisively.
+relations:
+  - node: pixelnerf2020
+    type: fixes
+    note: >
+      Completes what conditioning began: PixelNeRF removed per-scene training
+      but still answered through slow volume rendering; VGGT predicts the
+      geometry itself, feed-forward, at any view count.
+status: seed

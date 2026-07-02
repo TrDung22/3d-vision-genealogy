@@ -1,0 +1,35 @@
+title: "pixelNeRF: Neural Radiance Fields from One or Few Images"
+short: "PixelNeRF (2020)"
+authors: "Alex Yu, Vickie Ye, Matthew Tancik, Angjoo Kanazawa (UC Berkeley)"
+venue: "CVPR 2021"
+year: 2020
+branch: single-image-3d
+lane: scene
+links:
+  arxiv: "https://arxiv.org/abs/2012.02190"
+  project: "https://alexyu.net/pixelnerf/"
+problem: >
+  NeRF needs dozens of posed images and per-scene training — useless for the
+  single-image setting by construction.
+solution: >
+  Condition the radiance field on the image: pixel-aligned CNN features feed
+  the NeRF MLP, so one network trained across scenes renders novel views from
+  as little as ONE input image, feed-forward, no per-scene optimization.
+limitations: >
+  Blurry beyond small view changes — a regression model guessing the unseen,
+  not imagining it; the crisp-unseen-region problem waited for diffusion
+  priors (ZeroNVS, Zero-1-to-3 era) to be treated as generation instead.
+relations:
+  - node: nerf2020
+    type: fixes
+    note: >
+      Repairs NeRF's per-scene, many-image requirement within months of its
+      publication: conditioning turns a memorization machine into a
+      generalizable one.
+  - node: pifu2019
+    type: builds-on
+    note: >
+      The pixel-aligned feature trick escapes the human niche: PixelNeRF
+      plugs PIFu-style aligned features into volume rendering — a human-lane
+      idea becoming scene-lane infrastructure.
+status: seed

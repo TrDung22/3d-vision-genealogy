@@ -1,0 +1,37 @@
+title: "Depth Pro: Sharp Monocular Metric Depth in Less Than a Second"
+short: "Depth Pro (2024)"
+authors: "Aleksei Bochkovskii, Amaël Delaunoy, Hugo Germain, Marcel Santos, Yichao Zhou, Stephan R. Richter, Vladlen Koltun (Apple)"
+venue: "ICLR 2025"
+year: 2024
+branch: single-image-3d
+lane: depth
+links:
+  arxiv: "https://arxiv.org/abs/2410.02073"
+  code: "https://github.com/apple/ml-depth-pro"
+problem: >
+  Production-grade metric depth: sharp boundaries, absolute scale, no camera
+  metadata, and fast enough to ship — no prior model had all four.
+solution: >
+  A multi-scale ViT (shared-weight pretrained patches + DPT-style decoder)
+  producing 2.25-megapixel metric depth in 0.3s on a V100 without intrinsics;
+  a two-stage curriculum (real+synthetic, then synthetic-only boundary
+  sharpening) and new boundary-accuracy metrics derived from matting and
+  segmentation data.
+limitations: >
+  A frozen "pro" tool rather than a growing foundation line: single-image only,
+  no video consistency, and its boundary supremacy was matched within a year by
+  point-map models (MoGe-2) trained with refined real data.
+relations:
+  - node: metric3d2023
+    type: fixes
+    note: >
+      Calls out and fixes a hidden zero-shot violation: Metric3D's accuracy
+      depended on per-domain crop-size selection at test time — Depth Pro needs
+      no such tuning and no intrinsics at all.
+  - node: depthanythingv2-2024
+    type: fixes
+    note: >
+      Repairs the Depth Anything line's metric story: instead of separate
+      indoor/outdoor fine-tuned metric models, one network covers the world
+      with absolute scale.
+status: seed

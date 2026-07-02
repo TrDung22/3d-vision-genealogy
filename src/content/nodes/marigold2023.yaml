@@ -1,0 +1,29 @@
+title: "Marigold: Repurposing Diffusion-Based Image Generators for Monocular Depth Estimation"
+short: "Marigold (2023)"
+authors: "Bingxin Ke, Anton Obukhov, Shengyu Huang, Nando Metzger, Rodrigo Caye Daudt, Konrad Schindler"
+venue: "CVPR 2024 (Oral, Best Paper Award Candidate)"
+year: 2023
+branch: single-image-3d
+lane: depth
+links:
+  arxiv: "https://arxiv.org/abs/2312.02145"
+  project: "https://marigoldmonodepth.github.io/"
+problem: >
+  Achieve generalization WITHOUT hoarding millions of depth-labeled images —
+  because label-hoarding is a race with no finish line.
+solution: >
+  Borrow the visual "understanding" already inside Stable Diffusion: lightly
+  fine-tune the image generator into a depth generator, using only a small
+  synthetic dataset — the prior comes not from depth labels but from having
+  seen billions of internet images.
+limitations: >
+  Slow (many denoising steps per depth map) and still relative depth; quality
+  is bounded by the prior of the underlying generative model.
+relations:
+  - node: dpt2021
+    type: independent
+    note: >
+      A different road to the same generalization destination: the MiDaS/DPT
+      line scales LABELED DATA, Marigold borrows a GENERATIVE PRIOR. Two
+      philosophies running in parallel, neither descending from the other.
+status: seed

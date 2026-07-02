@@ -1,0 +1,28 @@
+title: "TripoSR: Fast 3D Object Reconstruction from a Single Image"
+short: "TripoSR (2024)"
+authors: "Dmitry Tochilkin, David Pankratz, Zexiang Liu, Zixuan Huang, Adam Letts, Yangguang Li, Ding Liang, Christian Laforte, Varun Jampani, Yan-Pei Cao"
+venue: "arXiv 2024"
+year: 2024
+branch: single-image-3d
+lane: generative
+links:
+  arxiv: "https://arxiv.org/abs/2403.02151"
+  code: "https://github.com/VAST-AI-Research/TripoSR"
+problem: >
+  LRM proved feed-forward 3D works but shipped closed-source — the community
+  needed an open, fast version that runs on commodity hardware.
+solution: >
+  Reproduce and streamline the LRM recipe: better Objaverse data curation and
+  training/rendering details, open weights + code, objects reconstructed in
+  under 0.5 seconds.
+limitations: >
+  Geometry still trails the slow optimization pipelines; back-side texture and
+  complex objects remain weak. Its historical role, though, is DEMOCRATIZING
+  the feed-forward line.
+relations:
+  - node: lrm2023
+    type: builds-on
+    note: >
+      Inherits the LRM recipe and settles its "closed-source" debt — opening
+      the way for the community to climb onto this line's shoulders.
+status: seed

@@ -1,0 +1,30 @@
+title: "ZoeDepth: Zero-shot Transfer by Combining Relative and Metric Depth"
+short: "ZoeDepth (2023)"
+authors: "Shariq Farooq Bhat, Reiner Birkl, Diana Wofk, Peter Wonka, Matthias Müller"
+venue: "arXiv 2023 (Intel)"
+year: 2023
+branch: single-image-3d
+lane: depth
+links:
+  arxiv: "https://arxiv.org/abs/2302.12288"
+  code: "https://github.com/isl-org/ZoeDepth"
+problem: >
+  The metric debt of the MiDaS line: relative depth generalizes but can't say
+  "how many meters", which blocks SLAM, AR, and robotics.
+solution: >
+  The first widely-adopted bridge from relative to metric: pre-train a
+  MiDaS-style relative backbone on the dataset mix, then bolt on a lightweight
+  metric-bins head fine-tuned on metric data — keeping generalization while
+  restoring absolute scale.
+limitations: >
+  The metric head is still domain-bound (separate indoor/outdoor heads with a
+  router), and scale accuracy degrades on cameras unlike those seen in
+  fine-tuning — the focal-length ambiguity is patched, not solved.
+relations:
+  - node: midas2020
+    type: fixes
+    note: >
+      Repairs exactly the debt MiDaS chose to take on: absolute scale — by
+      appending a metric-bins module to the relative-depth backbone instead of
+      retraining from scratch.
+status: seed

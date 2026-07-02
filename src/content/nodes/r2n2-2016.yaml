@@ -1,0 +1,27 @@
+title: "3D-R2N2: A Unified Approach for Single and Multi-view 3D Object Reconstruction"
+short: "3D-R2N2 (2016)"
+authors: "Christopher B. Choy, Danfei Xu, JunYoung Gwak, Kevin Chen, Silvio Savarese"
+venue: "ECCV 2016"
+year: 2016
+branch: single-image-3d
+lane: object
+links:
+  arxiv: "https://arxiv.org/abs/1604.00449"
+problem: >
+  A depth map is only 2.5D — the visible surface. Recover the FULL 3D shape of
+  an object, occluded parts included, from one (or a few) images.
+solution: >
+  A recurrent network (3D-LSTM) mapping images to a voxel occupancy grid,
+  trained with supervision on ShapeNet CAD models — opening an entire line of
+  "learn a shape prior from a shape warehouse".
+limitations: >
+  Voxels cost O(n³) memory, so it was stuck at 32³ — lego-brick models. And all
+  its knowledge came from ShapeNet: a closed world of a few thousand shapes.
+relations:
+  - node: eigen2014
+    type: builds-on
+    note: >
+      Inherits the belief that "a 3D prior can be learned from data with a deep
+      network", but changes the target from the visible surface (2.5D) to the
+      full shape.
+status: seed

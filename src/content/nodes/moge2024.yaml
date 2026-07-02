@@ -1,0 +1,34 @@
+title: "MoGe: Unlocking Accurate Monocular Geometry Estimation for Open-Domain Images with Optimal Training Supervision (MoGe-2: NeurIPS 2025)"
+short: "MoGe / MoGe-2 (2024)"
+authors: "Ruicheng Wang, Sicheng Xu, et al. (Microsoft Research)"
+venue: "CVPR 2025 (Oral) → NeurIPS 2025 (MoGe-2)"
+year: 2024
+branch: single-image-3d
+lane: depth
+links:
+  arxiv: "https://arxiv.org/abs/2507.02546"
+  code: "https://github.com/microsoft/MoGe"
+problem: >
+  A depth map is not geometry: it hides the camera, entangles focal length with
+  shape, and needs post-hoc intrinsics to become a point cloud anyone can use.
+solution: >
+  Change the prediction target itself: regress an affine-invariant POINT MAP —
+  full 3D geometry plus recoverable FOV in one forward pass — trained with an
+  optimal affine-alignment supervision that the depth-map line lacked. MoGe-2
+  (NeurIPS 2025) adds a decoupled global-scale branch for metric output and a
+  data-refinement pipeline that filters and completes noisy LiDAR/SfM labels,
+  claiming the first simultaneous win on relative geometry, metric scale, and
+  fine detail.
+limitations: >
+  Still single-image and static; the affine-invariant trick defers but does not
+  eliminate the scale question (the metric branch is a separate head); and the
+  self-reported "all three at once" claim rests on benchmark averages, not a
+  new theory of the ambiguity.
+relations:
+  - node: depthanythingv2-2024
+    type: fixes
+    note: >
+      Moves the goalposts of the whole depth lane: from ever-better depth maps
+      to full point maps with camera geometry built in — with a supervision
+      scheme the depth-map paradigm structurally couldn't express.
+status: seed

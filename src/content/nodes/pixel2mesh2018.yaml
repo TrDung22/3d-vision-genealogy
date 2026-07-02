@@ -1,0 +1,27 @@
+title: "Pixel2Mesh: Generating 3D Mesh Models from Single RGB Images"
+short: "Pixel2Mesh (2018)"
+authors: "Nanyang Wang, Yinda Zhang, Zhuwen Li, Yanwei Fu, Wei Liu, Yu-Gang Jiang"
+venue: "ECCV 2018"
+year: 2018
+branch: single-image-3d
+lane: object
+links:
+  arxiv: "https://arxiv.org/abs/1804.01654"
+problem: >
+  Produce a usable surface (a mesh with topology) instead of a cloud of
+  disconnected points.
+solution: >
+  A graph CNN progressively deforms an ellipsoid template guided by image
+  features, coarse-to-fine — the output is a triangle mesh you can render or
+  print immediately.
+limitations: >
+  Topology is locked to the template: every object is a deformed sphere
+  (genus-0), so a mug with a handle is impossible. Whatever data structure you
+  pre-commit to, you pay for it — voxels pay in resolution, meshes in topology.
+relations:
+  - node: psgn2017
+    type: fixes
+    note: >
+      Repairs the point cloud's missing surface by generating a mesh directly —
+      at the price of locked topology.
+status: seed

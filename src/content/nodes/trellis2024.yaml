@@ -1,0 +1,33 @@
+title: "Structured 3D Latents for Scalable and Versatile 3D Generation (TRELLIS)"
+short: "TRELLIS (2024)"
+authors: "Jianfeng Xiang, Zelong Lv, Sicheng Xu, Yu Deng, Ruicheng Wang, Bowen Zhang, Dong Chen, Xin Tong, Jiaolong Yang (Microsoft)"
+venue: "CVPR 2025 (Spotlight, per authors' repo)"
+year: 2024
+branch: single-image-3d
+lane: generative
+links:
+  arxiv: "https://arxiv.org/abs/2412.01506"
+  code: "https://github.com/microsoft/TRELLIS"
+problem: >
+  Every prior generator was locked to one output format — NeRF here, Gaussians
+  there, meshes elsewhere — fragmenting the field and capping quality at
+  whatever that format tolerates.
+solution: >
+  A unified Structured LATent (SLAT): a sparse 3D grid of latents fusing
+  geometry and appearance, decodable into radiance fields, 3D Gaussians, OR
+  meshes from the same generation. Rectified-flow transformers scaled to 2B
+  parameters on 500K curated objects, with local 3D editing prior models
+  couldn't offer. Adoption is the signal: ~13k GitHub stars and 1M+ Hugging
+  Face downloads within a year, spawning a family of SLAT successors.
+limitations: >
+  Trained on curated, object-centric assets — clean-background single objects,
+  not the cluttered real world; and the spotlight venue status is the repo's
+  own claim (independent verification against official CVPR lists failed).
+relations:
+  - node: lrm2023
+    type: fixes
+    note: >
+      Repairs the format lock-in of the feed-forward wave: LRM-line models
+      committed to triplane-NeRF; SLAT decodes one latent into whichever
+      representation the downstream task wants.
+status: seed

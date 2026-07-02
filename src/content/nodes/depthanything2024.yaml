@@ -1,0 +1,35 @@
+title: "Depth Anything: Unleashing the Power of Large-Scale Unlabeled Data"
+short: "Depth Anything (2024)"
+authors: "Lihe Yang, Bingyi Kang, Zilong Huang, Xiaogang Xu, Jiashi Feng, Hengshuang Zhao"
+venue: "CVPR 2024"
+year: 2024
+branch: single-image-3d
+lane: depth
+links:
+  arxiv: "https://arxiv.org/abs/2401.10891"
+  code: "https://github.com/LiheYoung/Depth-Anything"
+problem: >
+  The labeled-data ceiling of the MiDaS/DPT line: build a "foundation model"
+  for depth when real labels will always be scarce.
+solution: >
+  Break the ceiling with 62 million UNLABELED images: a teacher pseudo-labels,
+  a student relearns under strong augmentations + a semantic feature
+  constraint — the semi-supervised recipe at foundation-model scale.
+limitations: >
+  Still relative depth at its core (the metric variant needs fine-tuning); fine
+  detail (hair, mesh, thin edges) remains weak — exactly where the
+  generative-prior line is stronger, and why the two philosophies keep running
+  in parallel.
+relations:
+  - node: dpt2021
+    type: builds-on
+    note: >
+      Keeps the DPT-line architecture and scales the remaining axis: data —
+      from millions of labeled images to tens of millions of unlabeled ones.
+  - node: marigold2023
+    type: independent
+    note: >
+      Released almost simultaneously — two independent answers to the same
+      question: scale real data (Depth Anything) vs borrow a generative prior
+      (Marigold).
+status: seed

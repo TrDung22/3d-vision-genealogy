@@ -1,0 +1,38 @@
+title: "Metric3D: Towards Zero-shot Metric 3D Prediction from a Single Image (v2: TPAMI 2024)"
+short: "Metric3D / v2 (2023)"
+authors: "Wei Yin, Mu Hu, et al. (v2: Mu Hu, Wei Yin, et al.)"
+venue: "ICCV 2023 → TPAMI 2024 (v2)"
+year: 2023
+branch: single-image-3d
+lane: depth
+links:
+  arxiv: "https://arxiv.org/abs/2307.10984"
+  code: "https://github.com/YvanYin/Metric3D"
+problem: >
+  Why can't zero-shot depth be metric? Because the same scene photographed with
+  different focal lengths produces different image sizes — metric scale is
+  entangled with camera intrinsics.
+solution: >
+  Attack the ambiguity at its root: a canonical camera space transformation
+  that maps every training image to a standard camera before learning, making
+  metric depth learnable across tens of thousands of cameras. V2 (TPAMI 2024)
+  scales to 16M images and adds zero-shot surface normals via joint
+  depth-normal optimization, learning normals from depth-only data.
+limitations: >
+  Needs intrinsics (or an estimate) at test time, and its accuracy depends on
+  per-domain crop-size selection at inference — the specific weakness Depth Pro
+  later called out as violating the zero-shot premise.
+relations:
+  - node: midas2020
+    type: fixes
+    note: >
+      Repairs the affine-invariant line's missing metric scale (MiDaS, DPT,
+      LeReS): the canonical camera transform turns "unknowable" absolute depth
+      into a solvable problem.
+  - node: zoedepth2023
+    type: independent
+    note: >
+      Two same-year answers to the same metric debt: ZoeDepth patches scale
+      back with a fine-tuned bins head; Metric3D dissolves the ambiguity in
+      camera space. Neither derives from the other.
+status: seed

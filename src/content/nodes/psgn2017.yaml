@@ -1,0 +1,26 @@
+title: "A Point Set Generation Network for 3D Object Reconstruction from a Single Image"
+short: "PSGN (Fan 2017)"
+authors: "Haoqiang Fan, Hao Su, Leonidas Guibas"
+venue: "CVPR 2017"
+year: 2017
+branch: single-image-3d
+lane: object
+links:
+  arxiv: "https://arxiv.org/abs/1612.00603"
+problem: >
+  Break the voxel resolution ceiling: represent 3D shape without cost exploding
+  cubically with detail.
+solution: >
+  Generate a point cloud directly from the image; the most durable contribution
+  is the Chamfer / EMD loss pair that handles the unordered nature of point
+  sets — later standard equipment for the whole point-cloud community.
+limitations: >
+  Discrete points carry no surface topology: no direct rendering, no 3D
+  printing, no normals. "3D dust" rather than an object.
+relations:
+  - node: r2n2-2016
+    type: fixes
+    note: >
+      Repairs exactly the O(n³) voxel ceiling by changing the output data
+      structure to a point set.
+status: seed

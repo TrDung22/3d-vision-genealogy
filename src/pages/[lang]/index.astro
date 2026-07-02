@@ -1,0 +1,202 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import GenealogyGraph from '../../components/GenealogyGraph.astro';
+import { buildGraph, EDGE_TYPES } from '../../lib/graph';
+import { LOCALES, t, type Lang } from '../../lib/i18n';
+
+export function getStaticPaths() {
+  return LOCALES.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Lang;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const root = `${base}/${lang}`;
+const graph = await buildGraph();
+
+const shortOf = new Map(graph.nodes.map((n) => [n.id, n.short]));
+const laneTitle = new Map(graph.lanes.map((l) => [l.id, l.title]));
+const rows = [...graph.nodes].sort((a, b) => a.year - b.year || a.short.localeCompare(b.short));
+
+// outgoing relations (this node → the older nodes it references), grouped per node
+const relationsOf = new Map<string, string[]>();
+for (const e of graph.edges) {
+  const list = relationsOf.get(e.target) ?? [];
+  list.push(`${EDGE_TYPES[e.type].label} ${shortOf.get(e.source) ?? e.source}`);
+  relationsOf.set(e.target, list);
+}
+
+const posts = (await getCollection('posts'))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+  .slice(0, 3);
+
+const dateLocale = { en: 'en-US', vi: 'vi-VN', ja: 'ja-JP' }[lang];
+const fmtDate = (d: Date) =>
+  d.toLocaleDateString(dateLocale, { year: 'numeric', month: 'long', day: 'numeric' });
+---
+
+<Base title={t(lang, 'home.title')} lang={lang}>
+  <section class="hero">
+    <h1>{t(lang, 'hero.title')}</h1>
+    {
+      lang === 'vi' ? (
+        <p>
+          Đây không phải một danh sách paper. Đây là câu chuyện về <strong>dòng dõi</strong>:
+          công trình nào sinh ra từ điểm yếu của công trình nào, dòng chính đã <em>bỏ quên</em>
+          những hướng đi gì, và những nhánh độc lập nào đã lặng lẽ giải cùng một bài toán. Bắt
+          đầu từ nhánh ill-posed kinh điển nhất — dựng 3D từ một ảnh duy nhất.
+        </p>
+      ) : lang === 'ja' ? (
+        <p>
+          これは論文のリストではありません。<strong>系譜</strong>の物語です:
+          どの研究がどの研究の弱点から生まれたのか、主流は何を<em>見落とし</em>、
+          どの独立した枝が静かに同じ問題を解いていたのか。最も古典的な不良設定問題 —
+          一枚の画像からの3D復元 — から始めます。
+        </p>
+      ) : (
+        <p>
+          This is not a list of papers. It is the story of <strong>lineage</strong>: which work
+          was born from the weakness of which, what the mainstream <em>overlooked</em>, and
+          which independent branches quietly solved the same problem. Starting from the most
+          classically ill-posed branch of all — reconstructing 3D from a single image.
+        </p>
+      )
+    }
+  </section>
+
+  <GenealogyGraph lang={lang} />
+
+  <section>
+    <h2>{t(lang, 'howto.title')}</h2>
+    <ul class="edge-glossary">
+      {
+        Object.entries(EDGE_TYPES).map(([key, meta]) => (
+          <li>
+            <strong>{meta.label}</strong> — {t(lang, `glossary.${key}`)}
+          </li>
+        ))
+      }
+    </ul>
+    <p class="muted">{t(lang, 'howto.arrows')}</p>
+  </section>
+
+  <section class="table-view">
+    <h2>{t(lang, 'table.title')}</h2>
+    {
+      graph.branches.map((b) => {
+        const branchRows = rows.filter((n) => n.branch === b.id);
+        if (branchRows.length === 0) return null;
+        return (
+          <details class="panel branch-table" open>
+            <summary>
+              <span class="chip">
+                <span class="dot" style={`background:${b.color}`} />
+                <strong>{b.title}</strong>
+              </span>
+              <span class="muted count">{branchRows.length} {t(lang, 'table.nodes')}</span>
+            </summary>
+            <table>
+              <thead>
+                <tr>
+                  <th>{t(lang, 'table.year')}</th>
+                  <th>{t(lang, 'table.work')}</th>
+                  <th>{t(lang, 'table.lane')}</th>
+                  <th>{t(lang, 'table.relations')}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {branchRows.map((n) => (
+                  <tr>
+                    <td>{n.year}</td>
+                    <td>
+                      <a href={`${root}/nodes/${n.id}/`}>{n.short}</a>
+                    </td>
+                    <td class="muted">{laneTitle.get(n.lane) ?? ''}</td>
+                    <td class="muted">{(relationsOf.get(n.id) ?? ['—']).join(' · ')}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </details>
+        );
+      })
+    }
+  </section>
+
+  <section>
+    <h2>{t(lang, 'posts.title')}</h2>
+    {
+      posts.length === 0 ? (
+        <p class="muted">{t(lang, 'posts.none')}</p>
+      ) : (
+        <ul class="post-list">
+          {posts.map((p) => (
+            <li>
+              <a href={`${root}/blog/${p.id}/`}>{p.data.title}</a>
+              <span class="muted"> — {fmtDate(p.data.date)}</span>
+              <p class="muted">{p.data.description}</p>
+            </li>
+          ))}
+        </ul>
+      )
+    }
+    <p>
+      <a href={`${root}/blog/`}>{t(lang, 'posts.all')}</a>
+    </p>
+  </section>
+</Base>
+
+<style>
+  .hero {
+    max-width: 780px;
+    margin-bottom: 0.5rem;
+  }
+
+  .hero h1 {
+    margin-top: 1rem;
+  }
+
+  .edge-glossary li {
+    margin: 0.35rem 0;
+  }
+
+  .table-view {
+    margin: 2rem 0;
+  }
+
+  .branch-table {
+    margin: 1rem 0;
+  }
+
+  .branch-table summary {
+    cursor: pointer;
+  }
+
+  .branch-table summary .chip {
+    color: var(--ink);
+    font-size: 1rem;
+  }
+
+  .branch-table summary .count {
+    margin-left: 0.75rem;
+    font-size: 0.85rem;
+  }
+
+  .branch-table table {
+    margin-top: 1rem;
+  }
+
+  .post-list {
+    list-style: none;
+    padding: 0;
+  }
+
+  .post-list li {
+    margin: 0.9rem 0;
+  }
+
+  .post-list p {
+    margin: 0.15rem 0 0;
+    font-size: 0.9rem;
+  }
+</style>

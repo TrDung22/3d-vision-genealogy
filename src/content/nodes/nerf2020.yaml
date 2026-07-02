@@ -1,0 +1,29 @@
+title: "NeRF: Representing Scenes as Neural Radiance Fields for View Synthesis"
+short: "NeRF (2020)"
+authors: "Ben Mildenhall, Pratul P. Srinivasan, Matthew Tancik, Jonathan T. Barron, Ravi Ramamoorthi, Ren Ng"
+venue: "ECCV 2020"
+year: 2020
+branch: neural-rendering
+lane: radiance-fields
+links:
+  arxiv: "https://arxiv.org/abs/2003.08934"
+  project: "https://www.matthewtancik.com/nerf"
+problem: >
+  Novel view synthesis: render a scene from new viewpoints given a SET of posed
+  images — not single-image, but its fate is tied tightly to that branch.
+solution: >
+  An MLP mapping (position, view direction) → color + density, trained from
+  images alone through differentiable volume rendering — a continuous,
+  photorealistic scene representation that fits in a few MB of weights.
+limitations: >
+  Needs dozens of accurately-posed images and long per-scene training. That
+  very "needs many images" limitation became the exam question for the
+  one-image generative line: if views are missing, GENERATE them.
+relations:
+  - node: deepsdf2019
+    type: builds-on
+    note: >
+      Inherits the continuous implicit-MLP representation from the
+      DeepSDF/OccNet line and adds differentiable volume rendering — the bridge
+      between two branches of this genealogy.
+status: seed

@@ -1,0 +1,28 @@
+title: "DeepSDF: Learning Continuous Signed Distance Functions for Shape Representation"
+short: "DeepSDF (2019)"
+authors: "Jeong Joon Park, Peter Florence, Julian Straub, Richard Newcombe, Steven Lovegrove"
+venue: "CVPR 2019"
+year: 2019
+branch: single-image-3d
+lane: object
+links:
+  arxiv: "https://arxiv.org/abs/1901.05103"
+problem: >
+  The same problem as OccNet: a continuous shape representation locked to
+  neither resolution nor topology.
+solution: >
+  Learn a continuous signed distance function (SDF) with an MLP + an
+  auto-decoder that optimizes a latent code per shape; an SDF also gives you
+  surface normals and distance-to-surface for free.
+limitations: >
+  Inference requires optimizing the latent code (slow, initialization-
+  sensitive); just as boxed into ShapeNet as the rest of the object-
+  reconstruction line.
+relations:
+  - node: occnet2019
+    type: independent
+    note: >
+      Simultaneous and independent, same CVPR 2019, touching the same idea:
+      continuous implicit representations as MLPs (IM-Net was the third sibling
+      that year). When an idea is ripe, it falls everywhere at once.
+status: seed

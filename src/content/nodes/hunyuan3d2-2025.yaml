@@ -1,0 +1,33 @@
+title: "Hunyuan3D 2.0: Scaling Diffusion Models for High Resolution Textured 3D Assets Generation"
+short: "Hunyuan3D 2 (2025)"
+authors: "Tencent Hunyuan3D Team"
+venue: "Tech report 2025 (Tencent)"
+year: 2025
+branch: single-image-3d
+lane: generative
+links:
+  arxiv: "https://arxiv.org/abs/2501.12202"
+  code: "https://github.com/Tencent-Hunyuan/Hunyuan3D-2"
+problem: >
+  Production asset pipelines need more than geometry: game-ready 3D means
+  clean topology-friendly shapes AND high-resolution materials, at industrial
+  reliability.
+solution: >
+  Decouple the problem the way studios do: a large flow-based shape generator
+  (vecset-latent diffusion) produces geometry, then a separate multi-view
+  texture-synthesis model paints it — each stage scaled and optimized
+  independently. Version 2.1 (June 2025) extends the texture stage to
+  physically-based rendering (PBR) materials in the open release.
+limitations: >
+  The two-stage split means texture can't repair shape errors; PBR quality
+  still trails commercial closed tools; and note the marketing framing — its
+  "first production-ready open PBR" claim did not survive independent
+  verification.
+relations:
+  - node: trellis2024
+    type: independent
+    note: >
+      The same industrial wave, opposite bets: TRELLIS unifies everything into
+      one structured latent; Hunyuan3D splits shape and texture into separately
+      scaled specialists. Neither derives from the other.
+status: seed

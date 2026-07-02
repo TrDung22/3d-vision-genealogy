@@ -1,0 +1,27 @@
+title: "Occupancy Networks: Learning 3D Reconstruction in Function Space"
+short: "OccNet (2019)"
+authors: "Lars Mescheder, Michael Oechsle, Michael Niemeyer, Sebastian Nowozin, Andreas Geiger"
+venue: "CVPR 2019"
+year: 2019
+branch: single-image-3d
+lane: object
+links:
+  arxiv: "https://arxiv.org/abs/1812.03828"
+problem: >
+  Escape the voxel-vs-mesh dilemma: a 3D representation locked to neither a
+  resolution nor a topology.
+solution: >
+  Change the question entirely: don't pick a data structure — learn a FUNCTION.
+  The network learns a continuous implicit function f(point, image) → the
+  probability of being "inside the object"; a mesh is extracted afterwards via
+  marching cubes at any resolution you like.
+limitations: >
+  Still lives in the closed ShapeNet world with canonicalized objects; every
+  query point costs a forward pass — surface extraction is slow.
+relations:
+  - node: pixel2mesh2018
+    type: fixes
+    note: >
+      Settles two debts at once: the voxel resolution ceiling and the mesh
+      topology lock, by moving to function space.
+status: seed

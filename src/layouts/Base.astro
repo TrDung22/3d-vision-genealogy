@@ -1,0 +1,207 @@
+---
+import '../styles/global.css';
+import { LOCALES, LOCALE_LABELS, t, type Lang } from '../lib/i18n';
+
+interface Props {
+  title: string;
+  lang?: Lang;
+  description?: string;
+}
+
+const { title, lang = 'en' } = Astro.props;
+const description = Astro.props.description ?? t(lang, 'meta.description');
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const root = `${base}/${lang}`;
+
+const nav = [
+  { href: `${root}/about/`, label: t(lang, 'nav.about') },
+  { href: `${root}/`, label: t(lang, 'nav.genealogy') },
+  { href: `${root}/branches/`, label: t(lang, 'nav.branches') },
+  { href: `${root}/blog/`, label: t(lang, 'nav.blog') },
+];
+
+// swap only the language segment, keep the rest of the path
+const path = Astro.url.pathname;
+const rest = path.startsWith(`${root}`) ? path.slice(root.length) || '/' : '/';
+const alternates = LOCALES.map((l) => ({ l, href: `${base}/${l}${rest}` }));
+---
+
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title} · 3D Vision Genealogy</title>
+    {alternates.map((a) => <link rel="alternate" hreflang={a.l} href={a.href} />)}
+    <script is:inline>
+      // set the theme before first paint to avoid a flash
+      document.documentElement.dataset.theme =
+        localStorage.getItem('theme') ||
+        (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+    </script>
+  </head>
+  <body>
+    <header>
+      <div class="container header-row">
+        <a class="brand" href={`${root}/`}>3D Vision <span>Genealogy</span></a>
+        <div class="header-right">
+          <nav>
+            {nav.map((item) => <a href={item.href}>{item.label}</a>)}
+          </nav>
+          <div class="lang-switch">
+            {
+              alternates.map((a) => (
+                <a href={a.href} class:list={[{ active: a.l === lang }]} lang={a.l}>
+                  {LOCALE_LABELS[a.l]}
+                </a>
+              ))
+            }
+          </div>
+          <button id="theme-toggle" type="button" aria-label={t(lang, 'theme.toggle')} title={t(lang, 'theme.toggle')}>
+            <span class="icon-dark" aria-hidden="true">☾</span>
+            <span class="icon-light" aria-hidden="true">☀</span>
+          </button>
+        </div>
+      </div>
+    </header>
+    <main class="container">
+      <slot />
+    </main>
+    <footer>
+      <div class="container">
+        <p class="muted">{t(lang, 'footer.tagline')}</p>
+      </div>
+    </footer>
+
+    <script>
+      document.getElementById('theme-toggle')?.addEventListener('click', () => {
+        const next = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
+        document.documentElement.dataset.theme = next;
+        localStorage.setItem('theme', next);
+        window.dispatchEvent(new CustomEvent('themechange'));
+      });
+    </script>
+  </body>
+</html>
+
+<style>
+  header {
+    border-bottom: 1px solid var(--grid);
+    background: var(--page);
+    position: sticky;
+    top: 0;
+    z-index: 20;
+  }
+
+  .header-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-top: 0.8rem;
+    padding-bottom: 0.8rem;
+    flex-wrap: wrap;
+  }
+
+  .brand {
+    font-weight: 700;
+    color: var(--ink);
+    font-size: 1.05rem;
+    letter-spacing: 0.01em;
+  }
+
+  .brand span {
+    color: var(--accent);
+  }
+
+  .brand:hover {
+    text-decoration: none;
+  }
+
+  .header-right {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+  }
+
+  nav {
+    display: flex;
+    gap: 1.1rem;
+    flex-wrap: wrap;
+  }
+
+  nav a {
+    color: var(--ink-2);
+    font-size: 0.92rem;
+  }
+
+  nav a:hover {
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .lang-switch {
+    display: flex;
+    gap: 0.15rem;
+    border: 1px solid var(--baseline);
+    border-radius: 8px;
+    padding: 0.12rem;
+  }
+
+  .lang-switch a {
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 0.12rem 0.5rem;
+    border-radius: 6px;
+  }
+
+  .lang-switch a:hover {
+    color: var(--ink);
+    text-decoration: none;
+  }
+
+  .lang-switch a.active {
+    background: var(--baseline);
+    color: var(--ink);
+  }
+
+  #theme-toggle {
+    appearance: none;
+    background: transparent;
+    border: 1px solid var(--baseline);
+    border-radius: 8px;
+    color: var(--ink-2);
+    font-size: 0.95rem;
+    line-height: 1;
+    padding: 0.3rem 0.55rem;
+    cursor: pointer;
+  }
+
+  #theme-toggle:hover {
+    color: var(--ink);
+    border-color: var(--muted);
+  }
+
+  /* show the icon of the theme you would switch TO */
+  #theme-toggle .icon-dark { display: none; }
+  #theme-toggle .icon-light { display: inline; }
+
+  :global(html[data-theme='light']) #theme-toggle .icon-dark { display: inline; }
+  :global(html[data-theme='light']) #theme-toggle .icon-light { display: none; }
+
+  main {
+    min-height: 70vh;
+    padding-top: 1.5rem;
+    padding-bottom: 3rem;
+  }
+
+  footer {
+    border-top: 1px solid var(--grid);
+    padding: 1rem 0 2rem;
+    font-size: 0.85rem;
+  }
+</style>

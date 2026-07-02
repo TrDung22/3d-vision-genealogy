@@ -1,0 +1,36 @@
+title: "What Do Single-view 3D Reconstruction Networks Learn?"
+short: "Tatarchenko et al. 2019"
+authors: "Maxim Tatarchenko, Stephan R. Richter, René Ranftl, Zhuwen Li, Vladlen Koltun, Thomas Brox"
+venue: "CVPR 2019"
+year: 2019
+branch: single-image-3d
+lane: object
+links:
+  arxiv: "https://arxiv.org/abs/1905.03678"
+problem: >
+  The uncomfortable question the whole branch avoided: do single-view 3D
+  networks actually "reconstruct" anything, or do they just recall shapes
+  they've seen?
+solution: >
+  A controlled experiment: retrieval baselines (look up the nearest training
+  shape) and simple clustering BEAT the sophisticated networks on their own
+  benchmarks. Conclusion: they perform recognition in disguise, not
+  reconstruction.
+limitations: >
+  As a critique paper it offers no alternative — but it reset the evaluation
+  standards and planted doubt exactly where it belonged: the problem was the
+  closed ShapeNet world. Four years later, the generative line answered with
+  internet-scale priors.
+relations:
+  - node: r2n2-2016
+    type: challenges
+    note: >
+      Challenges the entire line opened by 3D-R2N2: IoU metrics on ShapeNet had
+      been hiding the fact that the networks "recognize and recall" rather than
+      reconstruct.
+  - node: psgn2017
+    type: challenges
+    note: >
+      Retrieval baselines beat the point-cloud networks too — the problem was
+      never the output data structure, but how the task was benchmarked.
+status: seed

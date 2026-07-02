@@ -1,0 +1,36 @@
+title: "Wonder3D: Single Image to 3D using Cross-Domain Diffusion"
+short: "Wonder3D (2023)"
+authors: "Xiaoxiao Long, Yuan-Chen Guo, Cheng Lin, Yuan Liu, et al."
+venue: "CVPR 2024"
+year: 2023
+branch: single-image-3d
+lane: generative
+links:
+  arxiv: "https://arxiv.org/abs/2310.15008"
+  code: "https://github.com/xxlong0/Wonder3D"
+problem: >
+  Generated RGB views alone underconstrain geometry: even consistent-looking
+  images can hide a mushy, ambiguous surface.
+solution: >
+  Make the diffusion model output geometry directly alongside appearance: a
+  cross-domain diffusion generates paired normal maps AND color images for
+  multiple views, with cross-domain attention keeping the two aligned; a
+  geometry-aware fusion then lifts them to a textured mesh in minutes.
+limitations: >
+  Fixed sparse view set and modest resolution; normal-map supervision helps
+  surfaces but fine structures and complex materials still break; per-object
+  fusion remains an optimization step.
+relations:
+  - node: zero123-2023
+    type: fixes
+    note: >
+      Attacks the same inconsistency debt as SyncDreamer, but by widening the
+      output: predicting normals with colors gives reconstruction an explicit
+      geometric anchor that RGB-only imagination lacked.
+  - node: syncdreamer2023
+    type: independent
+    note: >
+      Same weeks, same target, different levers — synchronized noise vs
+      cross-domain (normal + color) generation. A textbook parallel discovery
+      inside one research season.
+status: seed

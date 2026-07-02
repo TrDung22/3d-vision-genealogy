@@ -1,0 +1,29 @@
+title: "PIFuHD: Multi-Level Pixel-Aligned Implicit Function for High-Resolution 3D Human Digitization"
+short: "PIFuHD (2020)"
+authors: "Shunsuke Saito, Tomas Simon, Jason Saragih, Hanbyul Joo"
+venue: "CVPR 2020"
+year: 2020
+branch: single-image-3d
+lane: human
+links:
+  arxiv: "https://arxiv.org/abs/2004.00452"
+  code: "https://github.com/facebookresearch/pifuhd"
+problem: >
+  PIFu downsampled its input, throwing away exactly the pixels where clothing
+  wrinkles and fingers live.
+solution: >
+  A two-level architecture: a coarse level reasons holistically at low
+  resolution, a fine level ingests 1024px crops for detail, with front/back
+  normal-map prediction hallucinating the unseen side — full 1k-resolution
+  human digitization from one photo.
+limitations: >
+  Still no body prior: extreme poses and loose garments produce anatomically
+  impossible results — the failure mode the explicit-hybrid line (ICON/ECON)
+  was built to fix.
+relations:
+  - node: pifu2019
+    type: fixes
+    note: >
+      Same first author, direct repair: the resolution ceiling — multi-level
+      inference finally spends the input's native pixels on the surface detail.
+status: seed

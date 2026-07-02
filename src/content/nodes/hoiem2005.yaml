@@ -1,0 +1,28 @@
+title: "Automatic Photo Pop-up"
+short: "Photo Pop-up (Hoiem 2005)"
+authors: "Derek Hoiem, Alexei A. Efros, Martial Hebert"
+venue: "SIGGRAPH 2005"
+year: 2005
+branch: single-image-3d
+lane: priors
+links:
+  project: "https://dhoiem.cs.illinois.edu/projects/popup/"
+problem: >
+  Building a walkable 3D model from a single outdoor photo, without a physical
+  model of lighting or precise geometry.
+solution: >
+  Swap the kind of prior: learn a statistical classifier that labels image
+  regions as ground / vertical / sky, then erect the scene like a children's
+  pop-up book. The first time a STATISTICAL prior learned from data replaced
+  the physical prior for single-image 3D.
+limitations: >
+  Only three coarse geometric classes, only "ground plane + vertical things"
+  outdoor scenes; no continuous depth, and it shatters on anything complex.
+relations:
+  - node: horn1970
+    type: revives
+    note: >
+      Reawakened the single-image 3D problem after decades in which the field
+      poured its energy into stereo and multi-view — but with statistical
+      learning instead of reflectance physics.
+status: seed

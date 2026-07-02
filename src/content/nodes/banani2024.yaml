@@ -1,0 +1,36 @@
+title: "Probing the 3D Awareness of Visual Foundation Models"
+short: "Banani et al. 2024"
+authors: "Mohamed El Banani, Amit Raj, Kevis-Kokitsi Maninis, Abhishek Kar, Yuanzhen Li, Michael Rubinstein, Deqing Sun, Leonidas Guibas, Justin Johnson, Varun Jampani"
+venue: "CVPR 2024"
+year: 2024
+branch: single-image-3d
+lane: depth
+links:
+  paper: "https://openaccess.thecvf.com/content/CVPR2024/html/Banani_Probing_the_3D_Awareness_of_Visual_Foundation_Models_CVPR_2024_paper.html"
+problem: >
+  The uncomfortable question of the borrow-a-2D-prior era: when we repurpose
+  DINOv2, CLIP, or Stable Diffusion for 3D tasks, how much 3D do those models
+  actually contain?
+solution: >
+  A systematic probing study: frozen foundation-model features are tested for
+  single-view surface reconstruction and multi-view consistency. Verdict:
+  they encode the VISIBLE surface remarkably well, but fail at multi-view
+  consistency — the representations are view-dependent, not 3D-consistent.
+limitations: >
+  A diagnosis, not a cure — it doesn't say how to make 2D priors 3D-consistent.
+  But like Tatarchenko 2019 before it, it marks exactly where the era's
+  foundational assumption cracks.
+relations:
+  - node: marigold2023
+    type: challenges
+    note: >
+      Challenges the premise of the prior-borrowing line: Stable Diffusion's
+      "visual understanding" is single-view — the 3D consistency that depth
+      models inherit from it is shallower than assumed.
+  - node: depthanything2024
+    type: challenges
+    note: >
+      The DINOv2 semantic features Depth Anything leans on are probed directly:
+      strong on visible surfaces, view-dependent beyond them — bounding what
+      feature-transfer alone can deliver for 3D.
+status: seed

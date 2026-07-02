@@ -1,0 +1,34 @@
+title: "Zero-1-to-3: Zero-shot One Image to 3D Object"
+short: "Zero-1-to-3 (2023)"
+authors: "Ruoshi Liu, Rundi Wu, Basile Van Hoorick, Pavel Tokmakov, Sergey Zakharov, Carl Vondrick"
+venue: "ICCV 2023"
+year: 2023
+branch: single-image-3d
+lane: generative
+links:
+  arxiv: "https://arxiv.org/abs/2303.11328"
+  project: "https://zero123.cs.columbia.edu/"
+problem: >
+  Single-image 3D for ANY real-world object — the thing the entire
+  ShapeNet-trained object-reconstruction line never managed.
+solution: >
+  Fine-tune Stable Diffusion into a camera-conditioned novel-view generator:
+  from one image, "imagine" the other viewpoints, then reconstruct 3D from the
+  imagined views (via NeRF-style/SDS optimization).
+limitations: >
+  The generated views are not 3D-consistent with each other (multi-view
+  inconsistency), and per-object optimization takes minutes to hours.
+relations:
+  - node: occnet2019
+    type: fixes
+    note: >
+      Settles the closed-world debt of the whole object-reconstruction line —
+      the very problem Tatarchenko exposed — by swapping the few-thousand-shape
+      ShapeNet prior for diffusion's internet-scale prior.
+  - node: nerf2020
+    type: builds-on
+    note: >
+      Uses a NeRF-style representation as the 3D scaffold for the generated
+      views — a cross-branch relation: neural rendering becomes single-image
+      3D's infrastructure.
+status: seed

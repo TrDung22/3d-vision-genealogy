@@ -1,0 +1,17 @@
+---
+// language-neutral root → default locale
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="refresh" content={`0;url=${base}/en/`} />
+    <link rel="canonical" href={`${base}/en/`} />
+    <title>3D Vision Genealogy</title>
+  </head>
+  <body>
+    <p><a href={`${base}/en/`}>3D Vision Genealogy →</a></p>
+  </body>
+</html>

@@ -1,0 +1,30 @@
+title: "Depth Anything V2"
+short: "Depth Anything V2 (2024)"
+authors: "Lihe Yang, Bingyi Kang, Zilong Huang, Zhen Zhao, Xiaogang Xu, Jiashi Feng, Hengshuang Zhao"
+venue: "NeurIPS 2024"
+year: 2024
+branch: single-image-3d
+lane: depth
+links:
+  arxiv: "https://arxiv.org/abs/2406.09414"
+  code: "https://github.com/DepthAnything/Depth-Anything-V2"
+problem: >
+  V1 scaled unlabeled data but kept noisy real labels — and real depth labels
+  (LiDAR gaps, stereo mismatches) are precisely what destroys fine detail.
+solution: >
+  A surprising inversion: throw away ALL labeled real images. Train the teacher
+  on 595K synthetic images only (perfect labels), scale the teacher up, then
+  transfer to students through 62M+ pseudo-labeled real images — synthetic
+  precision plus real-world diversity, without the noise of either.
+limitations: >
+  Still relative depth at the core with fine-tuned metric variants; and the
+  whole recipe now leans on the realism of synthetic data pipelines — a new
+  dependency the field inherits.
+relations:
+  - node: depthanything2024
+    type: fixes
+    note: >
+      Repairs V1's own bottleneck: noisy real labels capped fine-grained
+      detail. The synthetic-first move quietly vindicates Marigold's
+      small-but-clean-synthetic insight — arrived at from the opposite end.
+status: seed

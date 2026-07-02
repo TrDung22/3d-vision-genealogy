@@ -1,0 +1,29 @@
+title: "UniDepth: Universal Monocular Metric Depth Estimation"
+short: "UniDepth (2024)"
+authors: "Luigi Piccinelli, Yung-Hsu Yang, Christos Sakaridis, Mattia Segu, Siyuan Li, Luc Van Gool, Fisher Yu"
+venue: "CVPR 2024"
+year: 2024
+branch: single-image-3d
+lane: depth
+links:
+  code: "https://github.com/lpiccinelli-eth/UniDepth"
+problem: >
+  Metric depth without being told the camera: Metric3D-style approaches still
+  assume intrinsics are available at test time.
+solution: >
+  Predict the camera itself: a self-promptable camera module estimates a dense
+  camera representation which conditions the depth decoder, with a spherical
+  (pseudo-spherical) output parameterization that disentangles camera from
+  depth — universal metric 3D from a bare image.
+limitations: >
+  Camera self-estimation is the new weakest link — errors in inferred
+  intrinsics leak directly into metric scale, and fine detail still trails the
+  relative-depth foundation models.
+relations:
+  - node: metric3d2023
+    type: independent
+    note: >
+      Parallel routes to camera-aware metric depth: Metric3D normalizes the
+      camera away (canonical space, intrinsics required), UniDepth predicts the
+      camera from the image itself. Same debt, opposite philosophies.
+status: seed
