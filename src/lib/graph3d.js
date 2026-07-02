@@ -143,17 +143,17 @@ export function mount3D({ el, infoEl, data, root, strings }) {
   // top/bottom of the frame. Facing the camera, the constellations spread
   // across the box. The ellipse is wider than tall to match the landscape
   // canvas; a little Z jitter keeps the depth cue.
-  const RX = 168;
-  const RY = 100;
+  const RX = 215;
+  const RY = 138;
   const anchors = new Map(
     data.lanes.map((l, i) => {
       const a = (2 * Math.PI * i) / data.lanes.length - Math.PI / 2; // lane 0 at top
-      return [l.id, { x: Math.cos(a) * RX, y: Math.sin(a) * RY, z: ((i % 3) - 1) * 34 }];
+      return [l.id, { x: Math.cos(a) * RX, y: Math.sin(a) * RY, z: ((i % 3) - 1) * 40 }];
     }),
   );
   let clusterNodes = [];
   function clusterForce(alpha) {
-    const k = 0.07 * alpha;
+    const k = 0.11 * alpha; // firmer pull → distinct constellations, less overlap
     for (const node of clusterNodes) {
       const a = anchors.get(node.lane);
       if (!a) continue;
@@ -178,7 +178,7 @@ export function mount3D({ el, infoEl, data, root, strings }) {
     );
     mesh.renderOrder = -1;
     const title = new SpriteText(l.title);
-    title.textHeight = 5;
+    title.textHeight = 4;
     title.material.depthWrite = false;
     title.material.depthTest = false;
     title.renderOrder = 998;
@@ -279,15 +279,21 @@ export function mount3D({ el, infoEl, data, root, strings }) {
     resize();
   }
 
-  // default view: once the force layout settles, frame the whole graph
+  // default view: frame the whole graph tightly. We fit instantly (ms = 0, no
+  // camera tween) so the framing is deterministic — a tween can be left half
+  // finished, stranding the camera too far out so the cloud looks tiny in a sea
+  // of empty space. Fit on settle, with an unconditional fallback in case the
+  // engine never emits onEngineStop.
+  graph.cooldownTime(5000);
   let fitted = false;
-  graph.onEngineStop(() => {
-    if (!fitted) {
-      fitted = true;
-      updateBubbles();
-      graph.zoomToFit(600, 60);
-    }
-  });
+  const frame = () => {
+    if (fitted) return;
+    fitted = true;
+    updateBubbles();
+    graph.zoomToFit(0, 46); // breathing room so labels aren't clipped at the edge
+  };
+  graph.onEngineStop(frame);
+  setTimeout(frame, 5500);
 
   const resize = () => graph.width(el.clientWidth).height(el.clientHeight);
   resize();

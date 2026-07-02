@@ -1,14 +1,14 @@
 title: "DeepSDF: Learning Continuous Signed Distance Functions for Shape Representation"
 short: "DeepSDF (2019)"
 authors: "Jeong Joon Park, Peter Florence, Julian Straub, Richard Newcombe, Steven Lovegrove"
-venue: "CVPR 2019"
+venue: "CVPR 2019 (Oral)"
 year: 2019
 branch: single-image-3d
 lane: object
 links:
   arxiv: "https://arxiv.org/abs/1901.05103"
 problem: >
-  The same problem as OccNet: a continuous shape representation locked to
+  The same problem as Occupancy Networks: a continuous shape representation locked to
   neither resolution nor topology.
 solution: >
   Learn a continuous signed distance function (SDF) with an MLP + an

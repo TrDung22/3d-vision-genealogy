@@ -1,7 +1,7 @@
 title: "NeRF: Representing Scenes as Neural Radiance Fields for View Synthesis"
 short: "NeRF (2020)"
 authors: "Ben Mildenhall, Pratul P. Srinivasan, Matthew Tancik, Jonathan T. Barron, Ravi Ramamoorthi, Ren Ng"
-venue: "ECCV 2020"
+venue: "ECCV 2020 (Oral, Best Paper Honorable Mention)"
 year: 2020
 branch: neural-rendering
 lane: radiance-fields
@@ -24,6 +24,6 @@ relations:
     type: builds-on
     note: >
       Inherits the continuous implicit-MLP representation from the
-      DeepSDF/OccNet line and adds differentiable volume rendering — the bridge
+      DeepSDF/Occupancy Networks line and adds differentiable volume rendering — the bridge
       between two branches of this genealogy.
 status: seed

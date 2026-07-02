@@ -24,7 +24,7 @@ relations:
   - node: occnet2019
     type: independent
     note: >
-      The fourth member of the 2019 implicit wave (OccNet, DeepSDF, IM-Net,
+      The fourth member of the 2019 implicit wave (Occupancy Networks, DeepSDF, IM-Net,
       PIFu — same year, independent): PIFu's twist is pixel-ALIGNED features,
       and a target the others avoided — people in clothes.
 status: seed

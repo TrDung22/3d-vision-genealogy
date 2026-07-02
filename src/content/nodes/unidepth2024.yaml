@@ -1,7 +1,7 @@
 title: "UniDepth: Universal Monocular Metric Depth Estimation"
 short: "UniDepth (2024)"
 authors: "Luigi Piccinelli, Yung-Hsu Yang, Christos Sakaridis, Mattia Segu, Siyuan Li, Luc Van Gool, Fisher Yu"
-venue: "CVPR 2024"
+venue: "CVPR 2024 (Highlight)"
 year: 2024
 branch: single-image-3d
 lane: depth

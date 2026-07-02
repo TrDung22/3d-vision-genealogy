@@ -1,7 +1,7 @@
 title: "SyncDreamer: Generating Multiview-consistent Images from a Single-view Image"
 short: "SyncDreamer (2023)"
 authors: "Yuan Liu, Cheng Lin, Zijiao Zeng, Xiaoxiao Long, Lingjie Liu, Taku Komura, Wenping Wang"
-venue: "ICLR 2024"
+venue: "ICLR 2024 (Spotlight)"
 year: 2023
 branch: single-image-3d
 lane: generative

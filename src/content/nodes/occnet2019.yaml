@@ -1,7 +1,7 @@
 title: "Occupancy Networks: Learning 3D Reconstruction in Function Space"
-short: "OccNet (2019)"
+short: "Occupancy Networks (2019)"
 authors: "Lars Mescheder, Michael Oechsle, Michael Niemeyer, Sebastian Nowozin, Andreas Geiger"
-venue: "CVPR 2019"
+venue: "CVPR 2019 (Oral)"
 year: 2019
 branch: single-image-3d
 lane: object

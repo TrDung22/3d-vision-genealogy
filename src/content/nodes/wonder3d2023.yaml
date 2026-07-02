@@ -1,7 +1,7 @@
 title: "Wonder3D: Single Image to 3D using Cross-Domain Diffusion"
 short: "Wonder3D (2023)"
 authors: "Xiaoxiao Long, Yuan-Chen Guo, Cheng Lin, Yuan Liu, et al."
-venue: "CVPR 2024"
+venue: "CVPR 2024 (Highlight)"
 year: 2023
 branch: single-image-3d
 lane: generative

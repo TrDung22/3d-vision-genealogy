@@ -450,7 +450,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     const el3d = document.getElementById('gg-3d');
     const info3d = document.getElementById('gg-3d-info');
     document.getElementById('gg-3d-loading').textContent = STR.loading3d;
-    document.getElementById('gg-3d-wrap').style.height = `${Math.min(viewH, 760)}px`;
+    document.getElementById('gg-3d-wrap').style.height = `${Math.max(560, Math.min(viewH, 820))}px`;
     try {
       const { mount3D } = await import('../lib/graph3d.js');
       el3d.innerHTML = '';
