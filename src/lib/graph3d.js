@@ -137,11 +137,18 @@ export function mount3D({ el, infoEl, data, root, strings }) {
 
   // ---- cluster force: pull each lane's nodes toward its own anchor so the
   // lanes form visible constellations (the 3D counterpart of timeline rows)
-  const R = 110;
+  // lane anchors ride an ellipse in the SCREEN plane (XY) — NOT the ground
+  // plane (XZ). A ground-plane ring is seen almost edge-on by the default
+  // camera and collapses into a thin horizontal band, wasting the whole
+  // top/bottom of the frame. Facing the camera, the constellations spread
+  // across the box. The ellipse is wider than tall to match the landscape
+  // canvas; a little Z jitter keeps the depth cue.
+  const RX = 168;
+  const RY = 100;
   const anchors = new Map(
     data.lanes.map((l, i) => {
-      const a = (2 * Math.PI * i) / data.lanes.length;
-      return [l.id, { x: Math.cos(a) * R, y: ((i % 3) - 1) * 38, z: Math.sin(a) * R }];
+      const a = (2 * Math.PI * i) / data.lanes.length - Math.PI / 2; // lane 0 at top
+      return [l.id, { x: Math.cos(a) * RX, y: Math.sin(a) * RY, z: ((i % 3) - 1) * 34 }];
     }),
   );
   let clusterNodes = [];
