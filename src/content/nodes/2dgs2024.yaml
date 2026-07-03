@@ -1,0 +1,38 @@
+title: "2D Gaussian Splatting for Geometrically Accurate Radiance Fields"
+short: "2D Gaussian Splatting (2024)"
+authors: "Binbin Huang, Zehao Yu, Anpei Chen, Andreas Geiger, Shenghua Gao"
+venue: "SIGGRAPH 2024"
+year: 2024
+branch: neural-rendering
+lane: gaussians
+links:
+  arxiv: "https://arxiv.org/abs/2403.17888"
+  project: "https://surfsplatting.github.io/"
+problem: >
+  3DGS looks right and measures wrong: a 3D blob shows a different silhouette
+  from every direction, so the "surface" it implies is view-inconsistent —
+  extracted meshes are noise.
+solution: >
+  Flatten the primitive: oriented 2D Gaussian disks (surfels) with exact
+  perspective-correct ray-splat intersection instead of screen-space
+  approximation, plus depth-distortion and normal-consistency
+  regularizers — splatting that renders AND reconstructs.
+limitations: >
+  Surfels assume the world is surfaces: fuzzy volumetric matter (hair, smoke)
+  fits worse than with 3D blobs, and appearance quality trades slightly
+  against the geometry gains.
+relations:
+  - node: 3dgs2023
+    type: fixes
+    note: >
+      Repairs the geometric lie in the primitive itself: replacing volumetric
+      blobs with oriented disks makes the represented surface view-consistent,
+      turning splatting from a view-synthesis trick into a reconstruction
+      method.
+  - node: ewa2001
+    type: builds-on
+    note: >
+      Completes the EWA revival: 3DGS resurrected Zwicker's volume splatting;
+      2DGS resurrects the other half — SURFACE splatting with oriented
+      surfels — now with gradients flowing through it.
+status: seed

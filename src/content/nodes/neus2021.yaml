@@ -1,0 +1,37 @@
+title: "NeuS: Learning Neural Implicit Surfaces by Volume Rendering for Multi-view Reconstruction"
+short: "NeuS (2021)"
+authors: "Peng Wang, Lingjie Liu, Yuan Liu, Christian Theobalt, Taku Komura, Wenping Wang"
+venue: "NeurIPS 2021 (Spotlight)"
+year: 2021
+branch: neural-rendering
+lane: surfaces
+links:
+  arxiv: "https://arxiv.org/abs/2106.10689"
+  project: "https://lingjie0206.github.io/papers/NeuS/"
+problem: >
+  NeRF renders beautifully but its density field is not a surface: threshold
+  it and you get sandpaper. Surface methods (IDR) reconstruct cleanly but
+  need masks and die on abrupt depth changes.
+solution: >
+  Represent geometry as a signed distance function and derive an UNBIASED,
+  occlusion-aware weight function converting SDF to volume-rendering
+  density — volume rendering's robustness, surface representation's
+  crispness, provably converging to the true surface as variance shrinks.
+limitations: >
+  Per-scene optimization for hours, and the smooth SDF prior sands off
+  fine detail — the gap Neuralangelo later closed with hash grids.
+relations:
+  - node: nerf2020
+    type: fixes
+    note: >
+      Repairs the geometry NeRF never promised: the density field's
+      extracted surfaces are noise because density is optimized for
+      appearance; routing volume rendering through an SDF makes geometry a
+      first-class citizen without losing the mask-free training.
+  - node: deepsdf2019
+    type: builds-on
+    note: >
+      A cross-branch marriage: the SDF representation from the object
+      reconstruction line, now supervised by images alone through volume
+      rendering instead of by 3D scans.
+status: seed

@@ -1,0 +1,32 @@
+title: "Surface Splatting / EWA Volume Splatting"
+short: "EWA Splatting (2001)"
+authors: "Matthias Zwicker, Hanspeter Pfister, Jeroen van Baar, Markus Gross"
+venue: "SIGGRAPH 2001 & IEEE Visualization 2001 (journal version: IEEE TVCG 2002)"
+year: 2001
+branch: neural-rendering
+lane: roots
+links:
+  paper: "https://dl.acm.org/doi/10.1145/383259.383300"
+  journal: "https://ieeexplore.ieee.org/document/1021576"
+problem: >
+  Render point clouds and volumes WITHOUT meshes or ray marching: points have
+  no connectivity, and naive point rendering is full of holes and aliasing.
+solution: >
+  Represent the data as anisotropic Gaussian kernels and SPLAT them: project
+  each 3D Gaussian to a 2D screen-space Gaussian (the EWA — elliptical
+  weighted average — filter), then blend front-to-back. Closed-form
+  projection, correct anti-aliasing, no rays.
+limitations: >
+  A forward renderer for scanned points — nobody optimized the Gaussians from
+  photographs. Point-based graphics faded as GPU triangle pipelines won, and
+  the technique lay dormant for two decades until differentiable rendering
+  needed exactly this math.
+relations:
+  - node: kajiya1984
+    type: builds-on
+    note: >
+      Same emission-absorption model of participating media, evaluated by
+      projecting kernels instead of marching rays — the rasterization answer
+      to the ray-marching question (building on Westover's splatting and
+      Heckbert's EWA filtering).
+status: seed

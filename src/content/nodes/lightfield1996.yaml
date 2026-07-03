@@ -1,0 +1,24 @@
+title: "Light Field Rendering"
+short: "Light Fields (1996)"
+authors: "Marc Levoy, Pat Hanrahan (Stanford)"
+venue: "SIGGRAPH 1996"
+year: 1996
+branch: neural-rendering
+lane: roots
+links:
+  paper: "https://graphics.stanford.edu/papers/light/"
+problem: >
+  Novel view synthesis without the hard part: can you render new views of a
+  real scene with NO geometry, no correspondence, no reconstruction at all?
+solution: >
+  Treat the scene as a 4D function of rays (the light field / plenoptic
+  function restricted to free space). Capture thousands of images on a plane,
+  then render any new view by RESAMPLING rays — view synthesis reduced to a
+  database lookup plus interpolation.
+limitations: >
+  The price of skipping geometry is captured density: thousands of images per
+  scene, huge storage, and ghosting the moment views get sparse. The entire
+  field then spent 25 years buying back sparsity — with geometry proxies,
+  then with neural priors.
+relations: []
+status: seed

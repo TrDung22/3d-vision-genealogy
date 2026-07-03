@@ -1,0 +1,38 @@
+title: "Neural Volumes: Learning Dynamic Renderable Volumes from Images"
+short: "Neural Volumes (2019)"
+authors: "Stephen Lombardi, Tomas Simon, Jason Saragih, Gabriel Schwartz, Andreas Lehrmann, Yaser Sheikh (Facebook Reality Labs)"
+venue: "SIGGRAPH 2019"
+year: 2019
+branch: neural-rendering
+lane: scene-reps
+links:
+  arxiv: "https://arxiv.org/abs/1906.07751"
+problem: >
+  Photorealistic renderable models of dynamic performers (faces, hands) from
+  multi-camera video — mesh trackers lose hair, smoke, and anything
+  topologically messy.
+solution: >
+  Learn a voxel grid of RGBA from images, rendered by differentiable
+  ray marching with accumulated transmittance — classic volume rendering,
+  now run BACKWARDS through gradients. Soft volumetric occupancy turns the
+  reconstruct-then-render pipeline into one end-to-end optimization.
+limitations: >
+  A dense voxel grid: memory scales cubically, so resolution tops out fast
+  and scenes must fit in a capture rig. The obvious fix — replace the grid
+  with a continuous function — arrived within the year as NeRF.
+relations:
+  - node: kajiya1984
+    type: revives
+    note: >
+      Resurrects the 1984 emission-absorption integral after decades as a
+      pure forward-rendering tool — its smooth, occlusion-aware accumulation
+      turns out to be a nearly ideal loss landscape for gradient descent.
+      Differentiability, not realism, is why volume rendering came back.
+  - node: srn2019
+    type: independent
+    note: >
+      Same months, same bet — scene representations learned from images
+      through a differentiable renderer — reached from opposite ends:
+      SRN chose a continuous MLP with learned marching; Neural Volumes chose
+      an explicit grid with classical marching. NeRF is their intersection.
+status: seed

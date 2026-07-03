@@ -1,0 +1,34 @@
+title: "Difix3D+: Improving 3D Reconstructions with Single-Step Diffusion Models"
+short: "Difix3D+ (2025)"
+authors: "Jay Zhangjie Wu, Yuxuan Zhang, Haithem Turki, Xuanchi Ren, Jun Gao, Mike Zheng Shou, Sanja Fidler, Zan Gojcic, Huan Ling (NVIDIA)"
+venue: "CVPR 2025 (Oral, Best Paper Finalist)"
+year: 2025
+branch: neural-rendering
+lane: gaussians
+links:
+  arxiv: "https://arxiv.org/abs/2503.01774"
+  project: "https://research.nvidia.com/labs/toronto-ai/difix3d/"
+problem: >
+  Step off the training trajectory and every radiance field — NeRF or 3DGS —
+  betrays you: floaters, smears, and hallucinated geometry in
+  under-observed regions. Per-scene optimization can only interpolate what
+  it saw.
+solution: >
+  Let an image prior clean up: a single-step diffusion model (fine-tuned
+  SD-Turbo) learns to "fix" rendered artifacts, its corrections are
+  distilled BACK into the 3D representation for consistency, and it runs
+  again as a real-time post-render polish — 2x better FID on novel views,
+  agnostic to NeRF vs 3DGS.
+limitations: >
+  The prior can only repair what it can imagine: fixes are plausible rather
+  than guaranteed-faithful, and heavily unobserved geometry stays
+  hallucinated — consistent-looking, not necessarily true.
+relations:
+  - node: 3dgs2023
+    type: fixes
+    note: >
+      Repairs the extrapolation failure per-scene optimization cannot fix
+      from inside: under-constrained regions get their artifacts erased by
+      an internet-scale 2D prior — the generative-prior playbook of the
+      single-image branch arriving in the reconstruction branch.
+status: seed

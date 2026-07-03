@@ -27,7 +27,8 @@ const dict: Record<Lang, Record<string, string>> = {
       'Arrows always follow time: from the older work to the newer one that references it. A filled node has a full write-up; a hollow one is a seed waiting to be written. A gold ring marks award / oral / spotlight / highlight recognition.',
     'glossary.fixes': 'Comes later and directly repairs a specific weakness of the earlier work',
     'glossary.builds-on': 'Stands on the earlier work and extends it in a new direction',
-    'glossary.independent': 'Tackles the same problem, developed without depending on the other',
+    'glossary.independent':
+      'Converges on the same core idea at the same time, without depending on the other — the task, even the branch, may differ',
     'glossary.challenges': 'Questions the assumptions, benchmarks, or conclusions of the earlier work',
     'glossary.revives': 'Reawakens a direction the mainstream had abandoned',
     'table.title': 'Table view — the whole genealogy, no graph required',
@@ -117,7 +118,8 @@ const dict: Record<Lang, Record<string, string>> = {
       'Mũi tên luôn theo chiều thời gian: từ công trình cũ đến công trình mới nhắc về nó. Node đặc đã có bài phân tích; node rỗng là hạt giống chờ viết. Vòng vàng đánh dấu paper được award / oral / spotlight / highlight.',
     'glossary.fixes': 'Ra sau và sửa trực tiếp một điểm yếu cụ thể của công trình trước',
     'glossary.builds-on': 'Đứng trên nền công trình trước và mở rộng sang hướng mới',
-    'glossary.independent': 'Cùng giải một bài toán nhưng phát triển độc lập với nhau',
+    'glossary.independent':
+      'Cùng chạm đến một ý tưởng cốt lõi vào cùng thời điểm mà không phụ thuộc nhau — bài toán, thậm chí cả nhánh, có thể khác',
     'glossary.challenges': 'Chất vấn giả định, benchmark hoặc kết luận của công trình trước',
     'glossary.revives': 'Đánh thức một hướng đi mà dòng chính đã bỏ quên',
     'table.title': 'Dạng bảng — toàn bộ gia phả, không cần đồ thị',
@@ -207,7 +209,8 @@ const dict: Record<Lang, Record<string, string>> = {
       '矢印は常に時間の向きに従います: 古い研究から、それを参照する新しい研究へ。塗りつぶしノードには解説記事があり、白抜きノードは執筆待ちの種です。金色のリングは受賞・Oral・Spotlight・Highlight の目印です。',
     'glossary.fixes': '後から現れ、先行研究の特定の弱点を直接修復する',
     'glossary.builds-on': '先行研究の上に立ち、新しい方向へ拡張する',
-    'glossary.independent': '同じ問題に取り組みつつ、互いに依存せず発展した',
+    'glossary.independent':
+      '同じ核心のアイデアに同時期に、互いに依存せず到達した — タスクや枝が異なっていてもよい',
     'glossary.challenges': '先行研究の前提・ベンチマーク・結論に疑問を投げかける',
     'glossary.revives': '主流が見捨てた方向性を呼び覚ます',
     'table.title': '表で見る — グラフなしで系譜全体を',

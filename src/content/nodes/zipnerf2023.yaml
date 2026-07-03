@@ -1,0 +1,37 @@
+title: "Zip-NeRF: Anti-Aliased Grid-Based Neural Radiance Fields"
+short: "Zip-NeRF (2023)"
+authors: "Jonathan T. Barron, Ben Mildenhall, Dor Verbin, Pratul P. Srinivasan, Peter Hedman"
+venue: "ICCV 2023 (Best Paper Finalist)"
+year: 2023
+branch: neural-rendering
+lane: radiance-fields
+links:
+  arxiv: "https://arxiv.org/abs/2304.06706"
+  project: "https://jonbarron.info/zipnerf/"
+problem: >
+  By 2023 the field had split: the mip line had quality but trained for
+  hours; the grid line (Instant-NGP) trained in minutes but aliased —
+  hash grids have no notion of a pixel's footprint, so scale changes shimmer.
+solution: >
+  Reconcile the rivals: multisample the hash grid inside each conical
+  frustum (approximating integration over the footprint) with
+  scale-dependent feature downweighting. Mip-NeRF 360's anti-aliasing at
+  Instant-NGP's speed — error rates drop up to 76% against the grid baseline.
+limitations: >
+  Still per-scene optimization and still ray marching — real-time rendering
+  remained out of reach, which is precisely the gap 3D Gaussian Splatting
+  drove through four months later.
+relations:
+  - node: instantngp2022
+    type: fixes
+    note: >
+      Repairs the hash grid's blind spot — aliasing under scale change —
+      which no amount of NGP's speed could hide on the 360 benchmark's
+      varying camera distances.
+  - node: mipnerf360-2021
+    type: builds-on
+    note: >
+      The same authors port their cone-tracing machinery onto the rival
+      camp's data structure — the moment the "MLP vs grid" war ended in
+      synthesis rather than victory.
+status: seed

@@ -1,0 +1,38 @@
+title: "Fourier Features Let Networks Learn High Frequency Functions in Low Dimensional Domains"
+short: "Fourier Features (2020)"
+authors: "Matthew Tancik, Pratul P. Srinivasan, Ben Mildenhall, Sara Fridovich-Keil, Nithin Raghavan, Utkarsh Singhal, Ravi Ramamoorthi, Jonathan T. Barron, Ren Ng"
+venue: "NeurIPS 2020 (Spotlight)"
+year: 2020
+branch: neural-rendering
+lane: scene-reps
+links:
+  arxiv: "https://arxiv.org/abs/2006.10739"
+  project: "https://bmild.github.io/fourfeat/"
+problem: >
+  NeRF only works because of a mysterious hack — the "positional encoding"
+  that maps coordinates through sinusoids before the MLP. Why does it work,
+  and what happens without it?
+solution: >
+  A neural-tangent-kernel analysis: plain MLPs converge impractically slowly
+  on high frequencies (spectral bias); a random Fourier feature mapping turns
+  the NTK into a tunable stationary kernel, unlocking sharp detail. The hack
+  becomes a theory — with a knob for the frequency bandwidth.
+limitations: >
+  Bandwidth is global and hand-tuned: too low is blurry, too high is noisy.
+  Aliasing across scales is untreated (mip-NeRF's opening), and the encoding
+  is dense — hash grids later made it sparse and fast.
+relations:
+  - node: nerf2020
+    type: builds-on
+    note: >
+      From the NeRF team itself: extracts the one component NeRF couldn't
+      explain — positional encoding — and gives it a theory, turning an
+      empirical trick into reusable infrastructure for every coordinate
+      network since.
+  - node: siren2020
+    type: independent
+    note: >
+      Submitted the same week in June 2020, one campus apart: Stanford fixed
+      spectral bias inside the network (sine activations); Berkeley fixed it
+      at the input (Fourier mapping). Two doors into the same room.
+status: seed

@@ -1,0 +1,32 @@
+title: "NeRF in the Wild: Neural Radiance Fields for Unconstrained Photo Collections"
+short: "NeRF-W (2020)"
+authors: "Ricardo Martin-Brualla, Noha Radwan, Mehdi S. M. Sajjadi, Jonathan T. Barron, Alexey Dosovitskiy, Daniel Duckworth (Google)"
+venue: "CVPR 2021 (Oral)"
+year: 2020
+branch: neural-rendering
+lane: radiance-fields
+links:
+  arxiv: "https://arxiv.org/abs/2008.02268"
+  project: "https://nerf-w.github.io/"
+problem: >
+  NeRF assumes a lab: fixed lighting, fixed scene, one camera. Point it at
+  internet photos of the Brandenburg Gate — different weather, exposure,
+  tourists — and it averages the chaos into fog.
+solution: >
+  Give every image its own explanation: a per-image appearance embedding
+  absorbs lighting and post-processing, and a transient head with learned
+  uncertainty soaks up tourists and cars — so the shared static radiance
+  field only has to explain what is actually permanent.
+limitations: >
+  Embeddings must be optimized per image (no feed-forward), transients are
+  discarded rather than understood, and it inherits NeRF's per-scene training
+  cost — now on thousands of photos.
+relations:
+  - node: nerf2020
+    type: fixes
+    note: >
+      Repairs the controlled-capture assumption within months: the
+      photometric-consistency requirement NeRF silently relied on is replaced
+      by learned per-image latents, opening radiance fields to found data —
+      photo tourism after a decade of point clouds.
+status: seed

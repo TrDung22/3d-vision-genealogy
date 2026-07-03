@@ -1,0 +1,25 @@
+title: "Neural Scene Representation and Rendering (Generative Query Networks)"
+short: "GQN (2018)"
+authors: "S. M. Ali Eslami, Danilo Jimenez Rezende, et al. (DeepMind)"
+venue: "Science, 2018"
+year: 2018
+branch: neural-rendering
+lane: feedforward
+links:
+  paper: "https://www.science.org/doi/10.1126/science.aar6170"
+problem: >
+  Can a system learn to perceive 3D scenes with NO human-authored 3D
+  machinery — no geometry, no projection, no labels — purely by looking at
+  images and moving?
+solution: >
+  The Generative Query Network: an encoder compresses a few posed views into
+  a latent vector, and a generative decoder renders the scene from any query
+  viewpoint. Everything — representation and renderer — is learned end to
+  end from data.
+limitations: >
+  Only works on toy synthetic rooms; the unstructured latent guarantees no
+  3D consistency, and quality collapses on real scenes. The field's verdict
+  was to ADD 3D structure back (SRN, NeRF) — but the pure-learning bet was
+  merely early, not wrong, as LVSM argued seven years later.
+relations: []
+status: seed

@@ -1,0 +1,32 @@
+title: "Local Light Field Fusion: Practical View Synthesis with Prescriptive Sampling Guidelines"
+short: "LLFF (2019)"
+authors: "Ben Mildenhall, Pratul P. Srinivasan, Rodrigo Ortiz-Cayon, Nima Khademi Kalantari, Ravi Ramamoorthi, Ren Ng, Abhishek Kar"
+venue: "SIGGRAPH 2019"
+year: 2019
+branch: neural-rendering
+lane: roots
+links:
+  arxiv: "https://arxiv.org/abs/1905.00889"
+  project: "https://bmild.github.io/llff/"
+problem: >
+  Light fields answered "no geometry needed" with "then give me thousands of
+  photos". How few HANDHELD photos can view synthesis survive on — and can
+  anyone say how few is enough?
+solution: >
+  Expand each input view into a local layered representation (multiplane
+  images), then blend nearby local light fields for new views. Crucially, a
+  plenoptic-sampling analysis gives a prescriptive bound — up to 4000x fewer
+  images than Nyquist ray sampling.
+limitations: >
+  MPIs are memory-hungry and views must still be reasonably dense and
+  forward-facing. Within a year the same group replaced the whole layered
+  machinery with one MLP — and inherited LLFF's dataset as NeRF's benchmark.
+relations:
+  - node: lightfield1996
+    type: builds-on
+    note: >
+      Directly extends the 1996 ray-resampling framework: keeps light-field
+      interpolation as the rendering engine but attacks its fatal weakness —
+      capture density — with local geometry layers and a sampling-theory
+      budget for how many photos you actually owe.
+status: seed

@@ -1,0 +1,31 @@
+title: "The Lumigraph"
+short: "Lumigraph (1996)"
+authors: "Steven J. Gortler, Radek Grzeszczuk, Richard Szeliski, Michael F. Cohen (Microsoft Research)"
+venue: "SIGGRAPH 1996"
+year: 1996
+branch: neural-rendering
+lane: roots
+links:
+  paper: "https://dl.acm.org/doi/10.1145/237170.237200"
+problem: >
+  The same question as Light Field Rendering, asked the same year: synthesize
+  new views of a real object from a set of photographs, without full 3D
+  reconstruction.
+solution: >
+  The same 4D ray database — but with a twist that aged remarkably well: use
+  APPROXIMATE geometry (a rough visual hull) to depth-correct the ray
+  interpolation, trading capture density for a little geometry.
+limitations: >
+  Still needs structured capture and heavy storage; the geometry proxy helps
+  but is handmade and coarse. The "how much geometry does view synthesis
+  need?" dial it introduced is still being argued about (3DGS says 'some
+  explicit'; LVSM says 'almost none').
+relations:
+  - node: lightfield1996
+    type: independent
+    note: >
+      SIGGRAPH 1996, same conference, back-to-back in the proceedings: Stanford
+      and Microsoft hit the ray-database idea simultaneously. The only real
+      difference — the Lumigraph's geometry proxy — is exactly the axis the
+      field has oscillated on ever since.
+status: seed

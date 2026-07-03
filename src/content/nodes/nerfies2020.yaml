@@ -1,0 +1,31 @@
+title: "Nerfies: Deformable Neural Radiance Fields"
+short: "Nerfies (2020)"
+authors: "Keunhong Park, Utkarsh Sinha, Jonathan T. Barron, Sofien Bouaziz, Dan B. Goldman, Steven M. Seitz, Ricardo Martin-Brualla"
+venue: "ICCV 2021"
+year: 2020
+branch: neural-rendering
+lane: dynamic
+links:
+  arxiv: "https://arxiv.org/abs/2011.12948"
+  project: "https://nerfies.github.io/"
+problem: >
+  Photorealistic free-viewpoint "selfies" from a casually waved phone: the
+  subject breathes, sways, blinks — nonrigidity everywhere, and NeRF's
+  static assumption shatters.
+solution: >
+  A per-observation deformation field warping each frame into a shared
+  canonical NeRF, tamed by elastic regularization (penalizing non-rigid
+  local deformation), a background prior, and coarse-to-fine annealing of
+  the deformation's frequencies — casually captured humans, reconstructed.
+limitations: >
+  Warps cannot change topology (opening mouths defeated it — spawning
+  HyperNeRF from the same team), motion must be modest, and per-scene
+  training is slow.
+relations:
+  - node: nerf2020
+    type: fixes
+    note: >
+      Repairs the static-scene assumption for REAL captures: where NeRF
+      needs a frozen world, Nerfies budgets for the involuntary motion of a
+      living subject and recovers the crisp static answer underneath.
+status: seed

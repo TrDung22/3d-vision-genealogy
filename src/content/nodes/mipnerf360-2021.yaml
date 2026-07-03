@@ -1,0 +1,31 @@
+title: "Mip-NeRF 360: Unbounded Anti-Aliased Neural Radiance Fields"
+short: "Mip-NeRF 360 (2021)"
+authors: "Jonathan T. Barron, Ben Mildenhall, Dor Verbin, Pratul P. Srinivasan, Peter Hedman"
+venue: "CVPR 2022"
+year: 2021
+branch: neural-rendering
+lane: radiance-fields
+links:
+  arxiv: "https://arxiv.org/abs/2111.12077"
+  project: "https://jonbarron.info/mipnerf360/"
+problem: >
+  Real scenes are unbounded: camera orbits an object, background stretches to
+  the horizon. Mip-NeRF's Gaussians blow up at distance, capacity is wasted
+  on far-away content, and sparse supervision breeds floaters.
+solution: >
+  Three repairs that became standard equipment: a contraction warping
+  unbounded space into a ball (mip-aware), a small "proposal MLP" distilled
+  online to place samples, and a distortion loss that dissolves floaters.
+  The "360" benchmark it introduced is still the field's proving ground.
+limitations: >
+  Hours of training per scene on the slow MLP stack — published the same
+  season the voxel-grid insurgency (Plenoxels, Instant-NGP) cut training to
+  minutes, setting up the two lines' merger in Zip-NeRF.
+relations:
+  - node: mipnerf2021
+    type: fixes
+    note: >
+      Repairs its own predecessor's bounded-scene assumption: the integrated
+      positional encoding survives an unbounded world only after the
+      contraction, proposal sampling, and distortion regularizer are added.
+status: seed

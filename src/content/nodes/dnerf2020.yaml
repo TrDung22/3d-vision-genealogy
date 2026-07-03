@@ -1,0 +1,38 @@
+title: "D-NeRF: Neural Radiance Fields for Dynamic Scenes"
+short: "D-NeRF (2020)"
+authors: "Albert Pumarola, Enric Corona, Gerard Pons-Moll, Francesc Moreno-Noguer"
+venue: "CVPR 2021"
+year: 2020
+branch: neural-rendering
+lane: dynamic
+links:
+  arxiv: "https://arxiv.org/abs/2011.13961"
+  project: "https://www.albertpumarola.com/research/D-NeRF/index.html"
+problem: >
+  NeRF's world is frozen: one moving object and the multi-view consistency
+  its training relies on is violated. Can a radiance field represent a scene
+  that CHANGES — from a single camera path, no synchronized rig?
+solution: >
+  Split time from space: a canonical static radiance field plus a
+  deformation MLP mapping each (point, time) back into canonical space.
+  Time becomes an input; the renderer stays NeRF.
+limitations: >
+  Synthetic-scene scope, and the deformation field is a low-frequency warp —
+  topology changes (mouths opening) and long sequences break it. The
+  canonical+warp blueprint, though, became the default for four years of
+  dynamic radiance fields.
+relations:
+  - node: nerf2020
+    type: fixes
+    note: >
+      Repairs the static-world assumption months after publication, and does
+      it without a camera rig: the deformation-to-canonical trick lets one
+      moving camera supervise a moving scene.
+  - node: nerfies2020
+    type: independent
+    note: >
+      Same November 2020, same idea, different worlds: D-NeRF bent synthetic
+      scenes with a time-conditioned warp; Nerfies bent real selfie videos
+      with an elastically-regularized one. Neither cites the other's
+      preprint — the canonical+deformation answer was simply ripe.
+status: seed

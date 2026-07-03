@@ -1,0 +1,32 @@
+title: "MVSplat: Efficient 3D Gaussian Splatting from Sparse Multi-View Images"
+short: "MVSplat (2024)"
+authors: "Yuedong Chen, Haofei Xu, Chuanxia Zheng, Bohan Zhuang, Marc Pollefeys, Andreas Geiger, Tat-Jen Cham, Jianfei Cai"
+venue: "ECCV 2024 (Oral)"
+year: 2024
+branch: neural-rendering
+lane: feedforward
+links:
+  arxiv: "https://arxiv.org/abs/2403.14627"
+  project: "https://donydchen.github.io/mvsplat/"
+problem: >
+  pixelSplat guesses depth from learned epipolar attention — probabilistic,
+  parameter-hungry, and its Gaussians land in geometrically wrong places
+  that photometric loss can't fully correct.
+solution: >
+  Bring back the classic: a plane-sweep COST VOLUME (multi-view stereo's
+  workhorse) gives explicit cross-view feature matching for Gaussian
+  centers. Better geometry and appearance than pixelSplat with 10x fewer
+  parameters, 2x faster inference, and far stronger cross-dataset
+  generalization.
+limitations: >
+  Plane sweeps presuppose known poses, near-front-facing overlap, and a
+  depth range; scaling to many views and wide baselines strains the volume —
+  and LVSM soon asked whether even this geometry machinery is necessary.
+relations:
+  - node: pixelsplat2023
+    type: fixes
+    note: >
+      Repairs the depth localization weakness directly: replaces learned
+      epipolar-attention depth with explicit cost-volume matching, showing
+      a classical MVS prior beats a learned one at a tenth the parameters.
+status: seed

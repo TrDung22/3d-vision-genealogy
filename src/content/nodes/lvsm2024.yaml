@@ -1,0 +1,40 @@
+title: "LVSM: A Large View Synthesis Model with Minimal 3D Inductive Bias"
+short: "LVSM (2024)"
+authors: "Haian Jin, Hanwen Jiang, Hao Tan, Kai Zhang, Sai Bi, Tianyuan Zhang, Fujun Luan, Noah Snavely, Zexiang Xu (Cornell, Adobe, MIT, UT Austin)"
+venue: "ICLR 2025 (Oral)"
+year: 2024
+branch: neural-rendering
+lane: feedforward
+links:
+  arxiv: "https://arxiv.org/abs/2410.17242"
+  project: "https://haian-jin.github.io/projects/LVSM/"
+problem: >
+  Every view synthesis method since 1996 smuggles in 3D machinery — ray
+  marching, splatting, epipolar attention, cost volumes. Is any of it
+  necessary, or is it all just inductive bias that data can replace?
+solution: >
+  A transformer that eats posed input-image tokens and EMITS novel-view
+  pixels. The decoder-only variant keeps no 3D representation whatsoever —
+  no NeRF, no Gaussians, no epipolar structure — and beats the 3D-biased
+  state of the art by 1.5-3.5 dB, with quality scaling smoothly with
+  compute.
+limitations: >
+  No explicit 3D means nothing to edit, no guaranteed consistency across
+  views, and data-hunger in place of geometry — the classic bitter-lesson
+  trade, whose long-term verdict is still out.
+relations:
+  - node: mvsplat2024
+    type: challenges
+    note: >
+      Challenges the premise of its own subfield: pixelSplat and MVSplat
+      compete on BETTER 3D machinery, and LVSM outperforms both with none —
+      arguing the geometry priors everyone was refining are training wheels
+      that scale eventually removes.
+  - node: gqn2018
+    type: revives
+    note: >
+      GQN's 2018 creed — rendering as pure learning, no human 3D machinery —
+      abandoned when SRN and NeRF proved structure wins, returns at
+      transformer scale and finally outperforms the structured lineage that
+      displaced it.
+status: seed

@@ -15,7 +15,8 @@ export const EDGE_TYPES = {
   },
   independent: {
     label: 'independent',
-    description: 'Tackles the same problem, developed without depending on the other',
+    description:
+      'Converges on the same core idea at the same time, without depending on the other — the task, even the branch, may differ',
   },
   challenges: {
     label: 'challenges',

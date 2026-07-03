@@ -1,0 +1,32 @@
+title: "Plenoxels: Radiance Fields without Neural Networks"
+short: "Plenoxels (2021)"
+authors: "Sara Fridovich-Keil*, Alex Yu*, Matthew Tancik, Qinhong Chen, Benjamin Recht, Angjoo Kanazawa (UC Berkeley)"
+venue: "CVPR 2022"
+year: 2021
+branch: neural-rendering
+lane: efficiency
+links:
+  arxiv: "https://arxiv.org/abs/2112.05131"
+  project: "https://alexyu.net/plenoxels/"
+problem: >
+  NeRF takes a day per scene to train, and everyone assumed the MLP was the
+  magic ingredient buying that quality. Was it?
+solution: >
+  Delete the network. A sparse voxel grid holding density + spherical
+  harmonics, optimized directly through the same differentiable volume
+  renderer, matches NeRF's quality while training two orders of magnitude
+  faster (minutes, not a day).
+limitations: >
+  Dense-ish grids eat memory and cap resolution; quality on unbounded scenes
+  lags the mip line. The heresy needed a better data structure — which
+  arrived within weeks as Instant-NGP's hash, and later returned as sparse
+  voxels done right (SVRaster).
+relations:
+  - node: nerf2020
+    type: challenges
+    note: >
+      Directly attacks the field's reading of NeRF: the essential ingredient
+      is DIFFERENTIABLE VOLUME RENDERING, not the neural network — the MLP
+      was just a (very slow) function container. A two-orders-of-magnitude
+      speedup as the proof.
+status: seed

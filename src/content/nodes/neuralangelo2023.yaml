@@ -1,0 +1,38 @@
+title: "Neuralangelo: High-Fidelity Neural Surface Reconstruction"
+short: "Neuralangelo (2023)"
+authors: "Zhaoshuo Li, Thomas Müller, Alex Evans, Russell H. Taylor, Mathias Unberath, Ming-Yu Liu, Chen-Hsuan Lin (NVIDIA)"
+venue: "CVPR 2023"
+year: 2023
+branch: neural-rendering
+lane: surfaces
+links:
+  arxiv: "https://arxiv.org/abs/2306.03092"
+  project: "https://research.nvidia.com/labs/dir/neuralangelo/"
+problem: >
+  SDF volume rendering (NeuS/VolSDF) produces watertight but SMOOTH
+  surfaces — ornament, brick, relief all sanded away. Hash grids have the
+  capacity for that detail, but their gradients are too local for stable
+  SDF optimization.
+solution: >
+  Make the hash grid behave: numerical (finite-difference) gradients that
+  spread learning signal across neighboring hash cells, plus
+  coarse-to-fine curvature scheduling — RGB-video-only surface
+  reconstruction with detail that had previously required laser scanners.
+limitations: >
+  Hours of optimization per scene and dense capture still required;
+  reflective and textureless surfaces still confuse the photometric loss.
+relations:
+  - node: neus2021
+    type: fixes
+    note: >
+      Repairs the fidelity ceiling of SDF volume rendering: the missing
+      high frequencies weren't a modeling limit but an optimization one —
+      analytic hash-grid gradients starve neighboring cells of signal, and
+      numerical gradients feed them.
+  - node: instantngp2022
+    type: builds-on
+    note: >
+      Same NVIDIA lineage: the hash encoding built for speed is
+      re-disciplined for accuracy — capacity borrowed from the efficiency
+      line to serve geometry.
+status: seed

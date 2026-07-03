@@ -1,0 +1,49 @@
+title: "3D Gaussian Splatting for Real-Time Radiance Field Rendering"
+short: "3D Gaussian Splatting (2023)"
+authors: "Bernhard Kerbl, Georgios Kopanas, Thomas Leimkühler, George Drettakis (Inria & MPI)"
+venue: "SIGGRAPH 2023 (Best Paper)"
+year: 2023
+branch: neural-rendering
+lane: gaussians
+links:
+  arxiv: "https://arxiv.org/abs/2308.04079"
+  project: "https://repo-sam.inria.fr/fungraph/3d-gaussian-splatting/"
+problem: >
+  Every radiance-field renderer still marched rays — even Instant-NGP.
+  Real-time (30+ fps) 1080p novel-view synthesis of real scenes remained
+  unreached, because sampling along rays is the wrong fit for GPUs built to
+  rasterize.
+solution: >
+  Represent the scene as millions of anisotropic 3D Gaussians — initialized
+  from the SfM point cloud, optimized by gradients, adaptively densified and
+  pruned — and render by SORTED SPLATTING through a tile-based differentiable
+  rasterizer. State-of-the-art quality at 100+ fps; training in ~30 minutes.
+limitations: >
+  Millions of unstructured blobs: memory-heavy, alias-prone under zoom
+  (Mip-Splatting's opening), view-inconsistent as geometry (2DGS's opening),
+  popping under sorting approximations, and pinhole-rasterization-only
+  (3DGRT's opening). A breakthrough that immediately became everyone's
+  favorite thing to fix.
+relations:
+  - node: ewa2001
+    type: revives
+    note: >
+      Resurrects EWA splatting after two dormant decades, virtually
+      unchanged as math — anisotropic Gaussians, screen-space projection,
+      sorted alpha blending — but now the Gaussians are OPTIMIZED from
+      photographs through the differentiable version of that very renderer.
+  - node: instantngp2022
+    type: fixes
+    note: >
+      Repairs the last bottleneck the hash grid left standing: rendering
+      speed. Replacing ray marching with rasterization — the operation GPUs
+      were born for — takes radiance fields from fast-to-train to
+      real-time-to-display.
+  - node: plenoxels2021
+    type: builds-on
+    note: >
+      Vindicates the no-neural-network heresy at scale: 3DGS is also pure
+      explicit primitives + differentiable rendering, no MLP anywhere — but
+      swaps the fixed voxel lattice for primitives that move, stretch, and
+      multiply where the scene needs them.
+status: seed

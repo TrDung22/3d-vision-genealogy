@@ -1,0 +1,31 @@
+title: "TensoRF: Tensorial Radiance Fields"
+short: "TensoRF (2022)"
+authors: "Anpei Chen, Zexiang Xu, Andreas Geiger, Jingyi Yu, Hao Su"
+venue: "ECCV 2022"
+year: 2022
+branch: neural-rendering
+lane: efficiency
+links:
+  arxiv: "https://arxiv.org/abs/2203.09517"
+  project: "https://apchenstu.github.io/TensoRF/"
+problem: >
+  The grid rebellion bought speed by paying in memory: a radiance voxel grid
+  is a huge 4D tensor, most of which is redundant.
+solution: >
+  Factorize it: decompose the scene tensor into compact vector-matrix
+  components (low-rank planes and lines). Quality above NeRF at minutes of
+  training, in tens of MB instead of gigabytes — the scene as a low-rank
+  object.
+limitations: >
+  Axis-aligned factorization struggles with unbounded scenes and can smear
+  detail across planes. Its lasting legacy is elsewhere: factored plane
+  representations became the triplane backbone of generative 3D (EG3D, LRM)
+  and dynamic fields (K-Planes).
+relations:
+  - node: plenoxels2021
+    type: fixes
+    note: >
+      Repairs the memory blowup that came with deleting the network: keeps
+      the fast direct-optimization recipe but compresses the explicit grid
+      ~100x via low-rank tensor decomposition.
+status: seed

@@ -1,0 +1,37 @@
+title: "4D Gaussian Splatting for Real-Time Dynamic Scene Rendering"
+short: "4D Gaussian Splatting (2023)"
+authors: "Guanjun Wu, Taoran Yi, Jiemin Fang, Lingxi Xie, Xiaopeng Zhang, Wei Wei, Wenyu Liu, Qi Tian, Xinggang Wang"
+venue: "CVPR 2024"
+year: 2023
+branch: neural-rendering
+lane: dynamic
+links:
+  arxiv: "https://arxiv.org/abs/2310.08528"
+  project: "https://guanjunwu.github.io/4dgs/"
+problem: >
+  Dynamic radiance fields inherited NeRF's cost twice over: per-scene
+  training in days and seconds per frame to render — a video you can watch
+  from anywhere, except not actually in real time.
+solution: >
+  One set of canonical 3D Gaussians deformed over time by a compact
+  factored (HexPlane-style) field predicting per-Gaussian motion and shape
+  change — dynamic scenes at 80+ fps and 800x600, trained in minutes,
+  storage kept modest by sharing the canonical Gaussians across time.
+limitations: >
+  The canonical+deformation blueprint's old debts carry over: topology
+  changes and long, complex motion strain a single canonical set; and
+  monocular casual video remains far harder than multi-camera capture.
+relations:
+  - node: 3dgs2023
+    type: builds-on
+    note: >
+      Extends splatting along the time axis within months: keeps the
+      rasterization speed that made 3DGS a phenomenon and spends it on the
+      dynamic setting where ray-marched methods were slowest.
+  - node: dnerf2020
+    type: fixes
+    note: >
+      Repairs the render-speed collapse of deformation-based dynamic NeRFs:
+      the same canonical+warp idea, but deforming explicit Gaussians instead
+      of querying a giant MLP — from seconds per frame to real time.
+status: seed

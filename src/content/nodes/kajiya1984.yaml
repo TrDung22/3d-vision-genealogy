@@ -1,0 +1,24 @@
+title: "Ray Tracing Volume Densities"
+short: "Kajiya & Von Herzen (1984)"
+authors: "James T. Kajiya, Brian P. Von Herzen"
+venue: "SIGGRAPH 1984"
+year: 1984
+branch: neural-rendering
+lane: roots
+links:
+  paper: "https://dl.acm.org/doi/10.1145/800031.808594"
+problem: >
+  Render things that have no surface at all — clouds, dust, flames. Surface
+  ray tracing has nothing to intersect; light is absorbed and scattered
+  continuously along the ray.
+solution: >
+  The emission-absorption volume rendering integral: march a ray through a
+  density field, accumulating emitted radiance attenuated by the transmittance
+  of everything in front of it. Formalized further by Max (1995) — this exact
+  integral, discretized, is the equation inside every NeRF renderer.
+limitations: >
+  Purely a forward renderer: densities are authored or simulated, never
+  RECOVERED from photographs. The integral waited 35 years for automatic
+  differentiation to be run backwards.
+relations: []
+status: seed

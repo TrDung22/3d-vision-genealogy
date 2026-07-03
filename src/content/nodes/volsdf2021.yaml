@@ -1,0 +1,32 @@
+title: "Volume Rendering of Neural Implicit Surfaces"
+short: "VolSDF (2021)"
+authors: "Lior Yariv, Jiatao Gu, Yoni Kasten, Yaron Lipman (Weizmann & Facebook AI)"
+venue: "NeurIPS 2021"
+year: 2021
+branch: neural-rendering
+lane: surfaces
+links:
+  arxiv: "https://arxiv.org/abs/2106.12052"
+  project: "https://lioryariv.github.io/volsdf/"
+problem: >
+  The same disease NeuS diagnosed the same month: NeRF's density is a
+  rendering device, not a geometry — and mask-dependent surface methods
+  don't scale to real scenes.
+solution: >
+  Model density as a transformed signed distance function (Laplace CDF of
+  the SDF), giving a principled probabilistic meaning to opacity plus an
+  error-bounded sampling algorithm — clean surfaces from volume rendering,
+  with a disentangled geometry/appearance split.
+limitations: >
+  Same per-scene cost and smoothness ceiling as NeuS; the two papers'
+  density constructions differ enough that the field spent the next year
+  benchmarking which bias wins where.
+relations:
+  - node: neus2021
+    type: independent
+    note: >
+      arXiv within two weeks of each other (June 2021), both at NeurIPS
+      2021: Hong Kong/MPI and Weizmann/Facebook independently rederived
+      "SDF-induced density" with different math — the 2019 implicit wave's
+      sequel, played out in volume rendering.
+status: seed

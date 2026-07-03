@@ -26,4 +26,23 @@ relations:
       Inherits the continuous implicit-MLP representation from the
       DeepSDF/Occupancy Networks line and adds differentiable volume rendering — the bridge
       between two branches of this genealogy.
+  - node: srn2019
+    type: builds-on
+    note: >
+      Keeps SRN's core bet — the scene as a coordinate MLP rendered by
+      differentiable ray marching — but replaces the fragile LEARNED
+      marcher with fixed volume rendering and adds positional encoding,
+      curing the blur.
+  - node: neuralvolumes2019
+    type: builds-on
+    note: >
+      Takes Neural Volumes' differentiable volume rendering machinery and
+      swaps the memory-bound voxel grid for a continuous MLP — resolution
+      no longer costs cubic memory.
+  - node: llff2019
+    type: builds-on
+    note: >
+      Same group, next year: LLFF's forward-facing captures and benchmark
+      carry over, but the layered light-field machinery is replaced
+      wholesale by one optimized radiance field.
 status: seed

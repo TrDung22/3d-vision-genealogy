@@ -1,0 +1,38 @@
+title: "Instant Neural Graphics Primitives with a Multiresolution Hash Encoding"
+short: "Instant-NGP (2022)"
+authors: "Thomas Müller, Alex Evans, Christoph Schied, Alexander Keller (NVIDIA)"
+venue: "SIGGRAPH 2022 (Best Paper)"
+year: 2022
+branch: neural-rendering
+lane: efficiency
+links:
+  arxiv: "https://arxiv.org/abs/2201.05989"
+  project: "https://nvlabs.github.io/instant-ngp/"
+problem: >
+  The cost of a coordinate network is paid per query, millions of times per
+  image: NeRF's day-long training is the encoding's fault as much as the
+  MLP's.
+solution: >
+  A multiresolution HASH TABLE of trainable feature vectors in front of a
+  tiny MLP: collisions are left for gradients to sort out, the whole thing
+  lives in fused CUDA kernels — and NeRF trains in SECONDS. One encoding
+  serves gigapixel images, SDFs, and radiance fields alike.
+limitations: >
+  Point-sampled features alias under scale change (Zip-NeRF's opening), hash
+  collisions put a ceiling on fine detail, and rendering still marches rays —
+  fast training, but not yet real-time display of big scenes.
+relations:
+  - node: nerf2020
+    type: fixes
+    note: >
+      Repairs the training-cost catastrophe head-on: from ~1 day to ~5
+      seconds on a single GPU, collapsing NeRF's iteration loop from
+      "overnight experiment" to "interactive tool".
+  - node: plenoxels2021
+    type: independent
+    note: >
+      The grid insurgency arrived from two directions in the same winter:
+      Berkeley deleted the network entirely; NVIDIA kept a tiny one and made
+      the data structure learnable. Neither needed the big MLP — the field's
+      bitter lesson about where NeRF's capacity actually lived.
+status: seed

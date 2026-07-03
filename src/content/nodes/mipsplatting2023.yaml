@@ -1,0 +1,39 @@
+title: "Mip-Splatting: Alias-free 3D Gaussian Splatting"
+short: "Mip-Splatting (2023)"
+authors: "Zehao Yu, Anpei Chen, Binbin Huang, Torsten Sattler, Andreas Geiger"
+venue: "CVPR 2024 (Best Student Paper)"
+year: 2023
+branch: neural-rendering
+lane: gaussians
+links:
+  arxiv: "https://arxiv.org/abs/2311.16493"
+  project: "https://niujinshuchong.github.io/mip-splatting/"
+problem: >
+  Change the camera distance or focal length at test time and 3DGS falls
+  apart: thin Gaussians alias into needles when zooming out, and the fixed
+  screen-space dilation makes zoom-ins bloat — erosion and swelling artifacts
+  the training views never reveal.
+solution: >
+  Two principled filters: a 3D smoothing filter capping each Gaussian's
+  frequency by the maximal sampling rate seen during training, and a 2D mip
+  filter replacing the dilation hack — approximating the physical box
+  footprint of a pixel. Alias-free splatting at any scale.
+limitations: >
+  Fixes sampling, not structure: geometry is still view-inconsistent blobs,
+  memory unchanged, and out-of-distribution zoom beyond the training
+  sampling band still degrades.
+relations:
+  - node: 3dgs2023
+    type: fixes
+    note: >
+      Repairs the scale fragility inside months: names the erosion/dilation
+      artifacts, traces them to the sampling-theory violation in the splat
+      pipeline, and swaps the ad-hoc dilation for filters with a Nyquist
+      argument.
+  - node: mipnerf2021
+    type: builds-on
+    note: >
+      The mip idea crosses paradigms: what integrated positional encoding
+      did for ray-marched radiance fields, band-limiting filters do for
+      rasterized Gaussians — same anti-aliasing debt, new currency.
+status: seed

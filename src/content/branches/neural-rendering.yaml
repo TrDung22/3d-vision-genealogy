@@ -1,30 +1,56 @@
 title: "Neural Rendering"
 tagline: "Scene representations as neural networks + differentiable rendering — the infrastructure of a whole generation"
 description: >
-  This branch is still a sapling (planted early to demonstrate cross-branch
-  relations): NeRF does not solve the single-image problem, but its radiance
-  field / triplane representations became the backbone of one-image generative
-  3D models. As it grows, this branch will reach back to 1990s volume rendering,
-  SRN, DVR... and forward to 3D Gaussian Splatting.
+  This branch is the story of one equation learning to run backwards: the
+  1984 volume rendering integral, revived as a differentiable renderer, turned
+  the scene itself into a trainable parameter. Its history is a series of
+  pendulum swings — geometry-free light fields (1996) vs geometry proxies;
+  neural representations (SRN, NeRF) vs the no-network heresy (Plenoxels);
+  ray marching vs the resurrected 2001 splatting math (3DGS); and now explicit
+  3D structure vs pure transformers that render with no 3D machinery at all
+  (LVSM). Each swing trades the same three currencies: quality, speed, and how
+  much human geometry you must smuggle into the model.
 i18n:
   vi:
     tagline: "Biểu diễn cảnh bằng mạng nơ-ron + render khả vi — hạ tầng của cả một thế hệ"
     description: >
-      Nhánh này hiện mới là một mầm cây (đặt sẵn để minh họa quan hệ liên-nhánh):
-      NeRF không giải bài toán single-image, nhưng biểu diễn radiance field / triplane
-      của nó trở thành xương sống cho các mô hình generative 3D một-ảnh. Khi mở rộng,
-      nhánh này sẽ ngược về volume rendering thập niên 90, SRN, DVR... và xuôi tới
-      3D Gaussian Splatting.
+      Nhánh này là câu chuyện về một phương trình học được cách chạy ngược:
+      tích phân volume rendering 1984, hồi sinh dưới dạng renderer khả vi, biến
+      chính cảnh 3D thành tham số huấn luyện được. Lịch sử của nó là chuỗi cú
+      lắc con lắc — light field không cần hình học (1996) đối đầu proxy hình học;
+      biểu diễn nơ-ron (SRN, NeRF) đối đầu "dị giáo" bỏ mạng nơ-ron (Plenoxels);
+      ray marching đối đầu phép splatting 2001 được hồi sinh (3DGS); và giờ là
+      cấu trúc 3D tường minh đối đầu transformer thuần túy render mà không cần
+      bất kỳ máy móc 3D nào (LVSM). Mỗi cú lắc đánh đổi cùng ba loại tiền tệ:
+      chất lượng, tốc độ, và lượng hình học con người phải lén đưa vào mô hình.
   ja:
     tagline: "ニューラルネットによるシーン表現 + 微分可能レンダリング — 一世代まるごとのインフラ"
     description: >
-      この枝はまだ苗木です(枝をまたぐ関係を示すために早めに植えました): NeRF は
-      single-image 問題を解くものではありませんが、その radiance field / triplane 表現は
-      一枚画像からの生成的3Dモデルの背骨になりました。成長すれば、この枝は90年代の
-      ボリュームレンダリング、SRN、DVR まで遡り、3D Gaussian Splatting へと続きます。
+      この枝は、ひとつの方程式が逆向きに走ることを学んだ物語です: 1984年の
+      ボリュームレンダリング積分が微分可能レンダラーとして蘇り、シーンそのものを
+      学習可能なパラメータに変えました。その歴史は振り子の往復です — 幾何を使わない
+      ライトフィールド (1996) 対 幾何プロキシ、ニューラル表現 (SRN、NeRF) 対
+      「ネットワーク不要」の異端 (Plenoxels)、レイマーチング 対 蘇った2001年の
+      スプラッティング数学 (3DGS)、そして今は明示的な3D構造 対 3Dの機構を一切
+      持たない純粋トランスフォーマー (LVSM)。どの往復も、品質・速度・モデルに
+      持ち込む人手の幾何の量という同じ三つの通貨を交換しています。
 color: "#199e70" # categorical slot 2 (dark)
 order: 2
 status: active
 lanes:
+  - id: roots
+    title: "Volume & light-field roots"
+  - id: scene-reps
+    title: "Neural scene representations"
   - id: radiance-fields
     title: "Radiance fields"
+  - id: efficiency
+    title: "Real-time & efficiency"
+  - id: gaussians
+    title: "Gaussian splatting & primitives"
+  - id: surfaces
+    title: "Surfaces & geometry"
+  - id: dynamic
+    title: "Dynamic scenes"
+  - id: feedforward
+    title: "Feed-forward view synthesis"

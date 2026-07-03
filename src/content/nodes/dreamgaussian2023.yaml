@@ -28,4 +28,10 @@ relations:
       NeRF-SDS become ~2 minutes by adopting 3D Gaussian Splatting (the
       neural-rendering branch's 2023 breakthrough) as the target
       representation — an explicit cross-branch import.
+  - node: 3dgs2023
+    type: builds-on
+    note: >
+      The imported canvas itself: 3DGS's fast differentiable rasterizer and
+      progressive densification are what turn hours of NeRF-based score
+      distillation into minutes.
 status: seed

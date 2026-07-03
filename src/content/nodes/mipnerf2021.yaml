@@ -1,0 +1,32 @@
+title: "Mip-NeRF: A Multiscale Representation for Anti-Aliasing Neural Radiance Fields"
+short: "Mip-NeRF (2021)"
+authors: "Jonathan T. Barron, Ben Mildenhall, Matthew Tancik, Peter Hedman, Ricardo Martin-Brualla, Pratul P. Srinivasan"
+venue: "ICCV 2021 (Best Paper Honorable Mention)"
+year: 2021
+branch: neural-rendering
+lane: radiance-fields
+links:
+  arxiv: "https://arxiv.org/abs/2103.13415"
+  project: "https://jonbarron.info/mipnerf/"
+problem: >
+  NeRF samples infinitesimal points along infinitesimal rays, so a pixel's
+  footprint is ignored: zoom out and it aliases, zoom in and it blurs.
+  Rendering at any scale other than the training scale is broken.
+solution: >
+  Rays become cones: each sample is a conical frustum encoded by an
+  integrated positional encoding (the expected Fourier features over the
+  frustum's Gaussian). One scale-aware MLP replaces NeRF's brittle
+  coarse+fine pair — mipmapping, rediscovered for radiance fields.
+limitations: >
+  Still assumes bounded, inward-facing scenes and per-scene training; the
+  math assumes the slow positional-encoding MLP, so the idea had to be
+  re-derived twice — for unbounded scenes (Mip-NeRF 360) and for hash grids
+  (Zip-NeRF).
+relations:
+  - node: nerf2020
+    type: fixes
+    note: >
+      Repairs NeRF's point-sampling fallacy — the aliasing and multiscale
+      blur baked into treating pixels as rays — by rendering anti-aliased
+      frustums, importing 40 years of graphics mipmapping wisdom.
+status: seed

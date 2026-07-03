@@ -1,0 +1,31 @@
+title: "Implicit Neural Representations with Periodic Activation Functions"
+short: "SIREN (2020)"
+authors: "Vincent Sitzmann, Julien N. P. Martel, Alexander W. Bergman, David B. Lindell, Gordon Wetzstein"
+venue: "NeurIPS 2020 (Oral)"
+year: 2020
+branch: neural-rendering
+lane: scene-reps
+links:
+  arxiv: "https://arxiv.org/abs/2006.09661"
+  project: "https://www.vincentsitzmann.com/siren/"
+problem: >
+  Coordinate MLPs with ReLU — the workhorse of SRN, DeepSDF, early NeRF —
+  are systematically blurry: they cannot represent fine detail or the
+  derivatives that physics losses (eikonal, wave equations) need.
+solution: >
+  Replace ReLU with sine activations plus a principled initialization:
+  SIRENs fit images, video, audio, and SDFs with orders more fidelity, and
+  their derivatives are SIRENs too — so you can supervise directly on
+  gradients and Laplacians.
+limitations: >
+  Sensitive to initialization and frequency scaling, and offers per-signal
+  fitting rather than generalization. Grid-based encodings (Instant-NGP)
+  later took the speed crown; sines survive where derivatives matter.
+relations:
+  - node: srn2019
+    type: fixes
+    note: >
+      Same lab, one year later: names and repairs the reason SRN renders
+      blurry — the spectral bias of ReLU coordinate networks — by changing
+      the activation itself.
+status: seed

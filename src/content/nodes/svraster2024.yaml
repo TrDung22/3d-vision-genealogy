@@ -1,0 +1,38 @@
+title: "Sparse Voxels Rasterization: Real-time High-fidelity Radiance Field Rendering"
+short: "SVRaster (2024)"
+authors: "Cheng Sun, Jaesung Choe, Charles Loop, Wei-Chiu Ma, Yu-Chiang Frank Wang (NVIDIA)"
+venue: "CVPR 2025"
+year: 2024
+branch: neural-rendering
+lane: gaussians
+links:
+  arxiv: "https://arxiv.org/abs/2412.04459"
+  project: "https://svraster.github.io/"
+problem: >
+  Gaussians won on speed but carry quirks — popping under view rotation
+  (the global sort is only approximately correct) and fuzzy blobs where
+  scenes want crisp axis-aligned structure.
+solution: >
+  Rasterize adaptive SPARSE VOXELS instead of Gaussians: an octree-style
+  layout up to 65,536^3 effective resolution, rendered in exactly correct
+  depth order via ray-direction-dependent Morton ordering — no neural
+  network, no Gaussians, no popping, 4dB over prior neural-free voxels at
+  10x their framerate.
+limitations: >
+  Hard voxel boundaries handle semi-transparent, soft matter less gracefully
+  than Gaussians; the grid, however sparse, still trades memory for detail.
+relations:
+  - node: plenoxels2021
+    type: revives
+    note: >
+      Brings the voxel heresy back from the dead after Gaussians had
+      seemingly buried it: the same "no neural network, just a sparse grid"
+      creed, now with adaptive level-of-detail and a rasterizer instead of
+      ray marching — voxels made competitive with splats.
+  - node: 3dgs2023
+    type: challenges
+    note: >
+      Questions the assumption that the primitive must be a Gaussian:
+      sorted-splat popping is an artifact of the primitive choice, and
+      sorted voxels dissolve it while keeping the rasterization speed.
+status: seed

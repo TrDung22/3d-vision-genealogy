@@ -1,0 +1,41 @@
+title: "pixelSplat: 3D Gaussian Splats from Image Pairs for Scalable Generalizable 3D Reconstruction"
+short: "pixelSplat (2023)"
+authors: "David Charatan, Sizhe Lester Li, Andrea Tagliasacchi, Vincent Sitzmann"
+venue: "CVPR 2024 (Oral, Best Paper Runner-Up)"
+year: 2023
+branch: neural-rendering
+lane: feedforward
+links:
+  arxiv: "https://arxiv.org/abs/2312.12337"
+  project: "https://davidcharatan.com/pixelsplat/"
+problem: >
+  Generalizable view synthesis (the pixelNeRF line) predicts radiance fields
+  feed-forward but renders them by volumetric sampling — so slow that
+  training on real video at scale is impractical, and real-time use is out.
+solution: >
+  Predict 3D GAUSSIANS feed-forward from an image pair: an epipolar
+  transformer resolves the scale ambiguity, and a probabilistic depth
+  parameterization keeps gradients flowing despite the primitives' local
+  support. Real-time rendering, orders faster training, and an explicit,
+  editable output.
+limitations: >
+  Two-view, small-baseline interpolation on scene-level data; depth
+  prediction is implicit and parameter-heavy — the cost-volume repair
+  (MVSplat) and the "why predict 3D at all" challenge (LVSM) both arrived
+  within the year.
+relations:
+  - node: 3dgs2023
+    type: builds-on
+    note: >
+      Makes splatting feed-forward: 3DGS optimizes Gaussians per scene for
+      30 minutes; pixelSplat amortizes that into a network that emits them
+      in one pass — the representation crossing from optimization to
+      prediction.
+  - node: pixelnerf2020
+    type: fixes
+    note: >
+      A cross-branch repair inside the same lab (Sitzmann): keeps
+      pixelNeRF's pixel-aligned, feed-forward recipe but swaps the implicit
+      field for explicit Gaussians, fixing the rendering-cost bottleneck
+      that kept generalizable NeRFs from scaling.
+status: seed

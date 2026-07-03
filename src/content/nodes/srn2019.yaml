@@ -1,0 +1,40 @@
+title: "Scene Representation Networks: Continuous 3D-Structure-Aware Neural Scene Representations"
+short: "SRN (2019)"
+authors: "Vincent Sitzmann, Michael Zollhöfer, Gordon Wetzstein"
+venue: "NeurIPS 2019 (Honorable Mention, Outstanding New Directions Paper)"
+year: 2019
+branch: neural-rendering
+lane: scene-reps
+links:
+  arxiv: "https://arxiv.org/abs/1906.01618"
+  project: "https://www.scenerepresentations.org/publications/srns/"
+problem: >
+  GQN showed scenes can be learned from images alone, but its flat latent
+  vector has no notion of space — nothing guarantees the same wall looks the
+  same from two viewpoints.
+solution: >
+  Make the representation a continuous FUNCTION of 3D coordinates: an MLP
+  maps (x, y, z) to features, and a learned differentiable ray marcher
+  renders it — 3D structure and multi-view consistency baked into the
+  architecture, trained from images only.
+limitations: >
+  The learned LSTM ray marcher is fragile, results are blurry (ReLU MLPs
+  can't express high frequencies — the spectral bias SIREN and Fourier
+  features later named), and geometry-appearance are entangled. One year
+  later NeRF kept the coordinate-MLP and swapped the learned marcher for
+  fixed volume rendering.
+relations:
+  - node: gqn2018
+    type: fixes
+    note: >
+      Repairs GQN's structureless latent: replaces the flat vector with a
+      coordinate function and the learned black-box decoder with explicit ray
+      marching, so multi-view consistency comes from geometry, not hope.
+  - node: deepsdf2019
+    type: independent
+    note: >
+      The third front of the 2019 implicit wave: DeepSDF and OccNet hit
+      continuous coordinate-MLPs for SHAPE; SRN hit the same representation
+      for appearance + rendering, simultaneously and independently — from
+      supervision by images instead of 3D scans.
+status: seed

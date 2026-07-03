@@ -1,0 +1,32 @@
+title: "3D Gaussian Ray Tracing: Fast Tracing of Particle Scenes"
+short: "3D Gaussian Ray Tracing (2024)"
+authors: "Nicolas Moenne-Loccoz, Ashkan Mirzaei, Or Perel, Riccardo de Lutio, Janick Martinez Esturo, Gavriel State, Sanja Fidler, Nicholas Sharp, Zan Gojcic (NVIDIA)"
+venue: "SIGGRAPH Asia 2024 (journal track, ACM TOG)"
+year: 2024
+branch: neural-rendering
+lane: gaussians
+links:
+  arxiv: "https://arxiv.org/abs/2407.07090"
+  project: "https://gaussiantracer.github.io/"
+problem: >
+  3DGS is welded to the rasterizer: one pinhole camera, coherent primary rays.
+  Fisheye lenses, rolling shutters, shadows, reflections, sensor simulation —
+  anything needing INCOHERENT rays is outside the paradigm.
+solution: >
+  Trace the particles instead: wrap each Gaussian in a bounding mesh to ride
+  hardware ray-triangle units (RT cores), shade intersections in depth-order
+  batches. Secondary rays, distorted cameras, and stochastic sampling come
+  back — at speeds competitive with rasterization.
+limitations: >
+  Still slower than a tuned rasterizer on plain pinhole novel-view synthesis,
+  and inherits 3DGS's blob geometry; the hybrid follow-up (3DGUT) later let
+  the two pipelines share one scene.
+relations:
+  - node: 3dgs2023
+    type: challenges
+    note: >
+      Questions the conclusion everyone drew from 3DGS — that rasterization
+      won: the sorted-splatting shortcut silently gave up everything ray
+      tracing was invented for, and hardware RT cores make the "slow" path
+      fast enough to take it back.
+status: seed
