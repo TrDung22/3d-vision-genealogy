@@ -40,7 +40,9 @@ const dict: Record<Lang, Record<string, string>> = {
     'posts.title': 'Latest posts',
     'posts.none': 'No posts yet — the genealogy is still germinating.',
     'posts.all': 'All posts →',
-    'graph.hint2d': 'Drag to pan · scroll to zoom · click a node to open its page · hover to trace its direct relations.',
+    'graph.hint2d':
+      'Drag to pan · scroll to zoom · click a node to open its page · hover to trace its direct relations. Cross-branch links stay faint until you hover a node they touch.',
+    'graph.filterHint': 'Click to toggle this branch · Alt-click to view it alone',
     'graph.hint3d':
       'Same genealogy in 3D — nodes cluster by lane (faint bubbles). Drag to rotate · scroll to zoom · click a node for details. Moving particles = fixes, red = challenges.',
     'graph.noscript': 'JavaScript is required for the graphs — the full table lives further down the page.',
@@ -131,7 +133,9 @@ const dict: Record<Lang, Record<string, string>> = {
     'posts.title': 'Bài viết mới',
     'posts.none': 'Chưa có bài viết nào — gia phả vẫn đang ươm mầm.',
     'posts.all': 'Tất cả bài viết →',
-    'graph.hint2d': 'Kéo để di chuyển · lăn chuột để zoom · bấm vào node để mở trang · rê chuột lên node để soi các quan hệ trực tiếp của nó.',
+    'graph.hint2d':
+      'Kéo để di chuyển · lăn chuột để zoom · bấm vào node để mở trang · rê chuột lên node để soi các quan hệ trực tiếp của nó. Quan hệ xuyên nhánh được làm mờ — rê chuột vào node là chúng hiện rõ.',
+    'graph.filterHint': 'Bấm để bật/tắt nhánh này · Alt+bấm để xem riêng nó',
     'graph.hint3d':
       'Vẫn gia phả đó, nhưng trong không gian 3D — các node tụ thành cụm theo mạch nghiên cứu (mấy quả bong bóng mờ). Kéo để xoay · lăn chuột để zoom · bấm vào node để xem chi tiết. Hạt sáng đang chạy = fixes, màu đỏ = challenges.',
     'graph.noscript': 'Cần bật JavaScript để xem đồ thị — bảng đầy đủ nằm ở cuối trang.',
@@ -223,7 +227,8 @@ const dict: Record<Lang, Record<string, string>> = {
     'posts.none': 'まだ記事はありません — 系譜はようやく芽吹きはじめたところです。',
     'posts.all': 'すべての記事 →',
     'graph.hint2d':
-      'ドラッグで移動 · スクロールでズーム · ノードをクリックで個別ページへ · ホバーすると直接の関係が浮かび上がります。',
+      'ドラッグで移動 · スクロールでズーム · ノードをクリックで個別ページへ · ホバーすると直接の関係が浮かび上がります。枝をまたぐ関係は薄く描かれ、ノードにホバーするとはっきり現れます。',
+    'graph.filterHint': 'クリックで枝の表示を切り替え · Alt+クリックでこの枝だけ表示',
     'graph.hint3d':
       '同じ系譜を3Dで。ノードはレーンごとに寄り集まります(淡い球)。ドラッグで回転 · スクロールでズーム · クリックで詳細へ。流れる粒子は fixes、赤は challenges。',
     'graph.noscript': 'グラフの表示には JavaScript が必要です — ページ下部に完全な表があります。',
@@ -301,6 +306,7 @@ export function graphStrings(lang: Lang) {
     'graph.error3d',
     'graph.play',
     'graph.pause',
+    'graph.filterHint',
     'graph.standsOn',
     'graph.followedBy',
     'graph.openPage',

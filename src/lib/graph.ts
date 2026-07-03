@@ -3,30 +3,53 @@ import { getCollection } from 'astro:content';
 /**
  * The relation vocabulary of the genealogy — the heart of the project.
  * This is what separates a genealogy from an awesome-list.
+ *
+ * `stroke` is a CSS custom-property name (resolved at render time so both
+ * themes share one definition); `dash`/`width` are the SVG stroke pattern.
+ * The D3 timeline and the server-rendered "how to read" legend both draw
+ * from here, so the two can never drift apart.
  */
 export const EDGE_TYPES = {
   fixes: {
     label: 'fixes',
     description: 'Comes later and directly repairs a specific weakness of the earlier work',
+    stroke: '--ink-2',
+    dash: null,
+    width: 2,
   },
   'builds-on': {
     label: 'builds on',
     description: 'Stands on the earlier work and extends it in a new direction',
+    stroke: '--muted',
+    dash: null,
+    width: 1.4,
   },
   independent: {
     label: 'independent',
     description:
       'Converges on the same core idea at the same time, without depending on the other — the task, even the branch, may differ',
+    stroke: '--muted',
+    dash: '6 5',
+    width: 1.6,
   },
   challenges: {
     label: 'challenges',
     description: 'Questions the assumptions, benchmarks, or conclusions of the earlier work',
+    stroke: '--danger',
+    dash: '2 4',
+    width: 1.6,
   },
   revives: {
     label: 'revives',
     description: 'Reawakens a direction the mainstream had abandoned',
+    stroke: '--muted',
+    dash: '10 4 2 4',
+    width: 1.6,
   },
-} as const;
+} as const satisfies Record<
+  string,
+  { label: string; description: string; stroke: string; dash: string | null; width: number }
+>;
 
 export type EdgeType = keyof typeof EDGE_TYPES;
 

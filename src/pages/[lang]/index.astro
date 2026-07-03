@@ -65,24 +65,37 @@ const fmtDate = (d: Date) =>
     }
   </section>
 
-  <GenealogyGraph lang={lang} />
-
-  <section>
+  <section class="howto">
     <h2>{t(lang, 'howto.title')}</h2>
     <ul class="edge-glossary">
       {
         Object.entries(EDGE_TYPES).map(([key, meta]) => (
           <li>
-            <strong>{meta.label}</strong> — {t(lang, `glossary.${key}`)}
+            <svg class="edge-sample" width="46" height="10" aria-hidden="true">
+              <line
+                x1="1"
+                y1="5"
+                x2="45"
+                y2="5"
+                stroke={`var(${meta.stroke})`}
+                stroke-width={meta.width}
+                stroke-dasharray={meta.dash}
+              />
+            </svg>
+            <span>
+              <strong>{meta.label}</strong> — {t(lang, `glossary.${key}`)}
+            </span>
           </li>
         ))
       }
     </ul>
-    <p class="muted">{t(lang, 'howto.arrows')}</p>
+    <p class="muted howto-arrows">{t(lang, 'howto.arrows')}</p>
     <p>
       <a href={`${root}/heresies/`}>{t(lang, 'heresies.teaser')} →</a>
     </p>
   </section>
+
+  <GenealogyGraph lang={lang} />
 
   <section class="table-view">
     <h2>{t(lang, 'table.title')}</h2>
@@ -91,7 +104,7 @@ const fmtDate = (d: Date) =>
         const branchRows = rows.filter((n) => n.branch === b.id);
         if (branchRows.length === 0) return null;
         return (
-          <details class="panel branch-table" open>
+          <details class="panel branch-table" data-branch={b.id} open>
             <summary>
               <span class="chip">
                 <span class="dot" style={`background:${b.color}`} />
@@ -160,8 +173,41 @@ const fmtDate = (d: Date) =>
     margin-top: 1rem;
   }
 
+  .howto {
+    margin-top: 1.5rem;
+  }
+
+  .howto h2 {
+    margin-bottom: 0.75rem;
+  }
+
+  /* compact two-column glossary so the "how to read" primer doesn't push
+     the graph below the fold */
+  .edge-glossary {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 0.75rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 0.45rem 2.25rem;
+  }
+
   .edge-glossary li {
-    margin: 0.35rem 0;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    margin: 0;
+    font-size: 0.92rem;
+  }
+
+  .edge-glossary .edge-sample {
+    flex: none;
+    margin-top: 0.45em;
+  }
+
+  .howto-arrows {
+    font-size: 0.85rem;
+    max-width: 900px;
   }
 
   .table-view {

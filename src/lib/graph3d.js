@@ -68,11 +68,13 @@ export function mount3D({ el, infoEl, data, root, strings }) {
 
   const awardTex = ringTexture();
 
+  // master copies — setFilter() feeds SUBSETS of these same objects back to
+  // the graph, so surviving nodes keep their simulation positions
+  const allNodes = data.nodes.map((n) => ({ ...n }));
+  const allLinks = data.edges.map((e) => ({ ...e }));
+
   const graph = ForceGraph3D()(el)
-    .graphData({
-      nodes: data.nodes.map((n) => ({ ...n })),
-      links: data.edges.map((e) => ({ ...e })),
-    })
+    .graphData({ nodes: allNodes, links: allLinks })
     .backgroundColor(tok('--page'))
     .nodeColor((n) => (related(n.id) ? bColor(n.branch) : tok('--baseline')))
     .nodeVal(nodeVal)
@@ -133,7 +135,8 @@ export function mount3D({ el, infoEl, data, root, strings }) {
       refreshFocus();
     });
 
-  const simNodes = graph.graphData().nodes;
+  // the CURRENTLY simulated nodes — changes with every setFilter() call
+  const simNodes = () => graph.graphData().nodes;
 
   // ---- cluster force: pull each lane's nodes toward its own anchor so the
   // lanes form visible constellations (the 3D counterpart of timeline rows)
@@ -197,8 +200,9 @@ export function mount3D({ el, infoEl, data, root, strings }) {
   }
 
   function updateBubbles() {
+    const live = simNodes();
     for (const [laneId, b] of bubbles) {
-      const pts = simNodes.filter((n) => n.lane === laneId && Number.isFinite(n.x));
+      const pts = live.filter((n) => n.lane === laneId && Number.isFinite(n.x));
       if (!pts.length) continue;
       const cx = pts.reduce((s, p) => s + p.x, 0) / pts.length;
       const cy = pts.reduce((s, p) => s + p.y, 0) / pts.length;
@@ -216,10 +220,12 @@ export function mount3D({ el, infoEl, data, root, strings }) {
   graph.onEngineTick(updateBubbles);
 
   // ---- hover focus-mode
+  // (both walk allNodes, not just the visible ones, so nodes hidden by the
+  // branch filter come back with the right label/ring state)
   function refreshFocus() {
     graph.nodeColor(graph.nodeColor());
     graph.linkColor(graph.linkColor());
-    for (const n of simNodes) {
+    for (const n of allNodes) {
       if (n.__label) n.__label.material.opacity = related(n.id) ? 1 : 0.12;
       if (n.__ring) n.__ring.material.opacity = related(n.id) ? 1 : 0.12;
     }
@@ -228,7 +234,7 @@ export function mount3D({ el, infoEl, data, root, strings }) {
   // ---- theme switching without a rebuild
   function applyTheme() {
     graph.backgroundColor(tok('--page'));
-    for (const n of simNodes) {
+    for (const n of allNodes) {
       if (n.__label) n.__label.color = tok('--ink-2');
       if (n.__ring) n.__ring.material.color.set(tok('--award'));
     }
@@ -249,7 +255,10 @@ export function mount3D({ el, infoEl, data, root, strings }) {
       .join('');
   }
 
+  let infoNode = null; // so the branch filter can close a panel it orphans
+
   function showInfo(n) {
+    infoNode = n;
     const standsOn = data.edges
       .filter((e) => e.target === n.id && nodeById.has(e.source))
       .map((e) => ({ type: e.type, note: e.note, other: nodeById.get(e.source) }));
@@ -274,9 +283,27 @@ export function mount3D({ el, infoEl, data, root, strings }) {
   }
 
   function hideInfo() {
+    infoNode = null;
     infoEl.hidden = true;
     infoEl.innerHTML = '';
     resize();
+  }
+
+  // ---- branch filter (driven by the legend chips above the timeline)
+  function setFilter(activeIds) {
+    const visible = (end) => {
+      const n = nodeById.get(end?.id ?? end); // link ends resolve to objects once the sim runs
+      return n && activeIds.has(n.branch);
+    };
+    graph.graphData({
+      nodes: allNodes.filter((n) => activeIds.has(n.branch)),
+      links: allLinks.filter((l) => visible(l.source) && visible(l.target)),
+    });
+    for (const [, b] of bubbles) {
+      b.mesh.visible = b.title.visible = activeIds.has(b.branch);
+    }
+    if (infoNode && !activeIds.has(infoNode.branch)) hideInfo();
+    setTimeout(() => graph.zoomToFit(400, 46), 650); // re-frame once the sim resettles
   }
 
   // default view: frame the whole graph tightly. We fit instantly (ms = 0, no
@@ -299,5 +326,5 @@ export function mount3D({ el, infoEl, data, root, strings }) {
   resize();
   window.addEventListener('resize', resize);
 
-  return { graph, resize, applyTheme };
+  return { graph, resize, applyTheme, setFilter };
 }

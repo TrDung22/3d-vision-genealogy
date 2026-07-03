@@ -82,47 +82,95 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       return b ? (isLight() ? b.colorLight : b.color) : tok('--muted');
     };
 
-    // ---- layout (theme-independent, computed once) ----
+    // sanitize once on the full set (filtering later must not re-warn)
+    const declaredEdges = data.edges.length;
+    data.edges = data.edges.filter((e) => nodeById.has(e.source) && nodeById.has(e.target));
+    if (data.edges.length < declaredEdges) {
+      console.warn(`genealogy: skipped ${declaredEdges - data.edges.length} edge(s) pointing to missing nodes`);
+    }
+    for (const e of data.edges) {
+      e.crossBranch = nodeById.get(e.source).branch !== nodeById.get(e.target).branch;
+    }
+
+    // ---- branch filter: one Set drives all three views (timeline, 3D, table).
+    // Toggled from the legend chips; shareable via ?branches=a,b.
+    const filterable = data.branches.filter((b) => data.nodes.some((n) => n.branch === b.id));
+    const allBranchIds = () => new Set(filterable.map((b) => b.id));
+    let activeBranches = allBranchIds();
+    {
+      const picked = (new URLSearchParams(location.search).get('branches') ?? '')
+        .split(',')
+        .filter((id) => activeBranches.has(id));
+      if (picked.length) activeBranches = new Set(picked);
+    }
+
+    // ---- layout: a pure function of the visible branches (theme-independent).
+    // Hidden branches take their lanes AND their years with them, so the
+    // timeline collapses both vertically and horizontally.
     const YEAR_W = 112;
     const STACK_GAP = 46; // vertical gap between same-lane, same-year nodes
     const MIN_LANE_H = 92;
     const M = { top: 52, left: 216, right: 48, bottom: 16 };
 
-    const years = [...new Set(data.nodes.map((n) => n.year))].sort((a, b) => a - b);
-    // first column is inset by 0.85 steps so centered labels don't slide under the left gutter
-    const yearX = new Map(years.map((y, i) => [y, M.left + (i + 0.85) * YEAR_W]));
-    const width = M.left + (years.length + 0.7) * YEAR_W + M.right;
+    function computeView() {
+      const nodes = data.nodes.filter((n) => activeBranches.has(n.branch));
+      const lanes = data.lanes.filter((l) => activeBranches.has(l.branch));
+      const visible = new Set(nodes.map((n) => n.id));
+      // an edge is drawn only when BOTH ends are visible
+      const edges = data.edges.filter((e) => visible.has(e.source) && visible.has(e.target));
 
-    // Lane heights grow with the largest same-year stack in that lane
-    const lanes = data.lanes;
-    const stackOf = d3.group(data.nodes, (n) => `${n.lane}@${n.year}`);
-    const maxStack = new Map();
-    for (const [key, members] of stackOf) {
-      const lane = key.slice(0, key.lastIndexOf('@'));
-      maxStack.set(lane, Math.max(maxStack.get(lane) ?? 1, members.length));
-    }
-    const laneTop = new Map();
-    const laneCenter = new Map();
-    let yCursor = M.top;
-    for (const l of lanes) {
-      const h = Math.max(MIN_LANE_H, (maxStack.get(l.id) ?? 1) * STACK_GAP + 36);
-      laneTop.set(l.id, yCursor);
-      laneCenter.set(l.id, yCursor + h / 2);
-      yCursor += h;
-    }
-    const height = yCursor + M.bottom;
-    const viewH = Math.max(420, Math.min(height, 860));
+      const years = [...new Set(nodes.map((n) => n.year))].sort((a, b) => a - b);
+      // first column is inset by 0.85 steps so centered labels don't slide under the left gutter
+      const yearX = new Map(years.map((y, i) => [y, M.left + (i + 0.85) * YEAR_W]));
+      const yearIdx = new Map(years.map((y, i) => [y, i]));
+      const width = M.left + (years.length + 0.7) * YEAR_W + M.right;
 
-    // same lane + same year → stack vertically around the lane center
-    const pos = new Map();
-    for (const [, members] of stackOf) {
-      members.forEach((n, i) => {
-        pos.set(n.id, {
-          x: yearX.get(n.year),
-          y: laneCenter.get(n.lane) + (i - (members.length - 1) / 2) * STACK_GAP,
+      // Lane heights grow with the largest same-year stack in that lane
+      const stackOf = d3.group(nodes, (n) => `${n.lane}@${n.year}`);
+      const maxStack = new Map();
+      for (const [key, members] of stackOf) {
+        const lane = key.slice(0, key.lastIndexOf('@'));
+        maxStack.set(lane, Math.max(maxStack.get(lane) ?? 1, members.length));
+      }
+      const laneTop = new Map();
+      const laneCenter = new Map();
+      let yCursor = M.top;
+      for (const l of lanes) {
+        const h = Math.max(MIN_LANE_H, (maxStack.get(l.id) ?? 1) * STACK_GAP + 36);
+        laneTop.set(l.id, yCursor);
+        laneCenter.set(l.id, yCursor + h / 2);
+        yCursor += h;
+      }
+      const height = yCursor + M.bottom;
+      const viewH = Math.max(420, Math.min(height, 860));
+
+      // same lane + same year → stack vertically around the lane center
+      const pos = new Map();
+      for (const [, members] of stackOf) {
+        members.forEach((n, i) => {
+          pos.set(n.id, {
+            x: yearX.get(n.year),
+            y: laneCenter.get(n.lane) + (i - (members.length - 1) / 2) * STACK_GAP,
+          });
         });
+      }
+
+      // neighborhood map for hover focus-mode (node id → related node ids)
+      const nbr = new Map(nodes.map((n) => [n.id, new Set([n.id])]));
+      for (const e of edges) {
+        nbr.get(e.source)?.add(e.target);
+        nbr.get(e.target)?.add(e.source);
+      }
+
+      const firstLaneOf = new Map();
+      lanes.forEach((l) => {
+        if (!firstLaneOf.has(l.branch)) firstLaneOf.set(l.branch, l.id);
       });
+
+      return { nodes, lanes, edges, years, yearX, yearIdx, width, height, viewH, laneTop, laneCenter, pos, nbr, firstLaneOf };
     }
+
+    let view = computeView();
 
     // One consistent label rule: always centered below the mark; year/author
     // parentheticals dropped (the x-axis already says the year)
@@ -131,32 +179,14 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
         .replace(/\s*\([^)]*\)\s*$/, '')
         .replace(/\s+(19|20)\d{2}$/, '');
 
-    const edges = data.edges.filter((e) => pos.has(e.source) && pos.has(e.target));
-    if (edges.length < data.edges.length) {
-      console.warn(`genealogy: skipped ${data.edges.length - edges.length} edge(s) pointing to missing nodes`);
-    }
-
-    // neighborhood map for hover focus-mode (node id → related node ids)
-    const nbr = new Map(data.nodes.map((n) => [n.id, new Set([n.id])]));
-    for (const e of edges) {
-      nbr.get(e.source)?.add(e.target);
-      nbr.get(e.target)?.add(e.source);
-    }
-
-    const firstLaneOf = new Map();
-    lanes.forEach((l) => {
-      if (!firstLaneOf.has(l.branch)) firstLaneOf.set(l.branch, l.id);
-    });
-
     const viewport = document.getElementById('gg-viewport');
     const tooltip = document.getElementById('gg-tooltip');
-    const svg = d3.select('#gg-svg').attr('height', viewH);
+    const svg = d3.select('#gg-svg');
 
     // ---- time machine: a cursor over the (compressed) year axis ----
     // The slider walks the INDEX of the sorted years array, not raw years —
     // the axis skips empty years, so a raw-year slider would have dead zones.
-    const yearIdx = new Map(years.map((y, i) => [y, i]));
-    let currentIdx = years.length - 1; // default: the whole genealogy
+    let currentIdx = view.years.length - 1; // default: the whole genealogy
     let applyYear = () => {}; // rebound by every renderTimeline() run
 
     const timebar = document.getElementById('gg-timebar');
@@ -164,11 +194,11 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     const yearRange = document.getElementById('gg-year-range');
     const yearReadout = document.getElementById('gg-year-readout');
     timebar.hidden = false;
-    yearRange.max = String(years.length - 1);
+    yearRange.max = String(Math.max(0, view.years.length - 1));
     // ?year=2005 → open the genealogy "as of 2005" (shareable snapshots in time)
     const q = Number(new URLSearchParams(location.search).get('year'));
-    if (Number.isFinite(q) && q >= years[0]) {
-      currentIdx = Math.max(0, years.findLastIndex((y) => y <= q));
+    if (Number.isFinite(q) && q >= view.years[0]) {
+      currentIdx = Math.max(0, view.years.findLastIndex((y) => y <= q));
     }
     yearRange.value = String(currentIdx);
     playBtn.setAttribute('aria-label', STR.play);
@@ -182,17 +212,17 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       playBtn.setAttribute('aria-label', STR.play);
     }
     function setYearIdx(idx) {
-      currentIdx = Math.max(0, Math.min(years.length - 1, idx));
+      currentIdx = Math.max(0, Math.min(view.years.length - 1, idx));
       yearRange.value = String(currentIdx);
       applyYear();
     }
     playBtn.addEventListener('click', () => {
       if (playTimer) return stopPlay();
-      if (currentIdx >= years.length - 1) setYearIdx(0); // full view → restart from the first year
+      if (currentIdx >= view.years.length - 1) setYearIdx(0); // full view → restart from the first year
       playBtn.textContent = '❚❚';
       playBtn.setAttribute('aria-label', STR.pause);
       playTimer = setInterval(() => {
-        if (currentIdx >= years.length - 1) return stopPlay();
+        if (currentIdx >= view.years.length - 1) return stopPlay();
         setYearIdx(currentIdx + 1);
       }, 800);
     });
@@ -201,36 +231,39 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       setYearIdx(Number(yearRange.value));
     });
 
-    // edges anchor on the marks' top/bottom within a year and bow slightly
-    // left so they never cut through stacked nodes or labels
-    const edgePath = (e) => {
-      const s = pos.get(e.source);
-      const t = pos.get(e.target);
-      if (s.x === t.x) {
-        const dir = t.y > s.y ? 1 : -1;
-        const y0 = s.y + dir * 12;
-        const y1 = t.y - dir * 15;
-        const bow = Math.min(44, 14 + Math.abs(t.y - s.y) * 0.18);
-        return `M${s.x},${y0} C${s.x - bow},${y0 + dir * 8} ${s.x - bow},${y1 - dir * 8} ${s.x},${y1}`;
-      }
-      const x0 = s.x + 12;
-      const x1 = t.x - 15;
-      const mx = (x0 + x1) / 2;
-      return `M${x0},${s.y} C${mx},${s.y} ${mx},${t.y} ${x1},${t.y}`;
-    };
-
-    // ---- theme-aware drawing: everything below re-runs on `themechange` ----
+    // ---- theme-aware drawing: everything below re-runs on `themechange`
+    // (same view) and on every filter change (fresh view) ----
     function renderTimeline() {
+      const { nodes, lanes, edges, years, yearX, yearIdx, width, height, viewH, laneTop, laneCenter, pos, nbr, firstLaneOf } = view;
+      svg.attr('height', viewH);
       svg.selectAll('*').remove();
 
       // stroke style per relation type — dash pattern carries the meaning
-      // (CVD-safe); "challenges" is the one colored exception (warning red)
-      const EDGE_STYLE = {
-        fixes: { stroke: tok('--ink-2'), dash: null, width: 2 },
-        'builds-on': { stroke: tok('--muted'), dash: null, width: 1.4 },
-        independent: { stroke: tok('--muted'), dash: '6 5', width: 1.6 },
-        challenges: { stroke: tok('--danger'), dash: '2 4', width: 1.6 },
-        revives: { stroke: tok('--muted'), dash: '10 4 2 4', width: 1.6 },
+      // (CVD-safe, single source in graph.ts); colors resolve through theme
+      // tokens at render time
+      const EDGE_STYLE = Object.fromEntries(
+        Object.entries(data.edgeTypes).map(([type, m]) => [
+          type,
+          { stroke: tok(m.stroke), dash: m.dash, width: m.width },
+        ]),
+      );
+
+      // edges anchor on the marks' top/bottom within a year and bow slightly
+      // left so they never cut through stacked nodes or labels
+      const edgePath = (e) => {
+        const s = pos.get(e.source);
+        const t = pos.get(e.target);
+        if (s.x === t.x) {
+          const dir = t.y > s.y ? 1 : -1;
+          const y0 = s.y + dir * 12;
+          const y1 = t.y - dir * 15;
+          const bow = Math.min(44, 14 + Math.abs(t.y - s.y) * 0.18);
+          return `M${s.x},${y0} C${s.x - bow},${y0 + dir * 8} ${s.x - bow},${y1 - dir * 8} ${s.x},${y1}`;
+        }
+        const x0 = s.x + 12;
+        const x1 = t.x - 15;
+        const mx = (x0 + x1) / 2;
+        return `M${x0},${s.y} C${mx},${s.y} ${mx},${t.y} ${x1},${t.y}`;
       };
 
       const defs = svg.append('defs');
@@ -282,6 +315,9 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
         .data(edges)
         .join('path')
         .attr('class', 'gg-edge')
+        // cross-branch relations whisper by default — hover reveals them
+        // (the 3D view below is where cross-branch structure gets the stage)
+        .classed('gg-xbranch', (e) => e.crossBranch)
         .attr('d', edgePath)
         .attr('stroke', (e) => EDGE_STYLE[e.type].stroke)
         .attr('stroke-width', (e) => EDGE_STYLE[e.type].width)
@@ -292,7 +328,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       const nodesG = g.append('g');
       const nodeSel = nodesG
         .selectAll('g.gg-node')
-        .data(data.nodes)
+        .data(nodes)
         .join('g')
         .attr('class', 'gg-node')
         .attr('transform', (n) => `translate(${pos.get(n.id).x},${pos.get(n.id).y})`)
@@ -325,19 +361,22 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       // hover/click target larger than the mark
       nodeSel.append('circle').attr('r', 17).attr('fill', 'transparent');
 
-      // ---- hover focus-mode: dim everything but the direct relations
+      // ---- hover focus-mode: dim everything but the direct relations;
+      // edges touching the focus get `gg-lit`, which un-fades cross-branch ones
       function focusNode(id) {
         nodeSel.classed('gg-dim', (n) => !nbr.get(id)?.has(n.id));
         edgeSel.classed('gg-dim', (e) => e.source !== id && e.target !== id);
-        edgeHit.classed('gg-dim', () => false);
+        edgeSel.classed('gg-lit', (e) => e.source === id || e.target === id);
       }
       function focusEdge(edge) {
         nodeSel.classed('gg-dim', (n) => n.id !== edge.source && n.id !== edge.target);
         edgeSel.classed('gg-dim', (e) => e !== edge);
+        edgeSel.classed('gg-lit', (e) => e === edge);
       }
       function unfocus() {
         nodeSel.classed('gg-dim', false);
         edgeSel.classed('gg-dim', false);
+        edgeSel.classed('gg-lit', false);
       }
 
       nodeSel
@@ -445,15 +484,20 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
         d3.zoomIdentity.translate(M.left * (1 - fitK), M.top * (1 - fitK)).scale(fitK),
       );
 
-      // ---- legend
+      // ---- legend: branch chips double as the filter (click = toggle,
+      // alt-click = solo). Rendered from state on every pass, so theme and
+      // filter changes both repaint them correctly.
       const sample = bColor(data.branches[0]?.id);
       document.getElementById('gg-legend').innerHTML = `
         <div class="legend-group">
-          ${data.branches
-            .map(
-              (b) =>
-                `<span class="chip"><span class="dot" style="background:${bColor(b.id)}"></span>${esc(b.title)}</span>`,
-            )
+          ${filterable
+            .map((b) => {
+              const on = activeBranches.has(b.id);
+              const dot = on
+                ? `background:${bColor(b.id)}`
+                : `background:transparent;box-shadow:inset 0 0 0 2px ${bColor(b.id)}`;
+              return `<button type="button" class="chip gg-chip${on ? '' : ' gg-chip-off'}" data-branch="${esc(b.id)}" aria-pressed="${on}" title="${esc(STR.filterHint)}"><span class="dot" style="${dot}"></span>${esc(b.title)}</button>`;
+            })
             .join('')}
         </div>
         <div class="legend-group">
@@ -478,8 +522,8 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
         edgeSel.classed('gg-future', (e) => future(e.source) || future(e.target));
         edgeHit.classed('gg-future', (e) => future(e.source) || future(e.target));
         applyTransform(lastT); // refresh year-label dimming
-        const visible = data.nodes.filter((n) => yearIdx.get(n.year) <= currentIdx).length;
-        yearReadout.textContent = `${years[currentIdx]} · ${visible}/${data.nodes.length}`;
+        const visible = nodes.filter((n) => yearIdx.get(n.year) <= currentIdx).length;
+        yearReadout.textContent = years.length ? `${years[currentIdx]} · ${visible}/${nodes.length}` : '';
       };
       applyYear();
     }
@@ -515,19 +559,72 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
         ${e.note ? `<p>${esc(e.note)}</p>` : ''}`;
     };
 
+    let g3d = null; // set once the 3D chunk loads; filter applies retroactively
+
+    // ---- branch filter wiring: one handler on the legend (its chips are
+    // re-created by every renderTimeline pass, so listeners can't live on them)
+    document.getElementById('gg-legend').addEventListener('click', (ev) => {
+      const chip = ev.target.closest('.gg-chip');
+      if (!chip) return;
+      const id = chip.dataset.branch;
+      if (ev.altKey) {
+        const soloed = activeBranches.size === 1 && activeBranches.has(id);
+        activeBranches = soloed ? allBranchIds() : new Set([id]);
+      } else if (activeBranches.has(id)) {
+        activeBranches.delete(id);
+        if (activeBranches.size === 0) activeBranches = allBranchIds(); // never an empty graph
+      } else {
+        activeBranches.add(id);
+      }
+      applyFilter();
+    });
+
+    function syncTables() {
+      document.querySelectorAll('.branch-table[data-branch]').forEach((el) => {
+        el.hidden = !activeBranches.has(el.dataset.branch);
+      });
+    }
+
+    function applyFilter() {
+      stopPlay();
+      // keep the YEAR, not the slider index — the years array changes shape
+      const keepYear = view.years[currentIdx] ?? Infinity;
+      view = computeView();
+      const idx = view.years.findLastIndex((y) => y <= keepYear);
+      currentIdx = idx === -1 ? 0 : idx;
+      yearRange.max = String(Math.max(0, view.years.length - 1));
+      yearRange.value = String(currentIdx);
+      renderTimeline();
+      syncTables();
+      g3d?.setFilter(activeBranches);
+      // shareable URL: ?branches=… (dropped when everything is on)
+      const params = new URLSearchParams(location.search);
+      if (activeBranches.size === filterable.length) params.delete('branches');
+      else
+        params.set(
+          'branches',
+          filterable.filter((b) => activeBranches.has(b.id)).map((b) => b.id).join(','),
+        );
+      const qs = params.toString();
+      history.replaceState(null, '', `${location.pathname}${qs ? `?${qs}` : ''}${location.hash}`);
+    }
+
     renderTimeline();
+    syncTables(); // the page may have opened with ?branches=…
     window.addEventListener('themechange', renderTimeline);
 
     // ---- 3D view, always on below the timeline
     const el3d = document.getElementById('gg-3d');
     const info3d = document.getElementById('gg-3d-info');
     document.getElementById('gg-3d-loading').textContent = STR.loading3d;
-    document.getElementById('gg-3d-wrap').style.height = `${Math.max(560, Math.min(viewH, 820))}px`;
+    document.getElementById('gg-3d-wrap').style.height = `${Math.max(560, Math.min(view.viewH, 820))}px`;
     try {
       const { mount3D } = await import('../lib/graph3d.js');
       el3d.innerHTML = '';
-      const g3d = mount3D({ el: el3d, infoEl: info3d, data, root, strings: STR });
+      g3d = mount3D({ el: el3d, infoEl: info3d, data, root, strings: STR });
       window.addEventListener('themechange', () => g3d.applyTheme());
+      // catch up with a filter chosen before the 3D chunk finished loading
+      if (activeBranches.size !== filterable.length) g3d.setFilter(activeBranches);
     } catch (err) {
       el3d.innerHTML = `<p class="gg-3d-loading">${esc(STR.error3d)}</p>`;
       console.error('genealogy 3d:', err);
@@ -539,8 +636,9 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   .genealogy {
     margin: 1.5rem 0;
     padding: 1rem;
-    /* break out of the 1100px container: the graphs deserve the screen */
-    width: min(96vw, 1680px);
+    /* break out of the 1100px container — wider than the text column,
+       but not wall-to-wall */
+    width: min(92vw, 1380px);
     position: relative;
     left: 50%;
     transform: translateX(-50%);
@@ -567,8 +665,18 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     transition: opacity 0.25s;
   }
 
+  /* cross-branch relations whisper by default; hovering a node they touch
+     adds .gg-lit and brings them back (rule order matters: dim > lit > xbranch) */
+  .gg-edge.gg-xbranch {
+    opacity: 0.14;
+  }
+
   .gg-node.gg-dim {
     opacity: 0.12;
+  }
+
+  .gg-edge.gg-lit {
+    opacity: 0.9;
   }
 
   .gg-edge.gg-dim {
@@ -685,6 +793,31 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     gap: 0.4em;
     font-size: 0.8rem;
     color: var(--muted);
+  }
+
+  /* branch chips are buttons (the filter) — undo the button chrome, keep the chip look */
+  button.gg-chip {
+    appearance: none;
+    background: none;
+    border: none;
+    font-family: inherit;
+    padding: 0.1rem 0.3rem;
+    margin: -0.1rem -0.3rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+
+  button.gg-chip:hover {
+    color: var(--ink);
+  }
+
+  .gg-chip.gg-chip-off {
+    opacity: 0.55;
+  }
+
+  .gg-chip.gg-chip-off:hover {
+    opacity: 0.85;
   }
 
   .gg-timebar {
