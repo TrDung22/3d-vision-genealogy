@@ -1,0 +1,27 @@
+title: "End-to-end Recovery of Human Shape and Pose"
+short: "HMR (2017)"
+authors: "Angjoo Kanazawa, Michael J. Black, David W. Jacobs, Jitendra Malik"
+venue: "CVPR 2018"
+year: 2017
+branch: single-image-3d
+lane: human
+links:
+  arxiv: "https://arxiv.org/abs/1712.06584"
+  project: "https://akanazawa.github.io/hmr/"
+problem: >
+  3D human pose AND shape from one photo. Optimization-based fitting
+  (SMPLify) is slow and brittle, and images paired with 3D bodies barely
+  exist — especially in the wild.
+solution: >
+  Regress SMPL parameters directly with a network, end to end: a 2D keypoint
+  reprojection loss replaces 3D supervision, and an adversarial prior
+  (a discriminator over real body parameters) keeps the regressed bodies
+  anatomically plausible. Parametric human recovery becomes a single
+  feed-forward pass on in-the-wild images.
+limitations: >
+  The output is a naked, smooth parametric mannequin — no clothing, no hair
+  (the opening PIFu drove through) — hands and face are rigid, and in-the-wild
+  robustness under occlusion and rare poses remained the lineage's standing
+  debt for years.
+relations: []
+status: seed

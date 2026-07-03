@@ -1,0 +1,38 @@
+title: "SAM 3D: 3Dfy Anything in Images"
+short: "SAM 3D Objects (2025)"
+authors: "Meta Superintelligence Labs (SAM 3D team)"
+venue: "CVPR 2026 (Best Paper Honorable Mention)"
+year: 2025
+branch: single-image-3d
+lane: generative
+links:
+  arxiv: "https://arxiv.org/abs/2511.16624"
+  code: "https://github.com/facebookresearch/sam-3d-objects"
+  project: "https://ai.meta.com/research/publications/sam-3d-3dfy-anything-in-images/"
+problem: >
+  The entire generative wave lived in a curated-object bubble: clean
+  backgrounds, full visibility, Objaverse-style assets. Real photographs have
+  clutter, occlusion, and spatial LAYOUT — and no model handled them.
+solution: >
+  A generative model predicting geometry, texture, and scene layout for
+  objects in one real-world image, robust to occlusion. The key move is on
+  data, not architecture: synthetic pretraining aligned with real-image
+  annotation at scale through a human- and model-in-the-loop data engine.
+  Wins human preference tests at ≥5:1 against prior single-image methods on
+  real scenes; released openly alongside SAM 3 (Nov 2025), with SAM 3D Body
+  as its sibling for humans.
+limitations: >
+  On clean studio-style inputs it only ties the best asset generators
+  (the win is the wild, not the lab); layout is per-object placement, not
+  full scene understanding; and the data engine's cost is repeatable only at
+  big-lab scale.
+relations:
+  - node: trellis2024
+    type: fixes
+    note: >
+      Repairs the wave's curated-world assumption: from Objaverse-style clean
+      objects to occluded, cluttered real photographs — with layout — by
+      fixing the data problem rather than the architecture. On isolated clean
+      objects it merely ties TRELLIS; the gap opens exactly where the old
+      assumption breaks.
+status: seed

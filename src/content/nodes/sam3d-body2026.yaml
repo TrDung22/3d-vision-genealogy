@@ -1,0 +1,44 @@
+title: "SAM 3D Body: Robust Full-Body Human Mesh Recovery"
+short: "SAM 3D Body (2026)"
+authors: "Meta Superintelligence Labs (SAM 3D Body team)"
+venue: "arXiv 2026"
+year: 2026
+branch: single-image-3d
+lane: human
+links:
+  arxiv: "https://arxiv.org/abs/2602.15989"
+  project: "https://ai.meta.com/research/publications/sam-3d-body-robust-full-body-human-mesh-recovery/"
+  mhr: "https://facebookresearch.github.io/MHR/"
+problem: >
+  The HMR lineage got accurate on benchmarks but stayed brittle where photos
+  actually live: unusual poses, occlusion, partial crops. And the SMPL-era
+  rigs it regresses entangle skeleton with surface shape — awkward for the
+  graphics pipelines the meshes are destined for.
+solution: >
+  Human mesh recovery as a promptable foundation model: an encoder-decoder
+  that accepts masks and 2D-keypoint prompts (the SAM interaction recipe),
+  trained on a data engine at Meta scale, regressing a NEW parametric rig —
+  Momentum Human Rig (MHR) — that decouples skeletal structure from surface
+  shape. State-of-the-art robustness on in-the-wild full-body benchmarks;
+  model and rig both open-sourced.
+limitations: >
+  Still a parametric mannequin: clothing, hair, and surface detail — the
+  debt PIFu named in 2019 — remain outside the representation; single-frame
+  (no temporal consistency); and follow-up audits are already probing its
+  anthropometric fidelity.
+relations:
+  - node: hmr2017
+    type: fixes
+    note: >
+      Directly repairs the standing weakness of the regression lineage HMR
+      founded — in-the-wild brittleness under occlusion, crops, and rare
+      poses — with a data engine and promptable interface instead of a new
+      loss, and swaps SMPL for the skeleton/shape-decoupled MHR rig.
+  - node: sam3d-objects2025
+    type: builds-on
+    note: >
+      The second head of the SAM 3D family: same promptable-foundation-model
+      recipe and data-engine-over-architecture philosophy, aimed at humans —
+      shipped together in Nov 2025, papered separately (the award went to the
+      Objects paper).
+status: seed

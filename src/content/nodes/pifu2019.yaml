@@ -21,6 +21,13 @@ limitations: >
   anatomy under hard poses — the two debts PIFuHD and the hybrid line each
   took on. Its pixel-aligned trick, though, escaped the human niche entirely.
 relations:
+  - node: hmr2017
+    type: fixes
+    note: >
+      Repairs the naked-mannequin ceiling of parametric regression: HMR
+      outputs a smooth SMPL body, PIFu reconstructs the clothed SURFACE —
+      hair, garments, unseen back — that the parametric line had defined
+      out of the problem.
   - node: occnet2019
     type: independent
     note: >
