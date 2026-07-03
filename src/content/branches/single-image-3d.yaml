@@ -10,23 +10,18 @@ description: >
   kind of prior and pays a different price.
 i18n:
   vi:
-    tagline: "Dựng 3D từ một ảnh duy nhất — bài toán ill-posed nguyên thủy của thị giác máy"
+    tagline: "Dựng 3D từ một tấm ảnh duy nhất — bài toán ill-posed nguyên thủy của thị giác máy"
     description: >
-      Một ảnh 2D tương thích với vô số cảnh 3D — bài toán không có nghiệm duy nhất,
-      nên toàn bộ lịch sử của nhánh này là lịch sử của các loại PRIOR: từ prior vật lý
-      (shape-from-shading), qua prior thống kê học từ dữ liệu (Make3D, Eigen), prior
-      hình học gắn trong biểu diễn (voxel → point → mesh → hàm ẩn), đến prior
-      internet-scale mượn từ các mô hình sinh ảnh (Zero-1-to-3, LRM). Mỗi thế hệ đổi
-      một loại prior và trả một cái giá khác nhau.
+      Một tấm ảnh 2D có thể ứng với vô số cảnh 3D khác nhau — bài toán không có
+      nghiệm duy nhất, nên trọn lịch sử của nhánh này là lịch sử của PRIOR: từ
+      prior vật lý (shape-from-shading), sang prior thống kê học từ dữ liệu
+      (Make3D, Eigen), prior hình học cài sẵn trong cách biểu diễn (voxel →
+      point cloud → mesh → hàm ẩn), cho đến prior cỡ internet mượn từ các mô
+      hình sinh ảnh (Zero-1-to-3, LRM). Thế hệ nào cũng thay một loại prior
+      mới — và trả một cái giá kiểu mới.
   ja:
     tagline: "一枚の画像からの3D復元 — マシンビジョン最古の不良設定問題"
-    description: >
-      一枚の2D画像は無数の3Dシーンと矛盾しません — 解が一意に定まらない問題です。
-      だからこの枝の歴史は、まるごと「事前知識 (prior) の歴史」になります: 物理的 prior
-      (shape-from-shading) から、データから学ぶ統計的 prior (Make3D、Eigen)、表現に
-      埋め込まれた幾何学的 prior (ボクセル → 点群 → メッシュ → 陰関数)、そして画像生成
-      モデルから借りたインターネット規模の prior (Zero-1-to-3、LRM) へ。世代ごとに
-      prior の種類を替え、それぞれ異なる代償を払ってきました。
+    description: "一枚の2D画像に合致する3Dシーンは無数にあります。解が一つに定まらない — だからこの枝の歴史は、まるごと「事前知識 (prior) の歴史」です。物理の prior (shape-from-shading) から、データに学ぶ統計の prior (Make3D、Eigen)、表現そのものに焼き込まれた幾何の prior (ボクセル → 点群 → メッシュ → 陰関数)、そして画像生成モデルから借りてきたインターネット規模の prior (Zero-1-to-3、LRM) へ。世代が替わるたびに prior の種類が替わり、支払う代償も替わってきました。"
 color: "#3987e5" # categorical slot 1 (dark)
 order: 1
 status: active

@@ -20,20 +20,20 @@ const root = `${base}/${lang}`;
       lang === 'vi' ? (
         <>
           <p>
-            Khi bắt đầu học 3D computer vision, tôi đứng trước hai lựa chọn quen thuộc: đọc
-            survey (được taxonomy, mất câu chuyện) hoặc lần theo awesome-list (được kho chứa,
-            mất trình tự). Cả hai đều trả lời <em>"có những gì"</em> — nhưng không trả lời câu
-            hỏi mà người học thực sự cần:
+            Ngày mới học 3D computer vision, tôi đứng trước hai lựa chọn quen thuộc: đọc
+            survey (được bộ khung phân loại, nhưng mất câu chuyện) hoặc lần theo awesome-list
+            (được cái kho, nhưng mất trình tự). Cả hai đều trả lời được
+            <em>"có những gì"</em> — còn câu hỏi người học thực sự cần thì không:
             <strong>vì sao cái này ra đời, và nó sửa cái gì của cái trước nó?</strong>
           </p>
           <p>
-            Paper B tồn tại vì paper A thất bại ở một chỗ cụ thể. Một hướng đi bị cả cộng đồng
-            bỏ quên hàng chục năm rồi bất ngờ hồi sinh. Hai nhóm chưa từng gặp nhau cùng chạm
-            một ý tưởng trong cùng một năm. Chính kết cấu nhân quả đó là thứ tôi cứ đánh rơi
-            mãi — nên site này ghi lại 3D vision như một <em>gia phả</em>: mỗi công trình là
-            một node, mỗi cạnh là một món nợ trí tuệ có tên gọi rõ ràng.
+            Paper B tồn tại vì paper A vấp ngã ở một chỗ rất cụ thể. Có hướng đi bị cả cộng
+            đồng bỏ quên mấy chục năm rồi bỗng sống dậy. Có hai nhóm chưa từng gặp nhau mà
+            cùng một năm nghĩ ra cùng một ý tưởng. Chính cái mạch nhân quả ấy là thứ tôi cứ
+            để tuột mất — nên site này ghi lại 3D vision như một <em>gia phả</em>: mỗi công
+            trình là một node, và mỗi cạnh ghi rõ công trình này nợ công trình kia điều gì.
           </p>
-          <h2>Từ vựng</h2>
+          <h2>Bộ từ vựng</h2>
           <ul>
             {Object.entries(EDGE_TYPES).map(([key, meta]) => (
               <li>
@@ -42,70 +42,73 @@ const root = `${base}/${lang}`;
             ))}
           </ul>
           <p>
-            Chuyện <em>fixes</em> và <em>builds on</em> thì survey nào cũng kể. Ba loại quan hệ
-            còn lại mới là thứ các tài liệu tuyến tính đánh rơi — và chúng là linh hồn của dự án:
+            Chuyện <em>fixes</em> với <em>builds on</em> thì survey nào cũng kể rồi. Ba loại
+            quan hệ còn lại mới là thứ lối kể một mạch thẳng luôn làm rơi dọc đường — và chúng
+            chính là linh hồn của dự án:
           </p>
           <p>
-            <strong>Independent.</strong> OccNet và DeepSDF cùng chạm vào một ý tưởng — biểu
-            diễn ẩn liên tục — tại cùng CVPR 2019, không ai kế thừa ai (tính cả IM-Net và PIFu
-            là bốn). Khi một ý tưởng chín, nó tự rụng ở nhiều nơi một lúc; câu hỏi thú vị là
-            <em>điều kiện gì</em> làm nó chín.
+            <strong>Independent.</strong> OccNet và DeepSDF cùng mang một ý tưởng — biểu diễn
+            ẩn liên tục — đến cùng một kỳ CVPR 2019, mà không bên nào hay biết về bên nào
+            (thêm IM-Net và PIFu nữa là đủ bộ tứ). Ý tưởng khi đã chín thì tự rụng ở nhiều
+            nơi cùng lúc; câu hỏi đáng giá là <em>điều kiện nào</em> đã làm nó chín.
           </p>
           <p>
-            <strong>Challenges.</strong> Năm 2019, Tatarchenko và cộng sự chứng minh các mạng
-            single-view 3D thực chất đang làm... recognition trá hình: một baseline tra cứu đơn
-            giản đánh bại tất cả. Năm năm sau, Banani và cộng sự đặt lại đúng câu hỏi khó chịu
-            đó cho kỷ nguyên foundation model. Tiến bộ không chỉ là cộng dồn — có những paper
-            vĩ đại vì chúng chỉ ra cả một nhánh đang tự lừa mình.
+            <strong>Challenges.</strong> Năm 2019, Tatarchenko và cộng sự chứng minh rằng các
+            mạng dựng 3D từ một ảnh thực ra đang chơi trò... nhận dạng trá hình: một baseline
+            tra cứu đơn giản thắng tất cả. Năm năm sau, Banani và cộng sự đem đúng câu hỏi khó
+            chịu ấy ra hỏi lại kỷ nguyên foundation model. Tiến bộ không chỉ là chuyện cộng
+            dồn — có những paper vĩ đại vì chúng chỉ ra cả một nhánh đang tự lừa mình.
           </p>
           <p>
-            <strong>Revives.</strong> Shape-from-shading của Horn (1970) bị quên nửa thế kỷ,
-            được SIRFS đánh thức năm 2012, rồi lại bị làn sóng CNN che khuất. "Dòng chính" chỉ
-            là một trong nhiều con đường — và những nhánh mồ côi có thói quen quay lại khi
-            không ai ngờ tới.
+            <strong>Revives.</strong> Shape-from-shading của Horn (1970) bị bỏ quên tròn nửa
+            thế kỷ, được SIRFS đánh thức năm 2012, rồi lại chìm nghỉm dưới làn sóng CNN.
+            "Dòng chính" chỉ là một trong nhiều con đường — và nhánh mồ côi có cái tật quay
+            về đúng lúc chẳng ai ngờ tới.
           </p>
           <h2>Bắt đầu từ đâu</h2>
           <p>
             Nhánh đầu tiên là <a href={`${root}/branches/single-image-3d/`}>single-image 3D</a>
-            — dựng 3D từ một tấm ảnh, bài toán ill-posed nguyên thủy của thị giác máy. Tôi chọn
-            nó vì lịch sử của nó là một vòng cung khép kín đẹp đẽ: mọi thế hệ đều xoay quanh
-            một câu hỏi duy nhất, <strong>"prior đến từ đâu?"</strong> Prior vật lý (Horn),
-            prior thống kê (Make3D), prior học sâu in-domain (Eigen), prior đa-dataset (MiDaS),
-            prior của biểu diễn (voxel → point → mesh → hàm ẩn), và cuối cùng là prior
-            internet-scale mượn từ các mô hình sinh ảnh (Zero-1-to-3, LRM, và mọi thứ sau đó).
+            — dựng 3D từ một tấm ảnh duy nhất, bài toán ill-posed nguyên thủy của thị giác
+            máy. Tôi chọn nó vì lịch sử của nó khép lại thành một vòng tròn đẹp lạ lùng: thế
+            hệ nào cũng xoay quanh đúng một câu hỏi — <strong>"prior đến từ đâu?"</strong>
+            Prior vật lý (Horn), prior thống kê (Make3D), prior học sâu trong miền (Eigen),
+            prior đa dataset (MiDaS), prior nằm ngay trong cách biểu diễn (voxel → point cloud
+            → mesh → hàm ẩn), và sau cùng là prior cỡ internet mượn từ các mô hình sinh ảnh
+            (Zero-1-to-3, LRM, và mọi thứ theo sau).
           </p>
           <p>
-            Đồ thị ở <a href={`${root}/`}>trang chủ</a> là bản đồ của câu chuyện đó. Mỗi node
-            sẽ dần dày lên thành bài phân tích riêng trên blog; các nhánh khác (multi-view
-            geometry, neural rendering đầy đủ, sinh 3D quy mô cảnh) sẽ được ghép vào cây theo
-            thời gian — mô hình dữ liệu được thiết kế để việc ghép đó chỉ là thêm file.
+            Đồ thị ở <a href={`${root}/`}>trang chủ</a> chính là tấm bản đồ của câu chuyện ấy.
+            Mỗi node sẽ dần dày lên thành một bài phân tích riêng trên blog; những nhánh khác
+            (multi-view geometry, sinh 3D cỡ cảnh) sẽ được ghép dần vào cây — mô hình dữ liệu
+            được thiết kế để mỗi lần ghép chỉ là thêm vài file.
           </p>
           <h2>Nguyên tắc biên soạn</h2>
           <ul>
             <li>Mỗi node phải trả lời đủ ba câu: <em>bài toán gì — ý tưởng gì — để lại giới hạn gì</em>.</li>
-            <li>Mỗi cạnh phải chỉ ra được <em>điểm yếu cụ thể</em> mà công trình sau khắc phục — không nói chung chung.</li>
-            <li>Trung thực lịch sử hơn danh tiếng: công trình ít trích dẫn nhưng đúng vai trò vẫn có chỗ.</li>
+            <li>Mỗi cạnh phải gọi tên được <em>điểm yếu cụ thể</em> mà công trình sau khắc phục — không nói chung chung cho xong.</li>
+            <li>Tôn trọng lịch sử hơn chạy theo danh tiếng: công trình ít được trích dẫn nhưng đúng vai trò vẫn có chỗ đứng.</li>
           </ul>
           <p class="muted">
-            Phát hiện node còn thiếu, quan hệ sai, hay một nhánh mồ côi chưa ai kể? Repo mở
-            trên GitHub — issue và PR luôn được chào đón.
+            Thấy thiếu node, sai quan hệ, hay biết một nhánh mồ côi chưa ai kể? Repo mở trên
+            GitHub — issue và PR luôn được chào đón.
           </p>
         </>
       ) : lang === 'ja' ? (
         <>
           <p>
-            3Dコンピュータビジョンを学び始めたとき、目の前にはお馴染みの二つの選択肢がありました:
-            サーベイを読むか(分類は得られるが、物語を失う)、awesome-list を漁るか(倉庫は得られるが、
-            順序を失う)。どちらも<em>「何が存在するか」</em>には答えてくれますが、学習者が本当に
-            必要としている問い —
-            <strong>なぜこれが生まれ、その前にあったものの何を直したのか?</strong> — には答えてくれません。
+            3Dコンピュータビジョンを学びはじめたとき、目の前にはお決まりの二つの選択肢が
+            ありました。サーベイを読むか — 分類は手に入るけれど、物語を失う。awesome-list
+            を漁るか — 倉庫は手に入るけれど、順序を失う。どちらも<em>「何があるか」</em>には
+            答えてくれます。でも、学ぶ側が本当に知りたいのは
+            <strong>「なぜこれが生まれ、前にあった何を直したのか」</strong>のほうです。
           </p>
           <p>
-            論文Bは、論文Aがある特定の場所で失敗したからこそ存在します。ある方向性がコミュニティ全体から
-            何十年も見捨てられ、突然よみがえる。出会ったこともない二つのグループが、同じ年に同じアイデアに
-            触れる。私が何度も見失っていたのは、この因果の手触りでした — だからこのサイトは3Dビジョンを
-            <em>系譜</em>として記録します: すべての研究はノードであり、すべてのエッジは明示的な名前を持つ
-            知的負債です。
+            論文Bが存在するのは、論文Aがどこか特定の一点でつまずいたからです。ある方向が
+            コミュニティごと何十年も忘れ去られ、ある日ふとよみがえる。面識のない二つの
+            グループが、同じ年に同じアイデアへ手を伸ばす。私が何度も見失っていたのは、
+            この因果の織り目でした。だからこのサイトは、3Dビジョンを<em>系譜</em>として
+            記録します。研究はどれも一つのノードに、「誰が誰に何を負っているか」はどれも
+            名前つきのエッジになります。
           </p>
           <h2>語彙</h2>
           <ul>
@@ -116,51 +119,57 @@ const root = `${base}/${lang}`;
             ))}
           </ul>
           <p>
-            <em>fixes</em> と <em>builds on</em> の物語はどのサーベイも語ります。線形な解説が
-            取りこぼすのは残りの三つ — そしてそれこそがこのプロジェクトの魂です:
+            <em>fixes</em> と <em>builds on</em> の物語なら、どのサーベイも語ってくれます。
+            一本道の解説がこぼしてしまうのは残りの三つ — そしてそれこそが、この
+            プロジェクトの魂です。
           </p>
           <p>
-            <strong>Independent.</strong> OccNet と DeepSDF は同じアイデア — 連続的な陰関数表現 —
-            に同じ CVPR 2019 で到達しました。どちらも他方から派生していません(IM-Net と PIFu を
-            含めれば四つ子です)。アイデアが熟せば、あちこちで同時に落ちる。面白い問いは、
-            <em>どんな条件が</em>それを熟させたのか、です。
+            <strong>Independent.</strong> OccNet と DeepSDF は、同じアイデア — 連続的な
+            陰関数表現 — を同じ CVPR 2019 に持ち込みました。どちらかがどちらかから
+            生まれたわけではありません(IM-Net と PIFu を数えれば四つ子です)。熟した
+            アイデアは、あちこちで同時に実を落とす。面白いのは「<em>どんな条件が</em>
+            それを熟させたのか」という問いのほうです。
           </p>
           <p>
-            <strong>Challenges.</strong> 2019年、Tatarchenko らは single-view 3D 再構成ネットワークが
-            実際には…変装した認識をやっていることを証明しました: 単純な検索ベースラインが全部に勝ったのです。
-            5年後、Banani らは foundation model の時代に同じ不都合な問いを投げかけました。進歩は積み重ね
-            だけではありません — ある枝全体が自分を騙していたことを示すからこそ偉大な論文もあるのです。
+            <strong>Challenges.</strong> 2019年、Tatarchenko らは single-view 3D 再構成
+            ネットワークの正体が…変装した「認識」だったことを示しました。単純な検索
+            ベースラインが、全員に勝ってしまったのです。その5年後、Banani らは同じ意地悪な
+            問いを foundation model の時代に投げ直しました。進歩は積み上げだけでは
+            ありません。ある枝がまるごと思い込みの上に立っていたと示したからこそ、偉大に
+            なった論文もあるのです。
           </p>
           <p>
-            <strong>Revives.</strong> Horn の shape-from-shading (1970) は半世紀忘れられ、2012年に
-            SIRFS が呼び覚まし、その後 CNN の波に再びかき消されました。「主流」は数ある道の一つに
-            すぎません — そして孤児になった枝は、誰も予想しないときに帰ってくるものです。
+            <strong>Revives.</strong> Horn の shape-from-shading (1970) は半世紀のあいだ
+            忘れられ、2012年に SIRFS が呼び覚まし、そのまま CNN の波にまた飲み込まれました。
+            「主流」は数ある道の一本にすぎません。そして孤児になった枝は、誰も予想して
+            いないときに帰ってくるものです。
           </p>
           <h2>どこから始めるか</h2>
           <p>
             最初の枝は <a href={`${root}/branches/single-image-3d/`}>single-image 3D</a> —
-            一枚の写真からの3D復元、マシンビジョン最古の不良設定問題です。選んだ理由は、その歴史が
-            美しく閉じた弧を描くから: どの世代も
-            <strong>「事前知識 (prior) はどこから来るのか?」</strong>というただ一つの問いを周回しています。
-            物理的 prior (Horn)、統計的 prior (Make3D)、ドメイン内深層 prior (Eigen)、マルチデータセット
-            prior (MiDaS)、表現の prior (ボクセル → 点群 → メッシュ → 陰関数)、そして画像生成モデルから
-            借りたインターネット規模の prior (Zero-1-to-3、LRM、それ以降のすべて)。
+            一枚の写真から3Dを起こす、マシンビジョン最古の不良設定問題です。選んだ理由は、
+            その歴史がきれいに一つの円を描いて閉じるから。どの世代も、
+            <strong>「prior はどこから来るのか」</strong>というただ一つの問いのまわりを
+            回っています。物理の prior (Horn)、統計の prior (Make3D)、ドメイン内の深層
+            prior (Eigen)、マルチデータセットの prior (MiDaS)、表現そのものに宿る prior
+            (ボクセル → 点群 → メッシュ → 陰関数)、そして最後に、画像生成モデルから
+            借りてきたインターネット規模の prior (Zero-1-to-3、LRM、その後のすべて)。
           </p>
           <p>
-            <a href={`${root}/`}>ホームページ</a>のグラフはその物語の地図です。各ノードは徐々にブログの
-            分析記事へと厚みを増し、他の枝(多視点幾何、ニューラルレンダリング全体、シーン規模の生成)も
-            時間とともに接ぎ木されていきます — データモデルは、接ぎ木がファイルを足すだけで済むように
-            設計されています。
+            <a href={`${root}/`}>ホーム</a>のグラフは、その物語の地図です。ノードは
+            少しずつ、ブログの分析記事へと厚みを増していきます。ほかの枝(多視点幾何、
+            シーン規模の生成)も時間をかけて木に接がれていきます — データモデルは、その
+            接ぎ木が「ファイルを足すだけ」で済むように設計してあります。
           </p>
           <h2>編集方針</h2>
           <ul>
-            <li>すべてのノードは三つの問いに答える: <em>何の問題 — どんなアイデア — どんな限界を残したか</em>。</li>
-            <li>すべてのエッジは、後の研究が修復した<em>具体的な弱点</em>を指す — 曖昧な表現はなし。</li>
-            <li>名声よりも歴史的誠実さ: 引用が少なくても役割を果たした研究には席がある。</li>
+            <li>すべてのノードは三つの問いに答えること。<em>何の問題か — どんなアイデアか — どんな限界を残したか</em>。</li>
+            <li>すべてのエッジは、後の研究が直した<em>具体的な弱点</em>を名指しすること。ぼかした言い方はしない。</li>
+            <li>名声より、歴史への誠実さ。引用が少なくても、役割を果たした研究には席があります。</li>
           </ul>
           <p class="muted">
-            欠けているノード、間違った関係、誰も語っていない孤児の枝を見つけたら — リポジトリは GitHub で
-            公開されています。Issue や PR はいつでも歓迎です。
+            欠けたノード、間違った関係、まだ誰も語っていない孤児の枝を見つけたら —
+            リポジトリは GitHub にあります。Issue も PR も、いつでも歓迎です。
           </p>
         </>
       ) : (
@@ -227,9 +236,9 @@ const root = `${base}/${lang}`;
           <p>
             The graph on the <a href={`${root}/`}>home page</a> is the map of that story. Each
             node will gradually thicken into its own analysis on the blog; other branches
-            (multi-view geometry, full neural rendering, scene-scale generation) will be
-            grafted onto the tree over time — the data model is designed so that grafting is
-            nothing more than adding files.
+            (multi-view geometry, scene-scale generation) will be grafted onto the tree over
+            time — the data model is designed so that grafting is nothing more than adding
+            files.
           </p>
           <h2>Editorial principles</h2>
           <ul>

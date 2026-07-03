@@ -14,26 +14,19 @@ i18n:
   vi:
     tagline: "Biểu diễn cảnh bằng mạng nơ-ron + render khả vi — hạ tầng của cả một thế hệ"
     description: >
-      Nhánh này là câu chuyện về một phương trình học được cách chạy ngược:
-      tích phân volume rendering 1984, hồi sinh dưới dạng renderer khả vi, biến
-      chính cảnh 3D thành tham số huấn luyện được. Lịch sử của nó là chuỗi cú
-      lắc con lắc — light field không cần hình học (1996) đối đầu proxy hình học;
-      biểu diễn nơ-ron (SRN, NeRF) đối đầu "dị giáo" bỏ mạng nơ-ron (Plenoxels);
-      ray marching đối đầu phép splatting 2001 được hồi sinh (3DGS); và giờ là
-      cấu trúc 3D tường minh đối đầu transformer thuần túy render mà không cần
-      bất kỳ máy móc 3D nào (LVSM). Mỗi cú lắc đánh đổi cùng ba loại tiền tệ:
-      chất lượng, tốc độ, và lượng hình học con người phải lén đưa vào mô hình.
+      Nhánh này là chuyện một phương trình học được cách chạy ngược: tích phân
+      volume rendering năm 1984 sống dậy dưới dạng renderer khả vi, biến chính
+      cảnh 3D thành thứ huấn luyện được. Lịch sử của nó là một con lắc văng qua
+      văng lại: light field không cần hình học (1996) đấu với proxy hình học;
+      biểu diễn nơ-ron (SRN, NeRF) đấu với phe "dị giáo" bỏ hẳn mạng nơ-ron
+      (Plenoxels); ray marching đấu với phép splatting năm 2001 được đào lại
+      (3DGS); và bây giờ là cấu trúc 3D tường minh đấu với transformer thuần
+      render mà chẳng cần chút máy móc 3D nào (LVSM). Lần nào con lắc văng,
+      cuộc mặc cả cũng xoay quanh đúng ba thứ: chất lượng, tốc độ, và lượng
+      hình học con người phải lén tuồn vào mô hình.
   ja:
     tagline: "ニューラルネットによるシーン表現 + 微分可能レンダリング — 一世代まるごとのインフラ"
-    description: >
-      この枝は、ひとつの方程式が逆向きに走ることを学んだ物語です: 1984年の
-      ボリュームレンダリング積分が微分可能レンダラーとして蘇り、シーンそのものを
-      学習可能なパラメータに変えました。その歴史は振り子の往復です — 幾何を使わない
-      ライトフィールド (1996) 対 幾何プロキシ、ニューラル表現 (SRN、NeRF) 対
-      「ネットワーク不要」の異端 (Plenoxels)、レイマーチング 対 蘇った2001年の
-      スプラッティング数学 (3DGS)、そして今は明示的な3D構造 対 3Dの機構を一切
-      持たない純粋トランスフォーマー (LVSM)。どの往復も、品質・速度・モデルに
-      持ち込む人手の幾何の量という同じ三つの通貨を交換しています。
+    description: "この枝は、ひとつの方程式が逆向きに走ることを覚えた物語です。1984年のボリュームレンダリング積分が微分可能レンダラーとして蘇り、シーンそのものが学習できるパラメータになりました。その歴史は振り子の往復です。幾何いらずのライトフィールド (1996) 対 幾何プロキシ。ニューラル表現 (SRN、NeRF) 対「ネットワーク不要」という異端 (Plenoxels)。レイマーチング 対 掘り起こされた2001年のスプラッティング (3DGS)。そして今は、明示的な3D構造 対 3Dの仕掛けを一切持たない純粋トランスフォーマー (LVSM)。振り子がどちらへ振れても、天秤に載るのはいつも同じ三つ — 品質、速度、そして人間の幾何知識をどれだけモデルに忍び込ませるか。"
 color: "#199e70" # categorical slot 2 (dark)
 order: 2
 status: active
