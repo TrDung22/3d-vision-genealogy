@@ -29,10 +29,46 @@ relations:
       explain — positional encoding — and gives it a theory, turning an
       empirical trick into reusable infrastructure for every coordinate
       network since.
+    i18n:
+      vi:
+        note: >
+          Từ chính đội NeRF: rút ra đúng thành phần NeRF không giải thích nổi
+          — positional encoding — và trao cho nó một lý thuyết, biến một mẹo
+          thực nghiệm thành hạ tầng tái dùng được cho mọi mạng tọa độ từ đó
+          về sau.
+      ja:
+        note: "NeRF チーム自身の手による — NeRF が説明できなかった唯一の部品 (positional encoding) を取り出し、理論を与えました。経験則のトリックが、以後あらゆる座標ネットワークの再利用可能なインフラになったのです。"
   - node: siren2020
     type: independent
     note: >
       Submitted the same week in June 2020, one campus apart: Stanford fixed
       spectral bias inside the network (sine activations); Berkeley fixed it
       at the input (Fourier mapping). Two doors into the same room.
+    i18n:
+      vi:
+        note: >
+          Nộp cùng một tuần tháng 6/2020, cách nhau một campus: Stanford sửa
+          thiên kiến phổ bên trong mạng (kích hoạt sine); Berkeley sửa nó ở
+          đầu vào (ánh xạ Fourier). Hai cánh cửa vào cùng một căn phòng.
+      ja:
+        note: "2020年6月の同じ週に、キャンパス一つ隔てて投稿されました。Stanford はスペクトルバイアスをネットワークの内側で (正弦活性化)、Berkeley は入力側で (Fourier マッピング) 直した。同じ部屋への二つの扉です。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      NeRF chạy được chỉ nhờ một mẹo bí ẩn — "positional encoding" ánh xạ tọa
+      độ qua các hàm sin trước khi vào MLP. Vì sao nó chạy, và không có nó thì
+      sao?
+    solution: >
+      Một phân tích neural-tangent-kernel: MLP trơn hội tụ chậm đến vô dụng ở
+      tần số cao (thiên kiến phổ); một ánh xạ đặc trưng Fourier ngẫu nhiên
+      biến NTK thành một kernel dừng chỉnh được, mở khóa chi tiết sắc. Mẹo trở
+      thành lý thuyết — với một cái núm cho băng thông tần số.
+    limitations: >
+      Băng thông là toàn cục và chỉnh tay: thấp quá thì nhòe, cao quá thì
+      nhiễu. Răng cưa xuyên tỉ lệ chưa được xử lý (đúng khe hở cho mip-NeRF),
+      và mã hóa dày đặc — hash grid sau này làm nó thưa và nhanh.
+  ja:
+    problem: "NeRF が動くのは、謎めいたハック一つのおかげです — MLP に入れる前に座標を正弦関数へ写す「positional encoding」。なぜそれが効くのか、そして無ければどうなるのか?"
+    solution: "neural-tangent-kernel の解析です。素の MLP は高周波では実用にならないほど遅く収束します (スペクトルバイアス)。ランダム Fourier 特徴のマッピングが NTK を調整可能な定常カーネルに変え、鋭いディテールを解き放ちました。ハックが理論になった — 周波数帯域のつまみ付きで。"
+    limitations: "帯域はグローバルかつ手動調整です。低すぎればぼやけ、高すぎればノイズが乗る。スケールをまたぐエイリアシングは未処理のまま (mip-NeRF の入口)、符号化も密でした — ハッシュグリッドがのちにそれを疎で高速にします。"

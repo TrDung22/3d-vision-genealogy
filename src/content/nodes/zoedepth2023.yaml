@@ -27,4 +27,30 @@ relations:
       Repairs exactly the debt MiDaS chose to take on: absolute scale — by
       appending a metric-bins module to the relative-depth backbone instead of
       retraining from scratch.
+    i18n:
+      vi:
+        note: >
+          Sửa đúng món nợ MiDaS chủ động vay: tỉ lệ tuyệt đối — bằng cách gắn
+          module metric-bins vào backbone độ sâu tương đối thay vì huấn luyện
+          lại từ đầu.
+      ja:
+        note: "MiDaS が承知の上で背負った借金 — 絶対スケール — を直します。ゼロから学習し直すのではなく、相対深度バックボーンに metric-bins モジュールを継ぎ足して。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      Món nợ metric của mạch MiDaS: độ sâu tương đối khái quát tốt nhưng không
+      nói được "bao nhiêu mét" — chặn đường SLAM, AR và robotics.
+    solution: >
+      Cây cầu tương đối→metric đầu tiên được dùng rộng rãi: pre-train backbone
+      tương đối kiểu MiDaS trên hỗn hợp dataset, rồi gắn thêm đầu metric-bins
+      gọn nhẹ fine-tune trên dữ liệu metric — giữ được khái quát hóa mà vẫn
+      khôi phục tỉ lệ tuyệt đối.
+    limitations: >
+      Đầu metric vẫn bị trói vào miền (đầu indoor/outdoor riêng kèm bộ định
+      tuyến), và độ chính xác tỉ lệ tụt khi gặp camera khác với lúc fine-tune
+      — sự nhập nhằng tiêu cự mới được vá tạm, chưa được giải.
+  ja:
+    problem: "MiDaS 路線の metric の借金 — 相対深度は汎化しても「何メートルか」は言えず、SLAM、AR、ロボティクスの手前で立ち往生します。"
+    solution: "相対から metric への、広く使われた最初の橋です。MiDaS 流の相対バックボーンをデータセット混合で事前学習し、その上に軽量な metric-bins ヘッドを載せて metric データで微調整 — 汎化を保ったまま絶対スケールを取り戻しました。"
+    limitations: "metric ヘッドは依然ドメインに縛られ (屋内用と屋外用のヘッド + ルーター)、微調整で見なかったカメラではスケール精度が落ちます — 焦点距離の曖昧性は、解かれたのではなく応急処置されただけです。"

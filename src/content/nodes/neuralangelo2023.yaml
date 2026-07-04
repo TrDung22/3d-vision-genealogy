@@ -29,10 +29,46 @@ relations:
       high frequencies weren't a modeling limit but an optimization one —
       analytic hash-grid gradients starve neighboring cells of signal, and
       numerical gradients feed them.
+    i18n:
+      vi:
+        note: >
+          Sửa cái trần độ trung thực của SDF volume rendering: những tần số
+          cao thiếu vắng không phải giới hạn mô hình mà là giới hạn tối ưu —
+          gradient giải tích của hash grid bỏ đói tín hiệu ở các ô lân cận,
+          còn gradient số thì nuôi chúng.
+      ja:
+        note: "SDF ボリュームレンダリングの忠実度の天井を直します。欠けていた高周波は、モデリングの限界ではなく最適化の限界でした — ハッシュグリッドの解析的勾配は隣接セルの信号を飢えさせ、数値的勾配がそれを養うのです。"
   - node: instantngp2022
     type: builds-on
     note: >
       Same NVIDIA lineage: the hash encoding built for speed is
       re-disciplined for accuracy — capacity borrowed from the efficiency
       line to serve geometry.
+    i18n:
+      vi:
+        note: >
+          Cùng dòng dõi NVIDIA: phép mã hóa hash dựng cho tốc độ được rèn lại
+          cho độ chính xác — năng lực mượn từ mạch hiệu năng để phục vụ hình
+          học.
+      ja:
+        note: "同じ NVIDIA の血統です。速度のために作られたハッシュ符号化を、精度のために鍛え直しました — 効率化の路線から借りた容量を、幾何のために使うのです。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      SDF volume rendering (NeuS/VolSDF) cho ra bề mặt kín nước nhưng TRƠN
+      NHẴN — hoa văn, gạch, phù điêu bị mài mòn hết. Hash grid có đủ năng lực
+      cho chi tiết đó, nhưng gradient của chúng quá cục bộ để tối ưu SDF ổn
+      định.
+    solution: >
+      Làm cho hash grid biết điều: gradient số (sai phân hữu hạn) trải tín
+      hiệu học ra các ô hash lân cận, cộng lịch trình độ cong từ thô đến mịn
+      — dựng lại bề mặt chỉ từ video RGB với chi tiết trước đây phải cần máy
+      quét laser.
+    limitations: >
+      Vẫn tối ưu hàng giờ mỗi cảnh và vẫn cần chụp dày; bề mặt phản chiếu và
+      không texture vẫn làm rối loss quang học.
+  ja:
+    problem: "SDF ボリュームレンダリング (NeuS/VolSDF) は水密だが滑らかな表面を作ります — 装飾、レンガ、レリーフはすべて削り落とされる。ハッシュグリッドにはその細部を表す容量がありますが、その勾配は局所的すぎて安定した SDF 最適化には向きません。"
+    solution: "ハッシュグリッドを行儀よくさせます。学習信号を隣接するハッシュセルへ広げる数値的 (有限差分) 勾配と、粗から密への曲率スケジューリング — RGB 映像だけから、かつてはレーザースキャナーを要した細部を持つ表面を再構成します。"
+    limitations: "依然としてシーンごとに数時間の最適化と密な撮影が必要で、反射的・テクスチャのない表面は今も測光ロスを混乱させます。"

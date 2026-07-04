@@ -29,4 +29,34 @@ relations:
       Repairs the depth localization weakness directly: replaces learned
       epipolar-attention depth with explicit cost-volume matching, showing
       a classical MVS prior beats a learned one at a tenth the parameters.
+    i18n:
+      vi:
+        note: >
+          Sửa trực tiếp điểm yếu định vị độ sâu: thay độ sâu bằng epipolar
+          attention học được bằng khớp cost-volume tường minh, cho thấy một
+          prior MVS cổ điển thắng một prior học được với một phần mười tham
+          số.
+      ja:
+        note: "深度の位置決めの弱点を直接直します。学習された epipolar アテンションの深度を、明示的な cost-volume マッチングに置き換え — 古典的な MVS prior が、10分の1のパラメータで学習された prior に勝つことを示しました。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      pixelSplat đoán độ sâu từ epipolar attention học được — xác suất, ngốn
+      tham số, và các Gaussian của nó rơi vào những chỗ sai về hình học mà
+      loss quang học không sửa hết được.
+    solution: >
+      Đem lại cái cổ điển: một COST VOLUME quét mặt phẳng (con ngựa kéo của
+      multi-view stereo) cho khớp đặc trưng xuyên góc nhìn tường minh để đặt
+      tâm Gaussian. Hình học và bề ngoài tốt hơn pixelSplat với ít hơn 10 lần
+      tham số, suy luận nhanh gấp đôi, và khái quát hóa xuyên dataset mạnh hơn
+      hẳn.
+    limitations: >
+      Quét mặt phẳng giả định biết trước pose, có phần chồng lấn gần-hướng-
+      trước và một dải độ sâu; mở rộng lên nhiều view và baseline rộng làm
+      căng cost volume — và LVSM chẳng mấy chốc hỏi liệu ngay cả bộ máy hình
+      học này có cần thiết không.
+  ja:
+    problem: "pixelSplat は学習された epipolar アテンションから深度を推測します — 確率的で、パラメータを食い、そのガウシアンは測光ロスでは直しきれない幾何的に誤った場所に落ちます。"
+    solution: "古典を呼び戻します。平面掃引の cost volume (多視点ステレオの主役) が、ガウシアン中心のための明示的な視点間の特徴マッチングを与える。pixelSplat より良い幾何と見た目を、10分の1のパラメータ、2倍速い推論、そしてはるかに強いデータセット横断の汎化とともに。"
+    limitations: "平面掃引は既知のポーズ、ほぼ前向きの重なり、そして深度範囲を前提とします。多視点や広ベースラインへのスケールは cost volume に負担をかけ — LVSM はまもなく、この幾何の仕掛けさえ必要なのかと問いかけました。"

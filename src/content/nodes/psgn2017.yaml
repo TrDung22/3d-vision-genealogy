@@ -23,4 +23,28 @@ relations:
     note: >
       Repairs exactly the O(n³) voxel ceiling by changing the output data
       structure to a point set.
+    i18n:
+      vi:
+        note: >
+          Sửa đúng cái trần O(n³) của voxel bằng cách đổi cấu trúc dữ liệu đầu
+          ra sang tập điểm.
+      ja:
+        note: "出力のデータ構造を点集合に替えることで、ボクセルの O(n³) という天井をまさにその一点で直しました。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      Phá cái trần độ phân giải của voxel: biểu diễn hình khối 3D mà chi phí
+      không phình lên theo lập phương khi cần thêm chi tiết.
+    solution: >
+      Sinh thẳng đám mây điểm từ ảnh; đóng góp bền nhất là cặp loss Chamfer /
+      EMD xử lý được bản chất không-thứ-tự của tập điểm — về sau thành đồ nghề
+      tiêu chuẩn của cả cộng đồng point cloud.
+    limitations: >
+      Điểm rời rạc không mang topology bề mặt: không render trực tiếp được,
+      không in 3D được, không có pháp tuyến. Là "bụi 3D" chứ chưa phải một vật
+      thể.
+  ja:
+    problem: "ボクセルの解像度の天井を破る — ディテールを増やしてもコストが3乗で爆発しない3D形状表現を。"
+    solution: "画像から点群を直接生成します。いちばん息の長い貢献は、点集合の順序のなさを扱う Chamfer / EMD というロスの組 — のちに点群コミュニティ全体の標準装備になりました。"
+    limitations: "離散的な点は表面のトポロジーを持ちません。直接レンダリングも3Dプリントもできず、法線もない。物体というより「3Dの塵」です。"

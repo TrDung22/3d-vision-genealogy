@@ -25,3 +25,24 @@ limitations: >
   debt for years.
 relations: []
 status: seed
+i18n:
+  vi:
+    problem: >
+      Pose LẪN hình dáng người 3D từ một tấm ảnh. Fit bằng tối ưu (SMPLify)
+      vừa chậm vừa dễ gãy, còn ảnh có cặp cơ thể 3D thì gần như không tồn tại
+      — nhất là ảnh đời thường.
+    solution: >
+      Hồi quy thẳng tham số SMPL bằng mạng, end-to-end: loss chiếu lại
+      keypoint 2D thay cho giám sát 3D, và một prior đối kháng (discriminator
+      trên tham số cơ thể thật) giữ cho cơ thể hồi quy ra hợp giải phẫu. Khôi
+      phục người tham số hóa thành một lượt feed-forward duy nhất trên ảnh
+      đời thường.
+    limitations: >
+      Đầu ra là một ma-nơ-canh tham số trơn nhẵn, khỏa thân — không quần áo,
+      không tóc (đúng khe hở PIFu lao vào) — tay và mặt cứng đờ, còn độ bền
+      trước che khuất và pose hiếm vẫn là món nợ treo của dòng dõi này trong
+      nhiều năm.
+  ja:
+    problem: "一枚の写真から、3D人体の姿勢と体型の両方を。最適化ベースのフィッティング (SMPLify) は遅くて脆く、3D人体とペアになった画像はほとんど存在しません — 野外の写真ならなおさらです。"
+    solution: "SMPL パラメータをネットワークで直接、end-to-end に回帰します。3Dの教師信号の代わりに2Dキーポイントの再投影ロスを使い、敵対的 prior (実在の人体パラメータ上の discriminator) が回帰された体を解剖学的に妥当な範囲に保つ。パラメトリックな人体復元が、野外画像への一回のフィードフォワードになりました。"
+    limitations: "出力はつるりとした裸のパラメトリック・マネキンです — 服も髪もない (まさに PIFu が突いた穴)。手と顔は硬直したままで、遮蔽や珍しい姿勢への頑健さは、この血統に長年積み残された借金でした。"

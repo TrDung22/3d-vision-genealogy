@@ -34,6 +34,15 @@ relations:
       founded — in-the-wild brittleness under occlusion, crops, and rare
       poses — with a data engine and promptable interface instead of a new
       loss, and swaps SMPL for the skeleton/shape-decoupled MHR rig.
+    i18n:
+      vi:
+        note: >
+          Sửa trực diện điểm yếu kinh niên của dòng hồi quy mà HMR khai sinh —
+          độ giòn ngoài đời thực trước che khuất, ảnh cắt dở và pose hiếm —
+          bằng data engine và giao diện promptable thay vì một loss mới, đồng
+          thời thay SMPL bằng rig MHR đã tách xương khỏi hình dáng.
+      ja:
+        note: "HMR が興した回帰血統の積年の弱点 — 遮蔽、切れた構図、珍しい姿勢での野外の脆さ — を直します。新しいロスではなくデータエンジンとプロンプト可能なインターフェースで。さらに SMPL を、骨格と体型を切り離した MHR リグに置き換えました。"
   - node: sam3d-objects2025
     type: builds-on
     note: >
@@ -41,4 +50,36 @@ relations:
       recipe and data-engine-over-architecture philosophy, aimed at humans —
       shipped together in Nov 2025, papered separately (the award went to the
       Objects paper).
+    i18n:
+      vi:
+        note: >
+          Cái đầu thứ hai của gia đình SAM 3D: cùng công thức
+          foundation-model-promptable và triết lý data-engine-hơn-kiến-trúc,
+          nhắm vào con người — ship cùng nhau tháng 11/2025, viết paper riêng
+          (giải thưởng về tay paper Objects).
+      ja:
+        note: "SAM 3D ファミリーの第二の顔です。同じプロンプト可能な基盤モデルのレシピと「アーキテクチャよりデータエンジン」の哲学を、人間に向けました — 2025年11月に同時リリース、論文は別々 (賞は Objects 論文の手に)。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      Dòng dõi HMR đạt độ chính xác trên benchmark nhưng vẫn giòn ở đúng nơi
+      ảnh chụp thật sự sống: pose lạ, che khuất, ảnh cắt dở. Và các rig thời
+      SMPL mà nó hồi quy thì trộn lẫn bộ xương với hình dáng bề mặt — vướng
+      víu cho các pipeline đồ họa vốn là đích đến của mesh.
+    solution: >
+      Khôi phục mesh người dưới dạng foundation model promptable: một
+      encoder-decoder nhận prompt là mask và keypoint 2D (công thức tương tác
+      của SAM), huấn luyện trên data engine cỡ Meta, hồi quy một rig tham số
+      MỚI — Momentum Human Rig (MHR) — tách cấu trúc xương khỏi hình dáng bề
+      mặt. Độ lì state-of-the-art trên các benchmark toàn thân ngoài đời thực;
+      mô hình lẫn rig đều mã nguồn mở.
+    limitations: >
+      Vẫn là một ma-nơ-canh tham số: quần áo, tóc và chi tiết bề mặt — món nợ
+      PIFu gọi tên từ 2019 — vẫn nằm ngoài biểu diễn; đơn khung hình (không
+      nhất quán thời gian); và các cuộc kiểm toán hậu kỳ đã bắt đầu soi độ
+      trung thực nhân trắc học của nó.
+  ja:
+    problem: "HMR の血統はベンチマークでは正確になりましたが、写真が実際に生きている場所 — 珍しい姿勢、遮蔽、切れた構図 — では脆いままでした。しかも回帰する SMPL 時代のリグは骨格と表面形状が絡み合っていて、メッシュの行き先であるグラフィックスパイプラインには扱いにくいのです。"
+    solution: "人体メッシュ復元を、プロンプト可能な基盤モデルとして作り直します。マスクと2Dキーポイントのプロンプトを受け付ける encoder-decoder (SAM 流の対話レシピ) を Meta 規模のデータエンジンで学習し、骨格構造と表面形状を切り離した新しいパラメトリックリグ — Momentum Human Rig (MHR) — を回帰します。野外の全身ベンチマークで最高水準の頑健さ。モデルもリグもオープンソースです。"
+    limitations: "それでもパラメトリックなマネキンです。服、髪、表面のディテール — 2019年に PIFu が名指しした借金 — は表現の外のまま。単一フレームで時間的一貫性はなく、その人体計測学的な忠実さを問う追跡検証もすでに始まっています。"

@@ -26,4 +26,31 @@ relations:
       Parallel routes to camera-aware metric depth: Metric3D normalizes the
       camera away (canonical space, intrinsics required), UniDepth predicts the
       camera from the image itself. Same debt, opposite philosophies.
+    i18n:
+      vi:
+        note: >
+          Hai lối song song đến độ sâu metric có ý thức về camera: Metric3D
+          chuẩn hóa cho camera biến mất (không gian canonical, cần tham số
+          nội), UniDepth đoán camera từ chính tấm ảnh. Cùng món nợ, triết lý
+          ngược chiều.
+      ja:
+        note: "カメラを意識した metric 深度への並行ルートです。Metric3D はカメラを正規化して消し (canonical 空間、内部パラメータ必須)、UniDepth は画像そのものからカメラを予測する。同じ借金に、正反対の哲学。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      Độ sâu metric mà không cần ai khai báo camera: các hướng kiểu Metric3D
+      vẫn giả định có sẵn tham số nội lúc suy luận.
+    solution: >
+      Dự đoán luôn cả camera: một module camera tự-prompt ước lượng biểu diễn
+      camera dày đặc để điều kiện hóa bộ giải mã độ sâu, cùng cách tham số hóa
+      đầu ra dạng cầu (pseudo-spherical) gỡ rối camera khỏi độ sâu — metric 3D
+      vạn năng từ một tấm ảnh trần.
+    limitations: >
+      Tự ước lượng camera thành mắt xích yếu mới — sai số trong tham số nội
+      suy ra rò thẳng vào tỉ lệ metric, và chi tiết mịn vẫn đuối hơn các
+      foundation model độ sâu tương đối.
+  ja:
+    problem: "カメラを教えてもらわずに metric 深度を — Metric3D 系のアプローチは、推論時に内部パラメータが手に入ることをまだ前提にしています。"
+    solution: "カメラそのものを予測します。self-promptable なカメラモジュールが密なカメラ表現を推定して深度デコーダを条件付け、擬似球面のパラメータ化でカメラと深度を解きほぐす — 素の画像一枚からの万能 metric 3D です。"
+    limitations: "カメラの自己推定が新しい最弱リンクになります — 推定した内部パラメータの誤差は metric スケールへ直に漏れ、微細なディテールでは相対深度の基盤モデルに今も後れを取ります。"

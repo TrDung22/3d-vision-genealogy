@@ -24,4 +24,28 @@ relations:
     note: >
       Settles two debts at once: the voxel resolution ceiling and the mesh
       topology lock, by moving to function space.
+    i18n:
+      vi:
+        note: >
+          Trả một lúc hai món nợ — trần độ phân giải của voxel và khóa topology
+          của mesh — bằng cách dời sang không gian hàm.
+      ja:
+        note: "関数空間へ移ることで、ボクセルの解像度の天井とメッシュのトポロジー固定という二つの借りを一度に清算しました。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      Thoát khỏi thế lưỡng nan voxel-hay-mesh: một cách biểu diễn 3D không bị
+      khóa vào độ phân giải, cũng chẳng bị khóa vào topology.
+    solution: >
+      Đổi hẳn câu hỏi: đừng chọn cấu trúc dữ liệu nữa — hãy học một HÀM. Mạng
+      học một hàm ẩn liên tục f(điểm, ảnh) → xác suất "nằm trong vật thể";
+      mesh được trích xuất sau đó bằng marching cubes ở bất kỳ độ phân giải
+      nào bạn muốn.
+    limitations: >
+      Vẫn sống trong thế giới đóng ShapeNet với vật thể đã chuẩn hóa tư thế;
+      mỗi điểm truy vấn tốn một lượt forward — trích xuất bề mặt chậm.
+  ja:
+    problem: "ボクセルかメッシュかというジレンマからの脱出 — 解像度にもトポロジーにも縛られない3D表現を。"
+    solution: "問いの立て方ごと変えます。データ構造を選ぶのをやめて、関数を学ぶのです。ネットワークは連続的な陰関数 f(点, 画像) →「物体の内側にある確率」を学習し、メッシュは後から marching cubes で、好きな解像度で取り出せます。"
+    limitations: "それでも、姿勢を正規化した物体が並ぶ閉じた ShapeNet の世界の住人です。クエリ点一つごとに forward 一回 — 表面の抽出は遅いのです。"

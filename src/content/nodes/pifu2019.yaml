@@ -28,10 +28,48 @@ relations:
       outputs a smooth SMPL body, PIFu reconstructs the clothed SURFACE —
       hair, garments, unseen back — that the parametric line had defined
       out of the problem.
+    i18n:
+      vi:
+        note: >
+          Sửa cái trần ma-nơ-canh-khỏa-thân của hồi quy tham số: HMR xuất một
+          cơ thể SMPL trơn nhẵn, PIFu dựng lại BỀ MẶT có quần áo — tóc, trang
+          phục, tấm lưng không nhìn thấy — thứ mà mạch tham số đã tự định
+          nghĩa ra khỏi bài toán.
+      ja:
+        note: "パラメトリック回帰の「裸のマネキン」という天井を直します。HMR が出すのは滑らかな SMPL ボディ、PIFu が再構成するのは服を着た表面 — 髪、衣服、見えない背中 — パラメトリック路線が問題の定義から外していたものです。"
   - node: occnet2019
     type: independent
     note: >
       The fourth member of the 2019 implicit wave (Occupancy Networks, DeepSDF, IM-Net,
       PIFu — same year, independent): PIFu's twist is pixel-ALIGNED features,
       and a target the others avoided — people in clothes.
+    i18n:
+      vi:
+        note: >
+          Thành viên thứ tư của làn sóng hàm ẩn 2019 (Occupancy Networks,
+          DeepSDF, IM-Net, PIFu — cùng năm, độc lập): cú twist của PIFu là đặc
+          trưng căn chỉnh THEO PIXEL, và một mục tiêu các bên kia đều né —
+          con người mặc quần áo.
+      ja:
+        note: "2019年の陰関数の波、その第四のメンバーです (Occupancy Networks、DeepSDF、IM-Net、PIFu — 同じ年に、独立に)。PIFu のひねりはピクセル整列の特徴、そして他の誰もが避けた標的 — 服を着た人間でした。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      Số hóa một con người mặc quần áo — tóc, trang phục, tấm lưng bị khuất —
+      từ một tấm ảnh, trong khi mô hình cơ thể tham số (SMPL) chỉ đưa nổi một
+      ma-nơ-canh khỏa thân.
+    solution: >
+      Hàm ẩn căn chỉnh theo pixel: thay vì một mã latent toàn cục, mỗi điểm 3D
+      được tra vào đặc trưng ảnh ngay tại hình chiếu 2D của nó — cưới ý tưởng
+      hàm ẩn với bằng chứng ảnh căn chỉnh không gian, dựng lại cả bề mặt LẪN
+      texture, kể cả vùng không nhìn thấy.
+    limitations: >
+      Bị chặn bởi độ phân giải đầu vào (mất chi tiết mịn), không có prior cơ
+      thể nên gãy giải phẫu ở pose khó — hai món nợ mà PIFuHD và mạch lai mỗi
+      bên nhận một. Nhưng mẹo pixel-aligned của nó thì vượt hẳn ra khỏi ngách
+      con người.
+  ja:
+    problem: "服を着た人間を — 髪も、衣服も、隠れた背中も — 一枚の写真からデジタル化する。パラメトリック人体モデル (SMPL) が差し出せるのは裸のマネキンだけ、という状況で。"
+    solution: "ピクセル整列の陰関数です。グローバルな潜在コード一つではなく、各3D点をその2D投影位置の画像特徴と照らし合わせる — 陰関数のアイデアを空間的に整列した画像の証拠と結びつけ、見えない領域まで含めて表面とテクスチャの両方を再構成します。"
+    limitations: "入力解像度に縛られ (細部が失われる)、体の prior が無いので難しい姿勢では解剖が崩れます — PIFuHD とハイブリッド路線がそれぞれ引き受けた二つの借金です。ただしピクセル整列の技そのものは、人間というニッチを完全に飛び出しました。"

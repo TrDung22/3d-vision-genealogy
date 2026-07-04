@@ -31,4 +31,35 @@ relations:
       Moves the goalposts of the whole depth lane: from ever-better depth maps
       to full point maps with camera geometry built in — with a supervision
       scheme the depth-map paradigm structurally couldn't express.
+    i18n:
+      vi:
+        note: >
+          Dời cột gôn của cả lane độ sâu: từ bản đồ độ sâu ngày càng đẹp sang
+          point map trọn vẹn với hình học camera cài sẵn — bằng một cơ chế
+          giám sát mà paradigm depth-map về cấu trúc không thể diễn đạt.
+      ja:
+        note: "深度レーン全体のゴールポストを動かしました。ひたすら良くなる深度マップから、カメラ幾何を内蔵した完全な点マップへ — 深度マップというパラダイムには構造的に書き表せなかった教師信号とともに。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      Bản đồ độ sâu chưa phải là hình học: nó giấu mất camera, trộn lẫn tiêu
+      cự với hình khối, và phải có tham số nội hậu kỳ mới thành được đám mây
+      điểm ai cũng dùng.
+    solution: >
+      Đổi chính mục tiêu dự đoán: hồi quy POINT MAP bất biến affine — trọn
+      hình học 3D kèm FOV khôi phục được, trong một lượt forward — huấn luyện
+      bằng phép giám sát căn chỉnh affine tối ưu mà mạch depth-map không có.
+      MoGe-2 (NeurIPS 2025) thêm nhánh tỉ lệ toàn cục tách rời cho đầu ra
+      metric và pipeline tinh lọc dữ liệu biết lọc-và-bù nhãn LiDAR/SfM nhiễu,
+      tuyên bố lần đầu thắng đồng thời cả hình học tương đối, tỉ lệ metric lẫn
+      chi tiết mịn.
+    limitations: >
+      Vẫn đơn ảnh và tĩnh; mẹo bất biến affine chỉ hoãn chứ không xóa câu hỏi
+      tỉ lệ (nhánh metric là một đầu riêng); và tuyên bố "ba trong một" tự
+      công bố dựa trên trung bình benchmark, chưa phải một lý thuyết mới về sự
+      nhập nhằng.
+  ja:
+    problem: "深度マップはまだ幾何ではありません。カメラを隠し、焦点距離と形状を絡ませ、誰もが使える点群にするには後付けの内部パラメータが要るのです。"
+    solution: "予測ターゲットそのものを替えます。アフィン不変の点マップを回帰する — 一回の forward で完全な3D幾何と復元可能な FOV が同時に手に入り、深度マップ路線には書けなかった最適なアフィン整列の教師信号で学習します。MoGe-2 (NeurIPS 2025) は metric 出力用に切り離したグローバルスケール分岐と、ノイズだらけの LiDAR/SfM ラベルを選別・補完するデータ精錬パイプラインを加え、相対幾何・metric スケール・微細ディテールの三つを初めて同時に取ったと主張します。"
+    limitations: "依然として単一画像かつ静的です。アフィン不変の技はスケール問題を先送りするだけで消しはせず (metric 分岐は別ヘッド)、自己申告の「三つ同時」もベンチマーク平均の話であって、曖昧性への新しい理論ではありません。"

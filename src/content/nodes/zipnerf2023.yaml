@@ -28,10 +28,45 @@ relations:
       Repairs the hash grid's blind spot — aliasing under scale change —
       which no amount of NGP's speed could hide on the 360 benchmark's
       varying camera distances.
+    i18n:
+      vi:
+        note: >
+          Sửa điểm mù của hash grid — răng cưa khi tỉ lệ đổi — thứ mà tốc độ
+          của NGP dù nhanh mấy cũng không giấu nổi trên các khoảng cách camera
+          thay đổi của benchmark 360.
+      ja:
+        note: "ハッシュグリッドの死角 — スケール変化でのエイリアシング — を直します。360 ベンチマークの変化するカメラ距離の前では、NGP の速さをもってしても隠しきれなかった弱点です。"
   - node: mipnerf360-2021
     type: builds-on
     note: >
       The same authors port their cone-tracing machinery onto the rival
       camp's data structure — the moment the "MLP vs grid" war ended in
       synthesis rather than victory.
+    i18n:
+      vi:
+        note: >
+          Cùng nhóm tác giả bê bộ máy cone-tracing của mình sang cấu trúc dữ
+          liệu của phe đối thủ — khoảnh khắc cuộc chiến "MLP đấu grid" kết thúc
+          bằng hợp nhất chứ không phải bằng chiến thắng.
+      ja:
+        note: "同じ著者たちが、自分たちの cone-tracing の機構をライバル陣営のデータ構造へ移植しました — 「MLP 対グリッド」の戦争が、勝利ではなく統合で終わった瞬間です。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      Đến 2023 cả ngành chia đôi: mạch mip có chất lượng nhưng huấn luyện hàng
+      giờ; mạch grid (Instant-NGP) huấn luyện vài phút nhưng răng cưa — hash
+      grid không có khái niệm dấu chân pixel, nên đổi tỉ lệ là lung linh.
+    solution: >
+      Hòa giải hai kỳ phùng địch thủ: multisample hash grid bên trong mỗi chóp
+      cụt hình nón (xấp xỉ tích phân trên footprint) kèm giảm trọng đặc trưng
+      theo tỉ lệ. Khử răng cưa của Mip-NeRF 360 ở tốc độ Instant-NGP — sai số
+      giảm tới 76% so với baseline grid.
+    limitations: >
+      Vẫn tối ưu theo từng cảnh và vẫn ray marching — render thời gian thực
+      vẫn ngoài tầm với, đúng cái khe hở mà 3D Gaussian Splatting lao qua bốn
+      tháng sau.
+  ja:
+    problem: "2023年、分野は二つに割れていました。mip 路線は品質はあるが学習に数時間。グリッド路線 (Instant-NGP) は数分で学習できるがエイリアスする — ハッシュグリッドにはピクセルの footprint という概念がなく、スケールが変わると揺らめくのです。"
+    solution: "二人の好敵手を仲直りさせます。各円錐台の内側でハッシュグリッドをマルチサンプルし (footprint 上の積分を近似)、スケールに応じて特徴を減衰させる。Mip-NeRF 360 のアンチエイリアスを Instant-NGP の速度で — グリッドのベースラインに対して誤差を最大76%削減しました。"
+    limitations: "依然としてシーンごとの最適化で、依然としてレイマーチング — リアルタイムレンダリングは手の届かないまま。それこそ、4か月後に 3D Gaussian Splatting がくぐり抜けた、まさにその隙間です。"

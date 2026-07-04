@@ -26,6 +26,14 @@ relations:
       Inherits the continuous implicit-MLP representation from the
       DeepSDF/Occupancy Networks line and adds differentiable volume rendering — the bridge
       between two branches of this genealogy.
+    i18n:
+      vi:
+        note: >
+          Thừa hưởng biểu diễn hàm-ẩn-MLP liên tục từ mạch DeepSDF/Occupancy
+          Networks và thêm vào volume rendering khả vi — nhịp cầu nối hai
+          nhánh của gia phả này.
+      ja:
+        note: "DeepSDF / Occupancy Networks 路線から連続的な陰関数 MLP 表現を受け継ぎ、そこへ微分可能ボリュームレンダリングを加えました — この系譜の二つの枝をつなぐ橋です。"
   - node: srn2019
     type: builds-on
     note: >
@@ -33,16 +41,59 @@ relations:
       differentiable ray marching — but replaces the fragile LEARNED
       marcher with fixed volume rendering and adds positional encoding,
       curing the blur.
+    i18n:
+      vi:
+        note: >
+          Giữ ván cược cốt lõi của SRN — cảnh là một MLP tọa độ render bằng
+          ray marching khả vi — nhưng thay marcher HỌC ĐƯỢC mong manh bằng
+          volume rendering cố định và thêm positional encoding, chữa dứt cái
+          nhòe.
+      ja:
+        note: "SRN の核心となる賭け — シーンを座標 MLP とし、微分可能なレイマーチングで描く — を保ちつつ、脆い「学習された」marcher を固定のボリュームレンダリングに置き換え、positional encoding を加えて、ぼやけを治しました。"
   - node: neuralvolumes2019
     type: builds-on
     note: >
       Takes Neural Volumes' differentiable volume rendering machinery and
       swaps the memory-bound voxel grid for a continuous MLP — resolution
       no longer costs cubic memory.
+    i18n:
+      vi:
+        note: >
+          Lấy bộ máy volume rendering khả vi của Neural Volumes và thay lưới
+          voxel nghẽn bộ nhớ bằng một MLP liên tục — độ phân giải không còn
+          tốn bộ nhớ theo lập phương nữa.
+      ja:
+        note: "Neural Volumes の微分可能ボリュームレンダリングの機構を受け取り、メモリに縛られたボクセルグリッドを連続 MLP に置き換えました — 解像度がもう3乗のメモリを食わなくなったのです。"
   - node: llff2019
     type: builds-on
     note: >
       Same group, next year: LLFF's forward-facing captures and benchmark
       carry over, but the layered light-field machinery is replaced
       wholesale by one optimized radiance field.
+    i18n:
+      vi:
+        note: >
+          Cùng nhóm, năm kế tiếp: các bản chụp hướng-về-trước và benchmark của
+          LLFF được giữ lại, nhưng cả bộ máy light field phân lớp bị thay
+          trọn bằng một radiance field được tối ưu.
+      ja:
+        note: "同じグループの翌年です。LLFF の前向き撮影とベンチマークは引き継ぎつつ、層状ライトフィールドの機構はまるごと、最適化された一つの放射輝度場に置き換えられました。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      Novel view synthesis: render một cảnh từ các góc nhìn mới khi đã có MỘT
+      TẬP ảnh có pose — không phải bài toán một-ảnh, nhưng số phận của nó gắn
+      chặt với nhánh đó.
+    solution: >
+      Một MLP ánh xạ (vị trí, hướng nhìn) → màu + mật độ, huấn luyện chỉ từ
+      ảnh qua volume rendering khả vi — một biểu diễn cảnh liên tục, chân thực
+      như ảnh, gói gọn trong vài MB trọng số.
+    limitations: >
+      Cần hàng chục ảnh có pose chính xác và huấn luyện lâu theo từng cảnh.
+      Chính cái giới hạn "cần nhiều ảnh" ấy trở thành đề thi cho mạch sinh
+      một-ảnh: nếu thiếu góc nhìn, hãy SINH ra chúng.
+  ja:
+    problem: "新規視点合成 — ポーズ付きの画像の集合が与えられたとき、シーンを新しい視点から描く。単一画像の問題ではありませんが、その運命はあの枝と固く結びついています。"
+    solution: "(位置, 視線方向) → 色 + 密度 を写す MLP を、微分可能ボリュームレンダリングにより画像だけから学習します — 数 MB の重みに収まる、連続的でフォトリアルなシーン表現です。"
+    limitations: "正確なポーズ付きの画像が何十枚も必要で、シーンごとの学習も長い。まさにこの「画像がたくさん要る」という限界が、単一画像の生成路線への試験問題になりました — 視点が足りないなら、生成せよ、と。"

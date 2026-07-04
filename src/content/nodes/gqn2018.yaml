@@ -23,3 +23,23 @@ limitations: >
   merely early, not wrong, as LVSM argued seven years later.
 relations: []
 status: seed
+i18n:
+  vi:
+    problem: >
+      Một hệ thống có thể học tri giác cảnh 3D mà KHÔNG cần chút máy móc 3D
+      nào do con người dựng — không hình học, không phép chiếu, không nhãn —
+      thuần túy bằng cách nhìn ảnh và di chuyển không?
+    solution: >
+      Generative Query Network: một encoder nén vài view có pose thành một
+      vector latent, và một decoder tạo sinh render cảnh từ bất kỳ góc nhìn
+      truy vấn nào. Tất cả — biểu diễn lẫn renderer — đều học end-to-end từ
+      dữ liệu.
+    limitations: >
+      Chỉ chạy nổi trên các phòng tổng hợp đồ chơi; cái latent vô cấu trúc
+      không đảm bảo nhất quán 3D, và chất lượng sụp trên cảnh thật. Phán quyết
+      của ngành là THÊM cấu trúc 3D trở lại (SRN, NeRF) — nhưng ván cược học
+      thuần chỉ là đến sớm, chứ không sai, như LVSM lập luận bảy năm sau.
+  ja:
+    problem: "システムは、人が作った3Dの仕掛けを一切使わずに — 幾何も、射影も、ラベルもなしに — ただ画像を見て動くだけで、3Dシーンの知覚を学べるのか?"
+    solution: "Generative Query Network です。エンコーダがポーズ付きの数枚を潜在ベクトルへ圧縮し、生成デコーダが任意のクエリ視点からシーンを描く。表現もレンダラーも、すべてがデータから end-to-end で学習されます。"
+    limitations: "動くのはおもちゃのような合成の部屋だけ。構造なき潜在表現は3D一貫性を保証せず、実シーンでは品質が崩れます。分野の判決は「3D構造を戻す」でした (SRN、NeRF) — しかし純粋学習の賭けは、7年後に LVSM が論じたように、間違いだったのではなく、ただ早すぎただけでした。"

@@ -28,6 +28,14 @@ relations:
       Repairs the static-world assumption months after publication, and does
       it without a camera rig: the deformation-to-canonical trick lets one
       moving camera supervise a moving scene.
+    i18n:
+      vi:
+        note: >
+          Sửa giả định thế-giới-tĩnh chỉ vài tháng sau khi NeRF ra, mà không
+          cần rig camera: mẹo biến-dạng-về-canonical cho phép một camera di
+          chuyển giám sát một cảnh đang chuyển động.
+      ja:
+        note: "静的世界の仮定を、NeRF 発表の数か月後に、しかもカメラリグなしで直します。canonical へ変形する技により、動く一台のカメラが動くシーンを教師付けできるのです。"
   - node: nerfies2020
     type: independent
     note: >
@@ -35,4 +43,32 @@ relations:
       scenes with a time-conditioned warp; Nerfies bent real selfie videos
       with an elastically-regularized one. Neither cites the other's
       preprint — the canonical+deformation answer was simply ripe.
+    i18n:
+      vi:
+        note: >
+          Cùng tháng 11/2020, cùng ý tưởng, khác thế giới: D-NeRF bẻ cong cảnh
+          tổng hợp bằng warp theo thời gian; Nerfies bẻ cong video selfie thật
+          bằng warp có regularizer đàn hồi. Không bên nào trích preprint của
+          bên kia — lời giải canonical+biến-dạng đơn giản là đã chín.
+      ja:
+        note: "同じ2020年11月、同じアイデア、異なる世界です。D-NeRF は時間条件の warp で合成シーンを曲げ、Nerfies は弾性正則化した warp で実際の自撮り動画を曲げた。互いのプレプリントを引用してもいません — canonical + 変形という答えは、ただ熟していたのです。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      Thế giới của NeRF đóng băng: chỉ một vật thể chuyển động là nhất quán đa
+      góc nhìn mà nó dựa vào đã bị vi phạm. Một radiance field có biểu diễn
+      nổi một cảnh ĐANG THAY ĐỔI không — từ một đường đi camera duy nhất,
+      không rig đồng bộ?
+    solution: >
+      Tách thời gian khỏi không gian: một radiance field tĩnh canonical cộng
+      một MLP biến dạng ánh xạ mỗi (điểm, thời gian) ngược về không gian
+      canonical. Thời gian trở thành đầu vào; renderer vẫn là NeRF.
+    limitations: >
+      Phạm vi cảnh tổng hợp, và trường biến dạng là một warp tần số thấp —
+      thay đổi topology (miệng mở ra) và chuỗi dài làm nó gãy. Nhưng khuôn mẫu
+      canonical+warp trở thành mặc định cho bốn năm radiance field động.
+  ja:
+    problem: "NeRF の世界は凍りついています。物体が一つ動くだけで、その学習が頼る多視点一貫性は破られる。放射輝度場は、変化するシーンを表現できるのか — 同期リグなしの、一本のカメラ経路から?"
+    solution: "時間を空間から切り離します。canonical な静的放射輝度場と、各 (点, 時刻) を canonical 空間へ写し戻す変形 MLP。時間が入力になり、レンダラーは NeRF のまま。"
+    limitations: "扱えるのは合成シーンの範囲で、変形場は低周波の warp です — トポロジー変化 (口が開く) や長いシーケンスで破綻します。ただし canonical + warp という設計図は、その後4年間、動的放射輝度場の既定になりました。"

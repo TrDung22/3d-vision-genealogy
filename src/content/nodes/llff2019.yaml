@@ -29,4 +29,32 @@ relations:
       interpolation as the rendering engine but attacks its fatal weakness —
       capture density — with local geometry layers and a sampling-theory
       budget for how many photos you actually owe.
+    i18n:
+      vi:
+        note: >
+          Nối dài trực tiếp khung tái-lấy-mẫu-tia 1996: giữ nội suy light
+          field làm động cơ render nhưng đánh vào điểm yếu chí mạng của nó —
+          mật độ chụp — bằng các lớp hình học cục bộ và một ngân sách theo lý
+          thuyết lấy mẫu cho số ảnh bạn thật sự nợ.
+      ja:
+        note: "1996年の光線リサンプリング枠組みの直系です。ライトフィールド補間をレンダリングエンジンに残したまま、その致命的な弱点 — 撮影密度 — を局所幾何の層とサンプリング理論による「写真を何枚借りているか」の予算で攻めました。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      Light field trả lời "khỏi cần hình học" bằng "vậy đưa tôi hàng nghìn
+      tấm ảnh". View synthesis sống nổi với bao nhiêu tấm ảnh chụp TAY — và
+      có ai nói được bao nhiêu là đủ không?
+    solution: >
+      Nở mỗi view đầu vào thành một biểu diễn phân lớp cục bộ (multiplane
+      images), rồi blend các light field cục bộ lân cận cho view mới. Quan
+      trọng nhất: một phân tích lấy mẫu plenoptic cho ra cận chỉ định — ít
+      hơn tới 4000 lần so với lấy mẫu tia kiểu Nyquist.
+    limitations: >
+      MPI ngốn bộ nhớ, và view vẫn phải khá dày, hướng về phía trước. Trong
+      vòng một năm, chính nhóm này thay cả bộ máy phân lớp bằng một MLP duy
+      nhất — và dataset của LLFF được thừa kế làm benchmark của NeRF.
+  ja:
+    problem: "ライトフィールドは「幾何は不要」の代わりに「なら写真を何千枚ください」と答えました。手持ち撮影の写真が何枚あれば視点合成は成立するのか — そして「何枚で十分か」を言える人はいるのか?"
+    solution: "各入力視点を局所的な層状表現 (multiplane images) へ展開し、近くの局所ライトフィールドをブレンドして新しい視点を作ります。肝心なのは、plenoptic サンプリング解析が処方箋となる下限を与えたこと — Nyquist 流の光線サンプリングより最大4000分の1の枚数で済むのです。"
+    limitations: "MPI はメモリを食い、視点もそれなりに密で前向きでなければなりません。一年のうちに同じグループが層状の機構まるごとを一つの MLP に置き換え — LLFF のデータセットは NeRF のベンチマークとして相続されました。"

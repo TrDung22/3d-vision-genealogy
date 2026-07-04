@@ -29,4 +29,31 @@ relations:
       is DIFFERENTIABLE VOLUME RENDERING, not the neural network — the MLP
       was just a (very slow) function container. A two-orders-of-magnitude
       speedup as the proof.
+    i18n:
+      vi:
+        note: >
+          Đánh thẳng vào cách cả ngành đọc NeRF: thành phần cốt tử là VOLUME
+          RENDERING KHẢ VI, không phải mạng nơ-ron — MLP chỉ là một cái hộp
+          đựng hàm (rất chậm). Bằng chứng: nhanh gấp trăm lần.
+      ja:
+        note: "分野の NeRF 解釈に真っ向から挑みます。本質的な材料は微分可能ボリュームレンダリングであって、ニューラルネットワークではない — MLP は (とても遅い) 関数の容れ物にすぎなかった。証拠は、二桁の高速化です。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      NeRF tốn cả ngày huấn luyện mỗi cảnh, và ai cũng đinh ninh cái MLP mới
+      là thành phần thần kỳ mua được chất lượng đó. Có đúng vậy không?
+    solution: >
+      Xóa luôn mạng. Một lưới voxel thưa chứa mật độ + spherical harmonics,
+      tối ưu thẳng qua đúng cái volume renderer khả vi ấy, đạt chất lượng
+      ngang NeRF mà huấn luyện nhanh hơn hai bậc (vài phút, không phải một
+      ngày).
+    limitations: >
+      Lưới hơi-dày ngốn bộ nhớ và chặn độ phân giải; chất lượng trên cảnh
+      không chặn thua mạch mip. Cú dị giáo này cần một cấu trúc dữ liệu tốt
+      hơn — đến ngay trong vài tuần dưới dạng hash của Instant-NGP, và về sau
+      quay lại dưới dạng voxel thưa làm cho đàng hoàng (SVRaster).
+  ja:
+    problem: "NeRF はシーンごとに丸一日学習を要し、その品質を買っている魔法の材料は MLP だと誰もが思い込んでいました。本当にそうだったのか?"
+    solution: "ネットワークを消します。密度 + 球面調和関数を持つ疎なボクセルグリッドを、同じ微分可能ボリュームレンダラー越しに直接最適化する。NeRF の品質に並びながら、学習は二桁速い (一日ではなく数分)。"
+    limitations: "やや密なグリッドはメモリを食い、解像度を頭打ちにします。非有界シーンでの品質は mip 路線に及びません。この異端には、より良いデータ構造が必要でした — 数週間のうちに Instant-NGP のハッシュとして到着し、のちに「まっとうに作られた疎ボクセル」(SVRaster) として戻ってきます。"

@@ -26,9 +26,40 @@ relations:
     note: >
       Repairs exactly the speed bottleneck: drops per-object SDS optimization
       for a single ~1-second forward pass.
+    i18n:
+      vi:
+        note: >
+          Sửa đúng nút thắt tốc độ: bỏ hẳn tối ưu SDS từng vật thể, thay bằng
+          một lượt forward ~1 giây.
+      ja:
+        note: "速度のボトルネックをまさにその一点で直します。物体ごとの SDS 最適化を捨て、約1秒の forward 一回に置き換えました。"
   - node: nerf2020
     type: builds-on
     note: >
       The output is a triplane radiance field — NeRF infrastructure, but
       PREDICTED rather than optimized.
+    i18n:
+      vi:
+        note: >
+          Đầu ra là một triplane radiance field — vẫn hạ tầng NeRF, nhưng được
+          DỰ ĐOÁN thay vì tối ưu.
+      ja:
+        note: "出力は triplane の放射輝度場 — NeRF のインフラです。ただし最適化するのではなく、予測するのです。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      Tối ưu từng vật thể của mạch Zero-1-to-3 quá chậm cho ứng dụng thật:
+      cần một ảnh → 3D trong đúng một lượt forward.
+    solution: >
+      Một transformer nửa tỷ tham số dự đoán TRỰC TIẾP triplane-NeRF từ ảnh,
+      huấn luyện end-to-end trên Objaverse + MVImgNet — "khoảnh khắc GPT" của
+      3D từ một ảnh: thay cả pipeline tối ưu bằng một mô hình lớn huấn luyện
+      trên dữ liệu lớn.
+    limitations: >
+      Mặt sau bị nhòe (một bài toán xác suất bị nén vào một dự đoán tất định),
+      texture mịn yếu, và mô hình đóng — cộng đồng không tái lập ngay được.
+  ja:
+    problem: "Zero-1-to-3 路線の物体ごとの最適化は、実アプリケーションには遅すぎます。必要なのは、一枚の画像 → forward 一回での3Dです。"
+    solution: "5億パラメータのトランスフォーマーが、画像から triplane-NeRF を直接予測します。Objaverse + MVImgNet で end-to-end 学習 — 単一画像3Dの「GPT の瞬間」です。最適化パイプラインを、大規模データで学習した一つの大きなモデルに置き換えました。"
+    limitations: "背面はぼやけます (確率的な問題を一つの決定的な予測に押し込んだ代償)。細かいテクスチャも弱く、モデルは非公開 — コミュニティはすぐには再現できませんでした。"

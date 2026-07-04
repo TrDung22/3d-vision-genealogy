@@ -20,3 +20,23 @@ limitations: >
   over — a classic "orphaned branch".
 relations: []
 status: seed
+i18n:
+  vi:
+    problem: >
+      Suy ra hình khối bề mặt 3D từ MỘT tấm ảnh — phát biểu sớm nhất của bài
+      toán ill-posed: vô số bề mặt khác nhau có thể tạo ra cùng một tấm ảnh
+      quan sát được.
+    solution: >
+      Không học gì từ dữ liệu; thay vào đó mô hình hóa vật lý của quá trình
+      tạo ảnh: giả định phản xạ Lambert và nguồn sáng đã biết, rồi giải ngược
+      phương trình shading bằng phương pháp dải đặc trưng (characteristic
+      strips).
+    limitations: >
+      Các giả định vật lý (phản xạ, chiếu sáng, bề mặt trơn) gần như không bao
+      giờ đúng với ảnh tự nhiên. Mạch prior vật lý này bị dòng chính bỏ rơi
+      hàng chục năm khi học thống kê rồi học sâu lên ngôi — một "nhánh mồ côi"
+      kinh điển.
+  ja:
+    problem: "一枚の画像から3D表面の形状を推定する — 不良設定問題の最も早い定式化です。まったく異なる無数の表面が、同じ一枚の画像を生み出しうるのです。"
+    solution: "データからの学習は一切なし。代わりに画像生成の物理をモデル化します。ランバート反射と既知の光源を仮定し、特性帯 (characteristic strips) の方法でシェーディング方程式を逆向きに解くのです。"
+    limitations: "物理の仮定 (反射特性、照明、滑らかな表面) は、自然画像ではほぼ成り立ちません。統計的学習、そして深層学習が主役になるにつれ、この物理 prior の路線は何十年も主流から見捨てられました — 典型的な「孤児の枝」です。"

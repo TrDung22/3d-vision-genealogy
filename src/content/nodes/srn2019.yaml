@@ -30,6 +30,15 @@ relations:
       Repairs GQN's structureless latent: replaces the flat vector with a
       coordinate function and the learned black-box decoder with explicit ray
       marching, so multi-view consistency comes from geometry, not hope.
+    i18n:
+      vi:
+        note: >
+          Sửa cái latent vô cấu trúc của GQN: thay vector phẳng bằng một hàm
+          tọa độ và thay decoder hộp đen học được bằng ray marching tường
+          minh, để nhất quán đa góc nhìn đến từ hình học chứ không phải từ
+          hy vọng.
+      ja:
+        note: "GQN の構造なき潜在表現を直します。平坦なベクトルを座標の関数に、学習されたブラックボックスのデコーダを明示的なレイマーチングに置き換え — 多視点一貫性は希望からではなく、幾何から来るようにしたのです。"
   - node: deepsdf2019
     type: independent
     note: >
@@ -37,4 +46,34 @@ relations:
       continuous coordinate-MLPs for SHAPE; SRN hit the same representation
       for appearance + rendering, simultaneously and independently — from
       supervision by images instead of 3D scans.
+    i18n:
+      vi:
+        note: >
+          Mặt trận thứ ba của làn sóng hàm ẩn 2019: DeepSDF và OccNet chạm
+          đến coordinate-MLP liên tục cho HÌNH KHỐI; SRN chạm cùng biểu diễn
+          đó cho bề ngoài + rendering, đồng thời và độc lập — với giám sát từ
+          ảnh thay vì scan 3D.
+      ja:
+        note: "2019年の陰関数の波、その第三戦線です。DeepSDF と OccNet は形状のために連続座標 MLP へ到達し、SRN は同じ表現に見た目とレンダリングの側から、同時かつ独立にたどり着きました — 教師信号は3Dスキャンではなく画像です。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      GQN cho thấy cảnh học được từ ảnh không thôi, nhưng vector latent phẳng
+      của nó không có khái niệm không gian — chẳng gì bảo đảm cùng một bức
+      tường trông giống nhau từ hai góc nhìn.
+    solution: >
+      Biến biểu diễn thành một HÀM liên tục của tọa độ 3D: một MLP ánh xạ
+      (x, y, z) sang đặc trưng, và một ray marcher khả vi học được render nó
+      — cấu trúc 3D và nhất quán đa góc nhìn được nướng sẵn vào kiến trúc,
+      huấn luyện chỉ từ ảnh.
+    limitations: >
+      Ray marcher LSTM học được thì mong manh, kết quả nhòe (MLP ReLU không
+      biểu diễn nổi tần số cao — cái thiên kiến phổ mà SIREN và Fourier
+      features sau này đặt tên), và hình học lẫn lộn với bề ngoài. Một năm
+      sau, NeRF giữ lại coordinate-MLP và thay marcher học được bằng volume
+      rendering cố định.
+  ja:
+    problem: "GQN は画像だけからシーンを学べることを示しました。しかしその平坦な潜在ベクトルには空間の概念がありません — 同じ壁が二つの視点から同じに見える保証は、どこにもないのです。"
+    solution: "表現を3D座標の連続関数にします。MLP が (x, y, z) を特徴へ写し、学習された微分可能レイマーチャーがそれを描く — 3D構造と多視点一貫性がアーキテクチャに焼き込まれ、学習は画像だけから行われます。"
+    limitations: "学習された LSTM レイマーチャーは脆く、結果はぼやけます (ReLU の MLP は高周波を表現できない — のちに SIREN と Fourier features が名付けたスペクトルバイアスです)。幾何と見た目も絡まったまま。一年後、NeRF は座標 MLP を残し、学習された marcher を固定のボリュームレンダリングに置き換えました。"

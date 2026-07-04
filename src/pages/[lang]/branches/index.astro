@@ -16,6 +16,7 @@ const nodes = await getCollection('nodes');
 const countOf = (branchId: string) => nodes.filter((n) => n.data.branch.id === branchId).length;
 const taglineOf = (b: (typeof branches)[number]) =>
   b.data.i18n?.[lang]?.tagline ?? b.data.tagline;
+const titleOf = (b: (typeof branches)[number]) => b.data.i18n?.[lang]?.title ?? b.data.title;
 ---
 
 <Base title={t(lang, 'nav.branches')} lang={lang}>
@@ -27,7 +28,7 @@ const taglineOf = (b: (typeof branches)[number]) =>
       branches.map((b) => (
         <a class="panel branch-card" href={`${root}/branches/${b.id}/`} style={`--branch-color:${b.data.color}`}>
           <div class="bar" />
-          <h2>{b.data.title}</h2>
+          <h2>{titleOf(b)}</h2>
           <p class="tagline">{taglineOf(b)}</p>
           <p class="muted">
             {countOf(b.id)} {t(lang, 'table.nodes')} ·{' '}

@@ -5,7 +5,7 @@
  * adding such an edge to any node YAML grows this page automatically.
  */
 import Base from '../../layouts/Base.astro';
-import { buildGraph, EDGE_TYPES } from '../../lib/graph';
+import { buildGraph } from '../../lib/graph';
 import { LOCALES, t, type Lang } from '../../lib/i18n';
 
 export function getStaticPaths() {
@@ -16,7 +16,7 @@ const lang = Astro.params.lang as Lang;
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const root = `${base}/${lang}`;
 
-const graph = await buildGraph();
+const graph = await buildGraph(lang);
 const nodeById = new Map(graph.nodes.map((n) => [n.id, n]));
 const branchById = new Map(graph.branches.map((b) => [b.id, b]));
 const colorOf = (nodeId: string) =>
@@ -141,7 +141,7 @@ const revivalGroups = groupByBranch(revivals, (r) => sameBranch([r.old.id, r.rev
                 <ul class="h-list">
                   {edges.map((e) => (
                     <li>
-                      <span class="rel">{EDGE_TYPES.challenges.label}</span>{' '}
+                      <span class="rel">{graph.edgeTypes.challenges.label}</span>{' '}
                       <a href={`${root}/nodes/${e.source}/`}>{nodeById.get(e.source)?.short}</a>
                       {e.note && <p>{e.note}</p>}
                     </li>
@@ -226,7 +226,7 @@ const revivalGroups = groupByBranch(revivals, (r) => sameBranch([r.old.id, r.rev
                   <strong class="h-years">{gapText(r.reviver.year - r.old.year)}</strong>
                   <span>
                     <a href={`${root}/nodes/${r.reviver.id}/`}>{r.reviver.short}</a>
-                    <span class="rel"> {EDGE_TYPES.revives.label} </span>
+                    <span class="rel"> {graph.edgeTypes.revives.label} </span>
                     <a href={`${root}/nodes/${r.old.id}/`}>{r.old.short}</a>
                   </span>
                 </p>

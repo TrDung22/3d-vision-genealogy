@@ -28,6 +28,16 @@ relations:
       pure forward-rendering tool — its smooth, occlusion-aware accumulation
       turns out to be a nearly ideal loss landscape for gradient descent.
       Differentiability, not realism, is why volume rendering came back.
+    i18n:
+      vi:
+        note: >
+          Hồi sinh tích phân phát-xạ–hấp-thụ 1984 sau hàng chục năm chỉ làm
+          công cụ render xuôi — phép tích lũy mượt, biết che khuất của nó hóa
+          ra là một địa hình loss gần như lý tưởng cho gradient descent.
+          Volume rendering quay lại không phải vì độ chân thực, mà vì tính
+          khả vi.
+      ja:
+        note: "純粋な順方向レンダリングの道具として数十年を過ごした1984年の発光・吸収積分を蘇らせました — その滑らかで遮蔽を弁えた累積が、勾配降下にとってほぼ理想的なロス地形だったのです。ボリュームレンダリングが帰ってきた理由はリアリズムではなく、微分可能性でした。"
   - node: srn2019
     type: independent
     note: >
@@ -35,4 +45,33 @@ relations:
       through a differentiable renderer — reached from opposite ends:
       SRN chose a continuous MLP with learned marching; Neural Volumes chose
       an explicit grid with classical marching. NeRF is their intersection.
+    i18n:
+      vi:
+        note: >
+          Cùng những tháng đó, cùng ván cược — biểu diễn cảnh học từ ảnh qua
+          một renderer khả vi — nhưng đi tới từ hai đầu ngược nhau: SRN chọn
+          MLP liên tục với marcher học được; Neural Volumes chọn lưới tường
+          minh với marching cổ điển. NeRF là giao điểm của cả hai.
+      ja:
+        note: "同じ数か月、同じ賭け — 微分可能レンダラー越しに画像からシーン表現を学ぶ — に、正反対の端から到達しました。SRN は連続 MLP と学習された marcher を、Neural Volumes は明示的グリッドと古典的な marching を選んだ。NeRF は両者の交点です。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      Mô hình render được, chân thực như ảnh, của người biểu diễn động (mặt,
+      tay) từ video đa camera — tracker mesh làm rơi mất tóc, khói, và mọi
+      thứ lộn xộn về topology.
+    solution: >
+      Học một lưới voxel RGBA từ ảnh, render bằng ray marching khả vi với độ
+      truyền qua tích lũy — volume rendering cổ điển, giờ chạy NGƯỢC qua
+      gradient. Occupancy thể tích mềm biến pipeline dựng-rồi-render thành
+      một bài tối ưu end-to-end duy nhất.
+    limitations: >
+      Một lưới voxel dày đặc: bộ nhớ phình theo lập phương, độ phân giải
+      nhanh chóng kịch trần và cảnh phải nằm lọt trong rig chụp. Cách sửa
+      hiển nhiên — thay lưới bằng một hàm liên tục — đến ngay trong năm, dưới
+      cái tên NeRF.
+  ja:
+    problem: "多カメラ映像から、動く被写体 (顔、手) のフォトリアルにレンダリング可能なモデルを。メッシュトラッカーは髪や煙、トポロジー的に厄介なものを取りこぼします。"
+    solution: "画像から RGBA のボクセルグリッドを学習し、透過率を積み上げる微分可能レイマーチングでレンダリングします — 古典的なボリュームレンダリングを、勾配で逆向きに走らせたのです。柔らかい体積 occupancy が「再構成してからレンダリング」というパイプラインを、一つの end-to-end 最適化に変えました。"
+    limitations: "密なボクセルグリッドです。メモリは3乗で増え、解像度はすぐ頭打ちになり、シーンは撮影リグに収まらなければなりません。自明な直し方 — グリッドを連続関数に替える — は、NeRF という名で年内に到着しました。"

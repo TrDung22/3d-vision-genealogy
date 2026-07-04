@@ -25,6 +25,7 @@ i18n:
       cuộc mặc cả cũng xoay quanh đúng ba thứ: chất lượng, tốc độ, và lượng
       hình học con người phải lén tuồn vào mô hình.
   ja:
+    title: "ニューラルレンダリング"
     tagline: "ニューラルネットによるシーン表現 + 微分可能レンダリング — 一世代まるごとのインフラ"
     description: "この枝は、ひとつの方程式が逆向きに走ることを覚えた物語です。1984年のボリュームレンダリング積分が微分可能レンダラーとして蘇り、シーンそのものが学習できるパラメータになりました。その歴史は振り子の往復です。幾何いらずのライトフィールド (1996) 対 幾何プロキシ。ニューラル表現 (SRN、NeRF) 対「ネットワーク不要」という異端 (Plenoxels)。レイマーチング 対 掘り起こされた2001年のスプラッティング (3DGS)。そして今は、明示的な3D構造 対 3Dの仕掛けを一切持たない純粋トランスフォーマー (LVSM)。振り子がどちらへ振れても、天秤に載るのはいつも同じ三つ — 品質、速度、そして人間の幾何知識をどれだけモデルに忍び込ませるか。"
 color: "#199e70" # categorical slot 2 (dark)
@@ -33,17 +34,39 @@ status: active
 lanes:
   - id: roots
     title: "Volume & light-field roots"
+    i18n:
+      vi: { title: "Gốc volume & light field" }
+      ja: { title: "ボリュームとライトフィールドの源流" }
   - id: scene-reps
     title: "Neural scene representations"
+    i18n:
+      vi: { title: "Biểu diễn cảnh nơ-ron" }
+      ja: { title: "ニューラルシーン表現" }
   - id: radiance-fields
     title: "Radiance fields"
+    i18n:
+      ja: { title: "放射輝度場" }
   - id: efficiency
     title: "Real-time & efficiency"
+    i18n:
+      vi: { title: "Thời gian thực & hiệu năng" }
+      ja: { title: "リアルタイムと効率化" }
   - id: gaussians
     title: "Gaussian splatting & primitives"
+    i18n:
+      ja: { title: "ガウシアンスプラッティング" }
   - id: surfaces
     title: "Surfaces & geometry"
+    i18n:
+      vi: { title: "Bề mặt & hình học" }
+      ja: { title: "表面と幾何" }
   - id: dynamic
     title: "Dynamic scenes"
+    i18n:
+      vi: { title: "Cảnh động" }
+      ja: { title: "動的シーン" }
   - id: feedforward
     title: "Feed-forward view synthesis"
+    i18n:
+      vi: { title: "View synthesis feed-forward" }
+      ja: { title: "フィードフォワード視点合成" }

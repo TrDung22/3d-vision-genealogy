@@ -24,4 +24,29 @@ relations:
       Inherits the belief that "a 3D prior can be learned from data with a deep
       network", but changes the target from the visible surface (2.5D) to the
       full shape.
+    i18n:
+      vi:
+        note: >
+          Thừa hưởng niềm tin "prior 3D có thể học từ dữ liệu bằng mạng sâu",
+          nhưng đổi mục tiêu từ bề mặt nhìn thấy (2.5D) sang toàn bộ hình khối.
+      ja:
+        note: "「3Dの事前知識はデータから深層ネットワークで学べる」という信念を受け継ぎつつ、目標を見えている表面 (2.5D) から形状の全体へと切り替えました。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      Bản đồ độ sâu mới chỉ là 2.5D — phần bề mặt nhìn thấy được. Bài toán ở
+      đây là khôi phục TOÀN BỘ hình khối 3D của vật thể, tính cả phần bị che
+      khuất, từ một (hoặc vài) tấm ảnh.
+    solution: >
+      Một mạng hồi quy (3D-LSTM) ánh xạ ảnh sang lưới voxel occupancy, huấn
+      luyện có giám sát trên các mô hình CAD của ShapeNet — mở ra cả một mạch
+      "học prior hình khối từ một nhà kho hình khối".
+    limitations: >
+      Voxel ngốn bộ nhớ O(n³) nên mắc kẹt ở 32³ — mô hình trông như xếp bằng
+      lego. Và toàn bộ hiểu biết của nó đến từ ShapeNet: một thế giới đóng chỉ
+      vài nghìn hình khối.
+  ja:
+    problem: "深度マップはあくまで2.5D — 見えている表面にすぎません。ここでの問題は、一枚 (または数枚) の画像から、遮蔽された部分も含む物体の完全な3D形状を復元することです。"
+    solution: "画像をボクセル占有グリッドへ写す再帰型ネットワーク (3D-LSTM) を、ShapeNet の CAD モデルで教師あり学習します — 「形状の倉庫から形状の事前知識を学ぶ」という路線をまるごと切り拓きました。"
+    limitations: "ボクセルはメモリを O(n³) で食うため 32³ で頭打ち — レゴブロックのようなモデルしか出せません。しかも知識のすべては ShapeNet 由来。数千個の形状しかない閉じた世界です。"

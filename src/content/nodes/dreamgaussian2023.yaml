@@ -28,10 +28,45 @@ relations:
       NeRF-SDS become ~2 minutes by adopting 3D Gaussian Splatting (the
       neural-rendering branch's 2023 breakthrough) as the target
       representation — an explicit cross-branch import.
+    i18n:
+      vi:
+        note: >
+          Sửa nút thắt tốc độ của chưng cất từng vật thể: hàng giờ NeRF-SDS
+          thành ~2 phút nhờ lấy 3D Gaussian Splatting (cú đột phá 2023 của
+          nhánh neural rendering) làm biểu diễn đích — một cú nhập khẩu xuyên
+          nhánh tường minh.
+      ja:
+        note: "物体ごとの蒸留の速度ボトルネックを直します。NeRF-SDS の数時間が、3D Gaussian Splatting (ニューラルレンダリング枝の2023年のブレイクスルー) をターゲット表現に採ることで約2分に — 明示的な枝またぎの輸入です。"
   - node: 3dgs2023
     type: builds-on
     note: >
       The imported canvas itself: 3DGS's fast differentiable rasterizer and
       progressive densification are what turn hours of NeRF-based score
       distillation into minutes.
+    i18n:
+      vi:
+        note: >
+          Chính tấm toan được nhập khẩu: rasterizer khả vi tốc độ cao và
+          densification lũy tiến của 3DGS là thứ biến hàng giờ chưng cất trên
+          NeRF thành vài phút.
+      ja:
+        note: "輸入されたキャンバスそのものです。3DGS の高速な微分可能ラスタライザと段階的な densification こそが、NeRF ベースの score distillation の数時間を数分に変えました。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      Vòng lặp tối ưu SDS thời Zero-1-to-3 tốn hàng giờ mỗi vật thể — vì nó
+      chưng cất vào NeRF, tấm toan chậm nhất có thể.
+    solution: >
+      Đổi tấm toan: chưng cất score vào 3D Gaussian thay vì NeRF.
+      Densification lũy tiến hội tụ nhanh hơn hẳn cho bài toán sinh, và một
+      bước trích mesh + tinh chỉnh texture UV nhả ra mesh có texture dùng được
+      trong ~2 phút — nhanh gấp ~10 lần.
+    limitations: >
+      Thừa kế các artifact mode-seeking của SDS (bão hòa màu, mặt Janus);
+      Gaussian giúp tối ưu nhanh nhưng trích hình học thì mất mát — trần chất
+      lượng vẫn thuộc về các pipeline chậm hơn.
+  ja:
+    problem: "Zero-1-to-3 時代の SDS 最適化ループは、物体一つに何時間もかかりました — 蒸留先が NeRF という、考えうる限り最も遅いキャンバスだったからです。"
+    solution: "キャンバスを替えます。score distillation の受け皿を NeRF から 3D Gaussian へ。段階的な densification により生成の収束は劇的に速くなり、メッシュ抽出 + UV テクスチャ精錬の段を経て、約2分で使えるテクスチャ付きメッシュが出てきます — およそ10倍の高速化です。"
+    limitations: "SDS の mode-seeking なアーティファクト (色の飽和、Janus 顔) は相続したまま。Gaussian は最適化を速くする一方で幾何の抽出には損失があり — 品質の天井は、今も遅いパイプラインの側にあります。"

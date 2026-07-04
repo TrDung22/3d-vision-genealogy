@@ -35,4 +35,37 @@ relations:
       fixing the data problem rather than the architecture. On isolated clean
       objects it merely ties TRELLIS; the gap opens exactly where the old
       assumption breaks.
+    i18n:
+      vi:
+        note: >
+          Sửa cái giả định thế-giới-chọn-lọc của cả làn sóng: từ vật thể sạch
+          kiểu Objaverse sang ảnh chụp thật bừa bộn, bị che khuất — kèm cả
+          layout — bằng cách sửa bài toán dữ liệu thay vì kiến trúc. Trên vật
+          thể sạch tách rời nó chỉ hòa TRELLIS; khoảng cách mở ra đúng chỗ giả
+          định cũ gãy.
+      ja:
+        note: "この波が抱えた「キュレーション済み世界」の仮定を直します。Objaverse 風の綺麗な物体から、遮蔽と雑然に満ちた本物の写真へ — レイアウトごと。アーキテクチャではなくデータ問題を直すことで、です。切り出した綺麗な物体では TRELLIS と引き分けどまり — 差が開くのは、古い仮定が壊れるまさにその場所です。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      Cả làn sóng tạo sinh sống trong bong bóng vật-thể-chọn-lọc: nền sạch,
+      nhìn thấy trọn vẹn, asset kiểu Objaverse. Ảnh chụp thật thì bừa bộn, che
+      khuất, và có BỐ CỤC không gian — mà chưa mô hình nào cân nổi.
+    solution: >
+      Một mô hình tạo sinh dự đoán hình học, texture và bố cục cảnh cho các
+      vật thể trong một tấm ảnh đời thực, chịu được che khuất. Nước đi then
+      chốt nằm ở dữ liệu, không phải kiến trúc: pretrain tổng hợp được căn
+      chỉnh với gán nhãn ảnh thật quy mô lớn qua một data engine có người và
+      mô hình trong vòng lặp. Thắng bài test sở thích con người ≥5:1 trước các
+      phương pháp một-ảnh đời trước trên cảnh thật; phát hành mở cùng SAM 3
+      (11/2025), với SAM 3D Body là người anh em bên phía con người.
+    limitations: >
+      Trên input sạch kiểu studio nó chỉ hòa các bộ sinh asset giỏi nhất
+      (chiến thắng nằm ở tự nhiên hoang dã, không phải phòng lab); layout mới
+      là đặt-từng-vật-thể, chưa phải hiểu trọn cảnh; và chi phí của data
+      engine chỉ lặp lại nổi ở quy mô big-lab.
+  ja:
+    problem: "生成の波は、まるごと「キュレーション済み物体」の泡の中に住んでいました — 綺麗な背景、完全な可視性、Objaverse 風のアセット。本物の写真には雑然と遮蔽と空間レイアウトがあり、それを扱えるモデルは存在しなかったのです。"
+    solution: "一枚の実写画像に写る物体たちの幾何・テクスチャ・シーンレイアウトを予測する生成モデルです。遮蔽にも頑健。鍵はアーキテクチャではなくデータにあります — 人間とモデルをループに入れたデータエンジンで、合成事前学習を大規模な実画像アノテーションと整合させました。実シーンでの人間の選好テストでは従来の単一画像手法に5:1以上で勝利。SAM 3 と同時にオープン公開され (2025年11月)、人間向けの兄弟として SAM 3D Body がいます。"
+    limitations: "スタジオ風の綺麗な入力では、最高のアセット生成器と引き分けるだけ (勝つのは実世界であって、ラボではない)。レイアウトは物体ごとの配置にとどまり、シーン全体の理解ではありません。そしてデータエンジンのコストは、巨大ラボの規模でしか再現できません。"

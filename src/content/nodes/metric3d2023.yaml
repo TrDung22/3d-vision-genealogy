@@ -29,10 +29,47 @@ relations:
       Repairs the affine-invariant line's missing metric scale (MiDaS, DPT,
       LeReS): the canonical camera transform turns "unknowable" absolute depth
       into a solvable problem.
+    i18n:
+      vi:
+        note: >
+          Sửa cái thiếu tỉ lệ metric của mạch bất biến affine (MiDaS, DPT,
+          LeReS): phép biến đổi camera chuẩn biến độ sâu tuyệt đối từ "bất khả
+          tri" thành bài toán giải được.
+      ja:
+        note: "アフィン不変路線 (MiDaS、DPT、LeReS) に欠けていた metric スケールを直します。canonical camera 変換が、「知りようがない」とされた絶対深度を解ける問題に変えました。"
   - node: zoedepth2023
     type: independent
     note: >
       Two same-year answers to the same metric debt: ZoeDepth patches scale
       back with a fine-tuned bins head; Metric3D dissolves the ambiguity in
       camera space. Neither derives from the other.
+    i18n:
+      vi:
+        note: >
+          Hai câu trả lời cùng năm cho cùng món nợ metric: ZoeDepth vá lại tỉ
+          lệ bằng đầu bins fine-tune; Metric3D hóa giải sự nhập nhằng ngay
+          trong không gian camera. Không bên nào sinh ra từ bên nào.
+      ja:
+        note: "同じ年に出た、同じ metric の借金への二つの答えです。ZoeDepth は微調整した bins ヘッドでスケールを継ぎ当て、Metric3D はカメラ空間で曖昧性そのものを溶かします。どちらも他方から生まれてはいません。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      Vì sao độ sâu zero-shot không thể metric? Vì cùng một cảnh chụp với tiêu
+      cự khác nhau sẽ ra kích thước trên ảnh khác nhau — tỉ lệ metric bị quấn
+      chặt vào tham số nội của camera.
+    solution: >
+      Đánh thẳng vào gốc của sự nhập nhằng: một phép biến đổi về không gian
+      camera chuẩn (canonical camera) đưa mọi ảnh huấn luyện về cùng một
+      camera tiêu chuẩn trước khi học, khiến độ sâu metric học được trên hàng
+      chục nghìn camera khác nhau. V2 (TPAMI 2024) mở rộng lên 16 triệu ảnh và
+      thêm pháp tuyến bề mặt zero-shot nhờ tối ưu đồng thời depth-normal, học
+      pháp tuyến từ dữ liệu chỉ có độ sâu.
+    limitations: >
+      Lúc suy luận vẫn cần tham số nội (hoặc ước lượng của nó), và độ chính
+      xác phụ thuộc vào việc chọn cỡ crop theo từng miền — đúng điểm yếu mà
+      Depth Pro sau này chỉ mặt là vi phạm tiền đề zero-shot.
+  ja:
+    problem: "なぜゼロショットの深度は metric になれないのか? 同じシーンでも焦点距離が違えば写る大きさが変わる — metric スケールはカメラの内部パラメータと絡み合っているからです。"
+    solution: "曖昧性の根っこを叩きます。学習前にすべての画像を標準カメラへ写す canonical camera 空間変換により、何万台ものカメラをまたいで metric 深度が学習可能になりました。V2 (TPAMI 2024) は1,600万枚へスケールし、深度と法線の同時最適化により、深度しかないデータからゼロショットの表面法線まで獲得します。"
+    limitations: "推論時にはやはり内部パラメータ (またはその推定値) が必要で、精度はドメインごとの crop サイズ選びに依存します — のちに Depth Pro が「ゼロショットの前提に反する」と名指しした、まさにその弱点です。"

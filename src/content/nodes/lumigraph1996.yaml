@@ -28,4 +28,32 @@ relations:
       and Microsoft hit the ray-database idea simultaneously. The only real
       difference — the Lumigraph's geometry proxy — is exactly the axis the
       field has oscillated on ever since.
+    i18n:
+      vi:
+        note: >
+          SIGGRAPH 1996, cùng hội nghị, đứng sát nhau trong kỷ yếu: Stanford
+          và Microsoft chạm vào ý tưởng cơ-sở-dữ-liệu-tia cùng lúc. Khác biệt
+          thật sự duy nhất — proxy hình học của Lumigraph — chính là cái trục
+          mà cả ngành đong đưa quanh nó từ đó đến nay.
+      ja:
+        note: "SIGGRAPH 1996、同じ会議、予稿集では背中合わせ — Stanford と Microsoft が光線データベースのアイデアに同時に到達しました。唯一の本当の違いである Lumigraph の幾何プロキシこそ、以来この分野が揺れ続けている軸そのものです。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      Cùng câu hỏi với Light Field Rendering, hỏi cùng một năm: tổng hợp góc
+      nhìn mới của một vật thể thật từ một bộ ảnh chụp, không cần dựng 3D đầy
+      đủ.
+    solution: >
+      Cùng cơ sở dữ liệu tia 4D — nhưng với một cú twist càng để lâu càng thấy
+      hay: dùng hình học XẤP XỈ (visual hull thô) để hiệu chỉnh độ sâu cho
+      phép nội suy tia, đổi một chút hình học lấy mật độ chụp.
+    limitations: >
+      Vẫn cần chụp có cấu trúc và lưu trữ nặng; proxy hình học có ích nhưng là
+      đồ làm tay và thô. Cái núm "view synthesis cần bao nhiêu hình học?" mà
+      nó giới thiệu đến giờ vẫn còn được cãi nhau (3DGS bảo "cần chút tường
+      minh"; LVSM bảo "gần như khỏi").
+  ja:
+    problem: "Light Field Rendering と同じ問いを、同じ年に。完全な3D再構成なしに、写真の集合から実物体の新しい視点を合成する。"
+    solution: "同じ4D光線データベースです — ただし、驚くほど古びなかったひねりが一つ。近似の幾何 (粗い visual hull) で光線補間を深度補正し、わずかな幾何と引き換えに撮影密度を下げたのです。"
+    limitations: "構造化された撮影と重いストレージは相変わらず必要で、幾何プロキシも手作りで粗いまま。ただ、ここで導入された「視点合成に幾何はどれだけ要るか」というダイヤルは、今も議論が続いています (3DGS は「明示的に少し」、LVSM は「ほぼゼロ」と答えました)。"

@@ -28,4 +28,33 @@ relations:
       Repairs its own predecessor's bounded-scene assumption: the integrated
       positional encoding survives an unbounded world only after the
       contraction, proposal sampling, and distortion regularizer are added.
+    i18n:
+      vi:
+        note: >
+          Sửa giả định cảnh-bị-chặn của chính người tiền nhiệm: integrated
+          positional encoding chỉ sống nổi trong một thế giới không chặn sau
+          khi thêm phép co không gian, proposal sampling và regularizer chống
+          méo.
+      ja:
+        note: "自らの前身が抱えた「有界シーン」の仮定を直します。integrated positional encoding が非有界の世界で生き延びられるのは、空間の contraction、proposal サンプリング、そして distortion 正則化を加えた後だけです。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      Cảnh thật thì không bị chặn: camera xoay quanh một vật thể, hậu cảnh
+      trải dài tới chân trời. Gaussian của Mip-NeRF phình vô hạn ở khoảng cách
+      xa, năng lực bị phí vào nội dung xa tít, và giám sát thưa đẻ ra floater.
+    solution: >
+      Ba phép sửa rồi thành đồ nghề chuẩn: một phép co bóp không gian không
+      chặn vào trong một quả cầu (có ý thức mip), một "proposal MLP" nhỏ được
+      chưng cất trực tuyến để đặt mẫu, và một distortion loss làm tan các
+      floater. Cái benchmark "360" nó giới thiệu đến giờ vẫn là bãi thử của cả
+      ngành.
+    limitations: >
+      Hàng giờ huấn luyện mỗi cảnh trên ngăn xếp MLP chậm — công bố đúng mùa
+      cuộc nổi dậy lưới-voxel (Plenoxels, Instant-NGP) cắt huấn luyện xuống
+      còn vài phút, dựng sẵn sân khấu cho cuộc hợp nhất hai mạch ở Zip-NeRF.
+  ja:
+    problem: "実シーンは非有界です。カメラは物体の周りを回り、背景は地平線まで伸びる。Mip-NeRF のガウシアンは遠方で発散し、容量は遠くの内容に浪費され、疎な教師信号は floater を生みます。"
+    solution: "標準装備になった三つの直しです。非有界空間を球へ折り込む contraction (mip を意識したもの)、サンプル位置を決めるためにオンラインで蒸留される小さな「proposal MLP」、そして floater を溶かす distortion ロス。ここで導入された「360」ベンチマークは、今も分野の試金石です。"
+    limitations: "遅い MLP スタックの上で、シーンごとに数時間の学習 — 発表は、ボクセルグリッドの反乱 (Plenoxels、Instant-NGP) が学習を数分に切り詰めたのと同じシーズンでした。Zip-NeRF での二路線の合流を、お膳立てしたのです。"

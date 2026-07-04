@@ -25,4 +25,27 @@ relations:
     note: >
       Same authors, same dataset-mixing recipe, upgrading the architecture
       axis: CNN → ViT.
+    i18n:
+      vi:
+        note: >
+          Cùng nhóm tác giả, cùng công thức trộn dataset, nâng cấp trục kiến
+          trúc: CNN → ViT.
+      ja:
+        note: "同じ著者、同じデータセット混合のレシピのまま、アーキテクチャの軸を CNN → ViT へ引き上げました。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      Trường tiếp nhận cục bộ của CNN bó hẹp khả năng suy luận hình học toàn
+      cảnh — độ sâu của một điểm phụ thuộc vào bố cục của cả khung hình.
+    solution: >
+      Thay backbone CNN bằng Vision Transformer cho dense prediction:
+      attention toàn cục ở mọi tầng, độ phân giải đặc trưng không bao giờ sập
+      — một cú nhảy chất lượng lớn cho mạch MiDaS.
+    limitations: >
+      Kiến trúc đã đổi, nhưng trần chất lượng giờ nằm ở DỮ LIỆU: bao nhiêu ảnh
+      có nhãn độ sâu đi nữa vẫn là quá ít so với độ đa dạng của thế giới thực.
+  ja:
+    problem: "CNN の局所的な受容野が、シーン全体にわたる幾何の推論を縛ります — ある一点の深度は、フレーム全体のレイアウトに依存するのです。"
+    solution: "バックボーンの CNN を dense prediction 向けの Vision Transformer に置き換えます。全段でグローバルなアテンション、決して潰れない特徴解像度 — MiDaS 路線に大きな品質ジャンプをもたらしました。"
+    limitations: "アーキテクチャは変わりました。しかし品質の天井は今やデータの側にあります — ラベル付き深度画像がいくらあっても、実世界の多様性には遠く及ばないのです。"

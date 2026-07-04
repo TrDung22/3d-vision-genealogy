@@ -29,4 +29,33 @@ relations:
       Repairs NeRF's point-sampling fallacy — the aliasing and multiscale
       blur baked into treating pixels as rays — by rendering anti-aliased
       frustums, importing 40 years of graphics mipmapping wisdom.
+    i18n:
+      vi:
+        note: >
+          Sửa ngụy biện lấy-mẫu-điểm của NeRF — cái răng cưa và nhòe đa tỉ lệ
+          nằm sẵn trong việc coi pixel là tia — bằng cách render các frustum
+          đã khử răng cưa, nhập khẩu 40 năm trí tuệ mipmapping của đồ họa.
+      ja:
+        note: "NeRF の点サンプリングの誤り — ピクセルを光線として扱うことに埋め込まれたエイリアシングとマルチスケールのぼやけ — を直します。アンチエイリアスされた錐台をレンダリングし、グラフィックスの40年分の mipmap の知恵を輸入して。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      NeRF lấy mẫu các điểm vô cùng nhỏ dọc các tia vô cùng mảnh, nên dấu chân
+      (footprint) của một pixel bị bỏ qua: zoom ra thì răng cưa, zoom vào thì
+      nhòe. Render ở bất kỳ tỉ lệ nào khác tỉ lệ huấn luyện đều hỏng.
+    solution: >
+      Tia biến thành nón: mỗi mẫu là một chóp cụt hình nón, mã hóa bằng
+      integrated positional encoding (kỳ vọng của Fourier features trên
+      Gaussian của chóp cụt). Một MLP có ý thức về tỉ lệ thay cho cặp
+      coarse+fine mong manh của NeRF — mipmapping, tái phát hiện cho radiance
+      field.
+    limitations: >
+      Vẫn giả định cảnh bị chặn, hướng vào trong và huấn luyện theo từng cảnh;
+      phần toán giả định cái MLP positional-encoding chậm, nên ý tưởng phải
+      được suy lại hai lần — cho cảnh không chặn (Mip-NeRF 360) và cho hash
+      grid (Zip-NeRF).
+  ja:
+    problem: "NeRF は無限に細い光線に沿って無限小の点をサンプルするため、ピクセルの footprint が無視されます。ズームアウトすればエイリアス、ズームインすればぼやける。学習時と違うスケールでのレンダリングは、ことごとく壊れるのです。"
+    solution: "光線が錐になります。各サンプルは円錐台で、integrated positional encoding (錐台のガウス上での Fourier 特徴の期待値) で符号化されます。スケールを弁えた一つの MLP が、NeRF の脆い coarse + fine の対を置き換える — 放射輝度場のために再発見された mipmapping です。"
+    limitations: "依然として有界で内向きのシーンとシーンごとの学習を前提とし、数式は遅い positional-encoding MLP を仮定しています。そのためこのアイデアは二度導き直されることになりました — 非有界シーン向け (Mip-NeRF 360) と、ハッシュグリッド向け (Zip-NeRF) に。"

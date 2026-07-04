@@ -25,9 +25,43 @@ relations:
       Same organization, next bet: after democratizing speed with TripoSR,
       chase fidelity — replacing the feed-forward regressor with a scaled
       rectified-flow generator.
+    i18n:
+      vi:
+        note: >
+          Cùng một tổ chức, ván cược kế tiếp: dân chủ hóa tốc độ bằng TripoSR
+          xong thì săn độ trung thực — thay bộ hồi quy feed-forward bằng bộ
+          sinh rectified-flow được scale lên.
+      ja:
+        note: "同じ組織の、次の賭けです。TripoSR で速度を民主化した後は忠実度を追う — フィードフォワードの回帰器を、スケールさせた rectified-flow 生成器に置き換えました。"
   - node: hunyuan3d2-2025
     type: independent
     note: >
       Parallel entries in the 2025 industrial shape-generation race, both
       flow-based, developed independently.
+    i18n:
+      vi:
+        note: >
+          Hai thí sinh song song trong cuộc đua sinh hình khối công nghiệp
+          2025, cùng dựa trên flow, phát triển độc lập.
+      ja:
+        note: "2025年の産業向け形状生成レースに並走した二つのエントリー — どちらもフローベースで、互いに独立に開発されました。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      Mạch feed-forward tốc độ cao (kiểu TripoSR) đụng trần độ trung thực:
+      tốc độ giải xong rồi, nhưng chi tiết hình học sắc nét từ một ảnh thì
+      chưa.
+    solution: >
+      Scale phía sinh cho tử tế: một transformer rectified-flow lớn trên
+      latent SDF độ phân giải cao, huấn luyện trên dữ liệu được chọn lọc gắt —
+      đánh đổi chút tốc độ lấy một bậc thang rõ rệt về độ trung thực hình học,
+      và mở trọng số.
+    limitations: >
+      Hình học trước đã: bề ngoài/vật liệu vẫn cần các công đoạn hạ nguồn; và
+      như cả làn sóng, thế giới của nó là dataset vật thể chọn lọc, không phải
+      cảnh.
+  ja:
+    problem: "高速フィードフォワード路線 (TripoSR 系) は忠実度の天井に当たりました。速度は解決済み — でも一枚の画像から鋭い幾何ディテールを出すことは、まだだったのです。"
+    solution: "生成側を本気でスケールさせます。高解像度 SDF 潜在の上で動く大規模 rectified-flow トランスフォーマーを、徹底的に選別したデータで学習 — 速度を少し譲る代わりに幾何の忠実度をはっきり一段引き上げ、重みも公開しました。"
+    limitations: "まずは幾何から — 見た目やマテリアルには依然として下流の工程が要ります。そしてこの波の例に漏れず、その世界はキュレーション済み物体データセットであって、シーンではありません。"

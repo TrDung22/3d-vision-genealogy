@@ -1,7 +1,7 @@
 /**
- * UI-chrome translations. Academic node content (problem/solution/limitations)
- * intentionally stays in English for now — it can be localized per node later
- * without touching this file.
+ * UI-chrome translations. Node/branch content (problem/solution/limitations,
+ * relation notes, lane titles) is localized in the content YAML itself via
+ * per-entry `i18n` blocks — see src/content.config.ts.
  */
 export const LOCALES = ['en', 'vi', 'ja'] as const;
 export type Lang = (typeof LOCALES)[number];
@@ -25,6 +25,11 @@ const dict: Record<Lang, Record<string, string>> = {
     'howto.title': 'How to read the graph',
     'howto.arrows':
       'Arrows always follow time: from the older work to the newer one that references it. A filled node has a full write-up; a hollow one is a seed waiting to be written. A gold ring marks award / oral / spotlight / highlight recognition.',
+    'edge.fixes': 'fixes',
+    'edge.builds-on': 'builds on',
+    'edge.independent': 'independent',
+    'edge.challenges': 'challenges',
+    'edge.revives': 'revives',
     'glossary.fixes': 'Comes later and directly repairs a specific weakness of the earlier work',
     'glossary.builds-on': 'Stands on the earlier work and extends it in a new direction',
     'glossary.independent':
@@ -57,6 +62,14 @@ const dict: Record<Lang, Record<string, string>> = {
     'graph.standsOn': 'Stands on',
     'graph.followedBy': 'Followed by',
     'graph.openPage': 'Open page →',
+    'graph.close': 'Close',
+    'graph.ariaTimeline': 'Genealogy of 3D vision works over time',
+    'status.seed': 'seed',
+    'status.draft': 'draft',
+    'status.written': 'written',
+    'node.linkPaper': 'Paper',
+    'node.linkProject': 'Project page',
+    'node.linkCode': 'Code',
     'node.problem': 'Problem',
     'node.coreIdea': 'Core idea',
     'node.limitations': 'Limitations it left behind',
@@ -118,6 +131,11 @@ const dict: Record<Lang, Record<string, string>> = {
     'howto.title': 'Cách đọc đồ thị',
     'howto.arrows':
       'Mũi tên luôn chảy xuôi theo thời gian: từ công trình trước đến công trình sau có nhắc đến nó. Node tô đặc là đã có bài phân tích; node rỗng là hạt giống còn chờ viết. Vòng vàng nghĩa là paper từng được award / oral / spotlight / highlight.',
+    'edge.fixes': 'sửa lỗi',
+    'edge.builds-on': 'kế thừa',
+    'edge.independent': 'độc lập',
+    'edge.challenges': 'thách thức',
+    'edge.revives': 'hồi sinh',
     'glossary.fixes': 'Ra đời sau và sửa thẳng vào một điểm yếu cụ thể của công trình trước',
     'glossary.builds-on': 'Đứng trên nền công trình trước và mở ra một hướng mới',
     'glossary.independent':
@@ -137,11 +155,11 @@ const dict: Record<Lang, Record<string, string>> = {
       'Kéo để di chuyển · lăn chuột để zoom · bấm vào node để mở trang · rê chuột lên node để soi các quan hệ trực tiếp của nó. Quan hệ xuyên nhánh được làm mờ — rê chuột vào node là chúng hiện rõ.',
     'graph.filterHint': 'Bấm để bật/tắt nhánh này · Alt+bấm để xem riêng nó',
     'graph.hint3d':
-      'Vẫn gia phả đó, nhưng trong không gian 3D — các node tụ thành cụm theo mạch nghiên cứu (mấy quả bong bóng mờ). Kéo để xoay · lăn chuột để zoom · bấm vào node để xem chi tiết. Hạt sáng đang chạy = fixes, màu đỏ = challenges.',
+      'Vẫn gia phả đó, nhưng trong không gian 3D — các node tụ thành cụm theo mạch nghiên cứu (mấy quả bong bóng mờ). Kéo để xoay · lăn chuột để zoom · bấm vào node để xem chi tiết. Hạt sáng đang chạy = sửa lỗi, màu đỏ = thách thức.',
     'graph.noscript': 'Cần bật JavaScript để xem đồ thị — bảng đầy đủ nằm ở cuối trang.',
     'graph.hasArticle': 'đã có bài phân tích',
     'graph.seed': 'hạt giống — còn chờ viết',
-    'graph.award': 'award / oral / spotlight / highlight',
+    'graph.award': 'giải thưởng / Oral / Spotlight / Highlight',
     'graph.tipOpen': 'Bấm để mở trang →',
     'graph.loading3d': 'Đang tải view 3D…',
     'graph.error3d': 'Không tải được view 3D.',
@@ -150,6 +168,14 @@ const dict: Record<Lang, Record<string, string>> = {
     'graph.standsOn': 'Đứng trên vai',
     'graph.followedBy': 'Mở đường cho',
     'graph.openPage': 'Mở trang →',
+    'graph.close': 'Đóng',
+    'graph.ariaTimeline': 'Gia phả các công trình 3D vision theo dòng thời gian',
+    'status.seed': 'hạt giống',
+    'status.draft': 'bản nháp',
+    'status.written': 'đã viết',
+    'node.linkPaper': 'Bài báo',
+    'node.linkProject': 'Trang dự án',
+    'node.linkCode': 'Code',
     'node.problem': 'Bài toán',
     'node.coreIdea': 'Ý tưởng cốt lõi',
     'node.limitations': 'Những giới hạn để lại',
@@ -180,7 +206,7 @@ const dict: Record<Lang, Record<string, string>> = {
     'heresies.meta':
       'Những cú nghịch dòng, những phát hiện song hành và những cuộc hồi sinh của 3D vision — ai dám cãi lại dòng chính, ý tưởng nào chín cùng lúc ở nhiều nơi, và điều gì đã sống dậy từ quên lãng.',
     'heresies.intro':
-      'Chuyện fixes với builds on thì survey nào cũng kể rồi. Trang này dành cho ba loại quan hệ còn lại — những thứ mà lối kể chuyện một mạch thẳng nào cũng làm rơi dọc đường. Không dòng nào dưới đây được viết tay: tất cả sinh ra từ chính gia phả, và lớn lên cùng nó.',
+      'Chuyện sửa lỗi với kế thừa thì survey nào cũng kể rồi. Trang này dành cho ba loại quan hệ còn lại — những thứ mà lối kể chuyện một mạch thẳng nào cũng làm rơi dọc đường. Không dòng nào dưới đây được viết tay: tất cả sinh ra từ chính gia phả, và lớn lên cùng nó.',
     'heresies.challenges.title': 'Những kẻ nghịch dòng',
     'heresies.challenges.intro':
       'Có những paper vĩ đại không phải vì đóng góp thêm thứ gì, mà vì chúng chỉ ra cả một nhánh đang tự lừa mình — bằng cách xét lại giả định, benchmark, hay chính kết luận của nhánh đó.',
@@ -211,6 +237,11 @@ const dict: Record<Lang, Record<string, string>> = {
     'howto.title': 'グラフの読み方',
     'howto.arrows':
       '矢印はつねに時間の流れに沿って、古い研究からそれを踏まえた新しい研究へ向かいます。塗りつぶされたノードには解説記事があり、白抜きのノードは執筆待ちの種。金色のリングは受賞・Oral・Spotlight・Highlight の印です。',
+    'edge.fixes': '修正',
+    'edge.builds-on': '継承',
+    'edge.independent': '独立',
+    'edge.challenges': '挑戦',
+    'edge.revives': '復活',
     'glossary.fixes': '後から現れ、先行研究の特定の弱点をまっすぐ直す',
     'glossary.builds-on': '先行研究の土台の上に立ち、新しい方向へ広げる',
     'glossary.independent':
@@ -230,7 +261,7 @@ const dict: Record<Lang, Record<string, string>> = {
       'ドラッグで移動 · スクロールでズーム · ノードをクリックで個別ページへ · ホバーすると直接の関係が浮かび上がります。枝をまたぐ関係は薄く描かれ、ノードにホバーするとはっきり現れます。',
     'graph.filterHint': 'クリックで枝の表示を切り替え · Alt+クリックでこの枝だけ表示',
     'graph.hint3d':
-      '同じ系譜を3Dで。ノードはレーンごとに寄り集まります(淡い球)。ドラッグで回転 · スクロールでズーム · クリックで詳細へ。流れる粒子は fixes、赤は challenges。',
+      '同じ系譜を3Dで。ノードはレーンごとに寄り集まります(淡い球)。ドラッグで回転 · スクロールでズーム · クリックで詳細へ。流れる粒子は「修正」、赤は「挑戦」。',
     'graph.noscript': 'グラフの表示には JavaScript が必要です — ページ下部に完全な表があります。',
     'graph.hasArticle': '記事あり',
     'graph.seed': '種 — 執筆待ち',
@@ -243,6 +274,14 @@ const dict: Record<Lang, Record<string, string>> = {
     'graph.standsOn': '土台となる研究',
     'graph.followedBy': '後に続く研究',
     'graph.openPage': 'ページを開く →',
+    'graph.close': '閉じる',
+    'graph.ariaTimeline': '3Dビジョン研究の系譜を時系列で示すグラフ',
+    'status.seed': '種',
+    'status.draft': '下書き',
+    'status.written': '執筆済み',
+    'node.linkPaper': '論文',
+    'node.linkProject': 'プロジェクトページ',
+    'node.linkCode': 'コード',
     'node.problem': '問題',
     'node.coreIdea': '中核のアイデア',
     'node.limitations': '残された限界',
@@ -273,7 +312,7 @@ const dict: Record<Lang, Record<string, string>> = {
     'heresies.meta':
       '3Dビジョンの異端と同時発見と復活 — 誰が主流に異を唱え、どのアイデアが各地で同時に実り、何が忘却から蘇ったのか。',
     'heresies.intro':
-      'fixes と builds on の物語なら、どのサーベイも語ってくれます。このページに集めたのは残りの三種類のエッジ — 一本道の解説からこぼれ落ちてしまう部分です。以下は一行たりとも手書きではありません。すべて系譜そのものから生成され、系譜とともに育ちます。',
+      '「修正」と「継承」の物語なら、どのサーベイも語ってくれます。このページに集めたのは残りの三種類のエッジ — 一本道の解説からこぼれ落ちてしまう部分です。以下は一行たりとも手書きではありません。すべて系譜そのものから生成され、系譜とともに育ちます。',
     'heresies.challenges.title': '異端者たち',
     'heresies.challenges.intro':
       '何かを積み上げたからではなく、ある枝がまるごと思い込みの上に立っていたと示したからこそ偉大な論文たち。前提を、ベンチマークを、結論そのものを疑った研究です。',
@@ -310,6 +349,7 @@ export function graphStrings(lang: Lang) {
     'graph.standsOn',
     'graph.followedBy',
     'graph.openPage',
+    'graph.close',
   ] as const;
   return Object.fromEntries(keys.map((k) => [k.replace('graph.', ''), t(lang, k)]));
 }

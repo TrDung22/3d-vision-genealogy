@@ -22,3 +22,23 @@ limitations: >
   then with neural priors.
 relations: []
 status: seed
+i18n:
+  vi:
+    problem: >
+      Novel view synthesis mà bỏ qua phần khó: có thể render góc nhìn mới của
+      một cảnh thật mà KHÔNG cần hình học, không correspondence, không dựng
+      lại gì hết không?
+    solution: >
+      Coi cảnh là một hàm 4D của các tia (light field — hàm plenoptic giới
+      hạn trong không gian tự do). Chụp hàng nghìn ảnh trên một mặt phẳng, rồi
+      render góc nhìn mới bằng cách TÁI LẤY MẪU tia — view synthesis rút gọn
+      thành tra cứu cơ sở dữ liệu cộng nội suy.
+    limitations: >
+      Cái giá của việc né hình học là mật độ chụp: hàng nghìn ảnh mỗi cảnh,
+      lưu trữ khổng lồ, và bóng ma (ghosting) ngay khi view thưa đi. Cả ngành
+      sau đó mất 25 năm để mua lại độ thưa — bằng proxy hình học, rồi bằng
+      prior nơ-ron.
+  ja:
+    problem: "難しい部分を丸ごと飛ばした新規視点合成 — 幾何なし、対応点なし、再構成も一切なしで、実シーンの新しい視点を描けるのか?"
+    solution: "シーンを光線の4D関数として扱います (自由空間に制限した light field / plenoptic 関数)。平面上で何千枚も撮影し、新しい視点は光線をリサンプリングして描く — 視点合成が、データベース検索と補間に還元されました。"
+    limitations: "幾何を飛ばした代償は撮影密度です。シーンごとに何千枚、巨大なストレージ、視点が疎になった途端のゴースト。分野はその後25年をかけて疎らさを買い戻していきます — まず幾何プロキシで、次にニューラルな事前知識で。"

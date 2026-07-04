@@ -26,10 +26,43 @@ relations:
     note: >
       Opens and extends the LRM recipe: sparse imagined views instead of one
       image, and mesh-native training instead of NeRF output.
+    i18n:
+      vi:
+        note: >
+          Mở và nối dài công thức LRM: vài view tưởng tượng thưa thay vì một
+          ảnh, và huấn luyện thẳng trên mesh thay vì xuất NeRF.
+      ja:
+        note: "LRM のレシピを公開し、押し広げます。一枚の画像の代わりに疎な想像視点を、NeRF 出力の代わりにメッシュ本位の学習を。"
   - node: triposr2024
     type: independent
     note: >
       Two open LRM descendants weeks apart: TripoSR optimizes for raw speed
       from a single image, InstantMesh for mesh quality via multiview
       conditioning.
+    i18n:
+      vi:
+        note: >
+          Hai hậu duệ mở của LRM cách nhau vài tuần: TripoSR tối ưu tốc độ
+          thuần từ một ảnh, InstantMesh tối ưu chất lượng mesh nhờ điều kiện
+          hóa đa góc nhìn.
+      ja:
+        note: "数週間差で現れた、LRM の二つのオープンな後継です。TripoSR は一枚の画像からの純粋な速さを、InstantMesh は多視点条件付けによるメッシュ品質を追いました。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      LRM chứng minh được feed-forward 3D nhưng vẫn đóng và xuất NeRF; người
+      làm nghề cần một pipeline mở mà điểm kết là một mesh sạch.
+    solution: >
+      Ghép hai sợi chỉ mở lại với nhau: front-end diffusion đa góc nhìn (kiểu
+      Zero123++) tưởng tượng các view thưa, một transformer kiểu LRM dựng lại
+      từ chúng, và phép trích iso-surface khả vi (FlexiCubes) dạy mô hình xuất
+      thẳng mesh — trọng số mở, ~10 giây mỗi asset.
+    limitations: >
+      Chất lượng bị chặn bởi độ nhất quán của front-end đa góc nhìn; hình học
+      thiên về trơn nhẵn; và như mọi mô hình luyện trên Objaverse, nó sống
+      trong thế giới ảnh vật thể sạch sẽ.
+  ja:
+    problem: "LRM はフィードフォワード3Dを証明しつつも非公開のままで、出力は NeRF でした。実務家に必要だったのは、綺麗なメッシュで終わるオープンなパイプラインです。"
+    solution: "二本のオープンな糸を編み合わせます。多視点拡散のフロントエンド (Zero123++ 流) が疎な視点を想像し、LRM 流トランスフォーマーがそこから再構成、微分可能な等値面抽出 (FlexiCubes) がモデルにメッシュを直接出力させる — 重みは公開、アセット一つ約10秒です。"
+    limitations: "品質は多視点フロントエンドの一貫性に頭を抑えられます。幾何は滑らかさに偏りがちで、Objaverse 育ちのモデルの例に漏れず、背景の綺麗な物体中心の画像世界の住人です。"

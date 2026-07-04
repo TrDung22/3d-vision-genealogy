@@ -28,10 +28,48 @@ relations:
       Extends splatting along the time axis within months: keeps the
       rasterization speed that made 3DGS a phenomenon and spends it on the
       dynamic setting where ray-marched methods were slowest.
+    i18n:
+      vi:
+        note: >
+          Nối dài splatting theo trục thời gian chỉ trong vài tháng: giữ tốc
+          độ rasterization đã làm 3DGS thành hiện tượng và đổ nó vào bối cảnh
+          động — nơi các phương pháp ray-marched chậm nhất.
+      ja:
+        note: "スプラッティングを時間軸へと数か月で拡張します。3DGS を現象にしたラスタライズの速度を保ち、それをレイマーチング系が最も遅かった動的設定へ注ぎ込みました。"
   - node: dnerf2020
     type: fixes
     note: >
       Repairs the render-speed collapse of deformation-based dynamic NeRFs:
       the same canonical+warp idea, but deforming explicit Gaussians instead
       of querying a giant MLP — from seconds per frame to real time.
+    i18n:
+      vi:
+        note: >
+          Sửa cú sụp tốc-độ-render của các NeRF động dựa trên biến dạng: vẫn ý
+          tưởng canonical+warp, nhưng biến dạng các Gaussian tường minh thay
+          vì truy vấn một MLP khổng lồ — từ vài giây mỗi khung hình thành thời
+          gian thực.
+      ja:
+        note: "変形ベースの動的 NeRF が抱えたレンダリング速度の崩壊を直します。同じ canonical + warp のアイデアながら、巨大な MLP を問い合わせる代わりに明示的なガウシアンを変形させる — 1フレーム数秒からリアルタイムへ。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      Radiance field động thừa kế chi phí của NeRF gấp đôi: huấn luyện theo
+      từng cảnh mất nhiều ngày và render mất vài giây mỗi khung hình — một
+      video xem được từ mọi hướng, chỉ trừ việc không thật sự thời gian thực.
+    solution: >
+      Một tập Gaussian 3D canonical bị biến dạng theo thời gian bởi một trường
+      phân rã gọn (kiểu HexPlane) dự đoán chuyển động và biến đổi hình của
+      từng Gaussian — cảnh động ở 80+ fps và 800x600, huấn luyện vài phút,
+      lưu trữ giữ ở mức vừa phải nhờ chia sẻ các Gaussian canonical xuyên thời
+      gian.
+    limitations: >
+      Những món nợ cũ của khuôn mẫu canonical+biến-dạng đi theo: thay đổi
+      topology và chuyển động dài, phức tạp làm căng một tập canonical duy
+      nhất; và video đơn ống kính chụp tùy hứng vẫn khó hơn nhiều so với chụp
+      đa camera.
+  ja:
+    problem: "動的放射輝度場は NeRF のコストを二重に相続しました。シーンごとの学習に数日、レンダリングに1フレーム数秒 — どこからでも見られる動画、ただし実際にはリアルタイムでない、を除いて。"
+    solution: "一組の canonical な3Dガウシアンを、ガウシアンごとの動きと形状変化を予測するコンパクトな分解場 (HexPlane 風) が時間にわたって変形させます — 80fps 超・800x600 の動的シーンを数分で学習、canonical ガウシアンを時間で共有してストレージも控えめに。"
+    limitations: "canonical + 変形という設計図の古い借金が持ち越されます。トポロジー変化と長く複雑な動きは単一の canonical セットに負担をかけ、単眼の気軽な動画は多カメラ撮影よりはるかに難しいままです。"

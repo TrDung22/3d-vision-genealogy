@@ -12,9 +12,9 @@
  * nodes cluster by lane inside faint bubbles with floating lane labels;
  * same award rings and hover focus; clicking docks an info panel.
  *
- * Both views read /graph.json — generated from src/content/ — so adding
- * branches or nodes requires NO changes to this file. UI strings arrive
- * pre-localized through data attributes.
+ * Both views read /<lang>/graph.json — generated from src/content/ with all
+ * text pre-localized — so adding branches or nodes requires NO changes to
+ * this file. UI strings arrive pre-localized through data attributes.
  */
 import { graphStrings, t, type Lang } from '../lib/i18n';
 
@@ -40,7 +40,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     <output class="gg-year-readout" id="gg-year-readout" for="gg-year-range"></output>
   </div>
   <div class="gg-viewport" id="gg-viewport">
-    <svg id="gg-svg" role="img" aria-label="Genealogy of 3D vision works over time"></svg>
+    <svg id="gg-svg" role="img" aria-label={t(lang, 'graph.ariaTimeline')}></svg>
     <div class="gg-tooltip" id="gg-tooltip" hidden></div>
   </div>
   <p class="muted gg-hint">
@@ -73,7 +73,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
   init().catch((err) => console.error('genealogy graph:', err));
 
   async function init() {
-    const data = await (await fetch(`${base}/graph.json`)).json();
+    const data = await (await fetch(`${root}/graph.json`)).json();
 
     const branchById = new Map(data.branches.map((b) => [b.id, b]));
     const nodeById = new Map(data.nodes.map((n) => [n.id, n]));

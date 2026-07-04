@@ -27,10 +27,44 @@ relations:
       Attacks the same inconsistency debt as SyncDreamer, but by widening the
       output: predicting normals with colors gives reconstruction an explicit
       geometric anchor that RGB-only imagination lacked.
+    i18n:
+      vi:
+        note: >
+          Tấn công cùng món nợ bất nhất như SyncDreamer, nhưng bằng cách mở
+          rộng đầu ra: dự đoán pháp tuyến kèm màu trao cho bước dựng lại một
+          mỏ neo hình học tường minh mà trí tưởng tượng chỉ-RGB không có.
+      ja:
+        note: "SyncDreamer と同じ不一致の借金を攻めますが、レバーが違います。出力を広げ、色と並べて法線を予測することで、RGB だけの想像には無かった明示的な幾何のアンカーを再構成に与えました。"
   - node: syncdreamer2023
     type: independent
     note: >
       Same weeks, same target, different levers — synchronized noise vs
       cross-domain (normal + color) generation. A textbook parallel discovery
       inside one research season.
+    i18n:
+      vi:
+        note: >
+          Cùng những tuần đó, cùng mục tiêu, khác đòn bẩy — nhiễu đồng bộ đấu
+          với sinh xuyên-miền (pháp tuyến + màu). Một phát hiện song song mẫu
+          mực ngay trong một mùa nghiên cứu.
+      ja:
+        note: "同じ数週間、同じ狙い、異なるレバー — 同期ノイズ対クロスドメイン (法線 + 色) 生成。一つの研究シーズンの中で起きた、教科書どおりの同時発見です。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      Chỉ view RGB sinh ra thì chưa đủ ràng buộc hình học: ảnh trông nhất quán
+      đấy nhưng vẫn có thể giấu bên dưới một bề mặt nhão, mơ hồ.
+    solution: >
+      Bắt mô hình diffusion nhả thẳng hình học kèm bề ngoài: một diffusion
+      xuyên-miền sinh cặp bản đồ pháp tuyến VÀ ảnh màu cho nhiều góc nhìn,
+      attention xuyên-miền giữ hai bên khớp nhau; một bước hợp nhất có ý thức
+      hình học nâng chúng thành mesh có texture trong vài phút.
+    limitations: >
+      Bộ view thưa cố định và độ phân giải khiêm tốn; giám sát bằng pháp tuyến
+      giúp bề mặt nhưng cấu trúc mịn và vật liệu phức tạp vẫn vỡ; bước hợp
+      nhất từng vật thể vẫn là một lần tối ưu hóa.
+  ja:
+    problem: "生成された RGB 視点だけでは幾何の制約が足りません。見た目は一致していても、その裏でぐにゃりとした曖昧な表面が隠れていることがあるのです。"
+    solution: "拡散モデルに、見た目と並べて幾何を直接出力させます。クロスドメイン拡散が複数視点の法線マップと色画像をペアで生成し、クロスドメインアテンションが両者を揃える。幾何を意識した融合ステップが、それらを数分でテクスチャ付きメッシュへ引き上げます。"
+    limitations: "視点セットは疎で固定、解像度も控えめです。法線の教師信号は表面には効くものの、細かい構造や複雑な材質は今も破綻します。物体ごとの融合も最適化ステップのままです。"

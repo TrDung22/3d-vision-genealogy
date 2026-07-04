@@ -25,4 +25,29 @@ relations:
       The same 2005–2008 wave of statistical learning for single-image 3D,
       developed in parallel: Pop-up chose geometric-class labeling, Make3D
       chose continuous depth regression.
+    i18n:
+      vi:
+        note: >
+          Cùng làn sóng 2005–2008 đem học thống kê vào bài toán 3D từ một ảnh,
+          phát triển song song: Pop-up chọn gán nhãn lớp hình học, Make3D chọn
+          hồi quy độ sâu liên tục.
+      ja:
+        note: "2005–2008年、単一画像3Dへ統計的学習を持ち込んだ同じ波の中で、並行して育った研究です。Pop-up は幾何クラスの分類を、Make3D は連続深度の回帰を選びました。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      Một bản đồ độ sâu liên tục (chứ không phải vài lớp hình học rời rạc) cho
+      cảnh bất kỳ, từ một tấm ảnh duy nhất.
+    solution: >
+      Một MRF trên các superpixel với đặc trưng đa tỉ lệ thiết kế tay: hồi quy
+      hướng và độ sâu của từng mảnh phẳng nhỏ, rồi khâu chúng lại thành bề mặt
+      của cảnh.
+    limitations: >
+      Đặc trưng thiết kế tay và MRF cứng nhắc — chất lượng sụp đổ ngay khi
+      bước ra khỏi phân phối huấn luyện. Chính giới hạn "ai là người thiết kế
+      đặc trưng?" là cánh cửa mà học sâu bước qua sáu năm sau.
+  ja:
+    problem: "任意のシーンに対して、一枚の画像から連続的な深度マップを得る — 少数の離散的な幾何クラスではなく。"
+    solution: "スーパーピクセル上の MRF と手作りのマルチスケール特徴。小さな平面パッチごとに向きと深度を回帰し、それらを縫い合わせてシーンの表面に仕立てます。"
+    limitations: "手作業で設計した特徴と硬直した MRF — 学習分布を一歩出た途端、品質は崩壊します。「特徴は誰が設計するのか」というこの限界こそ、6年後に深層学習がくぐり抜けてきた扉です。"

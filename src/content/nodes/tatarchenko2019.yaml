@@ -28,9 +28,44 @@ relations:
       Challenges the entire line opened by 3D-R2N2: IoU metrics on ShapeNet had
       been hiding the fact that the networks "recognize and recall" rather than
       reconstruct.
+    i18n:
+      vi:
+        note: >
+          Thách thức cả mạch nghiên cứu mà 3D-R2N2 mở ra: chỉ số IoU trên
+          ShapeNet bấy lâu che giấu sự thật rằng các mạng chỉ "nhận ra rồi nhớ
+          lại" chứ không hề dựng lại.
+      ja:
+        note: "3D-R2N2 が開いた路線そのものへの挑戦です。ShapeNet 上の IoU という指標が、ネットワークは再構成ではなく「認識して思い出している」だけという事実を覆い隠していました。"
   - node: psgn2017
     type: challenges
     note: >
       Retrieval baselines beat the point-cloud networks too — the problem was
       never the output data structure, but how the task was benchmarked.
+    i18n:
+      vi:
+        note: >
+          Baseline tra cứu thắng luôn cả các mạng point cloud — vấn đề chưa bao
+          giờ nằm ở cấu trúc dữ liệu đầu ra, mà ở cách benchmark bài toán.
+      ja:
+        note: "検索ベースラインは点群ネットワークにも勝ってしまいました — 問題は出力のデータ構造ではなく、タスクのベンチマークの仕方そのものだったのです。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      Câu hỏi khó chịu mà cả nhánh né tránh: các mạng dựng 3D từ một ảnh có
+      thật sự "dựng lại" thứ gì không, hay chỉ nhớ lại những hình khối chúng
+      từng thấy?
+    solution: >
+      Một thí nghiệm có kiểm soát: baseline tra cứu (tìm hình khối gần nhất
+      trong tập huấn luyện) và phân cụm đơn giản THẮNG các mạng tinh vi ngay
+      trên benchmark của chính chúng. Kết luận: chúng đang nhận dạng trá hình,
+      không phải dựng lại.
+    limitations: >
+      Là paper phê phán nên không đưa ra phương án thay thế — nhưng nó thiết
+      lập lại chuẩn đánh giá và gieo mối ngờ đúng chỗ cần gieo: vấn đề nằm ở
+      thế giới đóng ShapeNet. Bốn năm sau, mạch tạo sinh trả lời bằng prior cỡ
+      internet.
+  ja:
+    problem: "枝全体が避けてきた居心地の悪い問い — 単一画像3Dのネットワークは本当に何かを「再構成」しているのか、それとも見たことのある形状を思い出しているだけなのか?"
+    solution: "統制された実験です。検索ベースライン (学習データから最も近い形状を引いてくる) と単純なクラスタリングが、精巧なネットワークたちを彼ら自身のベンチマークで打ち負かしました。結論 — 彼らがやっていたのは再構成ではなく、変装した認識です。"
+    limitations: "批判の論文ゆえ代替案は示しません — それでも評価基準をリセットし、疑いを植えるべき場所に正しく植えました。問題は閉じた ShapeNet の世界にある、と。4年後、生成の路線がインターネット規模の事前知識でこれに答えます。"

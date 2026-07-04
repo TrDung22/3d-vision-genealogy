@@ -31,4 +31,34 @@ relations:
       from inside: under-constrained regions get their artifacts erased by
       an internet-scale 2D prior — the generative-prior playbook of the
       single-image branch arriving in the reconstruction branch.
+    i18n:
+      vi:
+        note: >
+          Sửa cái hỏng ngoại suy mà tối ưu theo từng cảnh không tự sửa nổi từ
+          bên trong: các vùng thiếu ràng buộc được một prior 2D cỡ internet
+          xóa sạch artifact — sách lược prior-tạo-sinh của nhánh một-ảnh đến
+          với nhánh dựng lại.
+      ja:
+        note: "シーンごとの最適化が内側からは直せない外挿の失敗を直します。制約の足りない領域は、インターネット規模の2D prior にアーティファクトを消してもらう — 単一画像の枝の「生成 prior」戦法が、再構成の枝に到着したのです。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      Bước ra khỏi quỹ đạo huấn luyện là mọi radiance field — NeRF hay 3DGS —
+      đều phản bội bạn: floater, vệt nhòe, và hình học bịa ra ở những vùng ít
+      được quan sát. Tối ưu theo từng cảnh chỉ nội suy được những gì nó đã
+      thấy.
+    solution: >
+      Để một image prior dọn dẹp: một mô hình diffusion một-bước (SD-Turbo đã
+      fine-tune) học cách "sửa" artifact đã render, các chỉnh sửa của nó được
+      chưng cất NGƯỢC vào biểu diễn 3D để giữ nhất quán, rồi chạy lại như một
+      lớp đánh bóng hậu-render thời gian thực — FID trên góc nhìn mới tốt gấp
+      2 lần, bất kể là NeRF hay 3DGS.
+    limitations: >
+      Prior chỉ sửa được những gì nó tưởng tượng nổi: các chỉnh sửa là hợp lý
+      chứ không đảm bảo trung thực, và hình học bị che khuất nặng vẫn cứ bịa
+      ra — trông thì nhất quán, chưa chắc đã đúng.
+  ja:
+    problem: "学習の軌道から一歩外れると、どの放射輝度場 — NeRF でも 3DGS でも — も裏切ります。観測の乏しい領域の floater、にじみ、幻視された幾何。シーンごとの最適化は、見たものを補間できるだけです。"
+    solution: "画像 prior に掃除させます。単一ステップの拡散モデル (微調整した SD-Turbo) がレンダリングのアーティファクトを「直す」ことを学び、その修正は一貫性のために3D表現へ蒸留し戻され、さらにリアルタイムのレンダー後仕上げとして再び走る — 新規視点の FID が2倍良くなり、NeRF か 3DGS かを問いません。"
+    limitations: "prior は、想像できるものしか直せません。修正は忠実である保証はなくもっともらしいだけで、大きく未観測な幾何は幻視のまま — 一貫して見えても、真実とは限らないのです。"

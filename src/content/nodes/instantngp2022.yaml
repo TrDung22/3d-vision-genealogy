@@ -28,6 +28,14 @@ relations:
       Repairs the training-cost catastrophe head-on: from ~1 day to ~5
       seconds on a single GPU, collapsing NeRF's iteration loop from
       "overnight experiment" to "interactive tool".
+    i18n:
+      vi:
+        note: >
+          Sửa thẳng thảm họa chi phí huấn luyện: từ ~1 ngày xuống ~5 giây trên
+          một GPU, gói vòng lặp thí nghiệm của NeRF từ "chạy qua đêm" thành
+          "công cụ tương tác".
+      ja:
+        note: "学習コストの大惨事を正面から直します。単一 GPU で約1日から約5秒へ — NeRF の反復ループを「一晩がかりの実験」から「対話的なツール」へ畳み込みました。"
   - node: plenoxels2021
     type: independent
     note: >
@@ -35,4 +43,33 @@ relations:
       Berkeley deleted the network entirely; NVIDIA kept a tiny one and made
       the data structure learnable. Neither needed the big MLP — the field's
       bitter lesson about where NeRF's capacity actually lived.
+    i18n:
+      vi:
+        note: >
+          Cuộc nổi dậy lưới đến từ hai hướng cùng một mùa đông: Berkeley xóa
+          sạch mạng; NVIDIA giữ một mạng tí hon và làm cho cấu trúc dữ liệu
+          học được. Không bên nào cần cái MLP lớn — bài học cay đắng của ngành
+          về nơi năng lực của NeRF thật sự trú ngụ.
+      ja:
+        note: "グリッドの反乱は、同じ冬に二方向から来ました。Berkeley はネットワークを完全に消し、NVIDIA は小さなものを残してデータ構造を学習可能にした。どちらも大きな MLP を必要としなかった — NeRF の容量が実際どこに宿っていたか、という分野の苦い教訓です。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      Chi phí của một mạng tọa độ phải trả theo từng lượt truy vấn, hàng triệu
+      lần mỗi ảnh: cái huấn luyện cả ngày của NeRF là lỗi của phép mã hóa
+      chẳng kém gì lỗi của MLP.
+    solution: >
+      Một BẢNG HASH đa phân giải chứa các vector đặc trưng huấn luyện được,
+      đặt trước một MLP tí hon: va chạm hash để mặc cho gradient tự dàn xếp,
+      toàn bộ nằm trong các CUDA kernel hợp nhất — và NeRF huấn luyện trong
+      vài GIÂY. Một phép mã hóa phục vụ cả ảnh gigapixel, SDF lẫn radiance
+      field.
+    limitations: >
+      Đặc trưng lấy mẫu điểm bị răng cưa khi đổi tỉ lệ (khe hở cho Zip-NeRF),
+      va chạm hash chặn trần chi tiết mịn, và render vẫn hành quân tia — huấn
+      luyện nhanh, nhưng chưa hiển thị thời gian thực nổi cảnh lớn.
+  ja:
+    problem: "座標ネットワークのコストはクエリごとに、画像一枚あたり何百万回も支払われます。NeRF の丸一日の学習は、MLP と同じくらい符号化のせいなのです。"
+    solution: "学習可能な特徴ベクトルの多重解像度ハッシュテーブルを、極小の MLP の前に置きます。衝突は勾配に任せて解かせ、全体が融合 CUDA カーネルの中で動く — そして NeRF が数秒で学習できる。一つの符号化が、ギガピクセル画像も SDF も放射輝度場も同じように扱います。"
+    limitations: "点サンプルの特徴はスケール変化でエイリアスし (Zip-NeRF の入口)、ハッシュ衝突が細部の天井を作り、レンダリングは相変わらず光線を行進させます — 学習は速くとも、大きなシーンのリアルタイム表示はまだです。"

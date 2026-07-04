@@ -24,4 +24,30 @@ relations:
       A direct revival of Horn's research program with modern statistical
       priors — just as the mainstream turned decisively to deep learning on
       large data.
+    i18n:
+      vi:
+        note: >
+          Hồi sinh trực tiếp chương trình nghiên cứu của Horn bằng prior thống
+          kê hiện đại — đúng lúc dòng chính rẽ hẳn sang học sâu trên dữ liệu
+          lớn.
+      ja:
+        note: "Horn の研究プログラムを、現代の統計的 prior で直接蘇らせました — 主流が大規模データの深層学習へ決定的に舵を切った、まさにそのときに。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      Giải trọn bài toán intrinsic images: khôi phục đồng thời hình khối,
+      chiếu sáng và phản xạ từ một tấm ảnh — phiên bản trọn vẹn nhất của giấc
+      mơ shape-from-shading.
+    solution: >
+      Tối ưu hóa với các prior thống kê học riêng cho từng thành phần (độ trơn
+      của hình khối, thống kê chiếu sáng tự nhiên, tính thưa của phản xạ) —
+      shape-from-shading được tái vũ trang bằng công cụ hiện đại.
+    limitations: >
+      Vẫn cần vật thể đã tách nền và mô hình chiếu sáng đơn giản. Nó đến đúng
+      lúc cơn sóng CNN end-to-end ập tới, và nhanh chóng bị che khuất — lần
+      "hồi sinh rồi lại bị lãng quên" thứ hai của mạch vật lý.
+  ja:
+    problem: "intrinsic images 問題の完全版に挑む — 一枚の画像から形状・照明・反射特性を同時に復元する。shape-from-shading の夢の、最も完成された形です。"
+    solution: "成分ごとに別々に学習した統計的 prior (形状の滑らかさ、自然照明の統計、反射率のスパース性) を使った最適化 — 現代の道具で再武装した shape-from-shading です。"
+    limitations: "それでも切り出し済みの物体と単純な照明モデルが前提です。end-to-end CNN の波が押し寄せたまさにその瞬間に登場し、あっという間に影へ — 物理路線にとって二度目の「蘇り、また忘れられる」でした。"

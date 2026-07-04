@@ -28,4 +28,31 @@ relations:
       Repairs the static-scene assumption for REAL captures: where NeRF
       needs a frozen world, Nerfies budgets for the involuntary motion of a
       living subject and recovers the crisp static answer underneath.
+    i18n:
+      vi:
+        note: >
+          Sửa giả định cảnh-tĩnh cho các bản chụp THẬT: chỗ NeRF cần một thế
+          giới đóng băng, Nerfies chừa ngân sách cho chuyển động vô thức của
+          một chủ thể sống và khôi phục lời giải tĩnh sắc nét bên dưới.
+      ja:
+        note: "実際の撮影に対して、静的シーンの仮定を直します。NeRF が凍った世界を要するところで、Nerfies は生きた被写体の無意識の動きに予算を割り当て、その下にある鮮明な静的解を取り戻します。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      "Selfie" tự do góc nhìn, chân thực như ảnh, từ một chiếc điện thoại vẫy
+      qua vẫy lại tùy hứng: chủ thể thở, đung đưa, chớp mắt — phi cứng khắp
+      nơi, và giả định tĩnh của NeRF vỡ tan.
+    solution: >
+      Một trường biến dạng theo từng quan sát warp mỗi khung hình về một NeRF
+      canonical dùng chung, được thuần hóa bằng regularizer đàn hồi (phạt biến
+      dạng cục bộ phi cứng), một prior hậu cảnh, và annealing tần số biến dạng
+      từ thô đến mịn — dựng lại con người chụp một cách tùy hứng.
+    limitations: >
+      Warp không đổi được topology (miệng mở ra đánh bại nó — đẻ ra HyperNeRF
+      từ chính nhóm đó), chuyển động phải vừa phải, và huấn luyện theo từng
+      cảnh thì chậm.
+  ja:
+    problem: "気ままに振り回したスマホからの、フォトリアルで自由視点の「自撮り」。被写体は呼吸し、揺れ、まばたきする — 非剛体だらけで、NeRF の静的仮定は砕け散ります。"
+    solution: "観測ごとの変形場が各フレームを共有 canonical NeRF へ warp し、それを弾性正則化 (非剛体な局所変形にペナルティ)、背景 prior、変形の周波数の粗から密へのアニーリングで手なずける — 気軽に撮った人間を再構成します。"
+    limitations: "warp はトポロジーを変えられず (口が開くのに敗れ、同チームから HyperNeRF が生まれました)、動きは控えめでなければならず、シーンごとの学習は遅いのです。"

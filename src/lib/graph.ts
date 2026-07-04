@@ -1,4 +1,5 @@
 import { getCollection } from 'astro:content';
+import { t, type Lang } from './i18n';
 
 /**
  * The relation vocabulary of the genealogy — the heart of the project.
@@ -54,6 +55,35 @@ export const EDGE_TYPES = {
 export type EdgeType = keyof typeof EDGE_TYPES;
 
 /**
+ * Localized prose of a node entry — each field falls back to the English
+ * original, so untranslated nodes degrade gracefully instead of breaking.
+ */
+export function nodeProse(
+  data: {
+    problem: string;
+    solution: string;
+    limitations?: string;
+    i18n?: Record<string, { problem?: string; solution?: string; limitations?: string }>;
+  },
+  lang: Lang,
+) {
+  const loc = data.i18n?.[lang];
+  return {
+    problem: loc?.problem ?? data.problem,
+    solution: loc?.solution ?? data.solution,
+    limitations: loc?.limitations ?? data.limitations,
+  };
+}
+
+/** Localized note of one relation — falls back to the English note. */
+export function relNote(
+  rel: { note?: string; i18n?: Record<string, { note?: string }> },
+  lang: Lang,
+): string {
+  return rel.i18n?.[lang]?.note ?? rel.note ?? '';
+}
+
+/**
  * Light-theme variants of the branch color slots (reference palette, light
  * column). Branch YAML stores the dark slot as canonical; the light twin is
  * derived here so the data files stay single-source.
@@ -94,11 +124,29 @@ export interface GraphData {
     problem: string;
   }[];
   edges: { source: string; target: string; type: EdgeType; note: string }[];
-  edgeTypes: typeof EDGE_TYPES;
+  edgeTypes: Record<
+    EdgeType,
+    { label: string; description: string; stroke: string; dash: string | null; width: number }
+  >;
 }
 
-/** Collect all collections into a single graph payload (shared by the D3 and 3D views). */
-export async function buildGraph(): Promise<GraphData> {
+const graphCache = new Map<Lang, Promise<GraphData>>();
+
+/**
+ * Collect all collections into a single graph payload (shared by the D3 and
+ * 3D views), with all human-readable text resolved for `lang`. Memoized per
+ * lang — every page of a build shares the same payload.
+ */
+export function buildGraph(lang: Lang = 'en'): Promise<GraphData> {
+  let graph = graphCache.get(lang);
+  if (!graph) {
+    graph = buildGraphUncached(lang);
+    graphCache.set(lang, graph);
+  }
+  return graph;
+}
+
+async function buildGraphUncached(lang: Lang): Promise<GraphData> {
   const branchEntries = (await getCollection('branches')).sort(
     (a, b) => a.data.order - b.data.order,
   );
@@ -106,7 +154,7 @@ export async function buildGraph(): Promise<GraphData> {
 
   const branches = branchEntries.map((b) => ({
     id: b.id,
-    title: b.data.title,
+    title: b.data.i18n?.[lang]?.title ?? b.data.title,
     color: b.data.color,
     colorLight: LIGHT_VARIANT[b.data.color.toLowerCase()] ?? b.data.color,
     order: b.data.order,
@@ -117,7 +165,7 @@ export async function buildGraph(): Promise<GraphData> {
   const lanes: GraphData['lanes'] = [];
   for (const b of branchEntries) {
     for (const l of b.data.lanes) {
-      lanes.push({ id: `${b.id}/${l.id}`, branch: b.id, title: l.title });
+      lanes.push({ id: `${b.id}/${l.id}`, branch: b.id, title: l.i18n?.[lang]?.title ?? l.title });
     }
     for (const n of nodeEntries) {
       if (n.data.branch.id !== b.id) continue;
@@ -137,7 +185,7 @@ export async function buildGraph(): Promise<GraphData> {
     status: n.data.status,
     hasPost: Boolean(n.data.post),
     award: AWARD_RE.test(n.data.venue ?? ''),
-    problem: n.data.problem,
+    problem: nodeProse(n.data, lang).problem,
   }));
 
   // Relations are declared on the NEWER node, pointing to the OLDER one
@@ -147,9 +195,17 @@ export async function buildGraph(): Promise<GraphData> {
       source: r.node.id,
       target: n.id,
       type: r.type,
-      note: r.note ?? '',
+      note: relNote(r, lang),
     })),
   );
 
-  return { branches, lanes, nodes, edges, edgeTypes: EDGE_TYPES };
+  // Style comes from EDGE_TYPES (canonical); words come from the i18n dict
+  const edgeTypes = Object.fromEntries(
+    (Object.keys(EDGE_TYPES) as EdgeType[]).map((k) => [
+      k,
+      { ...EDGE_TYPES[k], label: t(lang, `edge.${k}`), description: t(lang, `glossary.${k}`) },
+    ]),
+  ) as GraphData['edgeTypes'];
+
+  return { branches, lanes, nodes, edges, edgeTypes };
 }

@@ -25,4 +25,28 @@ relations:
     note: >
       Inherits the LRM recipe and settles its "closed-source" debt — opening
       the way for the community to climb onto this line's shoulders.
+    i18n:
+      vi:
+        note: >
+          Thừa hưởng công thức LRM và thanh toán món nợ "đóng mã nguồn" của nó
+          — mở đường cho cộng đồng leo lên vai của mạch này.
+      ja:
+        note: "LRM のレシピを受け継ぎ、その「クローズドソース」の借金を清算しました — コミュニティがこの路線の肩に乗れる道を開いたのです。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      LRM chứng minh feed-forward 3D chạy được nhưng lại đóng mã nguồn — cộng
+      đồng cần một bản mở, nhanh, chạy nổi trên phần cứng phổ thông.
+    solution: >
+      Tái lập và tinh gọn công thức LRM: chọn lọc dữ liệu Objaverse kỹ hơn,
+      chỉnh chi tiết huấn luyện/render, mở trọng số + code, dựng lại vật thể
+      dưới 0.5 giây.
+    limitations: >
+      Hình học vẫn thua các pipeline tối ưu chậm; texture mặt sau và vật thể
+      phức tạp còn yếu. Nhưng vai trò lịch sử của nó là DÂN CHỦ HÓA mạch
+      feed-forward.
+  ja:
+    problem: "LRM はフィードフォワード3Dが成り立つことを証明しましたが、クローズドソースのまま — コミュニティに必要だったのは、普通のハードウェアで動く、開かれた高速版です。"
+    solution: "LRM のレシピを再現し、磨き上げます。Objaverse データのキュレーションと学習・レンダリングの細部を改善し、重みとコードを公開。物体の再構成は0.5秒を切ります。"
+    limitations: "幾何は今も遅い最適化パイプラインに及ばず、背面のテクスチャや複雑な物体は弱いまま。それでも歴史的な役割は、フィードフォワード路線の民主化にあります。"

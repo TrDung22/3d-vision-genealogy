@@ -268,7 +268,7 @@ export function mount3D({ el, infoEl, data, root, strings }) {
     const branch = branchById.get(n.branch);
 
     infoEl.innerHTML = `
-      <button class="gg-3d-close" type="button" aria-label="Close">×</button>
+      <button class="gg-3d-close" type="button" aria-label="${esc(strings.close)}">×</button>
       <span class="chip"><span class="dot" style="background:${bColor(n.branch)}"></span>${esc(branch?.title ?? n.branch)}</span>
       <h3>${esc(n.short)}</h3>
       <p class="gg-3d-full">${esc(n.title)}</p>

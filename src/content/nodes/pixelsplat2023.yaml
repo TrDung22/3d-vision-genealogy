@@ -31,6 +31,14 @@ relations:
       30 minutes; pixelSplat amortizes that into a network that emits them
       in one pass — the representation crossing from optimization to
       prediction.
+    i18n:
+      vi:
+        note: >
+          Làm cho splatting thành feed-forward: 3DGS tối ưu Gaussian theo từng
+          cảnh mất 30 phút; pixelSplat khấu trừ chuyện đó vào một mạng nhả
+          chúng ra trong một lượt — biểu diễn băng từ tối ưu sang dự đoán.
+      ja:
+        note: "スプラッティングをフィードフォワードにします。3DGS はシーンごとに30分かけてガウシアンを最適化しますが、pixelSplat はそれをネットワークに償却し、一度の forward で吐き出させる — 表現が最適化から予測へと渡る瞬間です。"
   - node: pixelnerf2020
     type: fixes
     note: >
@@ -38,4 +46,34 @@ relations:
       pixelNeRF's pixel-aligned, feed-forward recipe but swaps the implicit
       field for explicit Gaussians, fixing the rendering-cost bottleneck
       that kept generalizable NeRFs from scaling.
+    i18n:
+      vi:
+        note: >
+          Một cú sửa xuyên nhánh ngay trong cùng phòng lab (Sitzmann): giữ
+          công thức pixel-aligned, feed-forward của pixelNeRF nhưng thay
+          trường ẩn bằng Gaussian tường minh, sửa nút thắt chi-phí-render vốn
+          giữ các NeRF khái quát hóa không scale nổi.
+      ja:
+        note: "同じ研究室 (Sitzmann) の中での枝またぎの直しです。pixelNeRF のピクセル整列・フィードフォワードのレシピを保ちつつ、陰的な場を明示的なガウシアンに置き換え、汎化 NeRF のスケールを阻んでいたレンダリングコストのボトルネックを直しました。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      View synthesis khái quát hóa (mạch pixelNeRF) dự đoán radiance field
+      feed-forward nhưng render bằng lấy mẫu thể tích — chậm đến mức huấn
+      luyện trên video thật ở quy mô lớn là bất khả, và dùng thời gian thực
+      thì khỏi.
+    solution: >
+      Dự đoán GAUSSIAN 3D feed-forward từ một cặp ảnh: một epipolar
+      transformer hóa giải nhập nhằng tỉ lệ, và một cách tham số hóa độ sâu
+      xác suất giữ cho gradient chảy dù primitive chỉ có giá đỡ cục bộ. Render
+      thời gian thực, huấn luyện nhanh hàng bậc, và đầu ra tường minh, sửa
+      được.
+    limitations: >
+      Nội suy hai-view, baseline nhỏ trên dữ liệu cỡ cảnh; dự đoán độ sâu là
+      ẩn và nặng tham số — cú sửa bằng cost volume (MVSplat) và cú thách thức
+      "sao phải dự đoán 3D làm gì" (LVSM) đều đến ngay trong năm.
+  ja:
+    problem: "汎化する視点合成 (pixelNeRF 路線) は放射輝度場をフィードフォワードで予測しますが、レンダリングは体積サンプリング — 実動画で大規模に学習するのが非現実的なほど遅く、リアルタイム利用は論外です。"
+    solution: "画像ペアから3Dガウシアンをフィードフォワードで予測します。epipolar トランスフォーマーがスケールの曖昧性を解き、確率的な深度パラメータ化がプリミティブの局所的な台にもかかわらず勾配を流し続ける。リアルタイムレンダリング、桁違いに速い学習、そして明示的で編集可能な出力です。"
+    limitations: "シーンレベルのデータでの、二視点・狭ベースラインの補間です。深度予測は陰的でパラメータも重い — cost volume による直し (MVSplat) と「そもそもなぜ3Dを予測するのか」という挑戦 (LVSM) が、どちらも年内に到着しました。"

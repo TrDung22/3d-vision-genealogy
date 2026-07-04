@@ -26,4 +26,29 @@ relations:
       A different road to the same generalization destination: the MiDaS/DPT
       line scales LABELED DATA, Marigold borrows a GENERATIVE PRIOR. Two
       philosophies running in parallel, neither descending from the other.
+    i18n:
+      vi:
+        note: >
+          Một con đường khác đến cùng đích khái quát hóa: mạch MiDaS/DPT nhân
+          rộng DỮ LIỆU GÁN NHÃN, Marigold mượn PRIOR TẠO SINH. Hai triết lý
+          chạy song song, không bên nào sinh ra từ bên nào.
+      ja:
+        note: "同じ「汎化」という目的地への別ルートです。MiDaS/DPT 路線はラベル付きデータをスケールさせ、Marigold は生成の事前知識を借りる。二つの哲学が並走し、どちらも他方の子ではありません。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      Đạt khái quát hóa mà KHÔNG cần tích trữ hàng triệu ảnh gán nhãn độ sâu —
+      vì cuộc đua gom nhãn là cuộc đua không có vạch đích.
+    solution: >
+      Mượn cái "hiểu" thị giác sẵn có trong Stable Diffusion: fine-tune nhẹ mô
+      hình sinh ảnh thành mô hình sinh độ sâu, chỉ dùng một dataset tổng hợp
+      nhỏ — prior không đến từ nhãn độ sâu mà từ việc đã nhìn qua hàng tỷ ảnh
+      internet.
+    limitations: >
+      Chậm (mỗi bản đồ độ sâu tốn nhiều bước khử nhiễu) và vẫn là độ sâu tương
+      đối; chất lượng bị chặn trên bởi prior của chính mô hình sinh bên dưới.
+  ja:
+    problem: "何百万枚もの深度ラベル付き画像を溜め込まずに汎化を達成する — ラベル集めの競争には、ゴールがないからです。"
+    solution: "Stable Diffusion の中にすでにある視覚的な「理解」を借ります。画像生成器を小さな合成データセットだけで軽く微調整し、深度生成器に仕立てる — 事前知識は深度ラベルからではなく、何十億枚ものインターネット画像を見てきた経験から来るのです。"
+    limitations: "遅い (深度マップ一枚に何ステップものデノイズが要る) うえ、依然として相対深度です。品質は土台の生成モデルが持つ事前知識に頭を抑えられます。"

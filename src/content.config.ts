@@ -19,13 +19,24 @@ const branches = defineCollection({
     status: z.enum(['active', 'planned']).default('active'),
     // The horizontal lanes of the timeline graph, top to bottom
     lanes: z
-      .array(z.object({ id: z.string(), title: z.string() }))
+      .array(
+        z.object({
+          id: z.string(),
+          title: z.string(),
+          // Localized lane titles, keyed by lang — falls back to `title`
+          i18n: z.record(z.object({ title: z.string() })).optional(),
+        }),
+      )
       .default([]),
     // Optional localized copies of the prose fields (UI chrome is translated
     // in src/lib/i18n.ts; per-branch prose lives here next to the original)
     i18n: z
       .record(
-        z.object({ tagline: z.string().optional(), description: z.string().optional() }),
+        z.object({
+          title: z.string().optional(),
+          tagline: z.string().optional(),
+          description: z.string().optional(),
+        }),
       )
       .optional(),
   }),
@@ -56,11 +67,24 @@ const nodes = defineCollection({
           node: reference('nodes'),
           type: z.enum(['builds-on', 'fixes', 'independent', 'challenges', 'revives']),
           note: z.string().optional(),
+          // Localized copies of the note, keyed by lang — falls back to `note`
+          i18n: z.record(z.object({ note: z.string() })).optional(),
         }),
       )
       .default([]),
     status: z.enum(['seed', 'draft', 'written']).default('seed'),
     post: reference('posts').optional(), // the deep-dive blog post, if any
+    // Localized copies of the prose fields, keyed by lang — each falls back
+    // to the English original above
+    i18n: z
+      .record(
+        z.object({
+          problem: z.string().optional(),
+          solution: z.string().optional(),
+          limitations: z.string().optional(),
+        }),
+      )
+      .optional(),
   }),
 });
 

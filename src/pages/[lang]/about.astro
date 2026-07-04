@@ -37,30 +37,31 @@ const root = `${base}/${lang}`;
           <ul>
             {Object.entries(EDGE_TYPES).map(([key, meta]) => (
               <li>
-                <strong>{meta.label}</strong> — {t(lang, `glossary.${key}`)}
+                <strong>{t(lang, `edge.${key}`)}</strong> <span class="muted">({meta.label})</span> —{' '}
+                {t(lang, `glossary.${key}`)}
               </li>
             ))}
           </ul>
           <p>
-            Chuyện <em>fixes</em> với <em>builds on</em> thì survey nào cũng kể rồi. Ba loại
+            Chuyện <em>sửa lỗi</em> với <em>kế thừa</em> thì survey nào cũng kể rồi. Ba loại
             quan hệ còn lại mới là thứ lối kể một mạch thẳng luôn làm rơi dọc đường — và chúng
             chính là linh hồn của dự án:
           </p>
           <p>
-            <strong>Independent.</strong> OccNet và DeepSDF cùng mang một ý tưởng — biểu diễn
+            <strong>Độc lập.</strong> OccNet và DeepSDF cùng mang một ý tưởng — biểu diễn
             ẩn liên tục — đến cùng một kỳ CVPR 2019, mà không bên nào hay biết về bên nào
             (thêm IM-Net và PIFu nữa là đủ bộ tứ). Ý tưởng khi đã chín thì tự rụng ở nhiều
             nơi cùng lúc; câu hỏi đáng giá là <em>điều kiện nào</em> đã làm nó chín.
           </p>
           <p>
-            <strong>Challenges.</strong> Năm 2019, Tatarchenko và cộng sự chứng minh rằng các
+            <strong>Thách thức.</strong> Năm 2019, Tatarchenko và cộng sự chứng minh rằng các
             mạng dựng 3D từ một ảnh thực ra đang chơi trò... nhận dạng trá hình: một baseline
             tra cứu đơn giản thắng tất cả. Năm năm sau, Banani và cộng sự đem đúng câu hỏi khó
             chịu ấy ra hỏi lại kỷ nguyên foundation model. Tiến bộ không chỉ là chuyện cộng
             dồn — có những paper vĩ đại vì chúng chỉ ra cả một nhánh đang tự lừa mình.
           </p>
           <p>
-            <strong>Revives.</strong> Shape-from-shading của Horn (1970) bị bỏ quên tròn nửa
+            <strong>Hồi sinh.</strong> Shape-from-shading của Horn (1970) bị bỏ quên tròn nửa
             thế kỷ, được SIRFS đánh thức năm 2012, rồi lại chìm nghỉm dưới làn sóng CNN.
             "Dòng chính" chỉ là một trong nhiều con đường — và nhánh mồ côi có cái tật quay
             về đúng lúc chẳng ai ngờ tới.
@@ -114,24 +115,25 @@ const root = `${base}/${lang}`;
           <ul>
             {Object.entries(EDGE_TYPES).map(([key, meta]) => (
               <li>
-                <strong>{meta.label}</strong> — {t(lang, `glossary.${key}`)}
+                <strong>{t(lang, `edge.${key}`)}</strong> <span class="muted">({meta.label})</span> —{' '}
+                {t(lang, `glossary.${key}`)}
               </li>
             ))}
           </ul>
           <p>
-            <em>fixes</em> と <em>builds on</em> の物語なら、どのサーベイも語ってくれます。
+            <em>修正</em>と<em>継承</em>の物語なら、どのサーベイも語ってくれます。
             一本道の解説がこぼしてしまうのは残りの三つ — そしてそれこそが、この
             プロジェクトの魂です。
           </p>
           <p>
-            <strong>Independent.</strong> OccNet と DeepSDF は、同じアイデア — 連続的な
+            <strong>独立。</strong>OccNet と DeepSDF は、同じアイデア — 連続的な
             陰関数表現 — を同じ CVPR 2019 に持ち込みました。どちらかがどちらかから
             生まれたわけではありません(IM-Net と PIFu を数えれば四つ子です)。熟した
             アイデアは、あちこちで同時に実を落とす。面白いのは「<em>どんな条件が</em>
             それを熟させたのか」という問いのほうです。
           </p>
           <p>
-            <strong>Challenges.</strong> 2019年、Tatarchenko らは single-view 3D 再構成
+            <strong>挑戦。</strong>2019年、Tatarchenko らは single-view 3D 再構成
             ネットワークの正体が…変装した「認識」だったことを示しました。単純な検索
             ベースラインが、全員に勝ってしまったのです。その5年後、Banani らは同じ意地悪な
             問いを foundation model の時代に投げ直しました。進歩は積み上げだけでは
@@ -139,7 +141,7 @@ const root = `${base}/${lang}`;
             なった論文もあるのです。
           </p>
           <p>
-            <strong>Revives.</strong> Horn の shape-from-shading (1970) は半世紀のあいだ
+            <strong>復活。</strong>Horn の shape-from-shading (1970) は半世紀のあいだ
             忘れられ、2012年に SIRFS が呼び覚まし、そのまま CNN の波にまた飲み込まれました。
             「主流」は数ある道の一本にすぎません。そして孤児になった枝は、誰も予想して
             いないときに帰ってくるものです。

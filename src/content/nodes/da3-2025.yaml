@@ -29,10 +29,48 @@ relations:
       Third generation of the line: keeps V2's teacher-student recipe and
       detail quality, but generalizes the task from one image to any number of
       views.
+    i18n:
+      vi:
+        note: >
+          Thế hệ thứ ba của mạch: giữ công thức teacher-student và chất lượng
+          chi tiết của V2, nhưng khái quát nhiệm vụ từ một ảnh lên số góc nhìn
+          tùy ý.
+      ja:
+        note: "路線の第三世代です。V2 の teacher-student レシピとディテール品質を保ちながら、タスクを一枚の画像から任意本数の視点へ一般化しました。"
   - node: vggt2025
     type: fixes
     note: >
       Simplifies away VGGT's multi-task head zoo — one plain transformer with a
       single depth-ray target beats it by 44.3% (pose) and 25.1% (geometry).
       The depth lane and the scene lane formally merge here.
+    i18n:
+      vi:
+        note: >
+          Giản lược cả "vườn thú" đầu đa-task của VGGT — một transformer trơn
+          với mục tiêu depth-ray duy nhất thắng nó 44.3% (pose) và 25.1% (hình
+          học). Lane độ sâu và lane cảnh chính thức nhập một tại đây.
+      ja:
+        note: "VGGT のマルチタスクヘッドの動物園を片付けました — 素のトランスフォーマー + 単一の depth-ray ターゲットが、姿勢で 44.3%、幾何で 25.1% 勝ってしまったのです。深度レーンとシーンレーンは、ここで正式に合流します。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      Hai lane đã âm thầm nhập thành một bài toán: các mô hình độ sâu đơn ảnh
+      và transformer hình học đa góc nhìn (VGGT) đang giải cùng một nhiệm vụ
+      "khôi phục không gian thị giác" bằng những kiến trúc không tương thích
+      và đầu ra chuyên biệt theo task.
+    solution: >
+      Tối giản triệt để: một transformer trơn (encoder DINO vanilla, không
+      chuyên biệt hóa kiến trúc) và một mục tiêu dự đoán duy nhất (depth-ray),
+      cân từ 1 đến N góc nhìn, có pose hay không đều được. Huấn luyện
+      teacher-student giữ độ chi tiết ngang DA2; benchmark hình học thị giác
+      mới cho thấy nó vượt VGGT 44.3% về pose camera và 25.1% về độ chính xác
+      hình học.
+    limitations: >
+      Sự hợp nhất mới là thực nghiệm, chưa phải khái niệm — vì sao một mục
+      tiêu depth-ray duy nhất là đủ vẫn chưa được mổ xẻ; và tỉ lệ metric đơn
+      ảnh vẫn đến từ dòng dõi teacher chứ chưa được giải lại từ đầu.
+  ja:
+    problem: "二つのレーンは、いつの間にか同じ問題になっていました。単一画像の深度モデルと多視点幾何トランスフォーマー (VGGT) が、互換性のないアーキテクチャとタスク別ヘッドで、同じ「視覚空間の復元」を解いていたのです。"
+    solution: "徹底したミニマリズムです。素のトランスフォーマー一つ (vanilla な DINO エンコーダ、アーキテクチャの特殊化なし) と予測ターゲット一つ (depth-ray) で、ポーズの有無を問わず 1〜N 視点を扱います。teacher-student 学習で DA2 級のディテールを保ち、新しい視覚幾何ベンチマークでは VGGT をカメラ姿勢で 44.3%、幾何精度で 25.1% 上回りました。"
+    limitations: "この統一は経験的なもので、概念的な説明はまだありません — なぜ depth-ray という単一ターゲットで足りるのかは十分に分析されておらず、単眼の metric スケールも teacher の血統頼みで、新たに解かれたわけではないのです。"

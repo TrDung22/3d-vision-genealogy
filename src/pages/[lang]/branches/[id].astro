@@ -1,7 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../../../layouts/Base.astro';
-import { EDGE_TYPES } from '../../../lib/graph';
+import { nodeProse } from '../../../lib/graph';
 import { LOCALES, t, type Lang } from '../../../lib/i18n';
 
 export async function getStaticPaths() {
@@ -17,6 +17,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const root = `${base}/${lang}`;
 
 const loc = branch.data.i18n?.[lang];
+const title = loc?.title ?? branch.data.title;
 const tagline = loc?.tagline ?? branch.data.tagline;
 const description = loc?.description ?? branch.data.description;
 
@@ -24,12 +25,12 @@ const nodes = (await getCollection('nodes'))
   .filter((n) => n.data.branch.id === branch.id)
   .sort((a, b) => a.data.year - b.data.year);
 
-const laneTitle = new Map(branch.data.lanes.map((l) => [l.id, l.title]));
+const laneTitle = new Map(branch.data.lanes.map((l) => [l.id, l.i18n?.[lang]?.title ?? l.title]));
 const allNodes = await getCollection('nodes');
 const shortOf = new Map(allNodes.map((n) => [n.id, n.data.short]));
 ---
 
-<Base title={branch.data.title} lang={lang} description={tagline}>
+<Base title={title} lang={lang} description={tagline}>
   <header>
     <p>
       <span class="chip">
@@ -38,7 +39,7 @@ const shortOf = new Map(allNodes.map((n) => [n.id, n.data.short]));
         {branch.data.status === 'active' ? t(lang, 'branches.growing') : t(lang, 'branches.planned')}
       </span>
     </p>
-    <h1>{branch.data.title}</h1>
+    <h1>{title}</h1>
     <p class="tagline">{tagline}</p>
     <p style="max-width: 760px;">{description}</p>
   </header>
@@ -54,11 +55,11 @@ const shortOf = new Map(allNodes.map((n) => [n.id, n.data.short]));
               <a href={`${root}/nodes/${n.id}/`}>{n.data.short}</a>
               {laneTitle.has(n.data.lane) && <span class="badge">{laneTitle.get(n.data.lane)}</span>}
             </h3>
-            <p>{n.data.problem}</p>
+            <p>{nodeProse(n.data, lang).problem}</p>
             {n.data.relations.length > 0 && (
               <p class="muted rels">
                 {n.data.relations
-                  .map((r) => `${EDGE_TYPES[r.type].label} ${shortOf.get(r.node.id) ?? r.node.id}`)
+                  .map((r) => `${t(lang, `edge.${r.type}`)} ${shortOf.get(r.node.id) ?? r.node.id}`)
                   .join(' · ')}
               </p>
             )}

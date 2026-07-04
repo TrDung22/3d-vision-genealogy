@@ -29,10 +29,46 @@ relations:
       blobs with oriented disks makes the represented surface view-consistent,
       turning splatting from a view-synthesis trick into a reconstruction
       method.
+    i18n:
+      vi:
+        note: >
+          Sửa lời-nói-dối-hình-học nằm ngay trong chính primitive: thay các
+          đốm thể tích bằng đĩa có hướng khiến bề mặt được biểu diễn nhất quán
+          theo góc nhìn, biến splatting từ một mẹo view synthesis thành một
+          phương pháp dựng lại.
+      ja:
+        note: "プリミティブそのものに潜む幾何の嘘を直します。体積的なblobを向きを持つ円盤に置き換えることで、表される表面が視点一貫になり、スプラッティングを視点合成のトリックから再構成の手法へと変えました。"
   - node: ewa2001
     type: builds-on
     note: >
       Completes the EWA revival: 3DGS resurrected Zwicker's volume splatting;
       2DGS resurrects the other half — SURFACE splatting with oriented
       surfels — now with gradients flowing through it.
+    i18n:
+      vi:
+        note: >
+          Hoàn tất cuộc hồi sinh EWA: 3DGS đánh thức volume splatting của
+          Zwicker; 2DGS đánh thức nửa còn lại — SURFACE splatting với surfel
+          có hướng — giờ có gradient chảy xuyên qua.
+      ja:
+        note: "EWA の復活を完成させます。3DGS は Zwicker のボリュームスプラッティングを蘇らせ、2DGS はもう半分 — 向きを持つ surfel による表面スプラッティング — を蘇らせる。今度は勾配がそこを流れます。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      3DGS nhìn thì đúng mà đo thì sai: một đốm 3D cho một bóng khác nhau từ
+      mỗi hướng, nên "bề mặt" nó hàm ý là bất nhất theo góc nhìn — mesh trích
+      ra chỉ là nhiễu.
+    solution: >
+      Dẹt cái primitive: đĩa Gaussian 2D có hướng (surfel) với giao cắt
+      tia-splat đúng phối cảnh chính xác thay vì xấp xỉ màn hình, cộng các
+      regularizer méo-độ-sâu và nhất-quán-pháp-tuyến — splatting vừa render
+      VỪA dựng lại.
+    limitations: >
+      Surfel giả định thế giới toàn là bề mặt: vật chất thể tích mờ nhòe (tóc,
+      khói) khớp kém hơn so với đốm 3D, và chất lượng bề ngoài phải đánh đổi
+      chút ít lấy phần hình học được cải thiện.
+  ja:
+    problem: "3DGS は見た目は正しく、計測は間違っています。3Dのblobはどの方向からも違うシルエットを見せるため、それが示唆する「表面」は視点不一致 — 抽出したメッシュはノイズです。"
+    solution: "プリミティブを平たくします。スクリーン空間の近似ではなく、正確に透視補正した ray-splat 交差を持つ、向きのある2Dガウシアン円盤 (surfel)。加えて深度歪みと法線一貫性の正則化 — レンダリングと再構成の両方を行うスプラッティングです。"
+    limitations: "surfel は世界を表面と仮定します。ふわふわした体積的な物質 (髪、煙) は3Dのblobより当てはまりが悪く、見た目の品質は幾何の向上と引き換えにわずかに譲ります。"

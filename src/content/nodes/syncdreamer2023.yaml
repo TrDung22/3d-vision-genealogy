@@ -26,4 +26,29 @@ relations:
       Repairs the multi-view inconsistency at its source: instead of
       generating views one by one, denoise them together with synchronized
       noise states.
+    i18n:
+      vi:
+        note: >
+          Sửa sự bất nhất đa góc nhìn ngay tại nguồn: thay vì sinh từng view
+          một, khử nhiễu chúng cùng nhau với trạng thái nhiễu đồng bộ.
+      ja:
+        note: "多視点不一致を発生源で直します。視点を一枚ずつ生成するのではなく、同期したノイズ状態でまとめてデノイズするのです。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      Các góc nhìn tưởng tượng của Zero-1-to-3 nhìn riêng từng cái thì hợp lý
+      nhưng chọi nhau trong 3D — dựng từ chúng là thừa kế luôn cả mâu thuẫn.
+    solution: >
+      Đồng bộ hóa trí tưởng tượng: một mô hình diffusion đa góc nhìn khử nhiễu
+      tất cả các view đích cùng lúc, tương quan trạng thái nhiễu của chúng qua
+      attention có ý thức 3D — các view sinh ra khớp nhau ngay từ trong cấu
+      tạo.
+    limitations: >
+      Nhất quán mới được ép ở tầng đặc trưng, chưa được bảo đảm về mặt hình
+      học; độ phân giải và số view cố định; và dựng từng vật thể vẫn là một
+      bước hạ nguồn riêng.
+  ja:
+    problem: "Zero-1-to-3 の想像した視点は、一枚ずつ見ればもっともらしいのに、3Dでは互いに矛盾します — そこから再構成すれば、矛盾ごと相続してしまうのです。"
+    solution: "想像を同期させます。多視点拡散モデルがすべての目標視点をまとめてデノイズし、3Dを意識したアテンションでノイズ状態どうしを相関させる — 生成される視点は、作りからして互いに一致するのです。"
+    limitations: "一貫性は特徴レベルで強制されるだけで、幾何的に保証されてはいません。解像度も視点数も固定で、物体ごとの再構成は依然として別の下流工程です。"

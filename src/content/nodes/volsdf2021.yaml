@@ -29,4 +29,32 @@ relations:
       2021: Hong Kong/MPI and Weizmann/Facebook independently rederived
       "SDF-induced density" with different math — the 2019 implicit wave's
       sequel, played out in volume rendering.
+    i18n:
+      vi:
+        note: >
+          Lên arXiv cách nhau hai tuần (6/2021), cùng ở NeurIPS 2021: Hong
+          Kong/MPI và Weizmann/Facebook độc lập suy lại "mật độ cảm sinh từ
+          SDF" bằng những phép toán khác nhau — phần tiếp theo của làn sóng
+          hàm ẩn 2019, diễn ra trong volume rendering.
+      ja:
+        note: "arXiv 投稿は二週間差 (2021年6月)、ともに NeurIPS 2021 — 香港/MPI と Weizmann/Facebook が「SDF から誘導される密度」を、異なる数式で独立に導き直しました。2019年の陰関数の波の続編が、ボリュームレンダリングの舞台で演じられたのです。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      Cùng căn bệnh NeuS chẩn ra trong cùng tháng: mật độ của NeRF là một cỗ
+      máy render, không phải hình học — còn các phương pháp bề mặt phụ thuộc
+      mask thì không mở rộng nổi lên cảnh thật.
+    solution: >
+      Mô hình hóa mật độ như một hàm khoảng cách có dấu đã biến đổi (Laplace
+      CDF của SDF), trao cho độ mờ đục một ý nghĩa xác suất có nguyên tắc cộng
+      một thuật toán lấy mẫu có chặn sai số — bề mặt sạch từ volume rendering,
+      với sự tách bạch hình học/bề ngoài.
+    limitations: >
+      Cùng chi phí theo từng cảnh và trần độ trơn như NeuS; cách dựng mật độ
+      của hai paper khác nhau đủ để cả ngành mất cả năm sau đi benchmark xem
+      thiên lệch nào thắng ở đâu.
+  ja:
+    problem: "NeuS が同じ月に診断したのと同じ病です。NeRF の密度はレンダリングの装置であって幾何ではなく、マスク依存の表面手法は実シーンへスケールしません。"
+    solution: "密度を、変換された符号付き距離関数 (SDF の Laplace CDF) としてモデル化します。不透明度に原理的な確率的意味を与え、誤差有界のサンプリングアルゴリズムも添える — ボリュームレンダリングから綺麗な表面を、幾何と見た目を切り分けた形で得るのです。"
+    limitations: "NeuS と同じシーンごとのコストと滑らかさの天井。二本の論文の密度の作り方は十分に異なり、分野はその後一年を「どちらの偏りがどこで勝つか」のベンチマークに費やしました。"

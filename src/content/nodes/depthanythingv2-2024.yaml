@@ -27,4 +27,32 @@ relations:
       Repairs V1's own bottleneck: noisy real labels capped fine-grained
       detail. The synthetic-first move quietly vindicates Marigold's
       small-but-clean-synthetic insight — arrived at from the opposite end.
+    i18n:
+      vi:
+        note: >
+          Sửa chính nút thắt của V1: nhãn thật nhiễu chặn trần chi tiết mịn.
+          Nước đi synthetic-first này âm thầm minh oan cho trực giác "tổng hợp
+          nhỏ mà sạch" của Marigold — dù đi tới từ đầu kia con đường.
+      ja:
+        note: "V1 自身のボトルネック — ノイズの多い実ラベルが微細ディテールの上限を決めていた — を直します。この synthetic-first の一手は、Marigold の「小さくても綺麗な合成データ」という洞察を、反対側の道から静かに立証しました。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      V1 nhân rộng dữ liệu không nhãn nhưng vẫn giữ nhãn thật nhiễu — mà nhãn
+      độ sâu thật (lỗ hổng LiDAR, lệch stereo) chính là thứ giết chết chi tiết
+      mịn.
+    solution: >
+      Một cú lộn ngược bất ngờ: vứt hết TOÀN BỘ ảnh thật có nhãn. Huấn luyện
+      teacher chỉ trên 595K ảnh tổng hợp (nhãn hoàn hảo), phóng to teacher,
+      rồi truyền sang student qua 62M+ ảnh thật gán nhãn giả — độ chính xác
+      của đồ tổng hợp cộng độ đa dạng của thế giới thực, mà không dính nhiễu
+      của cả hai.
+    limitations: >
+      Cốt lõi vẫn là độ sâu tương đối với các bản metric fine-tune; và cả công
+      thức giờ tựa vào độ chân thực của pipeline dữ liệu tổng hợp — một sự phụ
+      thuộc mới mà cả ngành thừa kế.
+  ja:
+    problem: "V1 はラベルなしデータをスケールさせつつ、ノイズの多い実ラベルを残しました — そして実の深度ラベル (LiDAR の抜け、ステレオの不一致) こそが、微細なディテールを壊す張本人なのです。"
+    solution: "意表を突く逆転の一手 — ラベル付きの実画像をすべて捨てる。teacher は完璧なラベルを持つ59.5万枚の合成画像だけで学習し、それを大きくスケールさせ、6,200万枚超の擬似ラベル付き実画像を介して student へ受け渡します。合成の精密さと実世界の多様性を、双方のノイズ抜きで。"
+    limitations: "核は依然として相対深度で、metric 版は微調整頼み。そしてレシピ全体が今度は合成データパイプラインのリアルさに寄りかかります — 分野が新たに相続した依存関係です。"

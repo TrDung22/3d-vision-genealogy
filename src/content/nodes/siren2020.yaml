@@ -28,4 +28,32 @@ relations:
       Same lab, one year later: names and repairs the reason SRN renders
       blurry — the spectral bias of ReLU coordinate networks — by changing
       the activation itself.
+    i18n:
+      vi:
+        note: >
+          Cùng phòng lab, một năm sau: gọi tên và sửa chính lý do SRN render
+          nhòe — thiên kiến phổ của mạng tọa độ ReLU — bằng cách đổi luôn hàm
+          kích hoạt.
+      ja:
+        note: "同じ研究室から一年後 — SRN のレンダリングがぼやける理由そのもの (ReLU 座標ネットワークのスペクトルバイアス) を名指しし、活性化関数そのものを替えて直しました。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      MLP tọa độ dùng ReLU — con ngựa kéo của SRN, DeepSDF, NeRF thời đầu —
+      nhòe một cách có hệ thống: chúng không biểu diễn nổi chi tiết mịn, cũng
+      không tính nổi các đạo hàm mà các loss vật lý (eikonal, phương trình
+      sóng) cần.
+    solution: >
+      Thay ReLU bằng hàm kích hoạt sine kèm một cách khởi tạo có nguyên tắc:
+      SIREN fit ảnh, video, âm thanh và SDF với độ trung thực cao hơn hàng bậc,
+      và đạo hàm của chúng cũng là SIREN — nên có thể giám sát thẳng trên
+      gradient và Laplacian.
+    limitations: >
+      Nhạy với khởi tạo và cách chỉnh tỉ lệ tần số, và chỉ fit từng tín hiệu
+      chứ không khái quát hóa. Các mã hóa dựa trên lưới (Instant-NGP) sau này
+      giành ngôi vương tốc độ; sine sống sót ở nơi đạo hàm còn quan trọng.
+  ja:
+    problem: "ReLU を使う座標 MLP — SRN、DeepSDF、初期 NeRF の主役 — は体系的にぼやけます。細かいディテールも、物理ロス (eikonal、波動方程式) が要求する導関数も、表現できないのです。"
+    solution: "ReLU を正弦活性化と原理的な初期化に置き換えます。SIREN は画像・映像・音声・SDF を桁違いの忠実度で fit し、その導関数もまた SIREN — なので勾配やラプラシアンの上で直接教師信号を与えられます。"
+    limitations: "初期化と周波数スケーリングに敏感で、汎化ではなく信号ごとの fitting にとどまります。速度の王座はのちにグリッドベースの符号化 (Instant-NGP) が奪いました。正弦が生き残るのは、導関数がものを言う場所です。"

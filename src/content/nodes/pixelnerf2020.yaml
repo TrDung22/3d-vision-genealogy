@@ -26,10 +26,45 @@ relations:
       Repairs NeRF's per-scene, many-image requirement within months of its
       publication: conditioning turns a memorization machine into a
       generalizable one.
+    i18n:
+      vi:
+        note: >
+          Sửa yêu cầu từng-cảnh-nhiều-ảnh của NeRF chỉ vài tháng sau khi nó
+          công bố: điều kiện hóa biến một cỗ máy học vẹt thành một cỗ máy khái
+          quát được.
+      ja:
+        note: "NeRF の「シーンごと・大量画像」という要件を、発表から数か月で直しました。条件付けが、暗記マシンを汎化できるマシンに変えたのです。"
   - node: pifu2019
     type: builds-on
     note: >
       The pixel-aligned feature trick escapes the human niche: PixelNeRF
       plugs PIFu-style aligned features into volume rendering — a human-lane
       idea becoming scene-lane infrastructure.
+    i18n:
+      vi:
+        note: >
+          Mẹo đặc trưng pixel-aligned thoát khỏi ngách con người: PixelNeRF
+          cắm đặc trưng căn chỉnh kiểu PIFu vào volume rendering — một ý tưởng
+          của lane người trở thành hạ tầng của lane cảnh.
+      ja:
+        note: "ピクセル整列特徴の技が、人間というニッチを飛び出します。PixelNeRF は PIFu 流の整列特徴をボリュームレンダリングに差し込みました — 人体レーンのアイデアが、シーンレーンのインフラになったのです。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      NeRF cần hàng chục ảnh có pose và huấn luyện theo từng cảnh — vô dụng
+      với bài toán một-ảnh ngay từ trong cấu tạo.
+    solution: >
+      Điều kiện hóa radiance field theo ảnh: đặc trưng CNN căn chỉnh theo
+      pixel được đưa vào MLP của NeRF, để một mạng huấn luyện xuyên cảnh render
+      góc nhìn mới từ chỉ MỘT ảnh đầu vào, feed-forward, không tối ưu theo
+      từng cảnh.
+    limitations: >
+      Nhòe ngay khi góc nhìn đổi nhiều — một mô hình hồi quy đang đoán phần
+      không nhìn thấy, chứ không tưởng tượng ra nó; bài toán vùng-khuất-sắc-nét
+      phải chờ prior diffusion (thời ZeroNVS, Zero-1-to-3) xử như một bài
+      toán sinh.
+  ja:
+    problem: "NeRF には何十枚ものポーズ付き画像とシーンごとの学習が必要です — 単一画像の設定には、作りからして役に立ちません。"
+    solution: "放射輝度場を画像で条件付けます。ピクセル整列の CNN 特徴を NeRF の MLP へ流し込み、シーンをまたいで学習した一つのネットワークが、たった一枚の入力から新規視点をフィードフォワードで描く — シーンごとの最適化はもう要りません。"
+    limitations: "視点が少し大きく動くだけでぼやけます — 見えない部分を「想像」ではなく「推測」する回帰モデルだからです。隠れた領域を鮮明に描く問題は、拡散 prior (ZeroNVS、Zero-1-to-3 の時代) が生成問題として扱い直すのを待つことになりました。"

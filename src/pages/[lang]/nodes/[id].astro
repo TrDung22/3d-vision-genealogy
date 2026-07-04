@@ -1,7 +1,7 @@
 ---
 import { getCollection, getEntry } from 'astro:content';
 import Base from '../../../layouts/Base.astro';
-import { EDGE_TYPES } from '../../../lib/graph';
+import { nodeProse, relNote } from '../../../lib/graph';
 import { LOCALES, t, type Lang } from '../../../lib/i18n';
 
 export async function getStaticPaths() {
@@ -20,37 +20,41 @@ const branch = await getEntry(entry.data.branch);
 const all = await getCollection('nodes');
 const byId = new Map(all.map((n) => [n.id, n]));
 
+const prose = nodeProse(entry.data, lang);
+const branchTitle = branch?.data.i18n?.[lang]?.title ?? branch?.data.title;
+const statusWord = t(lang, `status.${entry.data.status}`);
+
 // outgoing: what this node says about older nodes
 const outgoing = entry.data.relations
-  .map((r) => ({ type: r.type, note: r.note, other: byId.get(r.node.id) }))
+  .map((r) => ({ type: r.type, note: relNote(r, lang), other: byId.get(r.node.id) }))
   .filter((r) => r.other);
 
 // incoming: what newer nodes say about this one
 const incoming = all.flatMap((n) =>
   n.data.relations
     .filter((r) => r.node.id === entry.id)
-    .map((r) => ({ type: r.type, note: r.note, other: n })),
+    .map((r) => ({ type: r.type, note: relNote(r, lang), other: n })),
 );
 
 const post = entry.data.post ? await getEntry(entry.data.post) : null;
 
 const LINK_LABELS: Record<string, string> = {
   arxiv: 'arXiv',
-  paper: 'Paper',
-  project: 'Project page',
-  code: 'Code',
+  paper: t(lang, 'node.linkPaper'),
+  project: t(lang, 'node.linkProject'),
+  code: t(lang, 'node.linkCode'),
 };
 ---
 
-<Base title={entry.data.short} lang={lang} description={entry.data.problem}>
+<Base title={entry.data.short} lang={lang} description={prose.problem}>
   <article>
     <header class="node-header">
       <p>
         <span class="chip">
           <span class="dot" style={`background:${branch?.data.color}`}></span>
-          <a href={`${root}/branches/${branch?.id}/`}>{branch?.data.title}</a>
+          <a href={`${root}/branches/${branch?.id}/`}>{branchTitle}</a>
         </span>
-        <span class="badge">{entry.data.status}</span>
+        <span class="badge">{statusWord}</span>
       </p>
       <h1>{entry.data.short}</h1>
       <p class="full-title">{entry.data.title}</p>
@@ -73,14 +77,14 @@ const LINK_LABELS: Record<string, string> = {
 
     <section class="panel node-summary">
       <h2>{t(lang, 'node.problem')}</h2>
-      <p>{entry.data.problem}</p>
+      <p>{prose.problem}</p>
       <h2>{t(lang, 'node.coreIdea')}</h2>
-      <p>{entry.data.solution}</p>
+      <p>{prose.solution}</p>
       {
-        entry.data.limitations && (
+        prose.limitations && (
           <>
             <h2>{t(lang, 'node.limitations')}</h2>
-            <p>{entry.data.limitations}</p>
+            <p>{prose.limitations}</p>
           </>
         )
       }
@@ -95,7 +99,7 @@ const LINK_LABELS: Record<string, string> = {
             <ul class="relation-list">
               {outgoing.map((r) => (
                 <li>
-                  <span class="rel-type">{EDGE_TYPES[r.type].label}</span>
+                  <span class="rel-type">{t(lang, `edge.${r.type}`)}</span>
                   <a href={`${root}/nodes/${r.other!.id}/`}>{r.other!.data.short}</a>
                   {r.note && <p class="muted">{r.note}</p>}
                 </li>
@@ -112,7 +116,7 @@ const LINK_LABELS: Record<string, string> = {
               {incoming.map((r) => (
                 <li>
                   <a href={`${root}/nodes/${r.other.id}/`}>{r.other.data.short}</a>
-                  <span class="rel-type">{EDGE_TYPES[r.type].label}</span> {t(lang, 'node.thisWork')}
+                  <span class="rel-type">{t(lang, `edge.${r.type}`)}</span> {t(lang, 'node.thisWork')}
                   {r.note && <p class="muted">{r.note}</p>}
                 </li>
               ))}
@@ -132,7 +136,7 @@ const LINK_LABELS: Record<string, string> = {
             📖 {t(lang, 'node.readAnalysis')} <a href={`${root}/blog/${post.id}/`}>{post.data.title}</a>
           </p>
         ) : (
-          <p class="muted">{t(lang, 'node.seedNotice').replace('{status}', entry.data.status)}</p>
+          <p class="muted">{t(lang, 'node.seedNotice').replace('{status}', statusWord)}</p>
         )
       }
     </section>

@@ -25,4 +25,30 @@ relations:
       Reawakened the single-image 3D problem after decades in which the field
       poured its energy into stereo and multi-view — but with statistical
       learning instead of reflectance physics.
+    i18n:
+      vi:
+        note: >
+          Đánh thức bài toán 3D từ một ảnh sau hàng chục năm cả ngành dồn sức
+          cho stereo và multi-view — nhưng bằng học thống kê thay vì vật lý
+          phản xạ.
+      ja:
+        note: "ステレオと多視点に業界の力が注がれた数十年ののち、単一画像3Dの問題を呼び覚ましました — ただし反射の物理ではなく、統計的学習の手で。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      Dựng một mô hình 3D "đi dạo được" từ một tấm ảnh ngoài trời duy nhất,
+      không cần mô hình vật lý về ánh sáng hay hình học chính xác.
+    solution: >
+      Đổi hẳn loại prior: học một bộ phân loại thống kê gán nhãn từng vùng ảnh
+      là mặt đất / thẳng đứng / bầu trời, rồi dựng cảnh lên như sách pop-up
+      cho trẻ con. Lần đầu tiên một prior THỐNG KÊ học từ dữ liệu thay thế
+      prior vật lý trong bài toán 3D từ một ảnh.
+    limitations: >
+      Chỉ có ba lớp hình học thô, chỉ xử lý được cảnh ngoài trời kiểu "mặt
+      phẳng đất + các thứ thẳng đứng"; không có độ sâu liên tục, và vỡ vụn
+      ngay khi cảnh phức tạp lên.
+  ja:
+    problem: "一枚の屋外写真から「歩き回れる」3Dモデルを作る — 照明の物理モデルも精密な幾何も使わずに。"
+    solution: "prior の種類そのものを入れ替えます。画像の領域を「地面 / 垂直 / 空」に分類する統計的分類器を学習し、子ども向けの飛び出す絵本のようにシーンを起こします。データから学んだ統計的 prior が物理 prior に取って代わった、単一画像3D最初の瞬間です。"
+    limitations: "幾何クラスは粗い三つだけ。扱えるのは「地面 + 垂直な物体」型の屋外シーンのみ。連続的な深度はなく、少しでも複雑なシーンでは崩れてしまいます。"

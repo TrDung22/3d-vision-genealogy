@@ -30,10 +30,48 @@ relations:
       artifacts, traces them to the sampling-theory violation in the splat
       pipeline, and swaps the ad-hoc dilation for filters with a Nyquist
       argument.
+    i18n:
+      vi:
+        note: >
+          Sửa độ giòn theo tỉ lệ chỉ trong vài tháng: gọi tên các artifact
+          xói mòn/giãn nở, truy chúng về vi phạm lý thuyết lấy mẫu trong
+          pipeline splat, và thay phép giãn tùy tiện bằng các bộ lọc có lập
+          luận Nyquist.
+      ja:
+        note: "スケールへの脆さを数か月で直します。erosion/dilation のアーティファクトを名指しし、それをスプラットパイプラインのサンプリング理論違反に突き止め、場当たり的な dilation を Nyquist の論拠を持つフィルタに置き換えました。"
   - node: mipnerf2021
     type: builds-on
     note: >
       The mip idea crosses paradigms: what integrated positional encoding
       did for ray-marched radiance fields, band-limiting filters do for
       rasterized Gaussians — same anti-aliasing debt, new currency.
+    i18n:
+      vi:
+        note: >
+          Ý tưởng mip băng qua các paradigm: integrated positional encoding
+          làm gì cho radiance field ray-marched thì bộ lọc giới hạn băng thông
+          làm điều đó cho Gaussian rasterized — cùng món nợ khử răng cưa, đơn
+          vị tiền tệ mới.
+      ja:
+        note: "mip のアイデアがパラダイムをまたぎます。integrated positional encoding がレイマーチングの放射輝度場にしたことを、帯域制限フィルタがラスタライズされたガウシアンにする — 同じアンチエイリアスの借金を、新しい通貨で。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      Đổi khoảng cách camera hay tiêu cự lúc test là 3DGS sụp: Gaussian mỏng
+      răng cưa thành kim khi zoom ra, còn phép giãn màn hình cố định làm zoom
+      vào phồng lên — artifact xói mòn và trương nở mà các view huấn luyện
+      không hề để lộ.
+    solution: >
+      Hai bộ lọc có nguyên tắc: một bộ lọc làm mượt 3D chặn tần số mỗi Gaussian
+      theo tốc độ lấy mẫu tối đa thấy trong lúc huấn luyện, và một bộ lọc mip
+      2D thay cho mẹo giãn — xấp xỉ dấu chân hộp vật lý của một pixel.
+      Splatting không răng cưa ở mọi tỉ lệ.
+    limitations: >
+      Sửa lấy mẫu, không sửa cấu trúc: hình học vẫn là những đốm bất nhất theo
+      góc nhìn, bộ nhớ không đổi, và zoom ngoài phân phối vượt băng lấy mẫu
+      huấn luyện vẫn xuống cấp.
+  ja:
+    problem: "テスト時にカメラ距離や焦点距離を変えると 3DGS は崩れます。薄いガウシアンはズームアウトで針状にエイリアスし、固定のスクリーン空間 dilation はズームインで膨れ上がる — 学習ビューが決して見せない、痩せと膨張のアーティファクトです。"
+    solution: "原理的な二つのフィルタです。各ガウシアンの周波数を学習中に見た最大サンプリングレートで抑える3D平滑化フィルタと、dilation のハックを置き換える2D mip フィルタ — ピクセルの物理的なボックス footprint を近似します。どのスケールでもエイリアスのないスプラッティングを。"
+    limitations: "直すのはサンプリングであって構造ではありません。幾何は依然として視点不一致のblob、メモリも変わらず、学習のサンプリング帯域を超えた分布外のズームは今も劣化します。"

@@ -29,4 +29,33 @@ relations:
       projecting kernels instead of marching rays — the rasterization answer
       to the ray-marching question (building on Westover's splatting and
       Heckbert's EWA filtering).
+    i18n:
+      vi:
+        note: >
+          Cùng mô hình phát-xạ–hấp-thụ của môi trường tham gia, nhưng tính
+          bằng cách chiếu kernel thay vì hành quân tia — câu trả lời
+          rasterization cho câu hỏi ray-marching (đứng trên splatting của
+          Westover và bộ lọc EWA của Heckbert).
+      ja:
+        note: "同じ関与媒質の発光・吸収モデルを、光線の行進ではなくカーネルの射影で評価します — レイマーチングという問いへの、ラスタライズ側からの答えです (Westover のスプラッティングと Heckbert の EWA フィルタの上に立って)。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      Render đám mây điểm và volume mà KHÔNG cần mesh hay ray marching: điểm
+      không có kết nối, còn render điểm kiểu ngây thơ thì đầy lỗ thủng và răng
+      cưa.
+    solution: >
+      Biểu diễn dữ liệu bằng các kernel Gaussian dị hướng rồi SPLAT chúng:
+      chiếu từng Gaussian 3D thành một Gaussian 2D trên màn hình (bộ lọc EWA —
+      elliptical weighted average), rồi blend từ trước ra sau. Phép chiếu dạng
+      đóng, khử răng cưa chuẩn, không cần tia.
+    limitations: >
+      Một renderer xuôi cho điểm quét — chưa ai tối ưu các Gaussian từ ảnh
+      chụp. Đồ họa dựa trên điểm lụi dần khi pipeline tam giác của GPU thắng
+      thế, và kỹ thuật này ngủ đông hai thập kỷ cho đến khi rendering khả vi
+      cần đúng thứ toán này.
+  ja:
+    problem: "メッシュもレイマーチングも使わずに点群とボリュームをレンダリングする。点には接続関係がなく、素朴な点描画は穴とエイリアシングだらけです。"
+    solution: "データを異方性ガウスカーネルで表し、スプラットします。各3Dガウシアンをスクリーン空間の2Dガウシアンへ射影し (EWA — 楕円加重平均 — フィルタ)、前から後ろへブレンドする。閉形式の射影、正しいアンチエイリアシング、光線は不要です。"
+    limitations: "スキャンされた点のための順方向レンダラーです — ガウシアンを写真から最適化する者は現れませんでした。GPU の三角形パイプラインの勝利とともに点ベースグラフィックスは廃れ、この技法は、微分可能レンダリングがまさにこの数学を必要とするまで20年間眠り続けます。"

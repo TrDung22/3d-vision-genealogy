@@ -30,4 +30,35 @@ relations:
       Repairs the format lock-in of the feed-forward wave: LRM-line models
       committed to triplane-NeRF; SLAT decodes one latent into whichever
       representation the downstream task wants.
+    i18n:
+      vi:
+        note: >
+          Sửa cái khóa định dạng của làn sóng feed-forward: các mô hình dòng
+          LRM trót cam kết với triplane-NeRF; SLAT giải mã một latent thành
+          bất cứ biểu diễn nào mà tác vụ hạ nguồn cần.
+      ja:
+        note: "フィードフォワードの波が抱えたフォーマットの縛りを直します。LRM 系モデルは triplane-NeRF に身を固定していましたが、SLAT は一つの潜在表現を、下流タスクが望むどの表現へでもデコードできるのです。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      Mọi bộ sinh trước đó đều bị khóa vào một định dạng đầu ra — chỗ này
+      NeRF, chỗ kia Gaussian, chỗ khác mesh — vừa xé lẻ cả ngành vừa chặn trần
+      chất lượng ở mức định dạng đó chịu được.
+    solution: >
+      Một latent có cấu trúc thống nhất (SLAT): lưới 3D thưa các latent trộn
+      hình học với bề ngoài, giải mã được thành radiance field, 3D Gaussian
+      HOẶC mesh từ cùng một lần sinh. Transformer rectified-flow phóng lên 2B
+      tham số trên 500K vật thể chọn lọc, kèm khả năng chỉnh sửa 3D cục bộ mà
+      các mô hình trước không có. Mức độ được đón nhận nói thay: ~13k sao
+      GitHub và 1M+ lượt tải Hugging Face trong một năm, sinh ra cả một họ hậu
+      duệ SLAT.
+    limitations: >
+      Huấn luyện trên asset chọn lọc, lấy vật thể làm trung tâm — vật thể đơn
+      nền sạch, không phải thế giới thực bừa bộn; và danh xưng spotlight là tự
+      repo tuyên bố (đối chiếu độc lập với danh sách CVPR chính thức không xác
+      nhận được).
+  ja:
+    problem: "それまでの生成器はどれも一つの出力フォーマットに縛られていました — こちらは NeRF、あちらは Gaussian、そちらはメッシュ。分野は分断され、品質はそのフォーマットが許す範囲で頭打ちになります。"
+    solution: "統一された構造化潜在表現 (SLAT) です。幾何と見た目を融合した疎な3D潜在グリッドが、一度の生成から放射輝度場にも 3D Gaussian にもメッシュにもデコードできます。rectified-flow トランスフォーマーを、選び抜いた50万物体の上で20億パラメータまでスケールし、従来モデルにはなかった局所的な3D編集も可能に。普及ぶりが何よりの証拠 — 一年で GitHub スター約1.3万、Hugging Face ダウンロード100万超、SLAT 後継の一族まで生みました。"
+    limitations: "学習したのはキュレーション済みの物体中心アセット — 背景の綺麗な単一物体であって、散らかった実世界ではありません。また spotlight という venue はリポジトリの自称です (CVPR 公式リストとの独立照合では確認できませんでした)。"

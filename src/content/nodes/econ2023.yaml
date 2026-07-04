@@ -27,4 +27,31 @@ relations:
       Repairs the no-body-prior failure mode: where pure pixel-aligned
       implicits hallucinate broken anatomy, ECON's explicit SMPL-X scaffold
       guarantees a human underneath the details.
+    i18n:
+      vi:
+        note: >
+          Sửa kiểu hỏng không-prior-cơ-thể: chỗ hàm ẩn pixel-aligned thuần bịa
+          ra giải phẫu gãy nát, giàn giáo SMPL-X tường minh của ECON bảo đảm
+          bên dưới lớp chi tiết luôn là một con người.
+      ja:
+        note: "「体の prior なし」という壊れ方を直します。純粋なピクセル整列の陰関数が崩れた解剖を幻視するところで、ECON の明示的な SMPL-X 足場は、ディテールの下に必ず人間がいることを保証するのです。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      Mạch người dùng hàm ẩn gãy đúng chỗ quan trọng: quần áo rộng và pose lạ
+      cho ra những khối thù lù phi-nhân — vì chẳng có gì neo bề mặt vào một cơ
+      thể.
+    solution: >
+      Một bản lai: giữ cơ thể SMPL-X tường minh làm giàn giáo, dự đoán bản đồ
+      pháp tuyến trước/sau, rồi tích phân chúng thành các bề mặt chi tiết
+      (d-BiNI) khâu lên cơ thể — chi tiết cỡ hàm ẩn với độ lì cỡ tường minh,
+      cả với trang phục bay bổng.
+    limitations: >
+      Chỉ dựng lại, và vẫn tối ưu theo từng ảnh; texture cùng các vùng hoàn
+      toàn khuất vẫn cần trợ giúp tạo sinh — chỉ thẳng về cuộc hội tụ tạo sinh
+      mà SAM 3D Body sau này hiện thân.
+  ja:
+    problem: "陰関数の人体路線は、肝心なところで壊れます。ゆったりした服や珍しい姿勢では人間ならざる塊が出てくる — 表面を体につなぎ止めるものが何もないからです。"
+    solution: "ハイブリッドです。明示的な SMPL-X ボディを足場として残し、前面・背面の法線マップを予測、それを積分して得た詳細な表面 (d-BiNI) を体に縫い付ける — 陰関数級のディテールと明示表現級の頑健さを、なびく衣服にまで。"
+    limitations: "再構成のみで、画像ごとの最適化も残ります。テクスチャと完全に見えない領域には依然として生成の助けが必要 — のちに SAM 3D Body が体現する「生成への合流」を、まっすぐ指さしています。"

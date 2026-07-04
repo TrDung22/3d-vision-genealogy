@@ -28,10 +28,47 @@ relations:
       Calls out and fixes a hidden zero-shot violation: Metric3D's accuracy
       depended on per-domain crop-size selection at test time — Depth Pro needs
       no such tuning and no intrinsics at all.
+    i18n:
+      vi:
+        note: >
+          Chỉ mặt và sửa một vi phạm zero-shot ẩn: độ chính xác của Metric3D
+          phụ thuộc việc chọn cỡ crop theo miền lúc suy luận — Depth Pro không
+          cần tinh chỉnh kiểu đó, cũng chẳng cần tham số nội.
+      ja:
+        note: "隠れたゼロショット違反を名指しして直します。Metric3D の精度は推論時のドメイン別 crop サイズ選びに依存していました — Depth Pro にはその調整も、内部パラメータも一切不要です。"
   - node: depthanythingv2-2024
     type: fixes
     note: >
       Repairs the Depth Anything line's metric story: instead of separate
       indoor/outdoor fine-tuned metric models, one network covers the world
       with absolute scale.
+    i18n:
+      vi:
+        note: >
+          Sửa câu chuyện metric của mạch Depth Anything: thay vì các mô hình
+          metric fine-tune riêng cho indoor/outdoor, một mạng duy nhất phủ cả
+          thế giới với tỉ lệ tuyệt đối.
+      ja:
+        note: "Depth Anything 路線の metric 事情を直します。屋内用・屋外用に別々へ微調整したモデルの代わりに、一つのネットワークが絶対スケールで世界を覆います。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      Độ sâu metric chuẩn production: biên sắc nét, tỉ lệ tuyệt đối, không cần
+      metadata camera, và đủ nhanh để đem ship — chưa mô hình nào trước đó gom
+      đủ cả bốn.
+    solution: >
+      Một ViT đa tỉ lệ (các patch pretrain chia sẻ trọng số + decoder kiểu
+      DPT) cho ra độ sâu metric 2.25 megapixel trong 0.3 giây trên V100 mà
+      không cần tham số nội; giáo trình hai giai đoạn (thật + tổng hợp, rồi
+      chỉ tổng hợp để mài sắc biên) cùng bộ metric mới đo độ chính xác biên
+      rút từ dữ liệu matting và segmentation.
+    limitations: >
+      Là món đồ nghề "pro" đóng băng hơn là một mạch foundation đang lớn: chỉ
+      đơn ảnh, không nhất quán trên video, và ngôi vương về biên bị các mô
+      hình point-map (MoGe-2) huấn luyện bằng dữ liệu thật tinh lọc đuổi kịp
+      trong vòng một năm.
+  ja:
+    problem: "プロダクション級の metric 深度 — 鋭い境界、絶対スケール、カメラのメタデータ不要、そして製品に載せられる速さ。この四拍子がそろったモデルは、それまで存在しませんでした。"
+    solution: "マルチスケール ViT (重み共有の事前学習パッチ + DPT 風デコーダ) が、内部パラメータなしで 2.25 メガピクセルの metric 深度を V100 上 0.3 秒で出力します。実+合成で学んでから合成のみで境界を研ぎ澄ます二段階カリキュラムに加え、マッティングとセグメンテーションのデータから導いた境界精度の新しい評価指標も持ち込みました。"
+    limitations: "育ち続ける基盤路線というより、凍結された「プロの道具」です。単一画像のみで動画の一貫性はなく、境界の王座も、精錬した実データで学習した点マップ系モデル (MoGe-2) に一年で並ばれました。"

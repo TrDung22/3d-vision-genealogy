@@ -25,4 +25,29 @@ relations:
     note: >
       Repairs exactly the in-domain ceiling Eigen left behind — with
       multi-source data rather than a new architecture.
+    i18n:
+      vi:
+        note: >
+          Sửa đúng cái trần in-domain Eigen để lại — bằng dữ liệu đa nguồn
+          thay vì một kiến trúc mới.
+      ja:
+        note: "Eigen が残したドメイン内の天井を直しました — 新しいアーキテクチャではなく、多源データの力で。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      Món nợ sáu năm của Eigen: mô hình độ sâu huấn luyện trên một dataset là
+      chết ngay khi bước ra khỏi dataset đó. Làm sao cho nó chạy trên ảnh
+      BẤT KỲ?
+    solution: >
+      Trộn các dataset bản chất khác hẳn nhau (phim 3D, ảnh stereo trên web,
+      LiDAR...) với một loss bất biến theo tỉ lệ và độ dời — chấp nhận chỉ dự
+      đoán độ sâu tương đối để đổi lấy khái quát hóa zero-shot thực thụ.
+    limitations: >
+      Cái giá của việc trộn: mất tỉ lệ tuyệt đối (không nói được "bao nhiêu
+      mét"). Độ sâu tương đối đủ cho hiệu ứng ảnh nhưng không đủ cho robotics
+      — món nợ metric treo lơ lửng đến tận thế hệ 2023+.
+  ja:
+    problem: "Eigen が残した6年越しの借金 — 一つのデータセットで学習した深度モデルは、そこを出た瞬間に死にます。どうすれば「どんな画像でも」動くのか?"
+    solution: "性質のまるで違うデータセット (3D映画、ウェブのステレオ写真、LiDAR...) を、スケールとシフトに不変なロスで混ぜ合わせます。相対深度しか予測しないことを受け入れ、その引き換えに本物のゼロショット汎化を手に入れました。"
+    limitations: "混ぜることの代償 — 絶対スケールが消えました (「何メートルか」が言えない)。相対深度は写真のエフェクトには十分でも、ロボティクスには足りません。この metric の借金は 2023年以降の世代まで持ち越されます。"

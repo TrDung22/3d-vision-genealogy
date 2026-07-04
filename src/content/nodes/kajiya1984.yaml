@@ -22,3 +22,23 @@ limitations: >
   differentiation to be run backwards.
 relations: []
 status: seed
+i18n:
+  vi:
+    problem: >
+      Render những thứ chẳng có lấy một bề mặt — mây, bụi, lửa. Ray tracing bề
+      mặt không có gì để giao cắt; ánh sáng bị hấp thụ và tán xạ liên tục dọc
+      theo tia.
+    solution: >
+      Tích phân volume rendering phát-xạ–hấp-thụ: cho tia hành quân xuyên qua
+      một trường mật độ, tích lũy bức xạ phát ra bị suy giảm bởi độ truyền qua
+      của mọi thứ phía trước nó. Được Max (1995) hình thức hóa thêm — chính
+      tích phân này, sau khi rời rạc hóa, là phương trình nằm trong mọi
+      renderer NeRF.
+    limitations: >
+      Thuần túy là renderer xuôi: mật độ do người dựng hoặc mô phỏng, chưa bao
+      giờ được KHÔI PHỤC từ ảnh chụp. Tích phân này đợi 35 năm để automatic
+      differentiation chạy nó ngược lại.
+  ja:
+    problem: "表面というものを持たないもの — 雲、塵、炎 — をレンダリングする。表面レイトレーシングには交差すべきものがなく、光は光線に沿って連続的に吸収され、散乱していきます。"
+    solution: "発光・吸収のボリュームレンダリング積分です。光線を密度場の中へ行進させ、手前にあるすべての透過率で減衰させながら放射輝度を積み上げていく。Max (1995) がさらに定式化したこの積分こそ、離散化されて、あらゆる NeRF レンダラーの中に入っている方程式です。"
+    limitations: "純粋な順方向レンダラーです。密度は人が作るか、シミュレーションで得るもので、写真から復元されることはありませんでした。この積分は、自動微分に逆向きに走らせてもらえる日を35年間待つことになります。"

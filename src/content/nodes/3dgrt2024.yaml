@@ -29,4 +29,32 @@ relations:
       won: the sorted-splatting shortcut silently gave up everything ray
       tracing was invented for, and hardware RT cores make the "slow" path
       fast enough to take it back.
+    i18n:
+      vi:
+        note: >
+          Xét lại cái kết luận mà ai cũng rút ra từ 3DGS — rằng rasterization
+          đã thắng: lối tắt splatting-có-sắp-xếp âm thầm từ bỏ tất cả những gì
+          ray tracing được phát minh ra để làm, và RT core phần cứng khiến con
+          đường "chậm" đủ nhanh để giành lại chúng.
+      ja:
+        note: "3DGS から誰もが引き出した結論 — ラスタライズが勝った — を問い直します。ソート済みスプラッティングの近道は、レイトレーシングが発明された目的すべてを黙って手放していました。そしてハードウェアの RT コアが、その「遅い」道を、取り戻せるほど速くするのです。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      3DGS bị hàn chặt vào rasterizer: một camera pinhole, các tia sơ cấp mạch
+      lạc. Ống kính fisheye, rolling shutter, bóng đổ, phản chiếu, mô phỏng
+      cảm biến — bất cứ thứ gì cần tia KHÔNG mạch lạc đều nằm ngoài paradigm.
+    solution: >
+      Trace các hạt thay vì: bọc mỗi Gaussian trong một mesh bao để cưỡi lên
+      đơn vị tia-tam giác phần cứng (RT core), shade các giao cắt theo lô sắp
+      xếp độ sâu. Tia thứ cấp, camera méo, và lấy mẫu ngẫu nhiên quay lại —
+      ở tốc độ cạnh tranh với rasterization.
+    limitations: >
+      Vẫn chậm hơn một rasterizer đã tinh chỉnh trên novel view synthesis
+      pinhole thường, và thừa kế hình học đốm của 3DGS; bản kế nhiệm lai
+      (3DGUT) sau này cho hai pipeline dùng chung một cảnh.
+  ja:
+    problem: "3DGS はラスタライザに溶接されています — 一つのピンホールカメラ、コヒーレントな一次光線。魚眼レンズ、ローリングシャッター、影、反射、センサーシミュレーション — 非コヒーレントな光線を要するものはすべて、このパラダイムの外です。"
+    solution: "代わりに粒子をトレースします。各ガウシアンをバウンディングメッシュで包んでハードウェアの ray-triangle ユニット (RT コア) に載せ、交差を深度順のバッチでシェーディング。二次光線、歪んだカメラ、確率的サンプリングが戻ってくる — ラスタライズと張り合う速度で。"
+    limitations: "素のピンホール新規視点合成では、チューニングされたラスタライザにはまだ及ばず、3DGS のblob幾何も相続します。のちのハイブリッド後継 (3DGUT) が、二つのパイプラインに一つのシーンを共有させました。"

@@ -29,4 +29,33 @@ relations:
       photometric-consistency requirement NeRF silently relied on is replaced
       by learned per-image latents, opening radiance fields to found data —
       photo tourism after a decade of point clouds.
+    i18n:
+      vi:
+        note: >
+          Sửa cái giả định chụp-có-kiểm-soát chỉ vài tháng sau: yêu cầu nhất
+          quán quang học mà NeRF ngầm dựa vào được thay bằng latent học theo
+          từng ảnh, mở radiance field ra với dữ liệu nhặt được — photo tourism
+          sau cả thập kỷ point cloud.
+      ja:
+        note: "統制された撮影という仮定を、数か月で直します。NeRF が黙って頼っていた測光的一貫性の要件を、画像ごとに学習される潜在変数に置き換え、放射輝度場を「拾ってきたデータ」へ開きました — 点群の十年を経ての photo tourism です。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      NeRF mặc định một phòng lab: ánh sáng cố định, cảnh cố định, một camera.
+      Chĩa nó vào ảnh internet của Cổng Brandenburg — thời tiết, phơi sáng,
+      khách du lịch mỗi ảnh một khác — thì nó bình quân hết cái hỗn loạn ấy
+      thành sương mù.
+    solution: >
+      Cho mỗi ảnh một lời giải thích riêng: một appearance embedding theo từng
+      ảnh hấp thụ ánh sáng và hậu kỳ, còn một transient head với độ bất định
+      học được nuốt gọn khách du lịch và xe cộ — để radiance field tĩnh dùng
+      chung chỉ phải giải thích những gì thật sự vĩnh cửu.
+    limitations: >
+      Embedding phải tối ưu theo từng ảnh (không feed-forward), phần transient
+      bị vứt đi chứ không được hiểu, và nó thừa kế chi phí huấn luyện theo
+      từng cảnh của NeRF — giờ trên hàng nghìn tấm ảnh.
+  ja:
+    problem: "NeRF が前提とするのは実験室です — 固定照明、固定シーン、一台のカメラ。ブランデンブルク門のインターネット写真 (天気も露出も観光客もバラバラ) に向けると、その混沌を平均してしまい、霧になります。"
+    solution: "画像ごとに、それぞれの言い分を与えます。画像ごとの appearance embedding が照明と後処理を吸収し、学習された不確実性を持つ transient ヘッドが観光客や車を吸い取る — 共有される静的な放射輝度場は、本当に恒久的なものだけを説明すればよくなります。"
+    limitations: "embedding は画像ごとに最適化が必要 (フィードフォワードではない)、transient は理解されるのではなく捨てられ、NeRF のシーンごとの学習コストも相続します — しかも今度は何千枚もの写真の上で。"

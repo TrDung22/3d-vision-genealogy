@@ -24,4 +24,28 @@ relations:
     note: >
       Repairs exactly the weakness Make3D left behind: hand-crafted features +
       MRF replaced by representations learned end-to-end from data.
+    i18n:
+      vi:
+        note: >
+          Sửa đúng điểm yếu Make3D để lại: đặc trưng thiết kế tay + MRF được
+          thay bằng biểu diễn học end-to-end từ dữ liệu.
+      ja:
+        note: "Make3D が残した弱点をまさにその一点で直しました。手作りの特徴と MRF は、データから end-to-end で学んだ表現に置き換えられたのです。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      Hồi quy thẳng bản đồ độ sâu từ ảnh, không cần con người thiết kế đặc
+      trưng hay mô hình đồ thị.
+    solution: >
+      CNN hai tầng từ thô đến mịn dự đoán độ sâu end-to-end, cộng thêm loss
+      bất biến tỉ lệ tách lỗi cấu trúc khỏi lỗi tỉ lệ — cột mốc mở ra kỷ
+      nguyên học sâu của ước lượng độ sâu đơn ảnh.
+    limitations: >
+      Huấn luyện và đánh giá gói gọn trong một dataset (NYU Depth / KITTI):
+      mô hình học được "phòng ốc kiểu NYU" chứ không phải "thế giới". Cái trần
+      in-domain ấy treo lơ lửng trên đầu cả ngành suốt sáu năm, cho đến MiDaS.
+  ja:
+    problem: "画像から深度マップを直接回帰する — 特徴もグラフィカルモデルも、人間が設計せずに。"
+    solution: "粗から密への二段構え CNN が深度を end-to-end で予測します。構造の誤差とスケールの誤差を切り分けるスケール不変ロスも加わり — 単眼深度の深層学習時代を開いた一里塚です。"
+    limitations: "学習も評価も単一のデータセット (NYU Depth / KITTI) の中だけ。モデルが覚えたのは「NYU 風の部屋」であって「世界」ではありません。このドメイン内の天井は、MiDaS が現れるまで6年間、分野の頭上に垂れ込めていました。"

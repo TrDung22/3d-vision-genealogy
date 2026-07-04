@@ -30,4 +30,33 @@ relations:
       The same industrial wave, opposite bets: TRELLIS unifies everything into
       one structured latent; Hunyuan3D splits shape and texture into separately
       scaled specialists. Neither derives from the other.
+    i18n:
+      vi:
+        note: >
+          Cùng làn sóng công nghiệp, đặt cược ngược chiều: TRELLIS gom tất cả
+          vào một latent có cấu trúc; Hunyuan3D tách hình khối và texture
+          thành hai chuyên gia scale riêng. Không bên nào sinh ra từ bên nào.
+      ja:
+        note: "同じ産業化の波で、正反対の賭けです。TRELLIS はすべてを一つの構造化潜在にまとめ、Hunyuan3D は形状とテクスチャを別々にスケールさせる専門家に分けました。どちらも他方から生まれてはいません。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      Pipeline asset production cần nhiều hơn hình học: 3D sẵn sàng cho game
+      nghĩa là hình khối thân thiện với topology sạch VÀ vật liệu độ phân giải
+      cao, ở độ tin cậy công nghiệp.
+    solution: >
+      Tách bài toán đúng kiểu các studio vẫn làm: một bộ sinh hình khối lớn
+      dựa trên flow (diffusion latent dạng vecset) tạo hình học, rồi một mô
+      hình tổng hợp texture đa góc nhìn riêng "sơn" lên — mỗi công đoạn được
+      scale và tối ưu độc lập. Bản 2.1 (6/2025) nối dài công đoạn texture sang
+      vật liệu PBR (physically-based rendering) trong bản phát hành mở.
+    limitations: >
+      Tách hai công đoạn nghĩa là texture không cứu được lỗi hình khối; chất
+      lượng PBR vẫn thua các công cụ thương mại đóng; và để ý cách đóng khung
+      marketing — tuyên bố "PBR mở sẵn sàng production đầu tiên" đã không trụ
+      nổi kiểm chứng độc lập.
+  ja:
+    problem: "プロダクションのアセットパイプラインに必要なのは幾何だけではありません。ゲームで使える3Dとは、トポロジーに優しい綺麗な形状と高解像度のマテリアルを、産業レベルの信頼性で備えたものです。"
+    solution: "スタジオの流儀どおりに問題を分割します。大規模なフローベース形状生成器 (vecset 潜在の拡散) が幾何を作り、独立した多視点テクスチャ合成モデルがそれを塗る — 各段を別々にスケールし最適化するのです。バージョン2.1 (2025年6月) では、公開リリースのままテクスチャ段を物理ベースレンダリング (PBR) マテリアルへ拡張しました。"
+    limitations: "二段構えということは、テクスチャでは形状の誤りを直せないということ。PBR の品質は今も商用クローズドツールに及びません。そしてマーケティングの枠組みには注意 —「初のプロダクション対応オープン PBR」という主張は、独立検証に耐えられませんでした。"

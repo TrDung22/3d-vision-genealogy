@@ -32,6 +32,15 @@ relations:
       unchanged as math — anisotropic Gaussians, screen-space projection,
       sorted alpha blending — but now the Gaussians are OPTIMIZED from
       photographs through the differentiable version of that very renderer.
+    i18n:
+      vi:
+        note: >
+          Hồi sinh EWA splatting sau hai thập kỷ ngủ đông, gần như y nguyên
+          về mặt toán — Gaussian dị hướng, chiếu vào không gian màn hình,
+          alpha blending có sắp xếp — nhưng giờ các Gaussian được TỐI ƯU từ
+          ảnh chụp qua chính phiên bản khả vi của renderer đó.
+      ja:
+        note: "二十年の眠りを経て EWA スプラッティングを蘇らせました。数式はほぼそのまま — 異方性ガウシアン、スクリーン空間への射影、ソート済みアルファブレンド — ただし今度は、そのレンダラーの微分可能版を通して、ガウシアンが写真から最適化されるのです。"
   - node: instantngp2022
     type: fixes
     note: >
@@ -39,6 +48,15 @@ relations:
       speed. Replacing ray marching with rasterization — the operation GPUs
       were born for — takes radiance fields from fast-to-train to
       real-time-to-display.
+    i18n:
+      vi:
+        note: >
+          Sửa nút thắt cuối cùng mà hash grid còn chừa lại: tốc độ render.
+          Thay ray marching bằng rasterization — thao tác mà GPU sinh ra để
+          làm — đưa radiance field từ nhanh-để-huấn-luyện thành thời-gian-
+          thực-để-hiển-thị.
+      ja:
+        note: "ハッシュグリッドが残した最後のボトルネック — レンダリング速度 — を直します。レイマーチングを、GPU が生まれ持った仕事であるラスタライズに置き換え、放射輝度場を「学習が速い」から「表示がリアルタイム」へと運びました。"
   - node: plenoxels2021
     type: builds-on
     note: >
@@ -46,4 +64,34 @@ relations:
       explicit primitives + differentiable rendering, no MLP anywhere — but
       swaps the fixed voxel lattice for primitives that move, stretch, and
       multiply where the scene needs them.
+    i18n:
+      vi:
+        note: >
+          Minh oan cho cú dị giáo bỏ-mạng-nơ-ron ở quy mô lớn: 3DGS cũng
+          thuần primitive tường minh + rendering khả vi, không MLP ở đâu cả —
+          nhưng thay lưới voxel cố định bằng những primitive biết di chuyển,
+          giãn ra và nhân lên đúng chỗ cảnh cần.
+      ja:
+        note: "「ニューラルネット不要」という異端を、大規模で立証しました。3DGS もまた純粋な明示的プリミティブ + 微分可能レンダリングで、どこにも MLP はありません — ただし固定のボクセル格子を、シーンが必要とする場所で動き・伸び・増えるプリミティブに置き換えたのです。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      Mọi renderer radiance-field vẫn hành quân tia — kể cả Instant-NGP.
+      Novel view synthesis 1080p thời gian thực (30+ fps) của cảnh thật vẫn
+      chưa ai chạm tới, vì lấy mẫu dọc tia là thứ sai khớp với GPU vốn sinh
+      ra để rasterize.
+    solution: >
+      Biểu diễn cảnh bằng hàng triệu Gaussian 3D dị hướng — khởi tạo từ đám
+      mây điểm SfM, tối ưu bằng gradient, densify và prune thích nghi — rồi
+      render bằng SPLATTING CÓ SẮP XẾP qua một rasterizer khả vi theo ô. Chất
+      lượng state-of-the-art ở 100+ fps; huấn luyện ~30 phút.
+    limitations: >
+      Hàng triệu đốm không cấu trúc: nặng bộ nhớ, dễ răng cưa khi zoom (khe hở
+      cho Mip-Splatting), bất nhất về hình học khi coi là bề mặt (khe hở cho
+      2DGS), nhảy giật dưới các xấp xỉ sắp xếp, và chỉ rasterize pinhole (khe
+      hở cho 3DGRT). Một đột phá lập tức thành món ai cũng thích đem đi sửa.
+  ja:
+    problem: "どの放射輝度場レンダラーも、依然として光線を行進させていました — Instant-NGP でさえも。実シーンのリアルタイム (30fps 以上) 1080p 新規視点合成は手つかずのまま。光線に沿ったサンプリングは、ラスタライズのために生まれた GPU には不向きだからです。"
+    solution: "シーンを数百万個の異方性3Dガウシアンで表します — SfM 点群から初期化し、勾配で最適化し、適応的に densify・prune する — そしてタイルベースの微分可能ラスタライザによるソート済みスプラッティングで描く。100fps 超で最高水準の品質、学習は約30分です。"
+    limitations: "数百万の構造なきblob — メモリを食い、ズームでエイリアスしやすく (Mip-Splatting の入口)、表面としては視点不一致で (2DGS の入口)、ソート近似の下でポッピングし、ピンホールのラスタライズ専用です (3DGRT の入口)。ブレイクスルーは、たちまち皆のお気に入りの「直したいもの」になりました。"

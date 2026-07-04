@@ -26,4 +26,30 @@ relations:
     note: >
       Same first author, direct repair: the resolution ceiling — multi-level
       inference finally spends the input's native pixels on the surface detail.
+    i18n:
+      vi:
+        note: >
+          Cùng tác giả chính, sửa trực tiếp: cái trần độ phân giải — suy luận
+          đa tầng rốt cuộc cũng tiêu được những pixel gốc của đầu vào vào chi
+          tiết bề mặt.
+      ja:
+        note: "筆頭著者みずからの直しです。解像度の天井 — 多層の推論により、ようやく入力本来のピクセルが表面のディテールに使われるようになりました。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      PIFu downsample đầu vào, vứt đi đúng những pixel chứa nếp áo và ngón
+      tay.
+    solution: >
+      Kiến trúc hai tầng: tầng thô suy luận toàn cục ở độ phân giải thấp, tầng
+      mịn nuốt các crop 1024px để lấy chi tiết, kèm dự đoán bản đồ pháp tuyến
+      trước/sau để "bịa" ra mặt khuất — số hóa người trọn độ phân giải 1k từ
+      một tấm ảnh.
+    limitations: >
+      Vẫn không có prior cơ thể: pose cực đoan và trang phục rộng cho ra kết
+      quả bất khả về giải phẫu — đúng kiểu hỏng mà mạch lai tường minh
+      (ICON/ECON) được sinh ra để sửa.
+  ja:
+    problem: "PIFu は入力をダウンサンプルしていました — 服のしわや指が写っている、まさにそのピクセルを捨てて。"
+    solution: "二層のアーキテクチャです。粗い層が低解像度で全体を推論し、細かい層が 1024px のクロップを飲み込んでディテールを拾う。前面・背面の法線マップ予測が見えない側を補い — 一枚の写真から 1k 解像度まるごとの人体デジタル化を実現しました。"
+    limitations: "体の prior は依然ありません。極端な姿勢やゆったりした衣服では、解剖学的にありえない結果が出ます — 明示的ハイブリッド路線 (ICON/ECON) がその修理のために生まれた、まさにその壊れ方です。"

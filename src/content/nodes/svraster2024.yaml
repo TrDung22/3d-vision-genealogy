@@ -29,10 +29,46 @@ relations:
       seemingly buried it: the same "no neural network, just a sparse grid"
       creed, now with adaptive level-of-detail and a rasterizer instead of
       ray marching — voxels made competitive with splats.
+    i18n:
+      vi:
+        note: >
+          Kéo cú dị giáo voxel sống dậy từ cõi chết sau khi Gaussian tưởng như
+          đã chôn nó: vẫn tín điều "không mạng nơ-ron, chỉ một lưới thưa",
+          giờ kèm level-of-detail thích nghi và một rasterizer thay cho ray
+          marching — voxel được làm cho cân sức với splat.
+      ja:
+        note: "ガウシアンが葬り去ったかに見えたボクセルの異端を、死から呼び戻します。同じ「ニューラルネット不要、疎なグリッドだけ」の信条を、今度は適応的な level-of-detail とレイマーチングに代わるラスタライザとともに — ボクセルをスプラットと張り合えるようにしました。"
   - node: 3dgs2023
     type: challenges
     note: >
       Questions the assumption that the primitive must be a Gaussian:
       sorted-splat popping is an artifact of the primitive choice, and
       sorted voxels dissolve it while keeping the rasterization speed.
+    i18n:
+      vi:
+        note: >
+          Xét lại giả định rằng primitive nhất thiết phải là Gaussian: cái
+          nhảy giật của splat-có-sắp-xếp là artifact của lựa chọn primitive,
+          và voxel có sắp xếp làm nó tan biến mà vẫn giữ tốc độ rasterization.
+      ja:
+        note: "プリミティブは必ずガウシアンでなければならない、という仮定を問い直します。ソート済みスプラットのポッピングはプリミティブ選択のアーティファクトであり、ソート済みボクセルはラスタライズの速度を保ったままそれを溶かすのです。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      Gaussian thắng về tốc độ nhưng mang theo tật — nhảy giật khi xoay góc
+      nhìn (phép sắp xếp toàn cục chỉ đúng gần đúng) và những đốm mờ ở nơi
+      cảnh muốn có cấu trúc sắc, thẳng trục.
+    solution: >
+      Rasterize VOXEL THƯA thích nghi thay vì Gaussian: một bố cục kiểu octree
+      lên tới độ phân giải hiệu dụng 65.536³, render theo đúng thứ tự độ sâu
+      nhờ Morton ordering phụ thuộc hướng tia — không mạng nơ-ron, không
+      Gaussian, không nhảy giật, hơn 4dB so với voxel không-nơ-ron trước đó ở
+      framerate gấp 10 lần.
+    limitations: >
+      Biên voxel cứng xử lý vật chất bán trong suốt, mềm kém duyên hơn
+      Gaussian; lưới, dù thưa mấy, vẫn đánh đổi bộ nhớ lấy chi tiết.
+  ja:
+    problem: "ガウシアンは速度で勝ちましたが、癖も持ち込みました — 視点回転でのポッピング (グローバルソートは近似的にしか正しくない) と、シーンが鋭い軸整列構造を求める場所での曖昧なblobです。"
+    solution: "ガウシアンではなく適応的な疎ボクセルをラスタライズします。実効解像度 65,536³ までの octree 風レイアウトを、光線方向依存の Morton 順序で厳密に正しい深度順に描く — ニューラルネットなし、ガウシアンなし、ポッピングなし。従来のニューラルネット不要ボクセルを 4dB 上回り、フレームレートは10倍です。"
+    limitations: "硬いボクセル境界は、半透明で柔らかい物質をガウシアンほど優雅には扱えません。グリッドは、どれだけ疎でも、やはりメモリと引き換えに細部を得ます。"

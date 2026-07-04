@@ -25,10 +25,42 @@ relations:
       Settles the closed-world debt of the whole object-reconstruction line —
       the very problem Tatarchenko exposed — by swapping the few-thousand-shape
       ShapeNet prior for diffusion's internet-scale prior.
+    i18n:
+      vi:
+        note: >
+          Thanh toán món nợ thế-giới-đóng của cả mạch dựng lại vật thể — đúng
+          vấn đề Tatarchenko phơi bày — bằng cách thay prior vài-nghìn-hình
+          của ShapeNet bằng prior cỡ internet của diffusion.
+      ja:
+        note: "物体再構成路線まるごとの「閉じた世界」の借金 — まさに Tatarchenko が暴いた問題 — を清算します。数千形状の ShapeNet prior を、拡散モデルのインターネット規模の prior に替えて。"
   - node: nerf2020
     type: builds-on
     note: >
       Uses a NeRF-style representation as the 3D scaffold for the generated
       views — a cross-branch relation: neural rendering becomes single-image
       3D's infrastructure.
+    i18n:
+      vi:
+        note: >
+          Dùng biểu diễn kiểu NeRF làm giàn giáo 3D cho các góc nhìn sinh ra —
+          một quan hệ xuyên nhánh: neural rendering trở thành hạ tầng của 3D
+          từ một ảnh.
+      ja:
+        note: "生成した視点の3D足場として NeRF 流の表現を使います — 枝をまたぐ関係です。ニューラルレンダリングが、単一画像3Dのインフラになりました。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      3D từ một ảnh cho vật thể thật BẤT KỲ — điều mà cả mạch dựng lại vật thể
+      huấn luyện trên ShapeNet chưa bao giờ làm nổi.
+    solution: >
+      Fine-tune Stable Diffusion thành bộ sinh góc nhìn mới có điều kiện
+      camera: từ một tấm ảnh, "tưởng tượng" ra các góc nhìn còn lại, rồi dựng
+      3D từ những góc nhìn tưởng tượng ấy (qua tối ưu kiểu NeRF/SDS).
+    limitations: >
+      Các góc nhìn sinh ra không nhất quán 3D với nhau (multi-view
+      inconsistency), và tối ưu theo từng vật thể tốn từ vài phút đến vài giờ.
+  ja:
+    problem: "現実世界のどんな物体でも、単一画像から3Dへ — ShapeNet で育った物体再構成の路線が、ついに成し遂げられなかったことです。"
+    solution: "Stable Diffusion をカメラ条件付きの新規視点生成器へ微調整します。一枚の画像から残りの視点を「想像」し、その想像された視点群から (NeRF 流 / SDS の最適化で) 3Dを再構成するのです。"
+    limitations: "生成された視点どうしは3Dとして辻褄が合いません (多視点不一致)。しかも物体ごとの最適化に数分から数時間かかります。"

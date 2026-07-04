@@ -28,4 +28,31 @@ relations:
       Repairs the memory blowup that came with deleting the network: keeps
       the fast direct-optimization recipe but compresses the explicit grid
       ~100x via low-rank tensor decomposition.
+    i18n:
+      vi:
+        note: >
+          Sửa cú phình bộ nhớ đi kèm việc xóa mạng: giữ công thức tối ưu-trực
+          tiếp nhanh nhưng nén lưới tường minh ~100 lần bằng phân rã tensor
+          hạng thấp.
+      ja:
+        note: "ネットワークを消したことに伴うメモリの膨張を直します。速い直接最適化のレシピを保ちつつ、明示的グリッドを低ランクテンソル分解で約100倍圧縮しました。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      Cuộc nổi loạn lưới mua tốc độ bằng cách trả giá bộ nhớ: một lưới voxel
+      radiance là một tensor 4D khổng lồ, phần lớn thừa thãi.
+    solution: >
+      Phân rã nó ra: tách tensor cảnh thành các thành phần vector-ma trận gọn
+      (mặt phẳng và đường hạng thấp). Chất lượng trên NeRF ở vài phút huấn
+      luyện, trong vài chục MB thay vì hàng gigabyte — cảnh như một đối tượng
+      hạng thấp.
+    limitations: >
+      Phân rã theo trục gặp khó với cảnh không chặn và có thể nhòe chi tiết
+      qua các mặt phẳng. Di sản bền nhất của nó nằm chỗ khác: biểu diễn mặt
+      phẳng phân rã trở thành xương sống triplane của 3D tạo sinh (EG3D, LRM)
+      và trường động (K-Planes).
+  ja:
+    problem: "グリッドの反乱は、メモリを支払って速度を買いました。radiance のボクセルグリッドは巨大な4Dテンソルで、その大半は冗長なのです。"
+    solution: "それを分解します。シーンのテンソルをコンパクトなベクトル・行列成分 (低ランクの平面と線) に分ける。数分の学習で NeRF を超える品質を、ギガバイトではなく数十 MB で — シーンを低ランクの対象として扱うのです。"
+    limitations: "軸整列の分解は非有界シーンを苦手とし、ディテールが平面をまたいで滲むことがあります。最も長く残った遺産は別のところに — 分解された平面表現が、生成3D (EG3D、LRM) と動的場 (K-Planes) の triplane バックボーンになりました。"

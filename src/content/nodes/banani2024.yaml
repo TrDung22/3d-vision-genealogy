@@ -27,10 +27,46 @@ relations:
       Challenges the premise of the prior-borrowing line: Stable Diffusion's
       "visual understanding" is single-view — the 3D consistency that depth
       models inherit from it is shallower than assumed.
+    i18n:
+      vi:
+        note: >
+          Thách thức tiền đề của mạch mượn prior: cái "hiểu thị giác" của
+          Stable Diffusion là đơn-góc-nhìn — độ nhất quán 3D mà các mô hình độ
+          sâu thừa hưởng từ nó nông hơn người ta tưởng.
+      ja:
+        note: "prior 借用路線の前提への挑戦です。Stable Diffusion の「視覚的理解」は単一視点のもの — 深度モデルがそこから受け継ぐ3D一貫性は、思われていたより浅いのです。"
   - node: depthanything2024
     type: challenges
     note: >
       The DINOv2 semantic features Depth Anything leans on are probed directly:
       strong on visible surfaces, view-dependent beyond them — bounding what
       feature-transfer alone can deliver for 3D.
+    i18n:
+      vi:
+        note: >
+          Đặc trưng ngữ nghĩa DINOv2 mà Depth Anything tựa vào bị probe trực
+          diện: mạnh trên bề mặt nhìn thấy, phụ thuộc góc nhìn khi vượt ra
+          ngoài — vạch rõ giới hạn của việc chỉ chuyển giao đặc trưng cho 3D.
+      ja:
+        note: "Depth Anything が頼る DINOv2 の意味特徴を直接調べました。見えている表面には強く、その先は視点依存 — 特徴転移だけで3Dに届く範囲に、はっきり線を引きました。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      Câu hỏi khó chịu của kỷ nguyên mượn-prior-2D: khi ta trưng dụng DINOv2,
+      CLIP hay Stable Diffusion cho các bài toán 3D, mấy mô hình đó thật ra
+      chứa bao nhiêu phần 3D?
+    solution: >
+      Một nghiên cứu probing hệ thống: đặc trưng foundation model đóng băng
+      được đem thử dựng bề mặt đơn-góc-nhìn và độ nhất quán đa góc nhìn. Phán
+      quyết: chúng mã hóa bề mặt NHÌN THẤY tốt đến ngạc nhiên, nhưng trượt ở
+      nhất quán đa góc nhìn — biểu diễn phụ thuộc góc nhìn, chứ không nhất
+      quán 3D.
+    limitations: >
+      Là chẩn đoán, không phải thuốc chữa — nó không chỉ cách làm prior 2D
+      trở nên nhất quán 3D. Nhưng cũng như Tatarchenko 2019 trước đó, nó đánh
+      dấu chính xác chỗ rạn của giả định nền tảng thời đại.
+  ja:
+    problem: "2D の事前知識を借りる時代の、居心地の悪い問い — DINOv2 や CLIP、Stable Diffusion を3Dタスクに流用するとき、それらのモデルは実際どれほどの3Dを内包しているのか?"
+    solution: "系統立てた probing 研究です。凍結した基盤モデルの特徴を、単一視点の表面再構成と多視点一貫性でテストしました。判決 — 見えている表面は驚くほど良く符号化しているのに、多視点一貫性では落第。表現は視点依存であって、3D一貫ではないのです。"
+    limitations: "診断であって処方箋ではありません — 2D の事前知識を3D一貫にする方法までは示さないのです。それでも Tatarchenko 2019 がそうだったように、この時代の根本仮定にひびが入る場所を、正確に印しました。"

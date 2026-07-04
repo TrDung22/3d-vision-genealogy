@@ -28,10 +28,45 @@ relations:
       extracted surfaces are noise because density is optimized for
       appearance; routing volume rendering through an SDF makes geometry a
       first-class citizen without losing the mask-free training.
+    i18n:
+      vi:
+        note: >
+          Sửa cái hình học mà NeRF chưa từng hứa: bề mặt trích từ trường mật
+          độ chỉ là nhiễu, vì mật độ được tối ưu cho bề ngoài; cho volume
+          rendering đi qua một SDF nâng hình học thành công dân hạng nhất mà
+          không mất đi việc huấn luyện không cần mask.
+      ja:
+        note: "NeRF が約束したことのない幾何を直します。密度場から取り出した表面がノイズなのは、密度が見た目のために最適化されているから。ボリュームレンダリングを SDF 経由にすることで、マスク不要の学習を失わずに、幾何を一級市民に昇格させました。"
   - node: deepsdf2019
     type: builds-on
     note: >
       A cross-branch marriage: the SDF representation from the object
       reconstruction line, now supervised by images alone through volume
       rendering instead of by 3D scans.
+    i18n:
+      vi:
+        note: >
+          Một cuộc hôn phối xuyên nhánh: biểu diễn SDF từ mạch dựng lại vật
+          thể, giờ được giám sát chỉ bằng ảnh qua volume rendering thay vì
+          bằng scan 3D.
+      ja:
+        note: "枝をまたぐ結婚です。物体再構成の路線から来た SDF 表現が、3Dスキャンではなく、ボリュームレンダリング越しに画像だけで教師付けされるようになりました。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      NeRF render đẹp nhưng trường mật độ của nó không phải một bề mặt: đặt
+      ngưỡng lên nó là ra giấy nhám. Các phương pháp bề mặt (IDR) dựng sạch
+      nhưng cần mask và chết ở những chỗ độ sâu đổi đột ngột.
+    solution: >
+      Biểu diễn hình học bằng một hàm khoảng cách có dấu và suy ra một hàm
+      trọng số KHÔNG THIÊN LỆCH, biết che khuất, chuyển SDF sang mật độ volume
+      rendering — độ lì của volume rendering, độ sắc của biểu diễn bề mặt, hội
+      tụ chứng minh được về bề mặt thật khi phương sai co lại.
+    limitations: >
+      Tối ưu theo từng cảnh hàng giờ, và prior SDF trơn mài mòn chi tiết mịn —
+      khe hở mà Neuralangelo sau này lấp bằng hash grid.
+  ja:
+    problem: "NeRF は美しく描きますが、その密度場は表面ではありません。しきい値で切れば紙やすりが出てくる。表面手法 (IDR) は綺麗に再構成する代わりにマスクを要し、急な深度変化で破綻します。"
+    solution: "幾何を符号付き距離関数で表し、SDF をボリュームレンダリングの密度へ変換する、偏りのない・遮蔽を弁えた重み関数を導きます — ボリュームレンダリングの頑健さと、表面表現の鋭さ。分散が縮むにつれ真の表面へ収束することが証明されています。"
+    limitations: "シーンごとの最適化に数時間、そして滑らかな SDF prior が細部を削り落とします — のちに Neuralangelo がハッシュグリッドで埋めた隙間です。"

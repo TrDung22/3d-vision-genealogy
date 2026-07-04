@@ -28,4 +28,32 @@ relations:
       Completes what conditioning began: PixelNeRF removed per-scene training
       but still answered through slow volume rendering; VGGT predicts the
       geometry itself, feed-forward, at any view count.
+    i18n:
+      vi:
+        note: >
+          Hoàn tất điều mà điều kiện hóa khởi xướng: PixelNeRF bỏ được huấn
+          luyện theo cảnh nhưng vẫn trả lời qua volume rendering chậm chạp;
+          VGGT dự đoán thẳng hình học, feed-forward, với số view tùy ý.
+      ja:
+        note: "条件付けが始めたことを完成させます。PixelNeRF はシーンごとの学習を取り除いたものの、答えは遅いボリュームレンダリング越しでした。VGGT は幾何そのものを、任意の視点数でフィードフォワードに予測します。"
 status: seed
+i18n:
+  vi:
+    problem: >
+      Hình học của cảnh vẫn là một pipeline: SfM lo camera, MVS hoặc tối ưu
+      theo cảnh lo hình học dày đặc — chậm, giòn, và về cấu trúc không thể
+      chạy từ một tấm ảnh.
+    solution: >
+      Một transformer feed-forward duy nhất nuốt từ 1 đến hàng trăm ảnh không
+      pose và xuất thẳng camera, bản đồ độ sâu, point map lẫn 3D point track
+      trong vài giây — ván cược "hình học là dự đoán, không phải tối ưu" của
+      mạch DUSt3R được đẩy đến tận cùng logic, và là Best Paper CVPR 2025.
+    limitations: >
+      Mỗi task một đầu ra riêng và attention bậc hai theo số view; chỉ cảnh
+      tĩnh. Người kế vị đến rất nhanh: Depth Anything 3 cho thấy một
+      transformer trơn với một mục tiêu depth-ray duy nhất thắng thiết kế đa
+      đầu một cách dứt khoát.
+  ja:
+    problem: "シーンの幾何は依然としてパイプラインでした。カメラは SfM、密な幾何は MVS かシーンごとの最適化 — 遅く、脆く、そして構造上、一枚の画像からは走れません。"
+    solution: "一つのフィードフォワード・トランスフォーマーが、ポーズなしの画像を1枚から数百枚まで飲み込み、カメラ・深度マップ・点マップ・3Dポイントトラックを数秒で直接出力します —「幾何は最適化ではなく予測」という DUSt3R 路線の賭けを論理的な果てまで進めた、CVPR 2025 のベストペーパーです。"
+    limitations: "タスクごとに別ヘッド、視点数に対して二乗のアテンション、扱えるのは静的シーンのみ。後継はすぐに現れました — Depth Anything 3 が、素のトランスフォーマー + 単一の depth-ray ターゲットでマルチヘッド設計に決定的に勝てることを示したのです。"
