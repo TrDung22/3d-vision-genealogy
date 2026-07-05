@@ -45,6 +45,20 @@ relations:
           DỰ ĐOÁN thay vì tối ưu.
       ja:
         note: "出力は triplane の放射輝度場 — NeRF のインフラです。ただし最適化するのではなく、予測するのです。"
+  - node: objaverse2023
+    type: builds-on
+    note: >
+      Its "GPT moment" rests on the data as much as the model: LRM trains
+      end-to-end on Objaverse + MVImgNet, and only a corpus at that scale makes
+      one-forward-pass single-image 3D learnable.
+    i18n:
+      vi:
+        note: >
+          "Khoảnh khắc GPT" của nó dựa vào dữ liệu ngang với model: LRM huấn
+          luyện end-to-end trên Objaverse + MVImgNet, và chỉ một kho ở quy mô ấy
+          mới khiến 3D-từ-một-ảnh trong một lượt forward học được.
+      ja:
+        note: "その「GPT の瞬間」は、モデルと同じくらいデータに支えられています。LRM は Objaverse + MVImgNet で end-to-end 学習し、その規模のコーパスがあって初めて、forward 一回の単一画像3Dが学習可能になるのです。"
 status: seed
 i18n:
   vi:

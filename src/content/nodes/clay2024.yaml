@@ -1,0 +1,68 @@
+title: "CLAY: A Controllable Large-scale Generative Model for 3D Assets"
+short: "CLAY (2024)"
+authors: "Longwen Zhang, Ziyu Wang, Qixuan Zhang, Qiwei Qiu, Anqi Pang, Haoran Jiang, Wei Yang, Lan Xu, Jingyi Yu (ShanghaiTech, Deemos, Influxus)"
+venue: "SIGGRAPH 2024"
+year: 2024
+branch: single-image-3d
+lane: generative
+links:
+  arxiv: "https://arxiv.org/abs/2406.13897"
+problem: >
+  Early 3D diffusion (Point-E, Shap-E) proved you could generate 3D natively,
+  but geometry stayed coarse and never reached production quality or fine user
+  control. Could native 3D generation reach the fidelity and steerability that
+  made 2D diffusion a phenomenon?
+solution: >
+  Scale the 3D latent, not a distillation. CLAY compresses shapes into a neural
+  latent set (the 3DShape2VecSet lineage) and trains a large diffusion
+  transformer (DiT) over it — geometry FIRST, then a separate material stage —
+  pushing to 1.5B parameters on a carefully assembled asset pool. The result is
+  clean, watertight geometry with multi-modal control (text, image, voxel,
+  point cloud) at a fidelity earlier 3D diffusion couldn't touch.
+limitations: >
+  Geometry-first means a multi-stage pipeline — shape, then texture, then
+  material — and each output format is still produced by its own decoder. The
+  unresolved wish: one STRUCTURED latent that decodes to whichever
+  representation you need, in a single generation (→ TRELLIS).
+relations:
+  - node: pointe-shape2022
+    type: builds-on
+    note: >
+      Keeps Point-E/Shap-E's core bet — diffusion straight on a 3D
+      representation — but replaces coarse point/implicit outputs with a scaled
+      latent-set DiT, turning native 3D generation from a proof of concept into
+      production-grade geometry.
+    i18n:
+      vi:
+        note: >
+          Giữ nguyên ván cược cốt lõi của Point-E/Shap-E — diffusion thẳng trên
+          một biểu diễn 3D — nhưng thay đầu ra point/implicit thô bằng một DiT
+          trên latent set đã phóng to, biến native 3D generation từ một bằng
+          chứng khái niệm thành hình học đạt chuẩn production.
+      ja:
+        note: "Point-E/Shap-E の核心の賭け — 3D表現の上で直接 diffusion する — を受け継ぎつつ、粗い点群・陰関数の出力を、スケールした latent-set の DiT に置き換えます。native 3D generation を、概念実証から production 級の幾何へと引き上げたのです。"
+status: seed
+i18n:
+  vi:
+    problem: >
+      3D diffusion đời đầu (Point-E, Shap-E) chứng minh được rằng có thể sinh 3D
+      một cách native, nhưng hình học vẫn thô và chưa bao giờ chạm tới chất
+      lượng production hay khả năng điều khiển tinh vi. Liệu native 3D generation
+      có đạt được độ trung thực và độ "lái" được đã biến 2D diffusion thành hiện
+      tượng?
+    solution: >
+      Phóng to chính latent 3D, chứ không phải chưng cất. CLAY nén hình dạng vào
+      một latent set kiểu neural (dòng 3DShape2VecSet) rồi huấn luyện một
+      diffusion transformer (DiT) lớn trên đó — hình học TRƯỚC, rồi mới tới tầng
+      material riêng — đẩy lên 1.5B tham số trên một kho asset gom góp kỹ. Kết
+      quả là hình học sạch, khép kín, điều khiển đa phương thức (chữ, ảnh, voxel,
+      point cloud) ở độ trung thực mà 3D diffusion trước đó không với tới.
+    limitations: >
+      Geometry-first nghĩa là một pipeline nhiều tầng — hình rồi texture rồi
+      material — và mỗi định dạng đầu ra vẫn do một decoder riêng sinh ra. Điều
+      ước còn dang dở: một latent CÓ CẤU TRÚC giải mã được ra bất cứ biểu diễn
+      nào bạn cần, trong đúng một lần sinh (→ TRELLIS).
+  ja:
+    problem: "初期の 3D diffusion (Point-E、Shap-E) は3Dを native に生成できることを示しましたが、幾何は粗いままで、production 品質にも細かなユーザー制御にもスケールしませんでした。native 3D generation は、2D diffusion を現象にした忠実度と操作性に届くのか?"
+    solution: "蒸留ではなく、3D latent 自体をスケールします。CLAY は形状をニューラルな latent set (3DShape2VecSet 系) に圧縮し、その上で大きな diffusion transformer (DiT) を学習 — 幾何を先に、次に別段のマテリアル生成 — 丁寧に集めたアセット群の上で15億パラメータまで押し上げます。結果は、清潔で水密な幾何と、多様な入力 (テキスト、画像、ボクセル、点群) による制御を、従来の 3D diffusion が届かなかった忠実度で実現しました。"
+    limitations: "geometry-first は多段のパイプラインを意味します — 形状、次にテクスチャ、次にマテリアル — そして各出力フォーマットは依然それぞれのデコーダが作ります。積み残した願いは、構造を持つ一つの latent が、望むどの表現へでも一度の生成でデコードすること (→ TRELLIS) です。"

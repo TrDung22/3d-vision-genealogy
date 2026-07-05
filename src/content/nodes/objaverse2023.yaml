@@ -1,0 +1,52 @@
+title: "Objaverse and Objaverse-XL: Web-Scale 3D Data"
+short: "Objaverse (2023)"
+authors: "Matt Deitke, Ruoshi Liu, Matthew Wallingford, Huong Ngo, Ali Farhadi, Aniruddha Kembhavi (Allen Institute for AI, University of Washington, et al.)"
+venue: "CVPR 2023 / NeurIPS 2023"
+year: 2023
+branch: single-image-3d
+lane: generative
+links:
+  arxiv: "https://arxiv.org/abs/2307.05663"
+  project: "https://objaverse.allenai.org/"
+problem: >
+  Every "large model, large data" win in 2D rode on web-scale datasets — but 3D
+  had no ImageNet of its own. The feed-forward and generative 3D ideas of
+  2022-23 were bottlenecked not by architecture but by a starvation of 3D
+  training data.
+solution: >
+  A web-scale 3D corpus: Objaverse (~800K objects) and its successor
+  Objaverse-XL (10M+ objects auto-aggregated from across the internet) — two
+  orders of magnitude past prior collections. It is the fuel, not the engine:
+  the same data feeds the feed-forward reconstruction line (LRM and its heirs)
+  AND the native generative line (later curated into the training pools of
+  models like TRELLIS), making "large model + large data" finally tractable for
+  3D.
+limitations: >
+  Auto-aggregation means uneven quality, noisy or missing labels, and a heavy
+  skew toward single, clean-background objects — an object-centric bias every
+  model trained on it quietly inherits, and that the cluttered real world still
+  exposes.
+relations: []
+status: seed
+i18n:
+  vi:
+    problem: >
+      Mọi thành công "large model, large data" bên 2D đều cưỡi trên dataset cỡ
+      web — nhưng 3D thì chẳng có ImageNet của riêng mình. Các ý tưởng
+      feed-forward và generative 3D giai đoạn 2022-23 bị nghẽn không phải vì
+      kiến trúc, mà vì đói dữ liệu huấn luyện 3D.
+    solution: >
+      Một kho 3D cỡ web: Objaverse (~800K vật thể) và bản kế nhiệm Objaverse-XL
+      (10M+ vật thể gom tự động từ khắp internet) — hơn hai bậc độ lớn so với
+      các bộ trước đó. Nó là nhiên liệu, không phải động cơ: cùng một dữ liệu
+      nuôi cả dòng reconstruction feed-forward (LRM và hậu duệ) LẪN dòng
+      generative native (về sau được chắt lọc vào kho huấn luyện của những model
+      như TRELLIS), khiến "large model + large data" rốt cuộc khả thi cho 3D.
+    limitations: >
+      Gom tự động nghĩa là chất lượng không đều, nhãn nhiễu hoặc thiếu, và lệch
+      nặng về vật thể đơn nền sạch — một bias object-centric mà mọi model huấn
+      luyện trên nó lặng lẽ thừa hưởng, và thế giới thực bừa bộn vẫn phơi bày ra.
+  ja:
+    problem: "2Dの「大きなモデル、大きなデータ」の成功はどれもウェブ規模のデータセットに乗っていました — しかし3Dには自前の ImageNet がありませんでした。2022〜23年の feed-forward や generative 3D のアイデアは、アーキテクチャではなく3D学習データの飢餓によって頭打ちだったのです。"
+    solution: "ウェブ規模の3Dコーパスです。Objaverse (約80万物体) と、その後継 Objaverse-XL (インターネット全体から自動収集した1,000万超の物体) — 従来のコレクションを2桁上回ります。これはエンジンではなく燃料です。同じデータが、feed-forward の reconstruction 系 (LRM とその後継) も、native な generative 系 (後に TRELLIS のようなモデルの学習プールへとキュレーションされる) も養い、「大きなモデル + 大きなデータ」を3Dでついに現実的にしました。"
+    limitations: "自動収集は、品質のばらつき、ノイズや欠損したラベル、そして背景の綺麗な単一物体への強い偏りを意味します — その object-centric な偏りを、そこで学習したあらゆるモデルが静かに受け継ぎ、散らかった実世界がなお露呈させるのです。"

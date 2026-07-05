@@ -24,20 +24,35 @@ limitations: >
   not the cluttered real world; and the spotlight venue status is the repo's
   own claim (independent verification against official CVPR lists failed).
 relations:
-  - node: lrm2023
-    type: fixes
+  - node: clay2024
+    type: builds-on
     note: >
-      Repairs the format lock-in of the feed-forward wave: LRM-line models
-      committed to triplane-NeRF; SLAT decodes one latent into whichever
-      representation the downstream task wants.
+      Stands on CLAY's scaled latent-3D diffusion, then generalizes its
+      single-format decoders into one Structured Latent (SLAT) that emits
+      radiance fields, 3D Gaussians, or meshes from a single generation.
     i18n:
       vi:
         note: >
-          Sửa cái khóa định dạng của làn sóng feed-forward: các mô hình dòng
-          LRM trót cam kết với triplane-NeRF; SLAT giải mã một latent thành
-          bất cứ biểu diễn nào mà tác vụ hạ nguồn cần.
+          Đứng trên latent-3D diffusion đã phóng to của CLAY, rồi tổng quát hóa
+          các decoder đơn-định-dạng của nó thành một Structured Latent (SLAT)
+          duy nhất, nhả ra radiance field, 3D Gaussian hoặc mesh chỉ từ một lần
+          sinh.
       ja:
-        note: "フィードフォワードの波が抱えたフォーマットの縛りを直します。LRM 系モデルは triplane-NeRF に身を固定していましたが、SLAT は一つの潜在表現を、下流タスクが望むどの表現へでもデコードできるのです。"
+        note: "CLAY のスケールした latent-3D diffusion の上に立ち、その単一フォーマットのデコーダ群を、放射輝度場・3D Gaussian・メッシュを一度の生成から吐き出す一つの Structured Latent (SLAT) へと一般化します。"
+  - node: objaverse2023
+    type: builds-on
+    note: >
+      Its 2B-parameter model is only possible because the data exists: TRELLIS
+      trains on ~500K objects curated from the Objaverse pool — a large model
+      standing on large 3D data.
+    i18n:
+      vi:
+        note: >
+          Model 2B tham số của nó khả thi được chỉ vì dữ liệu tồn tại: TRELLIS
+          huấn luyện trên ~500K vật thể chắt lọc từ kho Objaverse — một large
+          model đứng trên large 3D data.
+      ja:
+        note: "20億パラメータのモデルが可能なのは、データが存在するからにほかなりません。TRELLIS は Objaverse のプールからキュレーションした約50万物体で学習します — 大きな3Dデータの上に立つ大きなモデルです。"
 status: seed
 i18n:
   vi:

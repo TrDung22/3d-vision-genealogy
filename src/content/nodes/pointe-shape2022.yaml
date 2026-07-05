@@ -1,0 +1,51 @@
+title: "Point-E and Shap-E: Diffusion Straight onto 3D"
+short: "Point-E / Shap-E (2022)"
+authors: "Alex Nichol, Heewoo Jun, Prafulla Dhariwal, Pamela Mishkin, Mark Chen (OpenAI)"
+venue: "arXiv 2022 / 2023"
+year: 2022
+branch: single-image-3d
+lane: generative
+links:
+  arxiv: "https://arxiv.org/abs/2212.08751"
+  code: "https://github.com/openai/shap-e"
+problem: >
+  Text-to-3D in 2022 meant per-prompt SDS optimization — DreamFusion took tens
+  of minutes to hours to hallucinate one object by distilling a 2D diffusion
+  prior. Generation was slow, indirect, and never touched 3D data itself.
+solution: >
+  OpenAI's answer: run diffusion DIRECTLY on a 3D representation. Point-E
+  generates a colored point cloud from a text or image prompt in ~1 minute on a
+  single GPU; Shap-E goes further, diffusing the PARAMETERS of an implicit
+  function that decodes to both a NeRF and a mesh. No per-scene optimization —
+  one forward sampling pass. This is the seed of "native 3D generation": learn
+  the distribution of 3D itself, rather than distilling it out of a 2D model.
+limitations: >
+  Geometry is coarse and blobby, texture is low-fidelity, and both trained on a
+  few million in-house assets — tiny next to web-scale image data. The recipe
+  was proven but starved: quality would only arrive once the 3D latent and the
+  dataset were both scaled up (→ CLAY, → Objaverse).
+relations: []
+status: seed
+i18n:
+  vi:
+    problem: >
+      Text-to-3D năm 2022 nghĩa là tối ưu SDS cho từng prompt — DreamFusion mất
+      hàng chục phút đến cả tiếng để "ảo giác" ra một vật thể bằng cách chưng
+      cất prior từ một 2D diffusion. Sinh vừa chậm, vừa gián tiếp, lại chẳng hề
+      đụng tới dữ liệu 3D thật.
+    solution: >
+      Câu trả lời của OpenAI: chạy diffusion THẲNG trên một biểu diễn 3D.
+      Point-E sinh một đám mây điểm có màu từ prompt chữ hoặc ảnh trong ~1 phút
+      trên một GPU; Shap-E đi xa hơn, diffuse chính THAM SỐ của một hàm ẩn giải
+      mã được ra cả NeRF lẫn mesh. Không tối ưu từng cảnh — chỉ một lượt
+      sampling forward. Đây là hạt mầm của "native 3D generation": học phân phối
+      của chính 3D, thay vì chưng cất nó ra từ một model 2D.
+    limitations: >
+      Hình học còn thô và cục mịch, texture độ trung thực thấp, và cả hai chỉ
+      huấn luyện trên vài triệu asset nội bộ — tí hon so với dữ liệu ảnh cỡ web.
+      Công thức đã được chứng minh nhưng bị bỏ đói: chất lượng chỉ đến khi cả
+      latent 3D lẫn dataset cùng được phóng to lên (→ CLAY, → Objaverse).
+  ja:
+    problem: "2022年のテキストから3Dは、プロンプトごとの SDS 最適化を意味しました — DreamFusion は 2D diffusion の prior を蒸留し、一つの物体を幻視するのに数十分から数時間かけます。生成は遅く、間接的で、3Dデータそのものには一切触れませんでした。"
+    solution: "OpenAI の答えは、diffusion を3D表現の上で直接回すことでした。Point-E はテキストや画像のプロンプトから色付き点群を、1枚の GPU で約1分で生成します。Shap-E はさらに進んで、NeRF にもメッシュにもデコードできる陰関数のパラメータそのものを diffuse します。シーンごとの最適化はなく、forward のサンプリング一回だけ。これが「native 3D generation」の種です — 3D を2Dモデルから蒸留するのではなく、3D そのものの分布を学ぶのです。"
+    limitations: "幾何は粗くぼってりし、テクスチャの忠実度も低く、どちらも数百万の社内アセットで学習しただけ — ウェブ規模の画像データに比べれば微々たるものです。レシピは実証されたものの、飢えていました。品質は、3D latent とデータセットの両方をスケールアップして初めて訪れます (→ CLAY、→ Objaverse)。"
