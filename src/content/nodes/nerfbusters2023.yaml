@@ -1,0 +1,58 @@
+title: "Nerfbusters: Removing Ghostly Artifacts from Casually Captured NeRFs"
+short: "Nerfbusters (2023)"
+authors: "Frederik Warburg*, Ethan Weber*, Matthew Tancik, Aleksander Holynski, Angjoo Kanazawa (UC Berkeley, Google Research)"
+venue: "ICCV 2023"
+year: 2023
+branch: neural-rendering
+lane: radiance-fields
+links:
+  arxiv: "https://arxiv.org/abs/2304.10532"
+  paper: "https://openaccess.thecvf.com/content/ICCV2023/html/Warburg_Nerfbusters_Removing_Ghostly_Artifacts_from_Casually_Captured_NeRFs_ICCV_2023_paper.html"
+  project: "https://ethanweber.me/nerfbusters/"
+  code: "https://github.com/ethanweber/nerfbusters"
+problem: >
+  Casually captured NeRFs look great on the benchmark and fall apart a few
+  steps off the capture path — floaters, ghostly geometry. Why did the
+  numbers never show it?
+solution: >
+  Two moves. An evaluation fix first: the standard protocol only assesses
+  "every 8th frame of the training capture", so test views share the
+  training trajectory; Nerfbusters records two trajectories per scene (12
+  scenes), trains on one and evaluates on the other, with visibility-masked
+  metrics plus a coverage score. Then a method: a local 3D diffusion prior
+  over density, applied through a density score-distillation loss, removes
+  floaters that hand-crafted regularizers (sparsity, TV, RegNeRF) leave in
+  place.
+limitations: >
+  The prior acts on density alone: it deletes floaters — and, wrongly,
+  transparent objects — but cannot hallucinate texture or inpaint regions no
+  training view saw; the authors point to 2D diffusion priors as the route
+  ahead. The cleaner scenes also come at lower coverage than the baselines.
+relations:
+  - node: nerf2020
+    type: challenges
+    note: >
+      Questions the evaluation protocol NeRF carried forward from LLFF: holding
+      out every 8th frame of the same capture means train and test views share
+      one camera path, so whatever breaks off that path never reaches the
+      scores. Training on one trajectory and testing on another makes the
+      ghosts visible.
+    i18n:
+      ja:
+        note: "NeRF が LLFF から引き継いだ評価プロトコルを問い直します。同じ撮影から8フレームごとにテスト視点を抜くと、学習とテストが一本のカメラ経路を共有し、その経路の外で壊れるものはスコアに届きません。一方の軌道で学習し、もう一方でテストすると、幽霊が見えるようになるのです。"
+  - node: dycheck2022
+    type: builds-on
+    note: >
+      Carries DyCheck's reality check from dynamic scenes to static ones: it
+      cites Gao et al.'s re-examination of dynamic-NeRF evaluation and adopts
+      its visibility masking (computed its own way, with depth) for a
+      second-trajectory protocol.
+    i18n:
+      ja:
+        note: "DyCheck の「現実チェック」を、動的シーンから静的シーンへ持ち込みます。動的 NeRF の評価を見直した Gao らを引用し、その可視性マスク (深度も使って独自に計算) を、2本目の軌道で評価するプロトコルに取り入れました。"
+status: seed
+i18n:
+  ja:
+    problem: "気軽に撮った NeRF は、ベンチマーク上では見事なのに、撮影経路から数歩外れただけで崩れます — floater、幽霊のような幾何。なぜ数値には一度も表れなかったのでしょうか?"
+    solution: "打ち手は二つ。まず評価の修正です。標準的なプロトコルは「学習用撮影の8フレームごと」しか評価しないため、テスト視点は学習の軌道を共有してしまう。Nerfbusters はシーンごとに2本の軌道を撮り (12シーン)、一方で学習して他方で評価し、可視性でマスクした指標に coverage スコアを添えます。次に手法です。密度に対する局所的な3D拡散 prior を、密度版のスコア蒸留ロスで適用し、手作りの正則化 (スパース性、TV、RegNeRF) が残してしまう floater を取り除きます。"
+    limitations: "prior が働くのは密度だけです。floater は消せても — 誤って透明な物体まで消してしまい — テクスチャを幻視することも、どの学習視点にも映らなかった領域を補完 (inpaint) することもできません。著者たちは、その先の道として2Dの拡散 prior を指し示しています。きれいになったシーンは、ベースラインより低い coverage と引き換えでもあります。"

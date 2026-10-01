@@ -26,7 +26,19 @@ limitations: >
   skew toward single, clean-background objects — an object-centric bias every
   model trained on it quietly inherits, and that the cluttered real world still
   exposes.
-relations: []
+relations:
+  - node: shapenet2015
+    type: fixes
+    note: >
+      Repairs the bias ShapeNet declared about itself — "strongly biased towards
+      categories of rigid man-made artifacts": Objaverse "improves upon present
+      day 3D repositories in terms of scale, number of categories, and in the
+      visual diversity of instances within a category" — 800K+ models with
+      captions, tags and animations, gathered from the web rather than from CAD
+      catalogs.
+    i18n:
+      ja:
+        note: "ShapeNet が自ら認めた偏り — 「剛体の人工物のカテゴリに強く偏っている」 — を直します。Objaverse は「規模、カテゴリ数、そしてカテゴリ内の見た目の多様性において、現在の3Dリポジトリを上回る」もので、キャプション・タグ・アニメーション付きの80万を超えるモデルを、CAD カタログではなくウェブから集めました。"
 status: seed
 i18n:
   ja:

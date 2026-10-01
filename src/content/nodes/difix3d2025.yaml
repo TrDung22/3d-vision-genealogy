@@ -34,6 +34,16 @@ relations:
     i18n:
       ja:
         note: "シーンごとの最適化が内側からは直せない外挿の失敗を直します。制約の足りない領域は、インターネット規模の2D prior にアーティファクトを消してもらう — 単一画像の枝の「生成 prior」戦法が、再構成の枝に到着したのです。"
+  - node: nerfbusters2023
+    type: fixes
+    note: >
+      Takes the route Nerfbusters' authors pointed to: where its 3D prior could
+      only delete density, Difix3D+ repairs the rendered appearance itself with
+      a single-step 2D diffusion model — evaluated on Nerfbusters' own captures
+      and protocol, and beating Nerfbusters there.
+    i18n:
+      ja:
+        note: "Nerfbusters の著者たちが指し示した道をそのまま進みます。その3D prior が密度を消すことしかできなかったところで、Difix3D+ は単一ステップの2D拡散モデルでレンダリングの見た目そのものを直す — しかも Nerfbusters 自身の撮影データとプロトコルで評価し、そこで Nerfbusters を上回りました。"
 status: seed
 i18n:
   ja:

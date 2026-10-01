@@ -1,0 +1,33 @@
+title: "ShapeNet: An Information-Rich 3D Model Repository"
+short: "ShapeNet (2015)"
+authors: "Angel X. Chang, Thomas Funkhouser, Leonidas Guibas, Pat Hanrahan, Qixing Huang, Zimo Li, Silvio Savarese, Manolis Savva, Shuran Song, Hao Su, Jianxiong Xiao, Li Yi, Fisher Yu (Stanford, Princeton, TTIC)"
+venue: "arXiv 2015 (technical report)"
+year: 2015
+branch: single-image-3d
+lane: object
+links:
+  arxiv: "https://arxiv.org/abs/1512.03012"
+  project: "https://shapenet.org/"
+problem: >
+  Deep learning had just learned to see from ImageNet — a large corpus
+  organized under WordNet. 3D needed the same: shapes to learn a prior from,
+  and a shared benchmark to compare learned models on.
+solution: >
+  Crawl and annotate the web's CAD models: more than 3,000,000 indexed, 220,000
+  of them classified into 3,135 WordNet categories, plus a clean core —
+  ShapeNetCore, 55 common categories and about 51,300 unique models — offered
+  explicitly as "a large-scale quantitative benchmark". The shape warehouse a
+  whole generation of learned 3D reconstruction was trained and judged on.
+limitations: >
+  By its own account "strongly biased towards categories of rigid man-made
+  artifacts" — a bias inherited from the CAD repositories it crawled — and with
+  no real scans yet (adding shapes reconstructed from RGB-D data is named "a
+  critical goal"). It got its wish of becoming the canonical benchmark, which
+  is exactly why its blind spots became the field's.
+relations: []
+status: seed
+i18n:
+  ja:
+    problem: "深層学習は ImageNet — WordNet で整理された大規模コーパス — から「見る」ことを覚えたばかりでした。3Dにも同じものが要りました。形状の prior を学ぶための形状と、学習したモデルを比べるための共通のベンチマークです。"
+    solution: "ウェブ上の CAD モデルを集めて注釈します。300万を超えるモデルを索引化し、うち22万を WordNet の3,135カテゴリに分類。さらに整理された中核 — ShapeNetCore、55の一般的なカテゴリと約51,300のユニークなモデル — を、はっきりと「大規模な定量的ベンチマーク」として差し出しました。学習ベースの3D再構成の一世代が、まるごとここで学び、ここで採点された形状の倉庫です。"
+    limitations: "自ら認めるとおり「剛体の人工物のカテゴリに強く偏って」います — 収集元の CAD リポジトリから受け継いだ偏りです。実物のスキャンもまだ含まれていません (RGB-D から再構成した形状の追加は「重要な目標」とされています)。canonical なベンチマークになるという願いは叶いました — だからこそ、その死角がそのまま分野の死角になったのです。"

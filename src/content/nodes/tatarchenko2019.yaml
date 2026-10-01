@@ -22,6 +22,17 @@ limitations: >
   closed ShapeNet world. Four years later, the generative line answered with
   internet-scale priors.
 relations:
+  - node: shapenet2015
+    type: challenges
+    note: >
+      Goes after the benchmark itself: ShapeNet's composition — single objects
+      of representative types, aligned to a canonical frame — lets recognition
+      masquerade as reconstruction, and a typical test shape has a near-twin in
+      the training set: "the train/test split is contaminated". IoU and Chamfer
+      distance get the same scrutiny, with F-score proposed instead.
+    i18n:
+      ja:
+        note: "ベンチマークそのものに切り込みます。ShapeNet の構成 — 代表的な種類の単一物体が、canonical な座標系にそろえて置かれている — は、認識が再構成になりすますことを許し、典型的なテスト形状には学習セットにほぼ瓜二つの相手がいる。「train/test の分割は汚染されている」のです。IoU と Chamfer 距離も同じく俎上に載せられ、代わりに F-score が提案されました。"
   - node: r2n2-2016
     type: challenges
     note: >

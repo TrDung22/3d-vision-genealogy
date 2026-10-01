@@ -1,0 +1,57 @@
+title: "Monocular Dynamic View Synthesis: A Reality Check"
+short: "DyCheck (2022)"
+authors: "Hang Gao, Ruilong Li, Shubham Tulsiani, Bryan Russell, Angjoo Kanazawa (UC Berkeley, CMU, Adobe Research)"
+venue: "NeurIPS 2022"
+year: 2022
+branch: neural-rendering
+lane: dynamic
+links:
+  arxiv: "https://arxiv.org/abs/2210.13445"
+  paper: "https://proceedings.neurips.cc/paper_files/paper/2022/hash/dab5a29f6614ec47ea0ca85c140226fd-Abstract-Conference.html"
+  project: "https://kair-bair.github.io/dycheck/"
+  code: "https://github.com/KAIR-BAIR/dycheck"
+problem: >
+  Two years of dynamic radiance fields (D-NeRF, Nerfies, HyperNeRF, NSFF)
+  promised moving scenes from a single, casually moving camera — and their
+  benchmarks seemed to agree. Were those benchmarks actually monocular?
+solution: >
+  Measure it. An effective multi-view factor (EMF) quantifies how much
+  multi-view signal a "monocular" capture leaks: D-NeRF's synthetic data is
+  "in effect teleporting between 100-200 cameras", Nerfies and HyperNeRF
+  "sample alternating frames from two physical cameras", and 22 of 23
+  multi-camera evaluation sequences teleport. Under its corrected protocol —
+  co-visibility-masked metrics plus a genuinely casual iPhone dataset —
+  state-of-the-art methods lose 1-2 dB of masked PSNR without multi-view
+  cues, and 4-5 dB on complex motion.
+limitations: >
+  A diagnosis, not a cure: harder data and fairer metrics, but no new method
+  to meet them. EMF is only a first cut at "difficulty" — appearance changes,
+  lighting and motion complexity are left "for future works". Its iPhone
+  benchmark became the yardstick later monocular 4D methods report on.
+relations:
+  - node: nerfies2020
+    type: challenges
+    note: >
+      Both the method and its data are put on trial: the evaluation sequences
+      behind Nerfies' numbers alternate frames between two physical cameras —
+      a stereo rig in disguise, not a casually waved phone. On truly monocular
+      iPhone video, Nerfies drops 4.4 dB in masked PSNR.
+    i18n:
+      ja:
+        note: "手法もデータも、まとめて審判にかけられます。Nerfies の数値を支える評価シーケンスは、2台の物理カメラから交互にフレームを取っていました — 気ままに振ったスマホではなく、変装したステレオリグです。本当に単眼の iPhone 動画では、Nerfies の masked PSNR は 4.4 dB 落ちます。"
+  - node: dnerf2020
+    type: challenges
+    note: >
+      The benchmark, not the method (D-NeRF itself is never re-run): its
+      synthetic sequences — framed as one moving camera, no synchronized rig —
+      in effect teleport between 100-200 cameras, the highest effective
+      multi-view factor of every dataset measured.
+    i18n:
+      ja:
+        note: "問われるのは手法ではなくベンチマークです (D-NeRF 自体は再実行されていません)。一台の動くカメラ、同期リグなし — とされたその合成シーケンスは、事実上100〜200台のカメラの間をテレポートしており、測定されたどのデータセットよりも高い effective multi-view factor を示しました。"
+status: seed
+i18n:
+  ja:
+    problem: "2年にわたる動的放射輝度場 (D-NeRF、Nerfies、HyperNeRF、NSFF) は、気ままに動く一台のカメラから動くシーンを、と約束してきました — そしてベンチマークもそれを裏付けているように見えた。そのベンチマークは、本当に単眼だったのでしょうか?"
+    solution: "測ってみます。effective multi-view factor (EMF) が、「単眼」の撮影にどれだけ多視点の信号が漏れ込んでいるかを数値化する。D-NeRF の合成データは「事実上100〜200台のカメラの間をテレポートして」おり、Nerfies と HyperNeRF は「2台の物理カメラから交互にフレームを取って」いて、多カメラ評価シーケンス23本のうち22本がテレポートしていました。修正したプロトコル — 共可視性 (co-visibility) でマスクした指標と、本当に気軽に撮った iPhone データセット — で測ると、最先端手法は多視点の手がかりがないだけで masked PSNR を 1〜2 dB、複雑な動きでは 4〜5 dB 失います。"
+    limitations: "診断であって、治療ではありません。より難しいデータとより公正な指標はあっても、それに応える新しい手法はない。EMF も「難しさ」の最初の切り口にすぎず、見え方の変化、照明、動きの複雑さは「今後の課題」に残されています。その iPhone ベンチマークは、後の単眼4D手法が成績を報告する物差しになりました。"

@@ -1,0 +1,49 @@
+title: "BEDLAM: A Synthetic Dataset of Bodies Exhibiting Detailed Lifelike Animated Motion"
+short: "BEDLAM (2023)"
+authors: "Michael J. Black, Priyanka Patel, Joachim Tesch, Jinlong Yang (MPI-IS Tübingen, Google)"
+venue: "CVPR 2023 (Highlight)"
+year: 2023
+branch: single-image-3d
+lane: human
+links:
+  arxiv: "https://arxiv.org/abs/2306.16940"
+  paper: "https://openaccess.thecvf.com/content/CVPR2023/html/Black_BEDLAM_A_Synthetic_Dataset_of_Bodies_Exhibiting_Detailed_Lifelike_Animated_CVPR_2023_paper.html"
+  project: "https://bedlam.is.tue.mpg.de/"
+  code: "https://github.com/pixelite1201/BEDLAM"
+problem: >
+  Since HMR, the field's working assumption: real photos lack 3D ground truth,
+  so human mesh regressors must learn from real images through 2D keypoints,
+  adversarial priors or pseudo-ground-truth fits. Is real training data
+  actually necessary?
+solution: >
+  Render the ground truth instead: a synthetic video dataset of diverse bodies
+  in SMPL-X, with clothing "realistically simulated on the moving bodies" and
+  motion drawn from AMASS. "For the first time", regressors trained only on
+  synthetic data (BEDLAM-HMR, BEDLAM-CLIFF) reach state-of-the-art 3D human
+  pose and shape accuracy on real-image benchmarks (3DPW, RICH, SSP-3D, HBW) —
+  even a basic HMR comes close to the best method of the day, CLIFF, and
+  fine-tuning on real data adds only a small benefit.
+limitations: >
+  "Synthetic only" covers the regressor, not the backbone: accuracy still
+  depends on a backbone pre-trained on real images. Motions are
+  randomly sampled from AMASS, with few sitting, lying or complex sports poses;
+  there is no hair physics or long hairstyles, and the body-shape distribution
+  is not uniform.
+relations:
+  - node: hmr2017
+    type: challenges
+    note: >
+      Challenges HMR's data premise — no 3D ground truth for in-the-wild images,
+      so learn from 2D keypoints and an adversarial prior — by showing exact
+      synthetic ground truth alone wins on real photos. The architecture is
+      vindicated, not refuted: HMR, with its adversary removed and trained on
+      BEDLAM, approaches the state of the art.
+    i18n:
+      ja:
+        note: "HMR のデータの前提 — 野外画像には3Dの ground truth がないから、2Dキーポイントと敵対的 prior で学ぶ — に挑戦します。正確な合成 ground truth だけで実写真に勝てることを示して。アーキテクチャは否定されるどころか、むしろ潔白が証明されました。discriminator を外し BEDLAM で学習した HMR は、最先端に迫るのです。"
+status: seed
+i18n:
+  ja:
+    problem: "HMR 以来、分野の作業仮説はこうでした — 実写真には3Dの ground truth がない。だから人体メッシュの回帰器は、2Dキーポイントや敵対的 prior、擬似 ground truth のフィッティングを通じて、実画像から学ぶしかない。実際の学習データは、本当に必要なのでしょうか?"
+    solution: "ground truth のほうをレンダリングしてしまいます。多様な体型を SMPL-X で表した合成動画データセットで、服は「動く体の上でリアルにシミュレート」され、動きは AMASS から取られる。合成データだけで学習した回帰器 (BEDLAM-HMR、BEDLAM-CLIFF) が「初めて」、実画像のベンチマーク (3DPW、RICH、SSP-3D、HBW) で最先端の3D人体姿勢・体型推定精度に届きました — 素朴な HMR でさえ当時最良の CLIFF に迫り、実データでの微調整が足すのはわずかな上積みだけです。"
+    limitations: "「合成データだけ」が指すのは回帰器であって、バックボーンではありません — 精度は、実画像で事前学習したバックボーンになお依存します。動きは AMASS からランダムに取られ、座る・寝転ぶ・複雑なスポーツの姿勢は少なく、髪の物理も長い髪型もなく、体型の分布も一様ではありません。"
