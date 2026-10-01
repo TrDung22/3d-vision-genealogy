@@ -30,7 +30,7 @@ const posts = (await getCollection('posts'))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, 3);
 
-const dateLocale = { en: 'en-US', vi: 'vi-VN', ja: 'ja-JP' }[lang];
+const dateLocale = { en: 'en-US', ja: 'ja-JP' }[lang];
 const fmtDate = (d: Date) =>
   d.toLocaleDateString(dateLocale, { year: 'numeric', month: 'long', day: 'numeric' });
 ---
@@ -39,15 +39,7 @@ const fmtDate = (d: Date) =>
   <section class="hero">
     <h1>{t(lang, 'hero.title')}</h1>
     {
-      lang === 'vi' ? (
-        <p>
-          Đây không phải thêm một cái danh sách paper nữa, mà là chuyện <strong>dòng dõi</strong>:
-          công trình nào sinh ra từ chỗ vấp của công trình nào, dòng chính đã <em>bỏ quên</em>
-          những lối đi nào, và những nhánh nào chẳng hề biết nhau mà vẫn lặng lẽ giải cùng một
-          bài toán. Tất cả bắt đầu từ nhánh ill-posed kinh điển nhất — dựng 3D từ một tấm ảnh
-          duy nhất.
-        </p>
-      ) : lang === 'ja' ? (
+      lang === 'ja' ? (
         <p>
           これは、よくある論文リストではありません。<strong>系譜</strong>の物語です。
           どの研究が、どの研究の弱点から生まれたのか。主流は何を<em>見落とした</em>のか。

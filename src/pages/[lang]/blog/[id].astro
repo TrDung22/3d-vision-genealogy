@@ -17,7 +17,7 @@ const root = `${base}/${lang}`;
 const { Content } = await render(post);
 
 const relatedNodes = await Promise.all(post.data.nodes.map((ref) => getEntry(ref)));
-const dateLocale = { en: 'en-US', vi: 'vi-VN', ja: 'ja-JP' }[lang];
+const dateLocale = { en: 'en-US', ja: 'ja-JP' }[lang];
 const fmtDate = (d: Date) =>
   d.toLocaleDateString(dateLocale, { year: 'numeric', month: 'long', day: 'numeric' });
 ---

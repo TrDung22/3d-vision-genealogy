@@ -12,7 +12,7 @@ src/content/
 └── posts/              # MDX blog posts, optionally attached to nodes
 
 src/lib/graph.ts        # folds content into the graph payload + the relation vocabulary
-src/lib/i18n.ts         # UI-chrome strings (en / vi / ja)
+src/lib/i18n.ts         # UI-chrome strings (en / ja)
 src/lib/graph3d.js      # 3D force-graph view (loaded as a separate chunk)
 src/components/         # GenealogyGraph (D3 timeline DAG + 3D view below it)
 src/pages/              # home, nodes, branches, heresies, blog, graph.json
@@ -126,13 +126,14 @@ on the graph.
 
 ## Languages & theme
 
-The site is trilingual — English at `/en/` (root `/` redirects there), Vietnamese
-at `/vi/`, Japanese at `/ja/` — with a light/dark theme toggle (persisted in
+The site is bilingual — English at `/en/` (root `/` redirects there) and
+Japanese at `/ja/` — with a light/dark theme toggle (persisted in
 `localStorage`, defaults to the system preference).
 
 - UI chrome strings live in `src/lib/i18n.ts`; per-branch prose is localized via
   the optional `i18n:` block in each branch YAML.
-- Academic node content (`problem` / `solution` / `limitations` / notes) is
-  English in all locales for now — localizing it per node is roadmap work.
+- Node prose (`problem` / `solution` / `limitations` / relation notes) is
+  localized via the optional `i18n: { ja: ... }` block in each node YAML; any
+  missing field falls back to English.
 - Both graphs read their colors from CSS custom properties at render time, so
   they re-theme live (the timeline re-renders, the 3D view swaps materials).

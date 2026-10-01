@@ -29,23 +29,6 @@ limitations: >
 relations: []
 status: seed
 i18n:
-  vi:
-    problem: >
-      Mọi thành công "large model, large data" bên 2D đều cưỡi trên dataset cỡ
-      web — nhưng 3D thì chẳng có ImageNet của riêng mình. Các ý tưởng
-      feed-forward và generative 3D giai đoạn 2022-23 bị nghẽn không phải vì
-      kiến trúc, mà vì đói dữ liệu huấn luyện 3D.
-    solution: >
-      Một kho 3D cỡ web: Objaverse (~800K vật thể) và bản kế nhiệm Objaverse-XL
-      (10M+ vật thể gom tự động từ khắp internet) — hơn hai bậc độ lớn so với
-      các bộ trước đó. Nó là nhiên liệu, không phải động cơ: cùng một dữ liệu
-      nuôi cả dòng reconstruction feed-forward (LRM và hậu duệ) LẪN dòng
-      generative native (về sau được chắt lọc vào kho huấn luyện của những model
-      như TRELLIS), khiến "large model + large data" rốt cuộc khả thi cho 3D.
-    limitations: >
-      Gom tự động nghĩa là chất lượng không đều, nhãn nhiễu hoặc thiếu, và lệch
-      nặng về vật thể đơn nền sạch — một bias object-centric mà mọi model huấn
-      luyện trên nó lặng lẽ thừa hưởng, và thế giới thực bừa bộn vẫn phơi bày ra.
   ja:
     problem: "2Dの「大きなモデル、大きなデータ」の成功はどれもウェブ規模のデータセットに乗っていました — しかし3Dには自前の ImageNet がありませんでした。2022〜23年の feed-forward や generative 3D のアイデアは、アーキテクチャではなく3D学習データの飢餓によって頭打ちだったのです。"
     solution: "ウェブ規模の3Dコーパスです。Objaverse (約80万物体) と、その後継 Objaverse-XL (インターネット全体から自動収集した1,000万超の物体) — 従来のコレクションを2桁上回ります。これはエンジンではなく燃料です。同じデータが、feed-forward の reconstruction 系 (LRM とその後継) も、native な generative 系 (後に TRELLIS のようなモデルの学習プールへとキュレーションされる) も養い、「大きなモデル + 大きなデータ」を3Dでついに現実的にしました。"

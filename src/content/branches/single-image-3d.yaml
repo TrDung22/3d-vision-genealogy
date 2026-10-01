@@ -9,17 +9,6 @@ description: >
   borrowed from image generators (Zero-1-to-3, LRM). Each generation swaps the
   kind of prior and pays a different price.
 i18n:
-  vi:
-    title: "3D từ một ảnh"
-    tagline: "Dựng 3D từ một tấm ảnh duy nhất — bài toán ill-posed nguyên thủy của thị giác máy"
-    description: >
-      Một tấm ảnh 2D có thể ứng với vô số cảnh 3D khác nhau — bài toán không có
-      nghiệm duy nhất, nên trọn lịch sử của nhánh này là lịch sử của PRIOR: từ
-      prior vật lý (shape-from-shading), sang prior thống kê học từ dữ liệu
-      (Make3D, Eigen), prior hình học cài sẵn trong cách biểu diễn (voxel →
-      point cloud → mesh → hàm ẩn), cho đến prior cỡ internet mượn từ các mô
-      hình sinh ảnh (Zero-1-to-3, LRM). Thế hệ nào cũng thay một loại prior
-      mới — và trả một cái giá kiểu mới.
   ja:
     title: "単一画像3D"
     tagline: "一枚の画像からの3D復元 — マシンビジョン最古の不良設定問題"
@@ -31,30 +20,24 @@ lanes:
   - id: priors
     title: "Priors & shape-from-X"
     i18n:
-      vi: { title: "Prior & shape-from-X" }
       ja: { title: "事前知識と Shape-from-X" }
   - id: depth
     title: "Depth estimation"
     i18n:
-      vi: { title: "Ước lượng độ sâu" }
       ja: { title: "深度推定" }
   - id: object
     title: "Object reconstruction"
     i18n:
-      vi: { title: "Dựng lại vật thể" }
       ja: { title: "物体再構成" }
   - id: generative
     title: "Generative 3D"
     i18n:
-      vi: { title: "3D tạo sinh" }
       ja: { title: "生成3D" }
   - id: human
     title: "Human & avatar"
     i18n:
-      vi: { title: "Người & avatar" }
       ja: { title: "人体とアバター" }
   - id: scene
     title: "Scene & any-view geometry"
     i18n:
-      vi: { title: "Cảnh & hình học any-view" }
       ja: { title: "シーンと任意視点幾何" }

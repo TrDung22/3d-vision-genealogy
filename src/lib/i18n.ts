@@ -3,10 +3,10 @@
  * relation notes, lane titles) is localized in the content YAML itself via
  * per-entry `i18n` blocks — see src/content.config.ts.
  */
-export const LOCALES = ['en', 'vi', 'ja'] as const;
+export const LOCALES = ['en', 'ja'] as const;
 export type Lang = (typeof LOCALES)[number];
 
-export const LOCALE_LABELS: Record<Lang, string> = { en: 'EN', vi: 'VI', ja: '日本語' };
+export const LOCALE_LABELS: Record<Lang, string> = { en: 'EN', ja: '日本語' };
 
 const dict: Record<Lang, Record<string, string>> = {
   en: {
@@ -113,112 +113,6 @@ const dict: Record<Lang, Record<string, string>> = {
     'heresies.gap': '{n} years later',
     'heresies.crossBranch': 'Across branches',
     'heresies.teaser': 'Meet the heresies, the parallel discoveries & the revivals',
-  },
-
-  vi: {
-    'meta.description':
-      'Gia phả của ngành 3D computer vision — ai sửa lỗi cho ai, dòng chính bỏ sót điều gì, và những nhánh nào đã âm thầm đi song song.',
-    'nav.about': 'Giới thiệu',
-    'nav.genealogy': 'Gia phả',
-    'nav.branches': 'Nhánh',
-    'nav.heresies': 'Nghịch dòng',
-    'nav.blog': 'Blog',
-    'footer.tagline':
-      'Cây gia phả lớn dần từng node một — mỗi node là một công trình, mỗi cạnh ghi rõ ai nợ ai điều gì. Dựng bằng Astro + D3.',
-    'theme.toggle': 'Đổi giao diện sáng/tối',
-    'home.title': 'Gia phả',
-    'hero.title': 'Gia phả của ngành 3D computer vision',
-    'howto.title': 'Cách đọc đồ thị',
-    'howto.arrows':
-      'Mũi tên luôn chảy xuôi theo thời gian: từ công trình trước đến công trình sau có nhắc đến nó. Node tô đặc là đã có bài phân tích; node rỗng là hạt giống còn chờ viết. Vòng vàng nghĩa là paper từng được award / oral / spotlight / highlight.',
-    'edge.fixes': 'sửa lỗi',
-    'edge.builds-on': 'kế thừa',
-    'edge.independent': 'độc lập',
-    'edge.challenges': 'thách thức',
-    'edge.revives': 'hồi sinh',
-    'glossary.fixes': 'Ra đời sau và sửa thẳng vào một điểm yếu cụ thể của công trình trước',
-    'glossary.builds-on': 'Đứng trên nền công trình trước và mở ra một hướng mới',
-    'glossary.independent':
-      'Hai bên không hề hay biết về nhau mà cùng lúc chạm đến một ý tưởng — dù bài toán, thậm chí cả nhánh, mỗi bên một khác',
-    'glossary.challenges': 'Xét lại giả định, benchmark hay chính kết luận của công trình trước',
-    'glossary.revives': 'Đánh thức một hướng đi mà dòng chính đã bỏ quên từ lâu',
-    'table.title': 'Xem dạng bảng — trọn bộ gia phả, không cần đồ thị',
-    'table.year': 'Năm',
-    'table.work': 'Công trình',
-    'table.lane': 'Mạch',
-    'table.relations': 'Quan hệ',
-    'table.nodes': 'node',
-    'posts.title': 'Bài viết mới',
-    'posts.none': 'Chưa có bài viết nào — gia phả vẫn đang ươm mầm.',
-    'posts.all': 'Tất cả bài viết →',
-    'graph.hint2d':
-      'Kéo để di chuyển · lăn chuột để zoom · bấm vào node để mở trang · rê chuột lên node để soi các quan hệ trực tiếp của nó. Quan hệ xuyên nhánh được làm mờ — rê chuột vào node là chúng hiện rõ.',
-    'graph.filterHint': 'Bấm để bật/tắt nhánh này · Alt+bấm để xem riêng nó',
-    'graph.hint3d':
-      'Vẫn gia phả đó, nhưng trong không gian 3D — các node tụ thành cụm theo mạch nghiên cứu (mấy quả bong bóng mờ). Kéo để xoay · lăn chuột để zoom · bấm vào node để xem chi tiết. Hạt sáng đang chạy = sửa lỗi, màu đỏ = thách thức.',
-    'graph.noscript': 'Cần bật JavaScript để xem đồ thị — bảng đầy đủ nằm ở cuối trang.',
-    'graph.hasArticle': 'đã có bài phân tích',
-    'graph.seed': 'hạt giống — còn chờ viết',
-    'graph.award': 'giải thưởng / Oral / Spotlight / Highlight',
-    'graph.tipOpen': 'Bấm để mở trang →',
-    'graph.loading3d': 'Đang tải view 3D…',
-    'graph.error3d': 'Không tải được view 3D.',
-    'graph.play': 'Tua qua từng năm',
-    'graph.pause': 'Tạm dừng',
-    'graph.standsOn': 'Đứng trên vai',
-    'graph.followedBy': 'Mở đường cho',
-    'graph.openPage': 'Mở trang →',
-    'graph.close': 'Đóng',
-    'graph.ariaTimeline': 'Gia phả các công trình 3D vision theo dòng thời gian',
-    'status.seed': 'hạt giống',
-    'status.draft': 'bản nháp',
-    'status.written': 'đã viết',
-    'node.linkPaper': 'Bài báo',
-    'node.linkProject': 'Trang dự án',
-    'node.linkCode': 'Code',
-    'node.problem': 'Bài toán',
-    'node.coreIdea': 'Ý tưởng cốt lõi',
-    'node.limitations': 'Những giới hạn để lại',
-    'node.place': 'Vị trí trong gia phả',
-    'node.standsOn': 'Nó đứng trên vai ai',
-    'node.standsOnIt': 'Ai đứng trên vai nó',
-    'node.thisWork': 'công trình này',
-    'node.root': 'Node gốc — chưa ghi nhận quan hệ nào.',
-    'node.readAnalysis': 'Đọc bài phân tích đầy đủ:',
-    'node.seedNotice': 'Node này mới chỉ là {status} — bài phân tích sâu sẽ có sau.',
-    'node.back': '← Về lại gia phả',
-    'branches.title': 'Các nhánh của gia phả',
-    'branches.intro':
-      'Ôm trọn cả ngành 3D vision ngay từ đầu là chuyện bất khả — nên gia phả này lớn lên từng nhánh một. Mỗi nhánh là một dòng chảy với câu chuyện của riêng nó, nhưng các nhánh gặp nhau thường xuyên hơn ta tưởng.',
-    'branches.growing': 'đang lớn',
-    'branches.planned': 'dự kiến',
-    'branch.label': 'nhánh',
-    'branch.timeline': 'Dòng thời gian',
-    'branch.all': '← Tất cả các nhánh',
-    'blog.title': 'Blog',
-    'blog.intro':
-      'Mỗi bài viết đào sâu một node, hoặc một khúc quanh của gia phả — vì sao nó ra đời, nó thật sự sửa được điều gì, và nó để lại món nợ gì cho thế hệ sau.',
-    'blog.none': 'Chưa có bài viết nào.',
-    'blog.related': 'Node liên quan:',
-    'blog.all': '← Tất cả bài viết',
-    'about.title': 'Vì sao là "gia phả" mà không phải "danh sách paper"?',
-    'heresies.title': 'Nghịch dòng, song hành & hồi sinh',
-    'heresies.meta':
-      'Những cú nghịch dòng, những phát hiện song hành và những cuộc hồi sinh của 3D vision — ai dám cãi lại dòng chính, ý tưởng nào chín cùng lúc ở nhiều nơi, và điều gì đã sống dậy từ quên lãng.',
-    'heresies.intro':
-      'Chuyện sửa lỗi với kế thừa thì survey nào cũng kể rồi. Trang này dành cho ba loại quan hệ còn lại — những thứ mà lối kể chuyện một mạch thẳng nào cũng làm rơi dọc đường. Không dòng nào dưới đây được viết tay: tất cả sinh ra từ chính gia phả, và lớn lên cùng nó.',
-    'heresies.challenges.title': 'Những kẻ nghịch dòng',
-    'heresies.challenges.intro':
-      'Có những paper vĩ đại không phải vì đóng góp thêm thứ gì, mà vì chúng chỉ ra cả một nhánh đang tự lừa mình — bằng cách xét lại giả định, benchmark, hay chính kết luận của nhánh đó.',
-    'heresies.independent.title': 'Khi ý tưởng đã chín',
-    'heresies.independent.intro':
-      'Những nhóm chưa từng gặp nhau, cùng một lúc với tay đến cùng một ý tưởng. Ý tưởng khi đã chín thì tự rụng ở nhiều nơi cùng lúc — câu hỏi thú vị là: điều kiện nào đã làm nó chín?',
-    'heresies.revives.title': 'Sống dậy từ quên lãng',
-    'heresies.revives.intro':
-      'Những hướng đi bị dòng chính bỏ rơi — có khi cả mấy chục năm — cho đến ngày có người nhớ ra. Nhánh mồ côi có cái tật quay về đúng lúc chẳng ai ngờ tới.',
-    'heresies.gap': '{n} năm sau',
-    'heresies.crossBranch': 'Xuyên nhánh',
-    'heresies.teaser': 'Xem những kẻ nghịch dòng, những ý tưởng song hành & những cuộc hồi sinh',
   },
 
   ja: {

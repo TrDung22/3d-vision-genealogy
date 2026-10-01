@@ -8,7 +8,7 @@ the same problem in parallel.
 
 **[Explore the live site →](https://trdung22.github.io/3d-vision-genealogy/)**
 
-English · Tiếng Việt · 日本語 — dark & light
+English · 日本語 — dark & light
 
 </div>
 
@@ -105,5 +105,5 @@ in [CONTRIBUTING.md](CONTRIBUTING.md).
 - [ ] First deep-dive posts (candidates: Eigen 2014, or the Tatarchenko 2019 "challenges" moment)
 - [x] Open the full neural-rendering branch (80s volume rendering → light fields → SRN → NeRF → 3DGS → LVSM)
 - [ ] Guided tours through the graph (story mode)
-- [ ] Localize node content for `/vi/` and `/ja/`
+- [x] Localize node content for `/ja/`
 - [ ] RSS feed + Open Graph images
