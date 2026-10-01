@@ -1,160 +1,109 @@
+<div align="center">
+
 # 3D Vision Genealogy
 
-A genealogy of 3D computer vision — not a list of papers, but the story of
-**who fixed whom, what the mainstream overlooked, and which independent
-branches quietly solved the same problem**. Presented as two stacked
-interactive graphs (a D3 timeline DAG with a three.js force graph below it)
-plus a blog of per-node deep dives.
+**Not another awesome-list.** A genealogy of 3D computer vision — who fixed whom,
+what the mainstream overlooked, and which branches quietly solved
+the same problem in parallel.
 
-Starting branch: **single-image 3D reconstruction** — the original ill-posed problem.
+**[Explore the live site →](https://trdung22.github.io/3d-vision-genealogy/)**
 
-## Running locally
+English · Tiếng Việt · 日本語 — dark & light
+
+</div>
+
+[![The genealogy timeline replaying the field year by year — lanes per research thread, arrows flowing with time](docs/timeline.gif)](https://trdung22.github.io/3d-vision-genealogy/)
+
+## The idea
+
+Surveys give you a taxonomy but lose the story. Awesome-lists give you a
+warehouse but lose the order. Neither answers the question a learner actually
+needs: **why was this born, and what did it fix about what came before it?**
+
+So this project records the field as a *genealogy*: every work is a node, and
+every edge is an intellectual debt with an explicit name —
+
+| relation | meaning |
+|---|---|
+| `fixes` | comes later and directly repairs a specific weakness of the earlier work |
+| `builds-on` | stands on the earlier work and extends it in a new direction |
+| `independent` | converges on the same core idea at the same time, without depending on the other — the task, even the branch, may differ |
+| `challenges` | questions the assumptions, benchmarks, or conclusions of the earlier work |
+| `revives` | reawakens a direction the mainstream had abandoned |
+
+The last three are the soul of the project — they are exactly what linear
+write-ups drop on the floor.
+
+## What's inside
+
+- **An interactive timeline DAG** — hover a node to trace its direct relations,
+  and drag the **time-machine slider** (or hit ▶) to replay the field year by
+  year. Snapshots are shareable: [`?year=2005`](https://trdung22.github.io/3d-vision-genealogy/en/?year=2005).
+- **The same genealogy in 3D** — a force graph with nodes clustered by research lane.
+- **[Heresies, rivalries & revivals](https://trdung22.github.io/3d-vision-genealogy/en/heresies/)** —
+  a page generated *entirely* from the graph's edges: who proved an entire
+  branch was fooling itself, which ideas landed everywhere at once
+  (the 2019 implicit wave!), and what came back from the dead decades later.
+- **77 works, 1970 → 2026**, across two full branches: **single-image 3D
+  reconstruction** (the most classically ill-posed problem of all) and
+  **neural rendering** (1984 volume rendering → light fields → NeRF → 3DGS →
+  the post-3D-bias era). Gold rings mark award / oral / spotlight recognition,
+  verified against official sources.
+
+<table>
+  <tr>
+    <td width="52%"><img src="docs/heresies.png" alt="The heresies page — challenges, parallel discoveries and revivals, generated from the graph" /></td>
+    <td><img src="docs/graph3d.gif" alt="The 3D force-graph view orbiting and zooming — nodes clustered by lane inside faint bubbles" /></td>
+  </tr>
+  <tr>
+    <td align="center"><sub>The heresies page — generated from the edges, never written by hand</sub></td>
+    <td align="center"><sub>The same genealogy in 3D</sub></td>
+  </tr>
+</table>
+
+## How it works
+
+An [Astro 5](https://astro.build) static site (D3 timeline + three.js force
+graph). The whole genealogy is **data, not code**: one YAML file per work, one
+per branch. Every page and both graphs are generated from it at build time —
+adding a paper, or grafting an entire new branch, is just adding files:
+
+```yaml
+# src/content/nodes/<id>.yaml
+title: "NeRF: Representing Scenes as Neural Radiance Fields for View Synthesis"
+short: "NeRF (2020)"
+venue: "ECCV 2020 (Oral, Best Paper Honorable Mention)"   # ⇒ gold ring, automatically
+year: 2020
+branch: neural-rendering
+lane: radiance-fields
+problem: >
+  Novel view synthesis: render a scene from new viewpoints...
+relations:
+  - node: deepsdf2019
+    type: builds-on
+    note: >
+      Inherits the continuous implicit-MLP representation and adds
+      differentiable volume rendering — the bridge between two branches.
+```
+
+## Run it locally
 
 ```bash
 npm install
 npm run dev        # http://localhost:4321/3d-vision-genealogy/
-npm run build      # static build into dist/
-npm run preview    # serve the built site
 ```
 
-## Languages & theme
+## Contributing
 
-The site is trilingual — English at `/en/` (root `/` redirects there), Vietnamese
-at `/vi/`, Japanese at `/ja/` — with a light/dark theme toggle (persisted in
-`localStorage`, defaults to the system preference).
+Spotted a missing node, a wrong relation, or an orphaned research direction
+nobody has told? Issues and PRs are very welcome — the authoring guide
+(node/branch templates, lane & color conventions, editorial principles) lives
+in [CONTRIBUTING.md](CONTRIBUTING.md).
 
-- UI chrome strings live in `src/lib/i18n.ts`; per-branch prose is localized via
-  the optional `i18n:` block in each branch YAML.
-- Academic node content (`problem` / `solution` / `limitations` / notes) is
-  English in all locales for now — localizing it per node is roadmap work.
-- Both graphs read their colors from CSS custom properties at render time, so
-  they re-theme live (the timeline re-renders, the 3D view swaps materials).
+## Roadmap
 
-## Architecture: data lives apart from code
-
-The entire genealogy lives in `src/content/` as YAML/MDX. **No code changes are
-needed** to add a paper, a relation, or a whole new branch — the graph (both the
-timeline and the 3D view), node pages, branch pages, and the table view are all
-generated at build time.
-
-```
-src/content/
-├── branches/           # one YAML file per major branch (single-image-3d, neural-rendering, ...)
-├── nodes/              # one YAML file per work (filename = node id)
-└── posts/              # MDX blog posts, optionally attached to nodes
-
-src/lib/graph.ts        # folds content into the graph payload + the relation vocabulary
-src/lib/graph3d.js      # 3D force-graph view (loaded as a separate chunk)
-src/components/         # GenealogyGraph (D3 timeline DAG + 3D view below it)
-src/pages/              # home, nodes, branches, blog, graph.json
-```
-
-## Adding a work (node)
-
-Create `src/content/nodes/<id>.yaml`:
-
-```yaml
-title: "Full paper title"
-short: "Short label (Author Year)"   # shown on the graph
-authors: "..."
-venue: "CVPR 2025"
-year: 2025
-branch: single-image-3d              # branch id
-lane: depth                          # lane id within that branch (see the branch YAML)
-links:
-  arxiv: "https://arxiv.org/abs/..."
-  code: "https://github.com/..."
-problem: >
-  The problem it went after — specific, one paragraph.
-solution: >
-  The core idea — what is genuinely new.
-limitations: >
-  What it left open — this is the bait for the nodes that come after it.
-relations:
-  - node: midas2020                  # id of the OLDER node it relates to
-    type: fixes
-    note: "Which SPECIFIC weakness it repairs — no hand-waving."
-status: seed                         # seed → draft → written
-# post: some-blog-slug               # attach the deep-dive post once written
-```
-
-### The relation vocabulary (the heart of the project)
-
-| type | meaning |
-|---|---|
-| `fixes` | comes later and directly repairs a specific weakness of the earlier work |
-| `builds-on` | stands on the earlier work and extends it in a new direction |
-| `independent` | tackles the same problem, developed without depending on the other |
-| `challenges` | questions the assumptions, benchmarks, or conclusions of the earlier work |
-| `revives` | reawakens a direction the mainstream had abandoned |
-
-Convention: relations are always declared on the **newer** node, pointing to the
-**older** one. Arrows on the graph flow with time automatically.
-
-Three editorial principles:
-
-1. Every node answers three questions: *what problem — what idea — what limitations it left behind*.
-2. Every edge names the *specific weakness* being repaired — no hand-waving.
-3. `independent` / `challenges` / `revives` are what set this apart from an awesome-list — dig for them.
-
-## Adding a new branch
-
-Create `src/content/branches/<id>.yaml`:
-
-```yaml
-title: "Multi-View Geometry"
-tagline: "One-line summary of the branch"
-description: >
-  A longer introduction, shown on the branch page.
-color: "#c98500"        # take the NEXT unused color slot (table below)
-order: 3                # display order on the graph, top to bottom
-status: active          # or planned
-lanes:                  # the branch's horizontal lanes on the timeline
-  - id: sfm
-    title: "Structure from Motion"
-  - id: mvs
-    title: "Multi-view stereo"
-```
-
-Then add nodes with `branch: <id>` — both the 2D and 3D graphs grow the new
-branch on their own, including cross-branch edges (existing example:
-DeepSDF → NeRF → Zero-1-to-3).
-
-### Branch color slots (validated CVD-safe on the dark surface, assigned in fixed order)
-
-| slot | hex | currently used by |
-|---|---|---|
-| 1 | `#3987e5` | single-image-3d |
-| 2 | `#199e70` | neural-rendering |
-| 3 | `#c98500` | (next branch) |
-| 4 | `#008300` | |
-| 5 | `#9085e9` | |
-
-Don't reorder the slots and don't invent new colors — the slot order itself is
-the color-vision-safety mechanism. (Palette from a validated dataviz reference;
-avoid `#e66767` for branches since red is reserved for *challenges* edges.)
-
-## Writing a blog post
-
-Create `src/content/posts/<slug>.mdx` with frontmatter `title`, `description`,
-`date`, `nodes: [id1, id2]` (related nodes). Attach the post back onto a node
-via its `post:` field so the node flips from hollow (seed) to filled (written)
-on the graph.
-
-## Deploying to GitHub Pages
-
-1. Change `site` in `astro.config.mjs` to `https://<username>.github.io`.
-2. Create a GitHub repo named `3d-vision-genealogy` (if you rename it, keep `base` in sync), then push.
-3. On GitHub: **Settings → Pages → Source: GitHub Actions**.
-4. The bundled workflow `.github/workflows/deploy.yml` builds & deploys on every push to `main`.
-
-The site lands at `https://<username>.github.io/3d-vision-genealogy/` — when you
-later build a portfolio at `<username>.github.io`, just link to it.
-
-## Roadmap ideas
-
-- [ ] Write the first deep dive (suggested: Eigen 2014, or the Tatarchenko 2019 "challenges" moment) and flip its node to `written`
-- [ ] Open the full neural-rendering branch (90s volume rendering → SRN → NeRF → 3DGS — DreamGaussian and the LRM line already reference 3DGS/NeRF)
-- [ ] Graph filters by branch / relation type
-- [ ] Localize node content (problem/solution/limitations) for `/vi/` and `/ja/`
-- [ ] RSS feed + Open Graph images for the blog
+- [ ] First deep-dive posts (candidates: Eigen 2014, or the Tatarchenko 2019 "challenges" moment)
+- [x] Open the full neural-rendering branch (80s volume rendering → light fields → SRN → NeRF → 3DGS → LVSM)
+- [ ] Guided tours through the graph (story mode)
+- [ ] Localize node content for `/vi/` and `/ja/`
+- [ ] RSS feed + Open Graph images
