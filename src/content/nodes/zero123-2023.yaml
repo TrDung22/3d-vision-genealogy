@@ -23,11 +23,11 @@ relations:
     type: fixes
     note: >
       Settles the closed-world debt of the whole object-reconstruction line —
-      the very problem Tatarchenko exposed — by swapping the few-thousand-shape
-      ShapeNet prior for diffusion's internet-scale prior.
+      the very problem Tatarchenko exposed — by swapping a ShapeNet prior of
+      ~50,000 CAD models in 13 categories for diffusion's internet-scale prior.
     i18n:
       ja:
-        note: "物体再構成路線まるごとの「閉じた世界」の借金 — まさに Tatarchenko が暴いた問題 — を清算します。数千形状の ShapeNet prior を、拡散モデルのインターネット規模の prior に替えて。"
+        note: "物体再構成路線まるごとの「閉じた世界」の借金 — まさに Tatarchenko が暴いた問題 — を清算します。13カテゴリ・約5万個の CAD モデルからなる ShapeNet prior を、拡散モデルのインターネット規模の prior に替えて。"
   - node: nerf2020
     type: builds-on
     note: >

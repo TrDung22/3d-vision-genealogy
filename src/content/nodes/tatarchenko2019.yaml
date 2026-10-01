@@ -34,11 +34,14 @@ relations:
   - node: psgn2017
     type: challenges
     note: >
-      Retrieval baselines beat the point-cloud networks too — the problem was
-      never the output data structure, but how the task was benchmarked.
+      PSGN was never re-run directly — but the retrieval baseline beat AtlasNet,
+      which had in turn outperformed PSGN, then the only approach producing point
+      clouds directly. Octrees (OGN), shape layers (Matryoshka) and surface
+      patches (AtlasNet) all fell alike: the problem was never the output data
+      structure, but how the task was benchmarked.
     i18n:
       ja:
-        note: "検索ベースラインは点群ネットワークにも勝ってしまいました — 問題は出力のデータ構造ではなく、タスクのベンチマークの仕方そのものだったのです。"
+        note: "PSGN 自体は再実行されていません — けれど検索ベースラインは AtlasNet に勝ち、その AtlasNet はかつて、点群を直接出力する唯一の手法だった PSGN を上回っていました。オクツリー (OGN) も、入れ子の形状レイヤー (Matryoshka) も、表面パッチ (AtlasNet) も同じように敗れた — 問題は出力のデータ構造ではなく、タスクのベンチマークの仕方そのものだったのです。"
 status: seed
 i18n:
   ja:

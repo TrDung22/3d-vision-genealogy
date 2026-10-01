@@ -17,7 +17,7 @@ solution: >
 limitations: >
   Trained and evaluated inside a single dataset (NYU Depth / KITTI): the model
   learned "NYU-style rooms", not "the world". That in-domain ceiling hung over
-  the field for six years, until MiDaS.
+  the field for five years, until MiDaS.
 relations:
   - node: saxena2008
     type: fixes
@@ -32,4 +32,4 @@ i18n:
   ja:
     problem: "画像から深度マップを直接回帰する — 特徴もグラフィカルモデルも、人間が設計せずに。"
     solution: "粗から密への二段構え CNN が深度を end-to-end で予測します。構造の誤差とスケールの誤差を切り分けるスケール不変ロスも加わり — 単眼深度の深層学習時代を開いた一里塚です。"
-    limitations: "学習も評価も単一のデータセット (NYU Depth / KITTI) の中だけ。モデルが覚えたのは「NYU 風の部屋」であって「世界」ではありません。このドメイン内の天井は、MiDaS が現れるまで6年間、分野の頭上に垂れ込めていました。"
+    limitations: "学習も評価も単一のデータセット (NYU Depth / KITTI) の中だけ。モデルが覚えたのは「NYU 風の部屋」であって「世界」ではありません。このドメイン内の天井は、MiDaS が現れるまで5年間、分野の頭上に垂れ込めていました。"

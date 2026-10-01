@@ -16,7 +16,8 @@ solution: >
   "learn a shape prior from a shape warehouse".
 limitations: >
   Voxels cost O(n³) memory, so it was stuck at 32³ — lego-brick models. And all
-  its knowledge came from ShapeNet: a closed world of a few thousand shapes.
+  its knowledge came from ShapeNet: a closed world of some 50,000 CAD models in
+  13 categories.
 relations:
   - node: eigen2014
     type: builds-on
@@ -32,4 +33,4 @@ i18n:
   ja:
     problem: "深度マップはあくまで2.5D — 見えている表面にすぎません。ここでの問題は、一枚 (または数枚) の画像から、遮蔽された部分も含む物体の完全な3D形状を復元することです。"
     solution: "画像をボクセル占有グリッドへ写す再帰型ネットワーク (3D-LSTM) を、ShapeNet の CAD モデルで教師あり学習します — 「形状の倉庫から形状の事前知識を学ぶ」という路線をまるごと切り拓きました。"
-    limitations: "ボクセルはメモリを O(n³) で食うため 32³ で頭打ち — レゴブロックのようなモデルしか出せません。しかも知識のすべては ShapeNet 由来。数千個の形状しかない閉じた世界です。"
+    limitations: "ボクセルはメモリを O(n³) で食うため 32³ で頭打ち — レゴブロックのようなモデルしか出せません。しかも知識のすべては ShapeNet 由来。13カテゴリ・約5万個の CAD モデルという閉じた世界です。"
