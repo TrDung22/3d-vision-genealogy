@@ -3,8 +3,8 @@ short: "Nerfies (2020)"
 authors: "Keunhong Park, Utkarsh Sinha, Jonathan T. Barron, Sofien Bouaziz, Dan B Goldman, Steven M. Seitz, Ricardo Martin-Brualla"
 venue: "ICCV 2021 (Oral, per authors' homepages)"
 year: 2020
-branch: neural-rendering
-lane: dynamic
+branch: dynamic-4d
+lane: deformation
 links:
   arxiv: "https://arxiv.org/abs/2011.12948"
   project: "https://nerfies.github.io/"

@@ -3,8 +3,8 @@ short: "4D Gaussian Splatting (2023)"
 authors: "Guanjun Wu, Taoran Yi, Jiemin Fang, Lingxi Xie, Xiaopeng Zhang, Wei Wei, Wenyu Liu, Qi Tian, Xinggang Wang"
 venue: "CVPR 2024"
 year: 2023
-branch: neural-rendering
-lane: dynamic
+branch: dynamic-4d
+lane: gaussians
 links:
   arxiv: "https://arxiv.org/abs/2310.08528"
   project: "https://guanjunwu.github.io/4dgs/"

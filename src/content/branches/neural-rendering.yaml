@@ -43,10 +43,6 @@ lanes:
     title: "Surfaces & geometry"
     i18n:
       ja: { title: "表面と幾何" }
-  - id: dynamic
-    title: "Dynamic scenes"
-    i18n:
-      ja: { title: "動的シーン" }
   - id: feedforward
     title: "Feed-forward view synthesis"
     i18n:

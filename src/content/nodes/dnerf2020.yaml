@@ -3,8 +3,8 @@ short: "D-NeRF (2020)"
 authors: "Albert Pumarola, Enric Corona, Gerard Pons-Moll, Francesc Moreno-Noguer"
 venue: "CVPR 2021"
 year: 2020
-branch: neural-rendering
-lane: dynamic
+branch: dynamic-4d
+lane: deformation
 links:
   arxiv: "https://arxiv.org/abs/2011.13961"
   project: "https://www.albertpumarola.com/research/D-NeRF/index.html"

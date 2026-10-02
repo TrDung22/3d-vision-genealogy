@@ -3,8 +3,8 @@ short: "DyCheck (2022)"
 authors: "Hang Gao, Ruilong Li, Shubham Tulsiani, Bryan Russell, Angjoo Kanazawa (UC Berkeley, CMU, Adobe Research)"
 venue: "NeurIPS 2022"
 year: 2022
-branch: neural-rendering
-lane: dynamic
+branch: dynamic-4d
+lane: monocular
 kind: analysis
 links:
   arxiv: "https://arxiv.org/abs/2210.13445"
