@@ -1,7 +1,7 @@
 title: "Depth Anything 3: Recovering the Visual Space from Any Views"
 short: "Depth Anything 3 (2025)"
 authors: "ByteDance Seed (Haotong Lin, Sili Chen, et al.)"
-venue: "ICLR 2026"
+venue: "ICLR 2026 (Oral)"
 year: 2025
 branch: single-image-3d
 lane: depth
@@ -10,18 +10,19 @@ links:
   code: "https://github.com/ByteDance-Seed/depth-anything-3"
 problem: >
   Two lanes had quietly become one problem: single-image depth models and
-  multi-view geometry transformers (VGGT) were solving the same "recover visual
-  space" task with incompatible architectures and task-specific heads.
+  multi-view geometry transformers (VGGT) were tackling the same task —
+  recovering the visual space — with highly specialized models and
+  task-specific heads.
 solution: >
   Radical minimalism: one plain transformer (a vanilla DINO encoder, no
   architectural specialization) and one prediction target (depth-ray),
   handling 1 to N views with or without poses. Teacher-student training keeps
   DA2-level detail; a new visual-geometry benchmark shows it beating VGGT by
-  44.3% on camera pose and 25.1% on geometric accuracy.
+  an average of 35.7% on camera pose and 23.6% on geometric accuracy.
 limitations: >
-  The unification is empirical, not conceptual — why a single depth-ray target
-  suffices remains under-analyzed; and monocular metric scale still comes from
-  the teacher lineage rather than being solved anew.
+  By its own account only "a step toward versatile 3D foundation models":
+  extending its reasoning to dynamic scenes, adding language and interaction
+  cues, and scaling up pretraining are all left to future work.
 relations:
   - node: depthanythingv2-2024
     type: builds-on
@@ -35,15 +36,17 @@ relations:
   - node: vggt2025
     type: fixes
     note: >
-      Simplifies away VGGT's multi-task head zoo — one plain transformer with a
-      single depth-ray target beats it by 44.3% (pose) and 25.1% (geometry).
-      The depth lane and the scene lane formally merge here.
+      Fixes the weakness it names in VGGT: accuracy bought with "a
+      multi-stage architecture, and redundancy in design" — point maps plus
+      extra depth heads. One plain transformer with a single depth-ray target
+      beats it by an average of 35.7% on pose and 23.6% on geometry. The depth
+      lane and the scene lane formally merge here.
     i18n:
       ja:
-        note: "VGGT のマルチタスクヘッドの動物園を片付けました — 素のトランスフォーマー + 単一の depth-ray ターゲットが、姿勢で 44.3%、幾何で 25.1% 勝ってしまったのです。深度レーンとシーンレーンは、ここで正式に合流します。"
+        note: "DA3 が VGGT に名指しした弱点を直します — 「多段のアーキテクチャと設計上の冗長性」で買った精度、つまり point map に深度ヘッドを重ねる構成です。素のトランスフォーマーと単一の depth-ray ターゲットが、姿勢で平均 35.7%、幾何で平均 23.6% 上回りました。深度レーンとシーンレーンは、ここで正式に合流します。"
 status: seed
 i18n:
   ja:
-    problem: "二つのレーンは、いつの間にか同じ問題になっていました。単一画像の深度モデルと多視点幾何トランスフォーマー (VGGT) が、互換性のないアーキテクチャとタスク別ヘッドで、同じ「視覚空間の復元」を解いていたのです。"
-    solution: "徹底したミニマリズムです。素のトランスフォーマー一つ (vanilla な DINO エンコーダ、アーキテクチャの特殊化なし) と予測ターゲット一つ (depth-ray) で、ポーズの有無を問わず 1〜N 視点を扱います。teacher-student 学習で DA2 級のディテールを保ち、新しい視覚幾何ベンチマークでは VGGT をカメラ姿勢で 44.3%、幾何精度で 25.1% 上回りました。"
-    limitations: "この統一は経験的なもので、概念的な説明はまだありません — なぜ depth-ray という単一ターゲットで足りるのかは十分に分析されておらず、単眼の metric スケールも teacher の血統頼みで、新たに解かれたわけではないのです。"
+    problem: "二つのレーンは、いつの間にか同じ問題になっていました。単一画像の深度モデルと多視点幾何トランスフォーマー (VGGT) が、視覚空間の復元という同じタスクに、高度に特化したモデルとタスク別のヘッドで取り組んでいたのです。"
+    solution: "徹底したミニマリズムです。素のトランスフォーマー一つ (vanilla な DINO エンコーダ、アーキテクチャの特殊化なし) と予測ターゲット一つ (depth-ray) で、ポーズの有無を問わず 1〜N 視点を扱います。teacher-student 学習で DA2 級のディテールを保ち、新しい視覚幾何ベンチマークでは VGGT をカメラ姿勢で平均 35.7%、幾何精度で平均 23.6% 上回りました。"
+    limitations: "本人たちの言うとおり「汎用的な3D基盤モデルへの一歩」にすぎません。動的なシーンへの推論の拡張、言語やインタラクションの手がかりの統合、より大規模な事前学習は、いずれも今後の課題として残されています。"
