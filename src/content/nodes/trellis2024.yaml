@@ -42,6 +42,16 @@ relations:
     i18n:
       ja:
         note: "20億パラメータのモデルが可能なのは、データが存在するからにほかなりません。TRELLIS は Objaverse のプールからキュレーションした約50万物体で学習します — 大きな3Dデータの上に立つ大きなモデルです。"
+  - node: banani2024
+    type: builds-on
+    note: >
+      Builds on a finding rather than a method: TRELLIS encodes each 3D asset
+      by averaging DINOv2 features gathered from many rendered views, and
+      picks DINOv2 "given its demonstrated strong 3D awareness" — citing this
+      probe as the evidence.
+    i18n:
+      ja:
+        note: "手法ではなく知見の上に築きます。TRELLIS は多数のレンダリング視点から集めた DINOv2 特徴を平均して各3Dアセットを符号化しますが、DINOv2 を選んだのは「実証された強い3D認識能力 (3D awareness)」ゆえ — その証拠として引くのが、この probing 研究です。"
 status: seed
 i18n:
   ja:

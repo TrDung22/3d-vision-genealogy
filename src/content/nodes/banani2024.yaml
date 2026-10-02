@@ -7,42 +7,31 @@ branch: single-image-3d
 lane: depth
 kind: analysis
 links:
+  arxiv: "https://arxiv.org/abs/2404.08636"
   paper: "https://openaccess.thecvf.com/content/CVPR2024/html/Banani_Probing_the_3D_Awareness_of_Visual_Foundation_Models_CVPR_2024_paper.html"
 problem: >
   The uncomfortable question of the borrow-a-2D-prior era: when we repurpose
   DINOv2, CLIP, or Stable Diffusion for 3D tasks, how much 3D do those models
   actually contain?
 solution: >
-  A systematic probing study: frozen foundation-model features are tested for
-  single-view surface reconstruction and multi-view consistency. Verdict:
-  they encode the VISIBLE surface remarkably well, but fail at multi-view
-  consistency — the representations are view-dependent, not 3D-consistent.
+  A probing study of frozen features — trainable probes and zero-shot
+  matching — on two capabilities: encoding the visible surface (depth,
+  surface normals) and staying consistent across views (correspondence).
+  Single-view, the verdict varies widely by model: DINOv2 encodes depth and
+  normals best with Stable Diffusion a close second, and vision-language
+  models such as CLIP are the notable exception. Across views, every model
+  breaks down under large viewpoint changes: the representations are
+  "view-consistent, not 3D consistent".
 limitations: >
-  A diagnosis, not a cure — it doesn't say how to make 2D priors 3D-consistent.
-  But like Tatarchenko 2019 before it, it marks exactly where the era's
-  foundational assumption cracks.
-relations:
-  - node: marigold2023
-    type: challenges
-    note: >
-      Challenges the premise of the prior-borrowing line: Stable Diffusion's
-      "visual understanding" is single-view — the 3D consistency that depth
-      models inherit from it is shallower than assumed.
-    i18n:
-      ja:
-        note: "prior 借用路線の前提への挑戦です。Stable Diffusion の「視覚的理解」は単一視点のもの — 深度モデルがそこから受け継ぐ3D一貫性は、思われていたより浅いのです。"
-  - node: depthanything2024
-    type: challenges
-    note: >
-      The DINOv2 semantic features Depth Anything leans on are probed directly:
-      strong on visible surfaces, view-dependent beyond them — bounding what
-      feature-transfer alone can deliver for 3D.
-    i18n:
-      ja:
-        note: "Depth Anything が頼る DINOv2 の意味特徴を直接調べました。見えている表面には強く、その先は視点依存 — 特徴転移だけで3Dに届く範囲に、はっきり線を引きました。"
+  By its own account only "a first step": the checkpoints it compares were
+  trained on different data at different scales, its probes are deliberately
+  minimal, and it tests just two basic aspects of 3D awareness. It diagnoses
+  the multiview gap without proposing a cure; what later work built on was
+  the positive half — DINOv2's grip on the visible surface.
+relations: []
 status: seed
 i18n:
   ja:
     problem: "2D の事前知識を借りる時代の、居心地の悪い問い — DINOv2 や CLIP、Stable Diffusion を3Dタスクに流用するとき、それらのモデルは実際どれほどの3Dを内包しているのか?"
-    solution: "系統立てた probing 研究です。凍結した基盤モデルの特徴を、単一視点の表面再構成と多視点一貫性でテストしました。判決 — 見えている表面は驚くほど良く符号化しているのに、多視点一貫性では落第。表現は視点依存であって、3D一貫ではないのです。"
-    limitations: "診断であって処方箋ではありません — 2D の事前知識を3D一貫にする方法までは示さないのです。それでも Tatarchenko 2019 がそうだったように、この時代の根本仮定にひびが入る場所を、正確に印しました。"
+    solution: "凍結した特徴を調べる probing 研究です — 学習可能なプローブとゼロショットの対応付けで、二つの能力を測ります。見えている表面を符号化できるか (深度・表面法線)、そして視点をまたいで一貫しているか (対応点)。単一視点での判定はモデルによって大きく異なります。深度と法線を最もよく符号化するのは DINOv2 で、Stable Diffusion が僅差で続き、CLIP のような視覚言語モデルは顕著な例外です。視点をまたぐと、大きな視点変化の前ではどのモデルも崩れます。表現は「視点ごとには一貫していても、3D として一貫してはいない」のです。"
+    limitations: "本人たちの言うとおり「第一歩」にすぎません。比べたチェックポイントは学習データも計算規模もまちまちで、プローブは意図的に最小限、テストしたのも3D認識のごく基本的な二つの側面だけです。多視点のギャップを診断しても、治し方は示しません。後の研究がその上に築いたのは肯定的な半分 — 見えている表面を DINOv2 がしっかり捉えている、という知見でした。"
