@@ -24,12 +24,13 @@ relations:
   - node: horn1970
     type: revives
     note: >
-      Reawakened the single-image 3D problem after decades in which the field
-      poured its energy into stereo and multi-view — but with statistical
-      learning instead of reflectance physics.
+      Reawakened the single-image problem Horn had posed: by Pop-up's own
+      account, automatic methods existed only for multiple images or video,
+      and "no one has yet attempted automatic single-view modeling" — so it
+      did, with statistical learning instead of reflectance physics.
     i18n:
       ja:
-        note: "ステレオと多視点に業界の力が注がれた数十年ののち、単一画像3Dの問題を呼び覚ましました — ただし反射の物理ではなく、統計的学習の手で。"
+        note: "Horn が立てた単一画像の問題を呼び覚ましました。Pop-up 自身によれば、自動的な手法は複数画像や動画向けにしかなく、「自動的な単一視点モデリングは、まだ誰も試みていない」状況でした — だからそれを、反射の物理ではなく統計的学習の手でやってのけたのです。"
 status: seed
 i18n:
   ja:

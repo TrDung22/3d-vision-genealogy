@@ -16,13 +16,13 @@ solution: >
   then invert the shading equation with the method of characteristic strips.
 limitations: >
   The physical assumptions (reflectance, illumination, smooth surfaces) almost
-  never hold for natural images. This physics-prior line was abandoned by the
-  mainstream for decades as statistical learning and then deep learning took
-  over — a classic "orphaned branch".
+  never hold for natural images. Once statistical learning and then deep
+  learning took over single-image 3D, the physics-prior line lived on mostly
+  at the margins (SIRFS extended it in 2012) — a classic "orphaned branch".
 relations: []
 status: seed
 i18n:
   ja:
     problem: "一枚の画像から3D表面の形状を推定する — コンピュータビジョンにおける shape from shading の出発点となった定式化であり、ill-posed な問題をいち早く言い表したものでもあります。まったく異なる無数の表面が、同じ一枚の画像を生み出しうるのです。"
     solution: "データからの学習は一切なし。代わりに画像生成の物理をモデル化します。表面の反射関数と光源の位置が既知だと仮定し、特性帯 (characteristic strips) の方法でシェーディング方程式を逆向きに解くのです。"
-    limitations: "物理の仮定 (反射特性、照明、滑らかな表面) は、自然画像ではほぼ成り立ちません。統計的学習、そして深層学習が主役になるにつれ、この物理 prior の路線は何十年も主流から見捨てられました — 典型的な「孤児の枝」です。"
+    limitations: "物理の仮定 (反射特性、照明、滑らかな表面) は、自然画像ではほぼ成り立ちません。統計的学習、そして深層学習が単一画像3Dの主役になると、この物理 prior の路線は主に傍流で生き延びることになりました (2012年に SIRFS が拡張) — 典型的な「孤児の枝」です。"
