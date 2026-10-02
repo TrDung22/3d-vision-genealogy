@@ -1,10 +1,12 @@
-title: "Shape, Illumination, and Reflectance from Shading (SIRFS)"
+title: "Shape, Illumination, and Reflectance from Shading"
 short: "SIRFS (Barron 2012)"
 authors: "Jonathan T. Barron, Jitendra Malik"
 venue: "TPAMI 2015"
 year: 2012
 branch: single-image-3d
 lane: priors
+links:
+  arxiv: "https://arxiv.org/abs/2010.03592"
 problem: >
   Solving the full intrinsic-images problem: recover shape, illumination, and
   reflectance simultaneously from one image — the most complete version of the

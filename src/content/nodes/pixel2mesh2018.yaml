@@ -7,6 +7,7 @@ branch: single-image-3d
 lane: object
 links:
   arxiv: "https://arxiv.org/abs/1804.01654"
+  code: "https://github.com/nywang16/Pixel2Mesh"
 problem: >
   Produce a usable surface (a mesh with topology) instead of a cloud of
   disconnected points.

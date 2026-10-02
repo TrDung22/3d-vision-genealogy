@@ -1,7 +1,7 @@
 title: "PIFuHD: Multi-Level Pixel-Aligned Implicit Function for High-Resolution 3D Human Digitization"
 short: "PIFuHD (2020)"
 authors: "Shunsuke Saito, Tomas Simon, Jason Saragih, Hanbyul Joo"
-venue: "CVPR 2020"
+venue: "CVPR 2020 (Oral)"
 year: 2020
 branch: single-image-3d
 lane: human
@@ -12,14 +12,15 @@ problem: >
   PIFu downsampled its input, throwing away exactly the pixels where clothing
   wrinkles and fingers live.
 solution: >
-  A two-level architecture: a coarse level reasons holistically at low
-  resolution, a fine level ingests 1024px crops for detail, with front/back
-  normal-map prediction hallucinating the unseen side — full 1k-resolution
-  human digitization from one photo.
+  A two-level architecture: a coarse level reasons holistically on a 512px
+  downsample, a fine level reads the full 1024px image (trained on crops of
+  it) for detail, with front/back normal-map prediction hallucinating the
+  unseen side — full 1k-resolution human digitization from one photo.
 limitations: >
-  Still no body prior: extreme poses and loose garments produce anatomically
-  impossible results — the failure mode the explicit-hybrid line (ICON/ECON)
-  was built to fix.
+  Still no body prior — its own future work names human-specific priors such
+  as pose. For novel poses or clothes, as ECON put it, such pixel-aligned
+  implicits "produce disembodied limbs or degenerate shapes" — the failure
+  mode the explicit-hybrid line (ICON/ECON) was built to fix.
 relations:
   - node: pifu2019
     type: fixes
@@ -33,5 +34,5 @@ status: seed
 i18n:
   ja:
     problem: "PIFu は入力をダウンサンプルしていました — 服のしわや指が写っている、まさにそのピクセルを捨てて。"
-    solution: "二層のアーキテクチャです。粗い層が低解像度で全体を推論し、細かい層が 1024px のクロップを飲み込んでディテールを拾う。前面・背面の法線マップ予測が見えない側を補い — 一枚の写真から 1k 解像度まるごとの人体デジタル化を実現しました。"
-    limitations: "体の prior は依然ありません。極端な姿勢やゆったりした衣服では、解剖学的にありえない結果が出ます — 明示的ハイブリッド路線 (ICON/ECON) がその修理のために生まれた、まさにその壊れ方です。"
+    solution: "二層のアーキテクチャです。粗い層が 512px に縮小した画像で全体を推論し、細かい層が 1024px の画像をそのまま読み込んで (学習はその切り抜きで) ディテールを拾う。前面・背面の法線マップ予測が見えない側を補い — 一枚の写真から 1k 解像度まるごとの人体デジタル化を実現しました。"
+    limitations: "体の prior は依然ありません — 自らの今後の課題にも、pose のような人体特有の prior を挙げています。見慣れない pose や服に対しては、ECON の言葉どおり、こうしたピクセル整列の陰関数は「ちぎれた手足や崩れた形状を生み出す」 — 明示的ハイブリッド路線 (ICON/ECON) がその修理のために生まれた、まさにその壊れ方です。"

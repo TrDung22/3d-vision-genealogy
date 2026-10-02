@@ -7,33 +7,37 @@ branch: neural-rendering
 lane: scene-reps
 links:
   arxiv: "https://arxiv.org/abs/2006.09661"
+  code: "https://github.com/vsitzmann/siren"
   project: "https://www.vincentsitzmann.com/siren/"
 problem: >
-  Coordinate MLPs with ReLU — the workhorse of SRN, DeepSDF, early NeRF —
-  are systematically blurry: they cannot represent fine detail or the
-  derivatives that physics losses (eikonal, wave equations) need.
+  Coordinate MLPs with ReLU — the workhorse of SRN and DeepSDF — are
+  systematically blurry: they cannot represent fine detail, and even with
+  NeRF's positional encoding they miss the derivatives that physics losses
+  (eikonal, wave equations) need.
 solution: >
   Replace ReLU with sine activations plus a principled initialization:
-  SIRENs fit images, video, audio, and SDFs with orders more fidelity, and
-  their derivatives are SIRENs too — so you can supervise directly on
-  gradients and Laplacians.
+  SIRENs fit images, video, audio, and SDFs with far higher fidelity than
+  ReLU MLPs, and their derivatives are SIRENs too — so you can supervise
+  directly on gradients and Laplacians.
 limitations: >
-  Sensitive to initialization and frequency scaling, and offers per-signal
-  fitting rather than generalization. Grid-based encodings (Instant-NGP)
-  later took the speed crown; sines survive where derivatives matter.
+  Sensitive to initialization and frequency scaling, and mostly per-signal
+  fitting: its generalization demo (hypernetwork priors) stays at 32x32
+  CelebA. Grid-based encodings (Instant-NGP) later took the speed crown;
+  sines survive where derivatives matter.
 relations:
   - node: srn2019
     type: fixes
     note: >
-      Same lab, one year later: names and repairs the reason SRN renders
-      blurry — the spectral bias of ReLU coordinate networks — by changing
-      the activation itself.
+      Same lab, one year later: diagnoses the ReLU coordinate MLPs behind
+      SRN and its peers as lacking "the capacity to represent fine details",
+      and their derivatives, and repairs that by changing the activation
+      itself, sine for ReLU.
     i18n:
       ja:
-        note: "同じ研究室から一年後 — SRN のレンダリングがぼやける理由そのもの (ReLU 座標ネットワークのスペクトルバイアス) を名指しし、活性化関数そのものを替えて直しました。"
+        note: "同じ研究室から一年後 — SRN とその同類を支える ReLU 座標 MLP には「細かなディテールを表現する能力」が欠け、導関数も表せないと診断し、活性化関数そのものを ReLU から正弦に替えて直しました。"
 status: seed
 i18n:
   ja:
-    problem: "ReLU を使う座標 MLP — SRN、DeepSDF、初期 NeRF の主役 — は体系的にぼやけます。細かいディテールも、物理ロス (eikonal、波動方程式) が要求する導関数も、表現できないのです。"
-    solution: "ReLU を正弦活性化と原理的な初期化に置き換えます。SIREN は画像・映像・音声・SDF を桁違いの忠実度で fit し、その導関数もまた SIREN — なので勾配やラプラシアンの上で直接教師信号を与えられます。"
-    limitations: "初期化と周波数スケーリングに敏感で、汎化ではなく信号ごとの fitting にとどまります。速度の王座はのちにグリッドベースの符号化 (Instant-NGP) が奪いました。正弦が生き残るのは、導関数がものを言う場所です。"
+    problem: "ReLU を使う座標 MLP — SRN と DeepSDF の主役 — は体系的にぼやけます。細かいディテールを表現できず、NeRF の positional encoding を加えても、物理ロス (eikonal、波動方程式) が要求する導関数は捉えられないのです。"
+    solution: "ReLU を正弦活性化と原理的な初期化に置き換えます。SIREN は画像・映像・音声・SDF を ReLU の MLP よりはるかに高い忠実度で fit し、その導関数もまた SIREN — なので勾配やラプラシアンの上で直接教師信号を与えられます。"
+    limitations: "初期化と周波数スケーリングに敏感で、ほぼ信号ごとの fitting です。汎化のデモ (ハイパーネットワークによる prior) は 32x32 の CelebA にとどまります。速度の王座はのちにグリッドベースの符号化 (Instant-NGP) が奪いました。正弦が生き残るのは、導関数がものを言う場所です。"

@@ -7,15 +7,17 @@ branch: neural-rendering
 lane: scene-reps
 links:
   arxiv: "https://arxiv.org/abs/1906.07751"
+  code: "https://github.com/facebookresearch/neuralvolumes"
 problem: >
   Photorealistic renderable models of dynamic performers (faces, hands) from
   multi-camera video — mesh trackers lose hair, smoke, and anything
   topologically messy.
 solution: >
   Learn a voxel grid of RGBA from images, rendered by differentiable
-  ray marching with accumulated transmittance — classic volume rendering,
-  now run BACKWARDS through gradients. Soft volumetric occupancy turns the
-  reconstruct-then-render pipeline into one end-to-end optimization.
+  ray marching that accumulates color and opacity front to back — classic
+  volume rendering, now run BACKWARDS through gradients. Soft volumetric
+  occupancy turns the reconstruct-then-render pipeline into one end-to-end
+  optimization.
 limitations: >
   A dense voxel grid: memory scales cubically, so resolution tops out fast
   and scenes must fit in a capture rig. The obvious fix — replace the grid
@@ -24,13 +26,17 @@ relations:
   - node: kajiya1984
     type: revives
     note: >
-      Resurrects the 1984 emission-absorption integral after decades as a
-      pure forward-rendering tool — its smooth, occlusion-aware accumulation
-      turns out to be a nearly ideal loss landscape for gradient descent.
-      Differentiability, not realism, is why volume rendering came back.
+      Reawakens volume rendering — ray-marching a density field, as Kajiya
+      & Von Herzen did in 1984 — for captured real scenes, where meshes had
+      ruled. Its renderer is classical front-to-back ray marching (it cites
+      Levoy 1988, not Kajiya), accumulating opacity clamped at 1 rather than
+      exponential transmittance; the gain is optimization — the
+      semi-transparent volume "disperses gradient information along the ray
+      of integration". Differentiability, not realism, is why volume
+      rendering came back.
     i18n:
       ja:
-        note: "純粋な順方向レンダリングの道具として数十年を過ごした1984年の発光・吸収積分を蘇らせました — その滑らかで遮蔽を弁えた累積が、勾配降下にとってほぼ理想的なロス地形だったのです。ボリュームレンダリングが帰ってきた理由はリアリズムではなく、微分可能性でした。"
+        note: "volume rendering — 1984年に Kajiya と Von Herzen がしたように、密度場の中を光線で進む — を、メッシュが支配していた実写シーンのキャプチャに呼び戻しました。レンダラーは古典的な front-to-back のレイマーチングで (引用しているのは Kajiya ではなく Levoy 1988)、指数関数的な透過率ではなく、1で打ち切る不透明度を積み上げます。得たのは最適化のしやすさです — 半透明のボリュームは「積分する光線に沿って勾配の情報を分散させる」のです。volume rendering が帰ってきた理由はリアリズムではなく、微分可能性でした。"
   - node: srn2019
     type: independent
     note: >
@@ -45,5 +51,5 @@ status: seed
 i18n:
   ja:
     problem: "多カメラ映像から、動く被写体 (顔、手) のフォトリアルにレンダリング可能なモデルを。メッシュトラッカーは髪や煙、トポロジー的に厄介なものを取りこぼします。"
-    solution: "画像から RGBA のボクセルグリッドを学習し、透過率を積み上げる微分可能レイマーチングでレンダリングします — 古典的なボリュームレンダリングを、勾配で逆向きに走らせたのです。柔らかい体積 occupancy が「再構成してからレンダリング」というパイプラインを、一つの end-to-end 最適化に変えました。"
+    solution: "画像から RGBA のボクセルグリッドを学習し、色と不透明度を手前から奥へ積み上げる微分可能レイマーチングでレンダリングします — 古典的な volume rendering を、勾配で逆向きに走らせたのです。柔らかい体積 occupancy が「再構成してからレンダリング」というパイプラインを、一つの end-to-end 最適化に変えました。"
     limitations: "密なボクセルグリッドです。メモリは3乗で増え、解像度はすぐ頭打ちになり、シーンは撮影リグに収まらなければなりません。自明な直し方 — グリッドを連続関数に替える — は、NeRF という名で年内に到着しました。"

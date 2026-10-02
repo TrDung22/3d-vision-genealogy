@@ -16,21 +16,22 @@ solution: >
   global attention at every stage, feature resolution that never collapses —
   a large quality jump for the MiDaS line.
 limitations: >
-  The architecture changed, but the quality ceiling now sits in the DATA:
-  however many labeled depth images exist, it is too few for the diversity of
-  the real world.
+  The architecture changed, but the quality ceiling now sits in the DATA: by
+  its own account the transformer pays off "especially when a large amount of
+  training data is available", and labeled depth stays scarce — the MiDaS
+  line, as Depth Anything later put it, "is limited by its data coverage".
 relations:
   - node: midas2020
     type: builds-on
     note: >
-      Same authors, same dataset-mixing recipe, upgrading the architecture
-      axis: CNN → ViT.
+      Shares MiDaS's first and last authors and its dataset-mixing recipe,
+      upgrading the architecture axis: CNN → ViT.
     i18n:
       ja:
-        note: "同じ著者、同じデータセット混合のレシピのまま、アーキテクチャの軸を CNN → ViT へ引き上げました。"
+        note: "MiDaS と筆頭・最終著者を同じくし、データセット混合のレシピもそのままに、アーキテクチャの軸を CNN → ViT へ引き上げました。"
 status: seed
 i18n:
   ja:
     problem: "CNN の局所的な受容野が、シーン全体にわたる幾何の推論を縛ります — ある一点の深度は、フレーム全体のレイアウトに依存するのです。"
     solution: "バックボーンの CNN を dense prediction 向けの Vision Transformer に置き換えます。全段でグローバルなアテンション、決して潰れない特徴解像度 — MiDaS 路線に大きな品質ジャンプをもたらしました。"
-    limitations: "アーキテクチャは変わりました。しかし品質の天井は今やデータの側にあります — ラベル付き深度画像がいくらあっても、実世界の多様性には遠く及ばないのです。"
+    limitations: "アーキテクチャは変わりました。しかし品質の天井は今やデータの側にあります — 本人たちも言うとおり、この Transformer が真価を発揮するのは「大量の学習データが手に入るとき」であり、ラベル付きの深度は足りないままです。後に Depth Anything が述べたように、MiDaS 路線は「データのカバー範囲に縛られている」のです。"

@@ -1,7 +1,7 @@
 title: "Mip-NeRF 360: Unbounded Anti-Aliased Neural Radiance Fields"
 short: "Mip-NeRF 360 (2021)"
 authors: "Jonathan T. Barron, Ben Mildenhall, Dor Verbin, Pratul P. Srinivasan, Peter Hedman"
-venue: "CVPR 2022"
+venue: "CVPR 2022 (Oral)"
 year: 2021
 branch: neural-rendering
 lane: radiance-fields
@@ -10,8 +10,8 @@ links:
   project: "https://jonbarron.info/mipnerf360/"
 problem: >
   Real scenes are unbounded: camera orbits an object, background stretches to
-  the horizon. Mip-NeRF's Gaussians blow up at distance, capacity is wasted
-  on far-away content, and sparse supervision breeds floaters.
+  the horizon. Mip-NeRF needs scene coordinates in a bounded domain, capacity
+  is wasted on far-away content, and sparse supervision breeds floaters.
 solution: >
   Three repairs that became standard equipment: a contraction warping
   unbounded space into a ball (mip-aware), a small "proposal MLP" distilled
@@ -34,6 +34,6 @@ relations:
 status: seed
 i18n:
   ja:
-    problem: "実シーンは非有界です。カメラは物体の周りを回り、背景は地平線まで伸びる。Mip-NeRF のガウシアンは遠方で発散し、容量は遠くの内容に浪費され、疎な教師信号は floater を生みます。"
+    problem: "実シーンは非有界です。カメラは物体の周りを回り、背景は地平線まで伸びる。Mip-NeRF はシーン座標が有界な領域に収まることを要求し、容量は遠くの内容に浪費され、疎な教師信号は floater を生みます。"
     solution: "標準装備になった三つの直しです。非有界空間を球へ折り込む contraction (mip を意識したもの)、サンプル位置を決めるためにオンラインで蒸留される小さな「proposal MLP」、そして floater を溶かす distortion ロス。ここで導入された「360」ベンチマークは、今も分野の試金石です。"
     limitations: "遅い MLP スタックの上で、シーンごとに数時間の学習 — 発表は、ボクセルグリッドの反乱 (Plenoxels、Instant-NGP) が学習を数分に切り詰めたのと同じシーズンでした。Zip-NeRF での二路線の合流を、お膳立てしたのです。"

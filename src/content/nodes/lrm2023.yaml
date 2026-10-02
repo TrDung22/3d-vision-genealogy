@@ -7,28 +7,32 @@ branch: single-image-3d
 lane: generative
 links:
   arxiv: "https://arxiv.org/abs/2311.04400"
-  project: "https://yiconghong.me/LRM/"
+  project: "https://web.archive.org/web/20240323235048/https://yiconghong.me/LRM/"
 problem: >
   The Zero-1-to-3 line's per-object optimization is too slow for real
   applications: we need one image → 3D in a single forward pass.
 solution: >
   A half-billion-parameter transformer predicting a triplane-NeRF DIRECTLY from
-  the image, trained end-to-end on Objaverse + MVImgNet — single-image 3D's
-  "GPT moment": replace the optimization pipeline with one large model trained
-  on large data.
+  the image, trained end-to-end on Objaverse + MVImgNet — modeled, by its own
+  account, on the GPT recipe: replace the optimization pipeline with one large
+  model trained on large data.
 limitations: >
-  Blurry back sides (a probabilistic problem squeezed into one deterministic
-  prediction), weak fine texture, and a closed model — the community could not
-  immediately reproduce it.
+  Blurry textures on occluded sides (by its own account, a probabilistic
+  problem squeezed into one deterministic prediction), shapes distorted when
+  its fixed camera assumption is wrong, and no released code or weights — the
+  community had to reimplement it (OpenLRM, six weeks later).
 relations:
   - node: zero123-2023
     type: fixes
     note: >
-      Repairs exactly the speed bottleneck: drops per-object SDS optimization
-      for a single ~1-second forward pass.
+      Repairs the bottleneck LRM names in the line Zero-1-to-3 belongs to:
+      diffusion-guided methods "require delicate parameter tuning and
+      regularization", and per-shape NeRF optimization "is often slow and
+      impractical". It drops per-object SDS optimization for a single
+      ~1-second forward pass.
     i18n:
       ja:
-        note: "速度のボトルネックをまさにその一点で直します。物体ごとの SDS 最適化を捨て、約1秒の forward 一回に置き換えました。"
+        note: "LRM が、Zero-1-to-3 の属する路線に見出したボトルネックを直します。拡散モデルに導かれる手法は「繊細なパラメータ調整と正則化を要し」、形状ごとの NeRF 最適化は「しばしば遅く実用的でない」。物体ごとの SDS 最適化を捨て、約1秒の forward 一回に置き換えました。"
   - node: nerf2020
     type: builds-on
     note: >
@@ -40,15 +44,16 @@ relations:
   - node: objaverse2023
     type: builds-on
     note: >
-      Its "GPT moment" rests on the data as much as the model: LRM trains
-      end-to-end on Objaverse + MVImgNet, and only a corpus at that scale makes
-      one-forward-pass single-image 3D learnable.
+      Its bet rests on the data as much as the model: LRM trains end-to-end on
+      ~730K Objaverse assets plus ~220K MVImgNet videos, and credits the
+      "combination of a high-capacity model and large-scale training data"
+      for its generalization.
     i18n:
       ja:
-        note: "その「GPT の瞬間」は、モデルと同じくらいデータに支えられています。LRM は Objaverse + MVImgNet で end-to-end 学習し、その規模のコーパスがあって初めて、forward 一回の単一画像3Dが学習可能になるのです。"
+        note: "その賭けは、モデルと同じくらいデータに支えられています。LRM は約73万の Objaverse アセットと約22万本の MVImgNet 動画で end-to-end 学習し、汎化の源を「大容量のモデルと大規模な学習データの組み合わせ」に求めています。"
 status: seed
 i18n:
   ja:
     problem: "Zero-1-to-3 路線の物体ごとの最適化は、実アプリケーションには遅すぎます。必要なのは、一枚の画像 → forward 一回での3Dです。"
-    solution: "5億パラメータのトランスフォーマーが、画像から triplane-NeRF を直接予測します。Objaverse + MVImgNet で end-to-end 学習 — 単一画像3Dの「GPT の瞬間」です。最適化パイプラインを、大規模データで学習した一つの大きなモデルに置き換えました。"
-    limitations: "背面はぼやけます (確率的な問題を一つの決定的な予測に押し込んだ代償)。細かいテクスチャも弱く、モデルは非公開 — コミュニティはすぐには再現できませんでした。"
+    solution: "5億パラメータのトランスフォーマーが、画像から triplane-NeRF を直接予測します。Objaverse + MVImgNet で end-to-end 学習 — 論文自身が語るとおり GPT のレシピに倣い、最適化パイプラインを、大規模データで学習した一つの大きなモデルに置き換えました。"
+    limitations: "遮蔽された側のテクスチャはぼやけます (論文自身の説明では、確率的な問題を一つの決定的な予測に押し込んだ代償)。固定のカメラ仮定が外れると形状は歪み、コードも重みも公開されませんでした — コミュニティは自ら再実装するしかなかったのです (6週間後の OpenLRM)。"

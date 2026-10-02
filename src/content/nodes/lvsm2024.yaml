@@ -7,21 +7,24 @@ branch: neural-rendering
 lane: feedforward
 links:
   arxiv: "https://arxiv.org/abs/2410.17242"
+  code: "https://github.com/haian-jin/LVSM"
   project: "https://haian-jin.github.io/projects/LVSM/"
 problem: >
-  Every view synthesis method since 1996 smuggles in 3D machinery — ray
-  marching, splatting, epipolar attention, cost volumes. Is any of it
-  necessary, or is it all just inductive bias that data can replace?
+  For decades view synthesis has smuggled in 3D machinery — ray marching,
+  splatting, epipolar attention, cost volumes. Is any of it necessary, or is
+  it all just inductive bias that data can replace?
 solution: >
   A transformer that eats posed input-image tokens and EMITS novel-view
   pixels. The decoder-only variant keeps no 3D representation whatsoever —
   no NeRF, no Gaussians, no epipolar structure — and beats the 3D-biased
-  state of the art by 1.5-3.5 dB, with quality scaling smoothly with
-  compute.
+  state of the art by 1.5-3.5 dB, with quality improving as the model
+  grows.
 limitations: >
-  No explicit 3D means nothing to edit, no guaranteed consistency across
-  views, and data-hunger in place of geometry — the classic bitter-lesson
-  trade, whose long-term verdict is still out.
+  No explicit 3D means nothing to edit and no guaranteed consistency across
+  views; and, deterministic by its own account, it cannot hallucinate unseen
+  regions, where it leaves "noisy and flickering artifacts" — the classic
+  bitter-lesson trade of structure for learning, whose long-term verdict is
+  still out.
 relations:
   - node: mvsplat2024
     type: challenges
@@ -37,15 +40,17 @@ relations:
     type: revives
     note: >
       GQN's 2018 creed — rendering as pure learning, no human 3D machinery —
-      abandoned when SRN and NeRF proved structure wins, returns at
-      transformer scale and finally outperforms the structured lineage that
-      displaced it.
+      was sidelined once SRN and NeRF showed structure wins, kept alive only
+      by a geometry-free minority (LFN, SRT) that LVSM says lacked "model
+      capacity and scalability". LVSM never cites GQN, but it brings the
+      direction back at transformer scale and outperforms the structured
+      lineage that displaced it.
     i18n:
       ja:
-        note: "GQN の2018年の信条 — レンダリングは純粋な学習であり、人間の3Dの仕掛けは要らない — は、SRN と NeRF が構造の勝利を証明したときに捨てられました。それがトランスフォーマー規模で戻り、ついに自分を追いやった構造ありの血統を上回るのです。"
+        note: "GQN の2018年の信条 — レンダリングは純粋な学習であり、人間の3Dの仕掛けは要らない — は、SRN と NeRF が構造の勝利を示したとき脇へ追いやられ、幾何を使わない少数派 (LFN、SRT) だけが細々と受け継ぎました。LVSM はそれらを「モデルの容量とスケーラビリティ」に欠けると評しています。LVSM は GQN を引用していませんが、この方向をトランスフォーマー規模で呼び戻し、自分を追いやった構造ありの血統を上回るのです。"
 status: seed
 i18n:
   ja:
-    problem: "1996年以降のあらゆる視点合成手法は、3Dの仕掛け — レイマーチング、スプラッティング、epipolar アテンション、cost volume — を密輸してきました。そのどれかが本当に必要なのか、それともすべてデータが置き換えられる帰納バイアスにすぎないのか?"
-    solution: "ポーズ付き入力画像のトークンを飲み込み、新規視点のピクセルを吐き出すトランスフォーマーです。デコーダのみの変種は3D表現を一切持たず — NeRF もガウシアンも epipolar 構造もなし — 3D バイアスを持つ最高水準を 1.5〜3.5 dB 上回り、品質は計算量とともに滑らかにスケールします。"
-    limitations: "明示的な3Dがないということは、編集するものが何もなく、視点間の一貫性の保証もなく、幾何の代わりにデータを渇望するということ — 古典的な bitter lesson の取引であり、その長期的な判決はまだ出ていません。"
+    problem: "何十年ものあいだ、視点合成は3Dの仕掛け — レイマーチング、スプラッティング、epipolar アテンション、cost volume — を密輸してきました。そのどれかが本当に必要なのか、それともすべてデータが置き換えられる帰納バイアスにすぎないのか?"
+    solution: "pose 付き入力画像のトークンを飲み込み、新規視点のピクセルを吐き出すトランスフォーマーです。デコーダのみの変種は3D表現を一切持たず — NeRF もガウシアンも epipolar 構造もなし — 3D バイアスを持つ最高水準を 1.5〜3.5 dB 上回り、品質はモデルを大きくするほど向上します。"
+    limitations: "明示的な3Dがないということは、編集するものが何もなく、視点間の一貫性の保証もないということ。そして本人たちの言うとおり決定論的なモデルなので、見えない領域を補って描くことはできず、そこには「ノイズやちらつきのアーティファクト」が残ります — 構造を学習と引き換えにする古典的な bitter lesson の取引であり、その長期的な判決はまだ出ていません。"

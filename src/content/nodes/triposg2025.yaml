@@ -6,28 +6,31 @@ year: 2025
 branch: single-image-3d
 lane: generative
 links:
+  arxiv: "https://arxiv.org/abs/2502.06608"
   code: "https://github.com/VAST-AI-Research/TripoSG"
 problem: >
   The fast feed-forward line (TripoSR-style) hit a fidelity ceiling: speed was
   solved, but sharp geometric detail from one image was not.
 solution: >
   Scale the generative side properly: a large rectified-flow transformer over
-  high-resolution SDF latents, trained on aggressively curated data — trading
-  a bit of speed for a clear step up in geometric fidelity, and releasing
-  weights openly.
+  high-resolution SDF latents, trained on aggressively curated data — giving
+  up TripoSR's single-pass speed for multi-step flow sampling and a clear step
+  up in geometric fidelity, and releasing weights openly.
 limitations: >
   Geometry-first: appearance/material still needs downstream stages; and like
   the rest of the wave, its world is the curated object dataset, not scenes.
 relations:
   - node: triposr2024
-    type: builds-on
+    type: fixes
     note: >
-      Same organization, next bet: after democratizing speed with TripoSR,
-      chase fidelity — replacing the feed-forward regressor with a scaled
-      rectified-flow generator.
+      From the VAST team that co-built TripoSR, the next bet: it names the
+      weakness of the reconstruction line TripoSR belongs to — models that
+      "regress the 3D model in a deterministic way" and "exhibit artifacts in
+      occluded areas" — and chases fidelity by replacing the feed-forward
+      regressor with a scaled rectified-flow generator.
     i18n:
       ja:
-        note: "同じ組織の、次の賭けです。TripoSR で速度を民主化した後は忠実度を追う — フィードフォワードの回帰器を、スケールさせた rectified-flow 生成器に置き換えました。"
+        note: "TripoSR を共同開発した VAST のチームによる、次の賭けです。TripoSR の属する再構成路線の弱点 — 「3Dモデルを決定的に回帰し」、「遮蔽領域にアーティファクトを示す」モデル — を名指しし、フィードフォワードの回帰器をスケールさせた rectified-flow 生成器に置き換えて忠実度を追いました。"
   - node: hunyuan3d2-2025
     type: independent
     note: >
@@ -40,5 +43,5 @@ status: seed
 i18n:
   ja:
     problem: "高速フィードフォワード路線 (TripoSR 系) は忠実度の天井に当たりました。速度は解決済み — でも一枚の画像から鋭い幾何ディテールを出すことは、まだだったのです。"
-    solution: "生成側を本気でスケールさせます。高解像度 SDF 潜在の上で動く大規模 rectified-flow トランスフォーマーを、徹底的に選別したデータで学習 — 速度を少し譲る代わりに幾何の忠実度をはっきり一段引き上げ、重みも公開しました。"
+    solution: "生成側を本気でスケールさせます。高解像度 SDF 潜在の上で動く大規模 rectified-flow トランスフォーマーを、徹底的に選別したデータで学習 — TripoSR の forward 一回の速さを手放して多段のフローサンプリングを取る代わりに、幾何の忠実度をはっきり一段引き上げ、重みも公開しました。"
     limitations: "まずは幾何から — 見た目やマテリアルには依然として下流の工程が要ります。そしてこの波の例に漏れず、その世界はキュレーション済み物体データセットであって、シーンではありません。"

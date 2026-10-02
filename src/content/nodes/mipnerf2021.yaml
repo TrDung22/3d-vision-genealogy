@@ -15,8 +15,8 @@ problem: >
 solution: >
   Rays become cones: each sample is a conical frustum encoded by an
   integrated positional encoding (the expected Fourier features over the
-  frustum's Gaussian). One scale-aware MLP replaces NeRF's brittle
-  coarse+fine pair — mipmapping, rediscovered for radiance fields.
+  frustum's Gaussian). One scale-aware MLP replaces NeRF's separate coarse
+  and fine MLPs — mipmapping, rediscovered for radiance fields.
 limitations: >
   Still assumes bounded, inward-facing scenes and per-scene training; the
   math assumes the slow positional-encoding MLP, so the idea had to be
@@ -36,5 +36,5 @@ status: seed
 i18n:
   ja:
     problem: "NeRF は無限に細い光線に沿って無限小の点をサンプルするため、ピクセルの footprint が無視されます。ズームアウトすればエイリアス、ズームインすればぼやける。学習時と違うスケールでのレンダリングは、ことごとく壊れるのです。"
-    solution: "光線が錐になります。各サンプルは円錐台で、integrated positional encoding (錐台のガウス上での Fourier 特徴の期待値) で符号化されます。スケールを弁えた一つの MLP が、NeRF の脆い coarse + fine の対を置き換える — 放射輝度場のために再発見された mipmapping です。"
+    solution: "光線が錐になります。各サンプルは円錐台で、integrated positional encoding (錐台のガウス上での Fourier 特徴の期待値) で符号化されます。スケールを弁えた一つの MLP が、NeRF の別々の coarse / fine MLP を置き換える — radiance field のために再発見された mipmapping です。"
     limitations: "依然として有界で内向きのシーンとシーンごとの学習を前提とし、数式は遅い positional-encoding MLP を仮定しています。そのためこのアイデアは二度導き直されることになりました — 非有界シーン向け (Mip-NeRF 360) と、ハッシュグリッド向け (Zip-NeRF) に。"

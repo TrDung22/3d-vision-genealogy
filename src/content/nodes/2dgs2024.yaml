@@ -9,18 +9,19 @@ links:
   arxiv: "https://arxiv.org/abs/2403.17888"
   project: "https://surfsplatting.github.io/"
 problem: >
-  3DGS looks right and measures wrong: a 3D blob shows a different silhouette
-  from every direction, so the "surface" it implies is view-inconsistent —
-  extracted meshes are noise.
+  3DGS looks right and measures wrong: a ray meets a 3D blob at a different
+  depth from every viewpoint, so the "surface" it implies is
+  view-inconsistent — extracted meshes come out noisy.
 solution: >
   Flatten the primitive: oriented 2D Gaussian disks (surfels) with exact
   perspective-correct ray-splat intersection instead of screen-space
   approximation, plus depth-distortion and normal-consistency
   regularizers — splatting that renders AND reconstructs.
 limitations: >
-  Surfels assume the world is surfaces: fuzzy volumetric matter (hair, smoke)
-  fits worse than with 3D blobs, and appearance quality trades slightly
-  against the geometry gains.
+  Surfels assume the world is opaque surfaces: by its own account
+  semi-transparent ones such as glass trip it up, its densification favors
+  texture-rich over geometry-rich regions, and its regularizers trade some
+  image quality for the geometry gains.
 relations:
   - node: 3dgs2023
     type: fixes
@@ -35,15 +36,16 @@ relations:
   - node: ewa2001
     type: builds-on
     note: >
-      Completes the EWA revival: 3DGS resurrected Zwicker's volume splatting;
-      2DGS resurrects the other half — SURFACE splatting with oriented
-      surfels — now with gradients flowing through it.
+      Completes the EWA revival: 3DGS brought back Zwicker's volume
+      splatting; 2DGS brings back the other half — SURFACE splatting with
+      oriented surfels — now recovered from photos alone, where earlier surfel
+      methods, even differentiable ones, needed known geometry or depth.
     i18n:
       ja:
-        note: "EWA の復活を完成させます。3DGS は Zwicker のボリュームスプラッティングを蘇らせ、2DGS はもう半分 — 向きを持つ surfel による表面スプラッティング — を蘇らせる。今度は勾配がそこを流れます。"
+        note: "EWA の復活を完成させます。3DGS は Zwicker のボリュームスプラッティングを呼び戻し、2DGS はもう半分 — 向きを持つ surfel による表面スプラッティング — を呼び戻す。今度は写真だけから復元されます。微分可能なものも含め、それ以前の surfel 手法は既知の幾何や深度を必要としていました。"
 status: seed
 i18n:
   ja:
-    problem: "3DGS は見た目は正しく、計測は間違っています。3Dのblobはどの方向からも違うシルエットを見せるため、それが示唆する「表面」は視点不一致 — 抽出したメッシュはノイズです。"
+    problem: "3DGS は見た目は正しく、計測は間違っています。光線が3Dのblobと出会う深度は視点ごとに異なるため、それが示唆する「表面」は視点不一致 — 抽出したメッシュはノイズだらけになります。"
     solution: "プリミティブを平たくします。スクリーン空間の近似ではなく、正確に透視補正した ray-splat 交差を持つ、向きのある2Dガウシアン円盤 (surfel)。加えて深度歪みと法線一貫性の正則化 — レンダリングと再構成の両方を行うスプラッティングです。"
-    limitations: "surfel は世界を表面と仮定します。ふわふわした体積的な物質 (髪、煙) は3Dのblobより当てはまりが悪く、見た目の品質は幾何の向上と引き換えにわずかに譲ります。"
+    limitations: "surfel は世界を不透明な表面と仮定します。論文自身が認めるとおり、ガラスのような半透明の表面には弱く、densification は幾何の豊かな領域よりテクスチャの豊かな領域を優先し、正則化は幾何の向上と引き換えに画質をいくらか譲ります。"

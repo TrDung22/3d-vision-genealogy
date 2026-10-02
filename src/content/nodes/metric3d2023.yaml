@@ -1,6 +1,6 @@
-title: "Metric3D: Towards Zero-shot Metric 3D Prediction from a Single Image (v2: TPAMI 2024)"
+title: "Metric3D: Towards Zero-shot Metric 3D Prediction from A Single Image (v2: TPAMI 2024)"
 short: "Metric3D / v2 (2023)"
-authors: "Wei Yin, Mu Hu, et al. (v2: Mu Hu, Wei Yin, et al.)"
+authors: "Wei Yin, Chi Zhang, et al. (v2: Mu Hu, Wei Yin, et al.)"
 venue: "ICCV 2023 → TPAMI 2024 (v2)"
 year: 2023
 branch: single-image-3d
@@ -26,21 +26,13 @@ relations:
   - node: midas2020
     type: fixes
     note: >
-      Repairs the affine-invariant line's missing metric scale (MiDaS, DPT,
-      LeReS): the canonical camera transform turns "unknowable" absolute depth
+      Repairs the weakness Metric3D names in the affine-invariant line (MiDaS,
+      LeReS, HDN): "by design, these methods are unable to recover the metric
+      information". The canonical camera transform turns that metric ambiguity
       into a solvable problem.
     i18n:
       ja:
-        note: "アフィン不変路線 (MiDaS、DPT、LeReS) に欠けていた metric スケールを直します。canonical camera 変換が、「知りようがない」とされた絶対深度を解ける問題に変えました。"
-  - node: zoedepth2023
-    type: independent
-    note: >
-      Two same-year answers to the same metric debt: ZoeDepth patches scale
-      back with a fine-tuned bins head; Metric3D dissolves the ambiguity in
-      camera space. Neither derives from the other.
-    i18n:
-      ja:
-        note: "同じ年に出た、同じ metric の借金への二つの答えです。ZoeDepth は微調整した bins ヘッドでスケールを継ぎ当て、Metric3D はカメラ空間で曖昧性そのものを溶かします。どちらも他方から生まれてはいません。"
+        note: "Metric3D がアフィン不変路線 (MiDaS、LeReS、HDN) に名指しした弱点 — 「設計上、これらの手法は metric の情報を復元できない」 — を直します。canonical camera 変換が、その metric の曖昧性を解ける問題に変えました。"
 status: seed
 i18n:
   ja:

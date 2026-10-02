@@ -13,11 +13,13 @@ problem: >
 solution: >
   Swap the kind of prior: learn a statistical classifier that labels image
   regions as ground / vertical / sky, then erect the scene like a children's
-  pop-up book. The first time a STATISTICAL prior learned from data replaced
-  the physical prior for single-image 3D.
+  pop-up book. One of the first times a STATISTICAL prior learned from data
+  replaced the physical prior for single-image 3D.
 limitations: >
-  Only three coarse geometric classes, only "ground plane + vertical things"
-  outdoor scenes; no continuous depth, and it shatters on anything complex.
+  Only three coarse geometric classes, only outdoor scenes of a ground plane
+  plus vertical objects; no continuous depth, and by its own account crowded
+  scenes, hills and steps defeat it — about 30% of outdoor photos gave
+  accurate models.
 relations:
   - node: horn1970
     type: revives
@@ -32,5 +34,5 @@ status: seed
 i18n:
   ja:
     problem: "一枚の屋外写真から「歩き回れる」3Dモデルを作る — 照明の物理モデルも精密な幾何も使わずに。"
-    solution: "prior の種類そのものを入れ替えます。画像の領域を「地面 / 垂直 / 空」に分類する統計的分類器を学習し、子ども向けの飛び出す絵本のようにシーンを起こします。データから学んだ統計的 prior が物理 prior に取って代わった、単一画像3D最初の瞬間です。"
-    limitations: "幾何クラスは粗い三つだけ。扱えるのは「地面 + 垂直な物体」型の屋外シーンのみ。連続的な深度はなく、少しでも複雑なシーンでは崩れてしまいます。"
+    solution: "prior の種類そのものを入れ替えます。画像の領域を「地面 / 垂直 / 空」に分類する統計的分類器を学習し、子ども向けの飛び出す絵本のようにシーンを起こします。データから学んだ統計的 prior が物理 prior に取って代わった、単一画像3Dにおける最初期の例の一つです。"
+    limitations: "幾何クラスは粗い三つだけ。扱えるのは、地面の平面に垂直な物体が立つ屋外シーンのみです。連続的な深度はなく、本人たちも認めるとおり、混み合ったシーンや丘、階段には歯が立ちません — 正確なモデルになったのは屋外写真の約30%でした。"

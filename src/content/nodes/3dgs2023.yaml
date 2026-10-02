@@ -9,7 +9,7 @@ links:
   arxiv: "https://arxiv.org/abs/2308.04079"
   project: "https://repo-sam.inria.fr/fungraph/3d-gaussian-splatting/"
 problem: >
-  Every radiance-field renderer still marched rays — even Instant-NGP.
+  Radiance-field renderers still marched rays — even Instant-NGP.
   Real-time (30+ fps) 1080p novel-view synthesis of real scenes remained
   unreached, because sampling along rays is the wrong fit for GPUs built to
   rasterize.
@@ -17,7 +17,8 @@ solution: >
   Represent the scene as millions of anisotropic 3D Gaussians — initialized
   from the SfM point cloud, optimized by gradients, adaptively densified and
   pruned — and render by SORTED SPLATTING through a tile-based differentiable
-  rasterizer. State-of-the-art quality at 100+ fps; training in ~30 minutes.
+  rasterizer. State-of-the-art quality at 100+ fps; training in 35-45
+  minutes.
 limitations: >
   Millions of unstructured blobs: memory-heavy, alias-prone under zoom
   (Mip-Splatting's opening), view-inconsistent as geometry (2DGS's opening),
@@ -28,13 +29,14 @@ relations:
   - node: ewa2001
     type: revives
     note: >
-      Resurrects EWA splatting after two dormant decades, virtually
-      unchanged as math — anisotropic Gaussians, screen-space projection,
-      sorted alpha blending — but now the Gaussians are OPTIMIZED from
-      photographs through the differentiable version of that very renderer.
+      Brings EWA splatting back from two decades on the margins of
+      point-based graphics, virtually unchanged as math — anisotropic
+      Gaussians, screen-space projection, sorted alpha blending — but now the
+      Gaussians are OPTIMIZED from photographs through the differentiable
+      version of that very renderer.
     i18n:
       ja:
-        note: "二十年の眠りを経て EWA スプラッティングを蘇らせました。数式はほぼそのまま — 異方性ガウシアン、スクリーン空間への射影、ソート済みアルファブレンド — ただし今度は、そのレンダラーの微分可能版を通して、ガウシアンが写真から最適化されるのです。"
+        note: "点ベースグラフィックスの傍流で二十年を過ごした EWA スプラッティングを、表舞台に呼び戻しました。数式はほぼそのまま — 異方性ガウシアン、スクリーン空間への射影、ソート済みアルファブレンド — ただし今度は、そのレンダラーの微分可能版を通して、ガウシアンが写真から最適化されるのです。"
   - node: instantngp2022
     type: fixes
     note: >
@@ -58,6 +60,6 @@ relations:
 status: seed
 i18n:
   ja:
-    problem: "どの放射輝度場レンダラーも、依然として光線を行進させていました — Instant-NGP でさえも。実シーンのリアルタイム (30fps 以上) 1080p 新規視点合成は手つかずのまま。光線に沿ったサンプリングは、ラスタライズのために生まれた GPU には不向きだからです。"
-    solution: "シーンを数百万個の異方性3Dガウシアンで表します — SfM 点群から初期化し、勾配で最適化し、適応的に densify・prune する — そしてタイルベースの微分可能ラスタライザによるソート済みスプラッティングで描く。100fps 超で最高水準の品質、学習は約30分です。"
+    problem: "放射輝度場のレンダラーは、依然として光線を行進させていました — Instant-NGP でさえも。実シーンのリアルタイム (30fps 以上) 1080p 新規視点合成は手つかずのまま。光線に沿ったサンプリングは、ラスタライズのために生まれた GPU には不向きだからです。"
+    solution: "シーンを数百万個の異方性3Dガウシアンで表します — SfM 点群から初期化し、勾配で最適化し、適応的に densify・prune する — そしてタイルベースの微分可能ラスタライザによるソート済みスプラッティングで描く。100fps 超で最高水準の品質、学習は35〜45分です。"
     limitations: "数百万の構造なきblob — メモリを食い、ズームでエイリアスしやすく (Mip-Splatting の入口)、表面としては視点不一致で (2DGS の入口)、ソート近似の下でポッピングし、ピンホールのラスタライズ専用です (3DGRT の入口)。ブレイクスルーは、たちまち皆のお気に入りの「直したいもの」になりました。"

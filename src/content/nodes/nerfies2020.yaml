@@ -1,7 +1,7 @@
 title: "Nerfies: Deformable Neural Radiance Fields"
 short: "Nerfies (2020)"
-authors: "Keunhong Park, Utkarsh Sinha, Jonathan T. Barron, Sofien Bouaziz, Dan B. Goldman, Steven M. Seitz, Ricardo Martin-Brualla"
-venue: "ICCV 2021"
+authors: "Keunhong Park, Utkarsh Sinha, Jonathan T. Barron, Sofien Bouaziz, Dan B Goldman, Steven M. Seitz, Ricardo Martin-Brualla"
+venue: "ICCV 2021 (Oral, per authors' homepages)"
 year: 2020
 branch: neural-rendering
 lane: dynamic

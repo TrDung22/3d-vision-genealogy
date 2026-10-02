@@ -7,6 +7,7 @@ branch: neural-rendering
 lane: feedforward
 links:
   arxiv: "https://arxiv.org/abs/2403.14627"
+  code: "https://github.com/donydchen/mvsplat"
   project: "https://donydchen.github.io/mvsplat/"
 problem: >
   pixelSplat guesses depth from learned epipolar attention — probabilistic,
@@ -16,12 +17,14 @@ solution: >
   Bring back the classic: a plane-sweep COST VOLUME (multi-view stereo's
   workhorse) gives explicit cross-view feature matching for Gaussian
   centers. Better geometry and appearance than pixelSplat with 10x fewer
-  parameters, 2x faster inference, and far stronger cross-dataset
+  parameters, more than 2x faster inference, and better cross-dataset
   generalization.
 limitations: >
-  Plane sweeps presuppose known poses, near-front-facing overlap, and a
-  depth range; scaling to many views and wide baselines strains the volume —
-  and LVSM soon asked whether even this geometry machinery is necessary.
+  Plane sweeps presuppose known poses and a near and far depth range; by its
+  own account it is unreliable on reflective surfaces like glass and
+  windows, and RealEstate10K alone is not diverse enough for robust
+  in-the-wild generalization — and LVSM soon asked whether even this
+  geometry machinery is necessary.
 relations:
   - node: pixelsplat2023
     type: fixes
@@ -36,5 +39,5 @@ status: seed
 i18n:
   ja:
     problem: "pixelSplat は学習された epipolar アテンションから深度を推測します — 確率的で、パラメータを食い、そのガウシアンは測光ロスでは直しきれない幾何的に誤った場所に落ちます。"
-    solution: "古典を呼び戻します。平面掃引の cost volume (多視点ステレオの主役) が、ガウシアン中心のための明示的な視点間の特徴マッチングを与える。pixelSplat より良い幾何と見た目を、10分の1のパラメータ、2倍速い推論、そしてはるかに強いデータセット横断の汎化とともに。"
-    limitations: "平面掃引は既知のポーズ、ほぼ前向きの重なり、そして深度範囲を前提とします。多視点や広ベースラインへのスケールは cost volume に負担をかけ — LVSM はまもなく、この幾何の仕掛けさえ必要なのかと問いかけました。"
+    solution: "古典を呼び戻します。平面掃引の cost volume (多視点ステレオの主役) が、ガウシアン中心のための明示的な視点間の特徴マッチングを与える。pixelSplat より良い幾何と見た目を、10分の1のパラメータ、2倍以上速い推論、そしてより良いデータセット横断の汎化とともに。"
+    limitations: "平面掃引は既知の pose と、手前・奥の深度範囲を前提とします。本人たちの言うとおり、ガラスや窓のような反射面では結果が不安定になり、RealEstate10K だけでは多様性が足りず、実世界のシーンへ頑健に汎化するには至りません — そして LVSM はまもなく、この幾何の仕掛けさえ必要なのかと問いかけました。"

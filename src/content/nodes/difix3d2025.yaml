@@ -1,7 +1,7 @@
 title: "Difix3D+: Improving 3D Reconstructions with Single-Step Diffusion Models"
 short: "Difix3D+ (2025)"
 authors: "Jay Zhangjie Wu, Yuxuan Zhang, Haithem Turki, Xuanchi Ren, Jun Gao, Mike Zheng Shou, Sanja Fidler, Zan Gojcic, Huan Ling (NVIDIA)"
-venue: "CVPR 2025 (Oral, Best Paper Finalist)"
+venue: "CVPR 2025 (Oral, Best Paper Award Candidate)"
 year: 2025
 branch: neural-rendering
 lane: gaussians

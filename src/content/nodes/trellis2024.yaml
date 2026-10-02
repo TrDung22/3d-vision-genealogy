@@ -1,7 +1,7 @@
 title: "Structured 3D Latents for Scalable and Versatile 3D Generation (TRELLIS)"
 short: "TRELLIS (2024)"
 authors: "Jianfeng Xiang, Zelong Lv, Sicheng Xu, Yu Deng, Ruicheng Wang, Bowen Zhang, Dong Chen, Xin Tong, Jiaolong Yang (Microsoft)"
-venue: "CVPR 2025 (Spotlight, per authors' repo)"
+venue: "CVPR 2025 (Highlight)"
 year: 2024
 branch: single-image-3d
 lane: generative
@@ -9,39 +9,44 @@ links:
   arxiv: "https://arxiv.org/abs/2412.01506"
   code: "https://github.com/microsoft/TRELLIS"
 problem: >
-  Every prior generator was locked to one output format — NeRF here, Gaussians
-  there, meshes elsewhere — fragmenting the field and capping quality at
-  whatever that format tolerates.
+  Prior generators were mostly locked to one output format — NeRF here,
+  Gaussians there, meshes elsewhere — fragmenting the field and capping
+  quality at whatever that format tolerates.
 solution: >
   A unified Structured LATent (SLAT): a sparse 3D grid of latents fusing
   geometry and appearance, decodable into radiance fields, 3D Gaussians, OR
   meshes from the same generation. Rectified-flow transformers scaled to 2B
   parameters on 500K curated objects, with local 3D editing prior models
-  couldn't offer. Adoption is the signal: ~13k GitHub stars and 1M+ Hugging
+  couldn't offer. Adoption is the signal: ~11k GitHub stars and 1M+ Hugging
   Face downloads within a year, spawning a family of SLAT successors.
 limitations: >
   Trained on curated, object-centric assets — clean-background single objects,
-  not the cluttered real world; and the spotlight venue status is the repo's
-  own claim (independent verification against official CVPR lists failed).
+  not the cluttered real world; and, by its own account, its image-to-3D model
+  bakes the reference image's lighting into the asset (no PBR materials),
+  while its two-stage pipeline can be less efficient than end-to-end
+  generation.
 relations:
   - node: clay2024
-    type: builds-on
+    type: fixes
     note: >
-      Stands on CLAY's scaled latent-3D diffusion, then generalizes its
-      single-format decoders into one Structured Latent (SLAT) that emits
-      radiance fields, 3D Gaussians, or meshes from a single generation.
+      Repairs the weakness it diagnoses in the geometry-first line CLAY
+      belongs to: generators built on meshes or implicit fields "often falter
+      in detailed appearance modeling", and CLAY "focuses solely on shape
+      encoding". One Structured Latent (SLAT) carries geometry and appearance
+      together and decodes to radiance fields, 3D Gaussians, or meshes from a
+      single generation.
     i18n:
       ja:
-        note: "CLAY のスケールした latent-3D diffusion の上に立ち、その単一フォーマットのデコーダ群を、放射輝度場・3D Gaussian・メッシュを一度の生成から吐き出す一つの Structured Latent (SLAT) へと一般化します。"
+        note: "CLAY が属する geometry-first の路線に見出した弱点を直します。メッシュや陰関数の上に築いた生成器は「細かな見た目のモデリングでしばしばつまずき」、CLAY は「形状の符号化だけに注力している」。一つの Structured Latent (SLAT) が幾何と見た目をまとめて担い、一度の生成から radiance field・3D Gaussian・メッシュのいずれへもデコードします。"
   - node: objaverse2023
     type: builds-on
     note: >
-      Its 2B-parameter model is only possible because the data exists: TRELLIS
-      trains on ~500K objects curated from the Objaverse pool — a large model
-      standing on large 3D data.
+      A large model standing on large 3D data: TRELLIS trains its
+      2B-parameter model on ~500K curated objects, about 480K of them filtered
+      from Objaverse-XL (the rest from ABO, 3D-FUTURE and HSSD).
     i18n:
       ja:
-        note: "20億パラメータのモデルが可能なのは、データが存在するからにほかなりません。TRELLIS は Objaverse のプールからキュレーションした約50万物体で学習します — 大きな3Dデータの上に立つ大きなモデルです。"
+        note: "大きな3Dデータの上に立つ大きなモデルです。TRELLIS は20億パラメータのモデルを、キュレーションした約50万物体で学習しますが、そのうち約48万は Objaverse-XL から選別したもの (残りは ABO、3D-FUTURE、HSSD) です。"
   - node: banani2024
     type: builds-on
     note: >
@@ -55,6 +60,6 @@ relations:
 status: seed
 i18n:
   ja:
-    problem: "それまでの生成器はどれも一つの出力フォーマットに縛られていました — こちらは NeRF、あちらは Gaussian、そちらはメッシュ。分野は分断され、品質はそのフォーマットが許す範囲で頭打ちになります。"
-    solution: "統一された構造化潜在表現 (SLAT) です。幾何と見た目を融合した疎な3D潜在グリッドが、一度の生成から放射輝度場にも 3D Gaussian にもメッシュにもデコードできます。rectified-flow トランスフォーマーを、選び抜いた50万物体の上で20億パラメータまでスケールし、従来モデルにはなかった局所的な3D編集も可能に。普及ぶりが何よりの証拠 — 一年で GitHub スター約1.3万、Hugging Face ダウンロード100万超、SLAT 後継の一族まで生みました。"
-    limitations: "学習したのはキュレーション済みの物体中心アセット — 背景の綺麗な単一物体であって、散らかった実世界ではありません。また spotlight という venue はリポジトリの自称です (CVPR 公式リストとの独立照合では確認できませんでした)。"
+    problem: "それまでの生成器の多くは一つの出力フォーマットに縛られていました — こちらは NeRF、あちらは Gaussian、そちらはメッシュ。分野は分断され、品質はそのフォーマットが許す範囲で頭打ちになります。"
+    solution: "統一された構造化潜在表現 (SLAT) です。幾何と見た目を融合した疎な3D潜在グリッドが、一度の生成から放射輝度場にも 3D Gaussian にもメッシュにもデコードできます。rectified-flow トランスフォーマーを、選び抜いた50万物体の上で20億パラメータまでスケールし、従来モデルにはなかった局所的な3D編集も可能に。普及ぶりが何よりの証拠 — 一年で GitHub スター約1.1万、Hugging Face ダウンロード100万超、SLAT 後継の一族まで生みました。"
+    limitations: "学習したのはキュレーション済みの物体中心アセット — 背景の綺麗な単一物体であって、散らかった実世界ではありません。また論文自身が認めるとおり、image-to-3D では参照画像の照明がアセットに焼き込まれ (PBR マテリアルは出力しません)、2段階のパイプラインは end-to-end の生成より効率で劣ることがあります。"

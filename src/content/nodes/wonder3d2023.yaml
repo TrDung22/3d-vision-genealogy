@@ -18,30 +18,36 @@ solution: >
   geometry-aware fusion then lifts them to a textured mesh in minutes.
 limitations: >
   Fixed sparse view set and modest resolution; normal-map supervision helps
-  surfaces but fine structures and complex materials still break; per-object
-  fusion remains an optimization step.
+  surfaces, but with only six views, the authors note, very thin structures
+  and severe occlusions are hard to reconstruct; per-object fusion remains an
+  optimization step.
 relations:
   - node: zero123-2023
     type: fixes
     note: >
-      Attacks the same inconsistency debt as SyncDreamer, but by widening the
+      Repairs the weakness it names in Zero123 — its images "lack multi-view
+      consistency since it operates on each view independently" — by
+      generating all views jointly with multi-view attention, and widens the
       output: predicting normals with colors gives reconstruction an explicit
       geometric anchor that RGB-only imagination lacked.
     i18n:
       ja:
-        note: "SyncDreamer と同じ不一致の借金を攻めますが、レバーが違います。出力を広げ、色と並べて法線を予測することで、RGB だけの想像には無かった明示的な幾何のアンカーを再構成に与えました。"
+        note: "Zero123 について自ら指摘した弱点 — 「各視点を独立に扱うため、多視点の一貫性を欠く」 — を、多視点アテンションで全視点をまとめて生成することで直します。さらに出力を広げ、色と並べて法線を予測することで、RGB だけの想像には無かった明示的な幾何のアンカーを再構成に与えました。"
   - node: syncdreamer2023
-    type: independent
+    type: fixes
     note: >
-      Same weeks, same target, different levers — synchronized noise vs
-      cross-domain (normal + color) generation. A textbook parallel discovery
-      inside one research season.
+      Six and a half weeks later, it follows SyncDreamer into multiview
+      generation and repairs the weakness it diagnoses there: working from
+      color images alone, SyncDreamer "requires dense views for 3D
+      reconstruction, but still suffers from low-quality geometry and blurring
+      textures". Generating normal maps alongside colors gives the
+      reconstruction explicit geometry from just six views.
     i18n:
       ja:
-        note: "同じ数週間、同じ狙い、異なるレバー — 同期ノイズ対クロスドメイン (法線 + 色) 生成。一つの研究シーズンの中で起きた、教科書どおりの同時発見です。"
+        note: "6週間半後、SyncDreamer に倣って多視点生成を採り入れたうえで、そこに見出した弱点を直します。色画像だけに頼る SyncDreamer は「3D再構成に密な視点を必要とし、それでも低品質な幾何とぼやけたテクスチャに悩まされる」。色と並べて法線マップを生成することで、わずか6視点から再構成に明示的な幾何を与えました。"
 status: seed
 i18n:
   ja:
     problem: "生成された RGB 視点だけでは幾何の制約が足りません。見た目は一致していても、その裏でぐにゃりとした曖昧な表面が隠れていることがあるのです。"
     solution: "拡散モデルに、見た目と並べて幾何を直接出力させます。クロスドメイン拡散が複数視点の法線マップと色画像をペアで生成し、クロスドメインアテンションが両者を揃える。幾何を意識した融合ステップが、それらを数分でテクスチャ付きメッシュへ引き上げます。"
-    limitations: "視点セットは疎で固定、解像度も控えめです。法線の教師信号は表面には効くものの、細かい構造や複雑な材質は今も破綻します。物体ごとの融合も最適化ステップのままです。"
+    limitations: "視点セットは疎で固定、解像度も控えめです。法線の教師信号は表面には効くものの、著者ら自身が認めるとおり、視点が6つしかないため、非常に細い構造や強い遮蔽は正確に再構成しにくいままです。物体ごとの融合も最適化ステップのままです。"

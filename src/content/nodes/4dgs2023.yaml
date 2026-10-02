@@ -9,18 +9,19 @@ links:
   arxiv: "https://arxiv.org/abs/2310.08528"
   project: "https://guanjunwu.github.io/4dgs/"
 problem: >
-  Dynamic radiance fields inherited NeRF's cost twice over: per-scene
-  training in days and seconds per frame to render — a video you can watch
-  from anywhere, except not actually in real time.
+  Dynamic radiance fields inherited NeRF's cost: the first ones trained for
+  days (D-NeRF: two, on one GPU), and even the grid-based successors that
+  cut training to minutes still rendered at roughly 1-2.5 fps — a video you
+  can watch from anywhere, except not actually in real time.
 solution: >
   One set of canonical 3D Gaussians deformed over time by a compact
   factored (HexPlane-style) field predicting per-Gaussian motion and shape
-  change — dynamic scenes at 80+ fps and 800x600, trained in minutes,
+  change — dynamic scenes at 82 fps and 800x800, trained in minutes,
   storage kept modest by sharing the canonical Gaussians across time.
 limitations: >
-  The canonical+deformation blueprint's old debts carry over: topology
-  changes and long, complex motion strain a single canonical set; and
-  monocular casual video remains far harder than multi-camera capture.
+  By its own account, large motions, missing background points and imprecise
+  poses make the 4D Gaussians hard to optimize, and on monocular video it can
+  overfit the training views and fail on novel ones.
 relations:
   - node: 3dgs2023
     type: builds-on
@@ -35,14 +36,16 @@ relations:
     type: fixes
     note: >
       Repairs the render-speed collapse of deformation-based dynamic NeRFs:
-      the same canonical+warp idea, but deforming explicit Gaussians instead
-      of querying a giant MLP — from seconds per frame to real time.
+      the same canonical+warp idea, but the Gaussians are deformed once per
+      frame and splatted, instead of every ray sample being warped and
+      queried through MLPs — from 1.5 fps for the deformation-based TiNeuVox
+      to 82 fps on the same synthetic benchmark.
     i18n:
       ja:
-        note: "変形ベースの動的 NeRF が抱えたレンダリング速度の崩壊を直します。同じ canonical + warp のアイデアながら、巨大な MLP を問い合わせる代わりに明示的なガウシアンを変形させる — 1フレーム数秒からリアルタイムへ。"
+        note: "変形ベースの動的 NeRF が抱えたレンダリング速度の崩壊を直します。同じ canonical + warp のアイデアながら、光線上のサンプルを一つずつ warp して MLP に問い合わせる代わりに、フレームごとにガウシアンを一度だけ変形させてスプラットする — 同じ合成ベンチマークで、変形ベースの TiNeuVox の 1.5 fps から 82 fps へ。"
 status: seed
 i18n:
   ja:
-    problem: "動的放射輝度場は NeRF のコストを二重に相続しました。シーンごとの学習に数日、レンダリングに1フレーム数秒 — どこからでも見られる動画、ただし実際にはリアルタイムでない、を除いて。"
-    solution: "一組の canonical な3Dガウシアンを、ガウシアンごとの動きと形状変化を予測するコンパクトな分解場 (HexPlane 風) が時間にわたって変形させます — 80fps 超・800x600 の動的シーンを数分で学習、canonical ガウシアンを時間で共有してストレージも控えめに。"
-    limitations: "canonical + 変形という設計図の古い借金が持ち越されます。トポロジー変化と長く複雑な動きは単一の canonical セットに負担をかけ、単眼の気軽な動画は多カメラ撮影よりはるかに難しいままです。"
+    problem: "動的放射輝度場は NeRF のコストを相続しました。初期の手法は学習に数日 (D-NeRF は GPU 1枚で2日) を要し、学習を数分に縮めたグリッド系の後継でさえ、描画は毎秒1〜2.5フレーム程度 — どこからでも見られる動画、ただし実際にはリアルタイムでない、を除いて。"
+    solution: "一組の canonical な3Dガウシアンを、ガウシアンごとの動きと形状変化を予測するコンパクトな分解場 (HexPlane 風) が時間にわたって変形させます — 82fps・800x800 の動的シーンを数分で学習、canonical ガウシアンを時間で共有してストレージも控えめに。"
+    limitations: "論文自身によれば、大きな動き、背景点の欠如、不正確なカメラ pose が 4D ガウシアンの最適化を難しくし、単眼動画では学習ビューに過学習して新規視点で破綻することがあります。"

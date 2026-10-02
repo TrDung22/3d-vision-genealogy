@@ -19,23 +19,28 @@ solution: >
   independently. Version 2.1 (June 2025) extends the texture stage to
   physically-based rendering (PBR) materials in the open release.
 limitations: >
-  The two-stage split means texture can't repair shape errors; PBR quality
-  still trails commercial closed tools; and note the marketing framing — its
-  "first production-ready open PBR" claim did not survive independent
-  verification.
+  The two-stage split means texture can't repair shape errors; its wins over
+  closed-source tools are measured against unnamed commercial models; and
+  note the marketing framing — the 2.1 report bills version 2.1 as "the first
+  fully open-sourced solution for PBR-textured 3D asset generation", yet its
+  own comparison includes the open-source 3DTopia-XL, which it says also
+  outputs PBR material maps.
 relations:
   - node: trellis2024
     type: independent
     note: >
-      The same industrial wave, opposite bets: TRELLIS unifies everything into
-      one structured latent; Hunyuan3D splits shape and texture into separately
-      scaled specialists. Neither derives from the other.
+      The same industrial wave, the same core bet — a large flow-matching
+      transformer generating a native 3D latent from one image — split on
+      the latent: TRELLIS unifies geometry and appearance in one structured
+      latent; Hunyuan3D keeps a shape-only latent and paints texture with a
+      separately scaled multi-view model. Hunyuan3D 2 only benchmarks
+      TRELLIS; neither derives from the other.
     i18n:
       ja:
-        note: "同じ産業化の波で、正反対の賭けです。TRELLIS はすべてを一つの構造化潜在にまとめ、Hunyuan3D は形状とテクスチャを別々にスケールさせる専門家に分けました。どちらも他方から生まれてはいません。"
+        note: "同じ産業化の波、同じ核心の賭けです — 一枚の画像からネイティブな3D潜在を生成する、大規模な flow matching トランスフォーマー。分かれたのは潜在の設計でした。TRELLIS は幾何と見た目を一つの構造化潜在にまとめ、Hunyuan3D は形状だけの潜在を保ち、テクスチャは別々にスケールさせた多視点モデルで塗ります。Hunyuan3D 2 は TRELLIS を比較対象として測っただけで、どちらも他方から生まれてはいません。"
 status: seed
 i18n:
   ja:
     problem: "プロダクションのアセットパイプラインに必要なのは幾何だけではありません。ゲームで使える3Dとは、トポロジーに優しい綺麗な形状と高解像度のマテリアルを、産業レベルの信頼性で備えたものです。"
     solution: "スタジオの流儀どおりに問題を分割します。大規模なフローベース形状生成器 (vecset 潜在の拡散) が幾何を作り、独立した多視点テクスチャ合成モデルがそれを塗る — 各段を別々にスケールし最適化するのです。バージョン2.1 (2025年6月) では、公開リリースのままテクスチャ段を物理ベースレンダリング (PBR) マテリアルへ拡張しました。"
-    limitations: "二段構えということは、テクスチャでは形状の誤りを直せないということ。PBR の品質は今も商用クローズドツールに及びません。そしてマーケティングの枠組みには注意 —「初のプロダクション対応オープン PBR」という主張は、独立検証に耐えられませんでした。"
+    limitations: "二段構えということは、テクスチャでは形状の誤りを直せないということ。クローズドなツールに対する勝利も、名前を伏せた商用モデルとの比較で測られたものです。そしてマーケティングの枠組みには注意 — 2.1 のレポートはバージョン2.1を「PBR テクスチャ付き3Dアセット生成のための、初の完全オープンソースのソリューション」と謳いますが、同じレポートの比較対象にはオープンソースの 3DTopia-XL が含まれ、それも PBR マテリアルマップを出力すると自ら書いています。"

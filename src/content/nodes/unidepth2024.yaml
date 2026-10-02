@@ -6,6 +6,7 @@ year: 2024
 branch: single-image-3d
 lane: depth
 links:
+  arxiv: "https://arxiv.org/abs/2403.18913"
   code: "https://github.com/lpiccinelli-eth/UniDepth"
 problem: >
   Metric depth without being told the camera: Metric3D-style approaches still
@@ -21,14 +22,16 @@ limitations: >
   relative-depth foundation models.
 relations:
   - node: metric3d2023
-    type: independent
+    type: fixes
     note: >
-      Parallel routes to camera-aware metric depth: Metric3D normalizes the
-      camera away (canonical space, intrinsics required), UniDepth predicts the
-      camera from the image itself. Same debt, opposite philosophies.
+      Repairs the test-time assumption UniDepth diagnoses in Metric3D (and
+      ZeroDepth): generalizable metric depth that still assumes "controlled
+      setups at test time, including camera intrinsics", so camera noise "is
+      directly injected into the model". Metric3D normalizes a given camera
+      away (canonical space); UniDepth predicts the camera from the image.
     i18n:
       ja:
-        note: "カメラを意識した metric 深度への並行ルートです。Metric3D はカメラを正規化して消し (canonical 空間、内部パラメータ必須)、UniDepth は画像そのものからカメラを予測する。同じ借金に、正反対の哲学。"
+        note: "UniDepth が Metric3D (と ZeroDepth) に見出した、推論時の前提を直します。汎化をめざす metric 深度でありながら「カメラ内部パラメータを含め、推論時に管理された設定」を前提とするため、カメラのノイズが「モデルに直接注入される」。Metric3D は与えられたカメラを正規化して消し (canonical 空間)、UniDepth は画像そのものからカメラを予測します。"
 status: seed
 i18n:
   ja:

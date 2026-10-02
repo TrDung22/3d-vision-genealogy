@@ -1,23 +1,25 @@
 title: "Occupancy Networks: Learning 3D Reconstruction in Function Space"
-short: "Occupancy Networks (2019)"
+short: "Occupancy Networks (2018)"
 authors: "Lars Mescheder, Michael Oechsle, Michael Niemeyer, Sebastian Nowozin, Andreas Geiger"
 venue: "CVPR 2019 (Oral)"
-year: 2019
+year: 2018
 branch: single-image-3d
 lane: object
 links:
   arxiv: "https://arxiv.org/abs/1812.03828"
+  code: "https://github.com/autonomousvision/occupancy_networks"
 problem: >
   Escape the voxel-vs-mesh dilemma: a 3D representation locked to neither a
   resolution nor a topology.
 solution: >
   Change the question entirely: don't pick a data structure — learn a FUNCTION.
   The network learns a continuous implicit function f(point, image) → the
-  probability of being "inside the object"; a mesh is extracted afterwards via
+  probability of being inside the object; a mesh is extracted afterwards via
   marching cubes at any resolution you like.
 limitations: >
   Still lives in the closed ShapeNet world with canonicalized objects; every
-  query point costs a forward pass — surface extraction is slow.
+  query point costs a forward pass — even with its hierarchical extraction
+  (MISE), a mesh takes about 3 s.
 relations:
   - node: pixel2mesh2018
     type: fixes
@@ -31,5 +33,5 @@ status: seed
 i18n:
   ja:
     problem: "ボクセルかメッシュかというジレンマからの脱出 — 解像度にもトポロジーにも縛られない3D表現を。"
-    solution: "問いの立て方ごと変えます。データ構造を選ぶのをやめて、関数を学ぶのです。ネットワークは連続的な陰関数 f(点, 画像) →「物体の内側にある確率」を学習し、メッシュは後から marching cubes で、好きな解像度で取り出せます。"
-    limitations: "それでも、姿勢を正規化した物体が並ぶ閉じた ShapeNet の世界の住人です。クエリ点一つごとに forward 一回 — 表面の抽出は遅いのです。"
+    solution: "問いの立て方ごと変えます。データ構造を選ぶのをやめて、関数を学ぶのです。ネットワークは連続的な陰関数 f(点, 画像) → 物体の内側にある確率を学習し、メッシュは後から marching cubes で、好きな解像度で取り出せます。"
+    limitations: "それでも、姿勢を正規化した物体が並ぶ閉じた ShapeNet の世界の住人です。クエリ点一つごとに forward 一回 — 階層的な抽出 (MISE) を使っても、メッシュ一つに約3秒かかります。"

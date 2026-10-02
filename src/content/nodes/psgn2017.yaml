@@ -1,12 +1,13 @@
 title: "A Point Set Generation Network for 3D Object Reconstruction from a Single Image"
-short: "PSGN (Fan 2017)"
+short: "PSGN (Fan 2016)"
 authors: "Haoqiang Fan, Hao Su, Leonidas Guibas"
-venue: "CVPR 2017"
-year: 2017
+venue: "CVPR 2017 (Oral)"
+year: 2016
 branch: single-image-3d
 lane: object
 links:
   arxiv: "https://arxiv.org/abs/1612.00603"
+  code: "https://github.com/fanhqme/PointSetGeneration"
 problem: >
   Break the voxel resolution ceiling: represent 3D shape without cost exploding
   cubically with detail.
@@ -16,7 +17,9 @@ solution: >
   sets — later standard equipment for the whole point-cloud community.
 limitations: >
   Discrete points carry no surface topology: no direct rendering, no 3D
-  printing, no normals. "3D dust" rather than an object.
+  printing, no normals — as Pixel2Mesh put it, the generated point cloud "is
+  usually not close to a surface and cannot be used to recover a 3D mesh
+  directly". 3D dust rather than an object.
 relations:
   - node: r2n2-2016
     type: fixes
@@ -31,4 +34,4 @@ i18n:
   ja:
     problem: "ボクセルの解像度の天井を破る — ディテールを増やしてもコストが3乗で爆発しない3D形状表現を。"
     solution: "画像から点群を直接生成します。いちばん息の長い貢献は、点集合の順序のなさを扱う Chamfer / EMD というロスの組 — のちに点群コミュニティ全体の標準装備になりました。"
-    limitations: "離散的な点は表面のトポロジーを持ちません。直接レンダリングも3Dプリントもできず、法線もない。物体というより「3Dの塵」です。"
+    limitations: "離散的な点は表面のトポロジーを持ちません。直接レンダリングも3Dプリントもできず、法線もない — Pixel2Mesh の言葉を借りれば、生成された点群は「たいてい表面に近くなく、そこから3Dメッシュを直接復元することはできない」。物体というより3Dの塵です。"

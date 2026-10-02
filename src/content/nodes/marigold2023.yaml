@@ -1,4 +1,4 @@
-title: "Marigold: Repurposing Diffusion-Based Image Generators for Monocular Depth Estimation"
+title: "Repurposing Diffusion-Based Image Generators for Monocular Depth Estimation"
 short: "Marigold (2023)"
 authors: "Bingxin Ke, Anton Obukhov, Shengyu Huang, Nando Metzger, Rodrigo Caye Daudt, Konrad Schindler"
 venue: "CVPR 2024 (Oral, Best Paper Award Candidate)"
@@ -7,6 +7,7 @@ branch: single-image-3d
 lane: depth
 links:
   arxiv: "https://arxiv.org/abs/2312.02145"
+  code: "https://github.com/prs-eth/Marigold"
   project: "https://marigoldmonodepth.github.io/"
 problem: >
   Achieve generalization WITHOUT hoarding millions of depth-labeled images —
@@ -17,21 +18,26 @@ solution: >
   synthetic dataset — the prior comes not from depth labels but from having
   seen billions of internet images.
 limitations: >
-  Slow (many denoising steps per depth map) and still relative depth; quality
-  is bounded by the prior of the underlying generative model.
+  Slow (in the paper's setting, 50 denoising steps ensembled over 10 runs per
+  depth map) and still affine-invariant (relative) depth; by its own account, inference
+  efficiency, consistency across similar inputs, and distant scene parts
+  remain open.
 relations:
   - node: dpt2021
-    type: independent
+    type: fixes
     note: >
-      A different road to the same generalization destination: the MiDaS/DPT
-      line scales LABELED DATA, Marigold borrows a GENERATIVE PRIOR. Two
-      philosophies running in parallel, neither descending from the other.
+      Fixes the weakness Marigold names in the MiDaS/DPT line: however large
+      the model, its "knowledge of the visual world is restricted by the data
+      seen during training". The fix borrows Stable Diffusion's internet-scale
+      prior instead: fine-tuned on only 74K synthetic samples, it beats DPT
+      (1.2M real + 188K synthetic training images) on four of five zero-shot
+      benchmarks.
     i18n:
       ja:
-        note: "同じ「汎化」という目的地への別ルートです。MiDaS/DPT 路線はラベル付きデータをスケールさせ、Marigold は生成の事前知識を借りる。二つの哲学が並走し、どちらも他方の子ではありません。"
+        note: "Marigold が MiDaS/DPT 路線に名指しした弱点 — モデルがどれほど大きくなっても、その「視覚世界についての知識は学習時に見たデータに制限される」こと — を直します。処方は、Stable Diffusion が持つインターネット規模の事前知識を借りること。わずか7.4万件の合成サンプルで微調整しただけで、DPT (実画像120万枚 + 合成18.8万枚で学習) を五つのゼロショット benchmark のうち四つで上回りました。"
 status: seed
 i18n:
   ja:
     problem: "何百万枚もの深度ラベル付き画像を溜め込まずに汎化を達成する — ラベル集めの競争には、ゴールがないからです。"
     solution: "Stable Diffusion の中にすでにある視覚的な「理解」を借ります。画像生成器を小さな合成データセットだけで軽く微調整し、深度生成器に仕立てる — 事前知識は深度ラベルからではなく、何十億枚ものインターネット画像を見てきた経験から来るのです。"
-    limitations: "遅い (深度マップ一枚に何ステップものデノイズが要る) うえ、依然として相対深度です。品質は土台の生成モデルが持つ事前知識に頭を抑えられます。"
+    limitations: "遅い (論文の設定では、深度マップ一枚につき50ステップのデノイズを10回分アンサンブル) うえ、依然としてアフィン不変 (相対) の深度です。推論の効率、似た入力への一貫した出力、遠景の扱いは、本人たちも未解決の課題として挙げています。"

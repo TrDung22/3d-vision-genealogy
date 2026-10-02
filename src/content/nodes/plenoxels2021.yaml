@@ -1,7 +1,7 @@
 title: "Plenoxels: Radiance Fields without Neural Networks"
 short: "Plenoxels (2021)"
 authors: "Sara Fridovich-Keil*, Alex Yu*, Matthew Tancik, Qinhong Chen, Benjamin Recht, Angjoo Kanazawa (UC Berkeley)"
-venue: "CVPR 2022"
+venue: "CVPR 2022 (Oral)"
 year: 2021
 branch: neural-rendering
 lane: efficiency

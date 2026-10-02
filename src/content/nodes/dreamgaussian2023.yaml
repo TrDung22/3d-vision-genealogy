@@ -9,28 +9,34 @@ links:
   arxiv: "https://arxiv.org/abs/2309.16653"
   code: "https://github.com/dreamgaussian/dreamgaussian"
 problem: >
-  The SDS optimization loop of the Zero-1-to-3 era took hours per object —
-  because it was distilling into a NeRF, the slowest possible canvas.
+  The SDS optimization loop of the Zero-1-to-3 era took tens of minutes to
+  hours per object — because it was distilling into a NeRF, whose costly
+  rendering the usual pruning speed-ups fail to accelerate under SDS.
 solution: >
   Swap the canvas: run score distillation into 3D Gaussians instead of a NeRF.
   Progressive densification converges dramatically faster for generation, and
   a mesh-extraction + UV texture-refinement stage outputs a usable textured
   mesh in ~2 minutes — a ~10x speedup.
 limitations: >
-  Inherits SDS's mode-seeking artifacts (saturation, Janus faces); Gaussians
-  make optimization fast but geometry extraction lossy — the quality ceiling
-  still belongs to slower pipelines.
+  Inherits the SDS line's familiar artifacts (Janus faces, over-saturated
+  texture, baked lighting — problems the authors say it shares with previous
+  works), and its image-to-3D back views can look blurry, they note.
+  Gaussians make optimization fast, but by the authors' own comparison its
+  mesh quality falls slightly behind slower optimization-based pipelines —
+  the quality ceiling still belongs to them.
 relations:
   - node: zero123-2023
     type: fixes
     note: >
-      Repairs the speed bottleneck of per-object distillation: hours of
-      NeRF-SDS become ~2 minutes by adopting 3D Gaussian Splatting (the
-      neural-rendering branch's 2023 breakthrough) as the target
-      representation — an explicit cross-branch import.
+      Repairs the weakness it names in Zero-1-to-3 — combined with SDS, it
+      "still suffers from long optimization time" (~20 minutes per object in
+      DreamGaussian's own comparison). Keeping Zero-1-to-3 (XL) as the 2D
+      prior, it swaps the NeRF canvas for 3D Gaussian Splatting (the
+      neural-rendering branch's 2023 breakthrough) and lands at ~2 minutes —
+      an explicit cross-branch import.
     i18n:
       ja:
-        note: "物体ごとの蒸留の速度ボトルネックを直します。NeRF-SDS の数時間が、3D Gaussian Splatting (ニューラルレンダリング枝の2023年のブレイクスルー) をターゲット表現に採ることで約2分に — 明示的な枝またぎの輸入です。"
+        note: "Zero-1-to-3 について自ら指摘した弱点 — SDS と組み合わせると「依然として最適化に長い時間がかかる」 (DreamGaussian 自身の比較で物体一つ約20分) — を直します。2D prior には Zero-1-to-3 (XL) を残したまま、NeRF のキャンバスを 3D Gaussian Splatting (ニューラルレンダリング枝の2023年のブレイクスルー) に替え、約2分に収めました — 明示的な枝またぎの輸入です。"
   - node: 3dgs2023
     type: builds-on
     note: >
@@ -43,6 +49,6 @@ relations:
 status: seed
 i18n:
   ja:
-    problem: "Zero-1-to-3 時代の SDS 最適化ループは、物体一つに何時間もかかりました — 蒸留先が NeRF という、考えうる限り最も遅いキャンバスだったからです。"
+    problem: "Zero-1-to-3 時代の SDS 最適化ループは、物体一つに数十分から数時間かかりました — 蒸留先が NeRF で、そのコストの高いレンダリングは、SDS のもとでは通常の枝刈りによる高速化も効かなかったからです。"
     solution: "キャンバスを替えます。score distillation の受け皿を NeRF から 3D Gaussian へ。段階的な densification により生成の収束は劇的に速くなり、メッシュ抽出 + UV テクスチャ精錬の段を経て、約2分で使えるテクスチャ付きメッシュが出てきます — およそ10倍の高速化です。"
-    limitations: "SDS の mode-seeking なアーティファクト (色の飽和、Janus 顔) は相続したまま。Gaussian は最適化を速くする一方で幾何の抽出には損失があり — 品質の天井は、今も遅いパイプラインの側にあります。"
+    limitations: "SDS 路線おなじみのアーティファクト (Janus 顔、色の飽和したテクスチャ、焼き込まれた照明 — 著者ら自身が先行研究と共通の問題だと認めています) は相続したまま。画像からの3Dでは背面がぼやけることがある、とも著者らは記しています。Gaussian は最適化を速くする一方、著者ら自身の比較でもメッシュ品質は遅い最適化ベースのパイプラインにわずかに及ばず — 品質の天井は、今もそちらの側にあります。"

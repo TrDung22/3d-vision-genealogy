@@ -8,25 +8,26 @@ lane: human
 links:
   arxiv: "https://arxiv.org/abs/1712.06584"
   project: "https://akanazawa.github.io/hmr/"
+  code: "https://github.com/akanazawa/hmr"
 problem: >
   3D human pose AND shape from one photo. Optimization-based fitting
   (SMPLify) is slow and brittle, and images paired with 3D bodies barely
   exist — especially in the wild.
 solution: >
   Regress SMPL parameters directly with a network, end to end: a 2D keypoint
-  reprojection loss replaces 3D supervision, and an adversarial prior
-  (a discriminator over real body parameters) keeps the regressed bodies
-  anatomically plausible. Parametric human recovery becomes a single
-  feed-forward pass on in-the-wild images.
+  reprojection loss stands in for scarce paired 3D supervision (it can even
+  train with none), and an adversarial prior (a discriminator over real body
+  parameters) keeps the regressed bodies anatomically plausible. Parametric
+  human recovery becomes a single feed-forward pass on in-the-wild images.
 limitations: >
   The output is a naked, smooth parametric mannequin — no clothing, no hair
   (the opening PIFu drove through) — hands and face are rigid, and in-the-wild
   robustness under occlusion and rare poses remained the lineage's standing
-  debt for years.
+  debt for years: SAM 3D Body was still diagnosing it in 2025.
 relations: []
 status: seed
 i18n:
   ja:
     problem: "一枚の写真から、3D人体の姿勢と体型の両方を。最適化ベースのフィッティング (SMPLify) は遅くて脆く、3D人体とペアになった画像はほとんど存在しません — 野外の写真ならなおさらです。"
-    solution: "SMPL パラメータをネットワークで直接、end-to-end に回帰します。3Dの教師信号の代わりに2Dキーポイントの再投影ロスを使い、敵対的 prior (実在の人体パラメータ上の discriminator) が回帰された体を解剖学的に妥当な範囲に保つ。パラメトリックな人体復元が、野外画像への一回のフィードフォワードになりました。"
-    limitations: "出力はつるりとした裸のパラメトリック・マネキンです — 服も髪もない (まさに PIFu が突いた穴)。手と顔は硬直したままで、遮蔽や珍しい姿勢への頑健さは、この血統に長年積み残された借金でした。"
+    solution: "SMPL パラメータをネットワークで直接、end-to-end に回帰します。乏しいペアの3D教師信号の代わりを2Dキーポイントの再投影ロスが務め (ペアの3Dデータなしでも学習できます)、敵対的 prior (実在の人体パラメータ上の discriminator) が回帰された体を解剖学的に妥当な範囲に保つ。パラメトリックな人体復元が、野外画像への一回の feed-forward になりました。"
+    limitations: "出力はつるりとした裸のパラメトリック・マネキンです — 服も髪もない (まさに PIFu が突いた穴)。手と顔は硬直したままで、遮蔽や珍しい姿勢への頑健さは、この血統に長年積み残された借金でした — 2025年の SAM 3D Body がなお指摘していたほどに。"

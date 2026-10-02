@@ -12,8 +12,8 @@ problem: >
   LRM proved feed-forward 3D but stayed closed and output NeRFs; practitioners
   needed an open pipeline that ends in a clean mesh.
 solution: >
-  Compose the two open threads: a multiview diffusion front-end (Zero123++
-  style) imagines sparse views, an LRM-style transformer reconstructs from
+  Compose the two open threads: a multiview diffusion front-end (a fine-tuned
+  Zero123++) imagines sparse views, an LRM-style transformer reconstructs from
   them, and differentiable iso-surface extraction (FlexiCubes) trains the
   model to output meshes directly — open weights, ~10 seconds per asset.
 limitations: >
@@ -24,23 +24,27 @@ relations:
   - node: lrm2023
     type: builds-on
     note: >
-      Opens and extends the LRM recipe: sparse imagined views instead of one
-      image, and mesh-native training instead of NeRF output.
+      Builds on the LRM architecture, initialized from the open-source OpenLRM
+      weights; following Instant3D, it feeds the model sparse imagined views
+      instead of one image, and its own step is mesh-native training
+      (FlexiCubes) instead of NeRF output.
     i18n:
       ja:
-        note: "LRM のレシピを公開し、押し広げます。一枚の画像の代わりに疎な想像視点を、NeRF 出力の代わりにメッシュ本位の学習を。"
+        note: "LRM のアーキテクチャの上に立ち、オープンソースの OpenLRM の重みから初期化します。Instant3D に倣って一枚の画像の代わりに疎な想像視点を入力し、独自の一歩は、NeRF 出力の代わりにメッシュ本位で学習すること (FlexiCubes) でした。"
   - node: triposr2024
-    type: independent
+    type: fixes
     note: >
-      Two open LRM descendants weeks apart: TripoSR optimizes for raw speed
-      from a single image, InstantMesh for mesh quality via multiview
-      conditioning.
+      Five weeks later, it benchmarks TripoSR and names its weakness: from one
+      image it "lacks the imagination ability and tends to generate degraded
+      geometry and textures on the back" when the input is free-style.
+      Imagining the unseen views with multiview diffusion first, then
+      reconstructing from them, is the repair.
     i18n:
       ja:
-        note: "数週間差で現れた、LRM の二つのオープンな後継です。TripoSR は一枚の画像からの純粋な速さを、InstantMesh は多視点条件付けによるメッシュ品質を追いました。"
+        note: "5週間後、TripoSR をベースラインに据えてその弱点を名指しします。一枚の画像からでは、入力が自由なスタイルだと「想像力を欠き、背面の幾何とテクスチャが劣化しがち」。見えない視点をまず多視点拡散で想像し、そこから再構成する — それが修正でした。"
 status: seed
 i18n:
   ja:
     problem: "LRM はフィードフォワード3Dを証明しつつも非公開のままで、出力は NeRF でした。実務家に必要だったのは、綺麗なメッシュで終わるオープンなパイプラインです。"
-    solution: "二本のオープンな糸を編み合わせます。多視点拡散のフロントエンド (Zero123++ 流) が疎な視点を想像し、LRM 流トランスフォーマーがそこから再構成、微分可能な等値面抽出 (FlexiCubes) がモデルにメッシュを直接出力させる — 重みは公開、アセット一つ約10秒です。"
+    solution: "二本のオープンな糸を編み合わせます。多視点拡散のフロントエンド (微調整した Zero123++) が疎な視点を想像し、LRM 流トランスフォーマーがそこから再構成、微分可能な等値面抽出 (FlexiCubes) がモデルにメッシュを直接出力させる — 重みは公開、アセット一つ約10秒です。"
     limitations: "品質は多視点フロントエンドの一貫性に頭を抑えられます。幾何は滑らかさに偏りがちで、Objaverse 育ちのモデルの例に漏れず、背景の綺麗な物体中心の画像世界の住人です。"

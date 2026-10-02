@@ -6,7 +6,8 @@ year: 2024
 branch: single-image-3d
 lane: depth
 links:
-  arxiv: "https://arxiv.org/abs/2507.02546"
+  arxiv: "https://arxiv.org/abs/2410.19115"
+  moge-2: "https://arxiv.org/abs/2507.02546"
   code: "https://github.com/microsoft/MoGe"
 problem: >
   A depth map is not geometry: it hides the camera, entangles focal length with
@@ -22,21 +23,23 @@ solution: >
 limitations: >
   Still single-image and static; the affine-invariant trick defers but does not
   eliminate the scale question (the metric branch is a separate head); and the
-  self-reported "all three at once" claim rests on benchmark averages, not a
-  new theory of the ambiguity.
+  self-reported claim to capabilities "no previous methods have simultaneously
+  achieved" rests on benchmark averages, not a new theory of the ambiguity.
 relations:
   - node: depthanythingv2-2024
     type: fixes
     note: >
-      Moves the goalposts of the whole depth lane: from ever-better depth maps
-      to full point maps with camera geometry built in — with a supervision
-      scheme the depth-map paradigm structurally couldn't express.
+      Moves the goalposts of the whole depth lane: Depth Anything V2 predicts
+      depth maps that, in MoGe's words, "require ground truth camera focal to
+      obtain 3D points cloud results". MoGe predicts the point map itself,
+      camera geometry built in, and trains it with an optimal alignment solver
+      where earlier scale-and-shift alignment was outlier-prone or approximate.
     i18n:
       ja:
-        note: "深度レーン全体のゴールポストを動かしました。ひたすら良くなる深度マップから、カメラ幾何を内蔵した完全な点マップへ — 深度マップというパラダイムには構造的に書き表せなかった教師信号とともに。"
+        note: "深度レーン全体のゴールポストを動かしました。Depth Anything V2 が予測するのは深度マップで、MoGe の言葉を借りれば「3D点群の結果を得るには ground truth のカメラ焦点距離が必要」です。MoGe は点マップそのものをカメラ幾何ごと予測し、従来のスケール・シフト整列が外れ値に弱いか近似どまりだったところを、最適な整列ソルバーで学習します。"
 status: seed
 i18n:
   ja:
     problem: "深度マップはまだ幾何ではありません。カメラを隠し、焦点距離と形状を絡ませ、誰もが使える点群にするには後付けの内部パラメータが要るのです。"
-    solution: "予測ターゲットそのものを替えます。アフィン不変の点マップを回帰する — 一回の forward で完全な3D幾何と復元可能な FOV が同時に手に入り、深度マップ路線には書けなかった最適なアフィン整列の教師信号で学習します。MoGe-2 (NeurIPS 2025) は metric 出力用に切り離したグローバルスケール分岐と、ノイズだらけの LiDAR/SfM ラベルを選別・補完するデータ精錬パイプラインを加え、相対幾何・metric スケール・微細ディテールの三つを初めて同時に取ったと主張します。"
-    limitations: "依然として単一画像かつ静的です。アフィン不変の技はスケール問題を先送りするだけで消しはせず (metric 分岐は別ヘッド)、自己申告の「三つ同時」もベンチマーク平均の話であって、曖昧性への新しい理論ではありません。"
+    solution: "予測ターゲットそのものを替えます。アフィン不変の点マップを回帰する — 一回の forward で完全な3D幾何と復元可能な FOV が同時に手に入り、深度マップ路線に欠けていた最適なアフィン整列の教師信号で学習します。MoGe-2 (NeurIPS 2025) は metric 出力用に切り離したグローバルスケール分岐と、ノイズだらけの LiDAR/SfM ラベルを選別・補完するデータ精錬パイプラインを加え、相対幾何・metric スケール・微細ディテールの三つを初めて同時に取ったと主張します。"
+    limitations: "依然として単一画像かつ静的です。アフィン不変の技はスケール問題を先送りするだけで消しはせず (metric 分岐は別ヘッド)、「これまでどの手法も同時には達成していない」という自己申告の主張も benchmark 平均の話であって、曖昧性への新しい理論ではありません。"

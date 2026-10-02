@@ -14,26 +14,31 @@ problem: >
 solution: >
   Factorize it: decompose the scene tensor into compact vector-matrix
   components (low-rank planes and lines). Quality above NeRF at minutes of
-  training, in tens of MB instead of gigabytes — the scene as a low-rank
-  object.
+  training, in tens of MB where per-voxel grids need hundreds — the scene as
+  a low-rank object.
 limitations: >
-  Axis-aligned factorization struggles with unbounded scenes and can smear
-  detail across planes. Its lasting legacy is elsewhere: factored plane
-  representations became the triplane backbone of generative 3D (EG3D, LRM)
-  and dynamic fields (K-Planes).
+  One bounding box only: by its own account it cannot handle unbounded
+  scenes with background content, and its CP variant needs ever more
+  components (and training time) as scenes get complex. Its lasting legacy
+  is the factored plane itself, carried into dynamic fields (K-Planes);
+  generative 3D's triplane is a sibling, not an heir — EG3D published it
+  first (TensoRF reads it as a special case of its VM factorization), and
+  LRM took it from EG3D.
 relations:
   - node: plenoxels2021
     type: fixes
     note: >
-      Repairs the memory blowup that came with deleting the network: keeps
-      the fast direct-optimization recipe but compresses the explicit grid
-      ~100x via low-rank tensor decomposition.
+      Repairs the memory blowup of optimizing every voxel directly, which
+      TensoRF diagnoses in Plenoxels ("huge model sizes"): keeps the fast
+      direct-optimization recipe but factorizes the grid into low-rank
+      vectors and matrices — 778 MB for Plenoxels vs 72 MB for TensoRF-VM
+      (under 4 MB with CP) on Synthetic-NeRF.
     i18n:
       ja:
-        note: "ネットワークを消したことに伴うメモリの膨張を直します。速い直接最適化のレシピを保ちつつ、明示的グリッドを低ランクテンソル分解で約100倍圧縮しました。"
+        note: "すべてのボクセルを直接最適化することに伴うメモリの膨張 — TensoRF が Plenoxels に見た「巨大なモデルサイズ」 — を直します。速い直接最適化のレシピを保ちつつ、グリッドを低ランクのベクトルと行列に分解しました。Synthetic-NeRF で、Plenoxels の 778 MB に対し TensoRF-VM は 72 MB (CP なら 4 MB 未満) です。"
 status: seed
 i18n:
   ja:
     problem: "グリッドの反乱は、メモリを支払って速度を買いました。radiance のボクセルグリッドは巨大な4Dテンソルで、その大半は冗長なのです。"
-    solution: "それを分解します。シーンのテンソルをコンパクトなベクトル・行列成分 (低ランクの平面と線) に分ける。数分の学習で NeRF を超える品質を、ギガバイトではなく数十 MB で — シーンを低ランクの対象として扱うのです。"
-    limitations: "軸整列の分解は非有界シーンを苦手とし、ディテールが平面をまたいで滲むことがあります。最も長く残った遺産は別のところに — 分解された平面表現が、生成3D (EG3D、LRM) と動的場 (K-Planes) の triplane バックボーンになりました。"
+    solution: "それを分解します。シーンのテンソルをコンパクトなベクトル・行列成分 (低ランクの平面と線) に分ける。数分の学習で NeRF を超える品質を、ボクセルごとのグリッドなら数百 MB かかるところ数十 MB で — シーンを低ランクの対象として扱うのです。"
+    limitations: "使えるのはバウンディングボックス一つだけです。論文自身によれば、背景を含む非有界シーンは扱えず、CP 版はシーンが複雑になるほど多くの成分 (と学習時間) を要します。最も長く残った遺産は分解された平面そのもので、動的場 (K-Planes) へと受け継がれました。生成3D の triplane は子孫ではなく兄弟です — 先に発表したのは EG3D で (TensoRF 自身はそれを自らの VM 分解の特殊形と読んでいます)、LRM は EG3D からそれを受け継ぎました。"

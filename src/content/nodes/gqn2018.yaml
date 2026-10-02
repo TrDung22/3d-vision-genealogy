@@ -1,4 +1,4 @@
-title: "Neural Scene Representation and Rendering (Generative Query Networks)"
+title: "Neural Scene Representation and Rendering"
 short: "GQN (2018)"
 authors: "S. M. Ali Eslami, Danilo Jimenez Rezende, et al. (DeepMind)"
 venue: "Science, 2018"
@@ -17,14 +17,17 @@ solution: >
   viewpoint. Everything — representation and renderer — is learned end to
   end from data.
 limitations: >
-  Only works on toy synthetic rooms; the unstructured latent guarantees no
-  3D consistency, and quality collapses on real scenes. The field's verdict
-  was to ADD 3D structure back (SRN, NeRF) — but the pure-learning bet was
-  merely early, not wrong, as LVSM argued seven years later.
+  Shown only in synthetic environments (rooms, mazes, a robot arm) — by its
+  authors' account, for controlled analysis and for want of suitable real
+  datasets and hardware; and, as SRN later put it, its representation and
+  renderer are both "oblivious to the scene's 3D structure", so nothing
+  guarantees 3D consistency. The field's verdict was to ADD 3D structure back
+  (SRN, NeRF) — though rendering without explicit 3D came back at transformer
+  scale, through SRT and then LVSM.
 relations: []
 status: seed
 i18n:
   ja:
     problem: "システムは、人が作った3Dの仕掛けを一切使わずに — 幾何も、射影も、ラベルもなしに — ただ画像を見て動くだけで、3Dシーンの知覚を学べるのか?"
     solution: "Generative Query Network です。エンコーダがポーズ付きの数枚を潜在ベクトルへ圧縮し、生成デコーダが任意のクエリ視点からシーンを描く。表現もレンダラーも、すべてがデータから end-to-end で学習されます。"
-    limitations: "動くのはおもちゃのような合成の部屋だけ。構造なき潜在表現は3D一貫性を保証せず、実シーンでは品質が崩れます。分野の判決は「3D構造を戻す」でした (SRN、NeRF) — しかし純粋学習の賭けは、7年後に LVSM が論じたように、間違いだったのではなく、ただ早すぎただけでした。"
+    limitations: "示されたのは合成環境 (部屋、迷路、ロボットアーム) だけです — 著者たちによれば、統制された分析のためであり、また適した実データとハードウェアが足りなかったためです。そして SRN がのちに指摘したとおり、表現もレンダラーも「シーンの3D構造を意識していない」ため、3D一貫性を保証するものは何もありません。分野の判決は「3D構造を戻す」でした (SRN、NeRF) — ただし、明示的な3Dなしでレンダリングするという路線は、SRT、そして LVSM を通じて、トランスフォーマー規模で戻ってきました。"

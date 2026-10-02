@@ -16,21 +16,24 @@ solution: >
   training/rendering details, open weights + code, objects reconstructed in
   under 0.5 seconds.
 limitations: >
-  Geometry still trails the slow optimization pipelines; back-side texture and
-  complex objects remain weak. Its historical role, though, is DEMOCRATIZING
-  the feed-forward line.
+  As InstantMesh and TripoSG later diagnosed, a deterministic single-image
+  regressor lacks imagination for unseen sides: back-side geometry and texture
+  degrade on free-style inputs, with artifacts in occluded areas. Its
+  historical role, though, is DEMOCRATIZING the feed-forward line.
 relations:
   - node: lrm2023
     type: builds-on
     note: >
-      Inherits the LRM recipe and settles its "closed-source" debt — opening
-      the way for the community to climb onto this line's shoulders.
+      Inherits the LRM architecture and, released under the MIT license,
+      offers a stronger open model than the OpenLRM reimplementation it
+      benchmarks against — opening the way for the community to climb onto
+      this line's shoulders.
     i18n:
       ja:
-        note: "LRM のレシピを受け継ぎ、その「クローズドソース」の借金を清算しました — コミュニティがこの路線の肩に乗れる道を開いたのです。"
+        note: "LRM のアーキテクチャを受け継ぎ、MIT ライセンスで公開することで、比較対象とした再実装 OpenLRM よりも強いオープンなモデルを提供しました — コミュニティがこの路線の肩に乗れる道を開いたのです。"
 status: seed
 i18n:
   ja:
     problem: "LRM はフィードフォワード3Dが成り立つことを証明しましたが、クローズドソースのまま — コミュニティに必要だったのは、普通のハードウェアで動く、開かれた高速版です。"
     solution: "LRM のレシピを再現し、磨き上げます。Objaverse データのキュレーションと学習・レンダリングの細部を改善し、重みとコードを公開。物体の再構成は0.5秒を切ります。"
-    limitations: "幾何は今も遅い最適化パイプラインに及ばず、背面のテクスチャや複雑な物体は弱いまま。それでも歴史的な役割は、フィードフォワード路線の民主化にあります。"
+    limitations: "後に InstantMesh と TripoSG が診断したとおり、決定的な単一画像の回帰器は見えない側を想像できません。自由なスタイルの入力では背面の幾何とテクスチャが劣化し、遮蔽領域にはアーティファクトが出ます。それでも歴史的な役割は、フィードフォワード路線の民主化にあります。"

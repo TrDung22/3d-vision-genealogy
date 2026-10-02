@@ -7,17 +7,19 @@ branch: single-image-3d
 lane: object
 links:
   arxiv: "https://arxiv.org/abs/1901.05103"
+  code: "https://github.com/facebookresearch/DeepSDF"
 problem: >
-  The same problem as Occupancy Networks: a continuous shape representation locked to
-  neither resolution nor topology.
+  The same problem as Occupancy Networks: a continuous shape representation
+  locked to neither resolution nor topology.
 solution: >
   Learn a continuous signed distance function (SDF) with an MLP + an
   auto-decoder that optimizes a latent code per shape; an SDF also gives you
   surface normals and distance-to-surface for free.
 limitations: >
-  Inference requires optimizing the latent code (slow, initialization-
-  sensitive); just as boxed into ShapeNet as the rest of the object-
-  reconstruction line.
+  Inference requires optimizing the latent code — by its own account,
+  auto-decoding "takes considerably more time during inference" — and it
+  assumes shapes in a canonical pose; just as boxed into ShapeNet as the rest
+  of the object-reconstruction line.
 relations:
   - node: occnet2019
     type: independent
@@ -33,4 +35,4 @@ i18n:
   ja:
     problem: "Occupancy Networks と同じ問題 — 解像度にもトポロジーにも縛られない、連続的な形状表現を。"
     solution: "MLP で連続的な符号付き距離関数 (SDF) を学習し、auto-decoder が形状ごとに潜在コードを最適化します。SDF なら表面の法線も表面までの距離もおまけで手に入ります。"
-    limitations: "推論のたびに潜在コードの最適化が要ります (遅く、初期値に敏感)。そして物体再構成の路線の例に漏れず、ShapeNet の箱の中に閉じ込められたままです。"
+    limitations: "推論のたびに潜在コードの最適化が要ります — 本人いわく、auto-decoding は「推論時にかなり多くの時間を要する」。形状が正準的な pose に置かれていることも前提です。そして物体再構成の路線の例に漏れず、ShapeNet の箱の中に閉じ込められたままです。"

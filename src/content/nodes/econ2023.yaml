@@ -1,38 +1,45 @@
 title: "ECON: Explicit Clothed humans Optimized via Normal integration"
-short: "ECON (2023)"
+short: "ECON (2022)"
 authors: "Yuliang Xiu, Jinlong Yang, Xu Cao, Dimitrios Tzionas, Michael J. Black"
 venue: "CVPR 2023 (Highlight)"
-year: 2023
+year: 2022
 branch: single-image-3d
 lane: human
 links:
   arxiv: "https://arxiv.org/abs/2212.07422"
   code: "https://github.com/YuliangXiu/ECON"
 problem: >
-  The implicit human line breaks where it matters: loose clothing and unusual
-  poses yield non-human blobs, because nothing anchors the surface to a body.
+  The implicit human line breaks where it matters: novel poses or clothes
+  yield disembodied limbs and degenerate blobs, because nothing anchors the
+  surface to a body — yet the usual fix, constraining it with a body model,
+  limits the recovery of loose clothing that drifts away from the body.
 solution: >
   A hybrid: keep the explicit SMPL-X body as scaffold, predict front/back
-  normal maps, then integrate them into detailed surfaces (d-BiNI) that are
-  stitched onto the body — implicit-level detail with explicit-level
-  robustness, even for flowing garments.
+  normal maps, integrate them into detailed front and back surfaces (d-BiNI)
+  registered with the body's help, then inpaint the gaps and stitch the
+  pieces together — implicit-level detail with explicit-level robustness,
+  even for flowing garments.
 limitations: >
-  Reconstruction-only and per-image optimization; texture and the fully unseen
-  regions still need generative help — pointing straight at the generative
-  convergence that SAM 3D Body later embodied.
+  Reconstruction-only, with per-image optimization, and by its own account a
+  failed SMPL-X estimate can become an ECON failure. It recovers geometry
+  only — back-view texture would have to be generated — and it pictures
+  ECON-like reconstructions at scale as training data for generative models
+  of clothed avatars.
 relations:
   - node: pifuhd2020
     type: fixes
     note: >
-      Repairs the no-body-prior failure mode: where pure pixel-aligned
-      implicits hallucinate broken anatomy, ECON's explicit SMPL-X scaffold
-      guarantees a human underneath the details.
+      Repairs the failure ECON diagnoses in PIFu(HD): with "no explicit
+      knowledge about the human body's structure", pixel-aligned implicits
+      "produce disembodied limbs or degenerate shapes for images with novel
+      poses". ECON's explicit SMPL-X scaffold anchors the details to a human
+      body.
     i18n:
       ja:
-        note: "「体の prior なし」という壊れ方を直します。純粋なピクセル整列の陰関数が崩れた解剖を幻視するところで、ECON の明示的な SMPL-X 足場は、ディテールの下に必ず人間がいることを保証するのです。"
+        note: "ECON が PIFu(HD) に見出した壊れ方を直します。「人体の構造についての明示的な知識を持たない」ピクセル整列の陰関数は、「見慣れない pose の画像に対して、ちぎれた手足や崩れた形状を生み出す」。ECON の明示的な SMPL-X 足場は、ディテールを人間の体につなぎ止めます。"
 status: seed
 i18n:
   ja:
-    problem: "陰関数の人体路線は、肝心なところで壊れます。ゆったりした服や珍しい姿勢では人間ならざる塊が出てくる — 表面を体につなぎ止めるものが何もないからです。"
-    solution: "ハイブリッドです。明示的な SMPL-X ボディを足場として残し、前面・背面の法線マップを予測、それを積分して得た詳細な表面 (d-BiNI) を体に縫い付ける — 陰関数級のディテールと明示表現級の頑健さを、なびく衣服にまで。"
-    limitations: "再構成のみで、画像ごとの最適化も残ります。テクスチャと完全に見えない領域には依然として生成の助けが必要 — のちに SAM 3D Body が体現する「生成への合流」を、まっすぐ指さしています。"
+    problem: "陰関数の人体路線は、肝心なところで壊れます。見慣れない pose や服では、ちぎれた手足や崩れた塊が出てくる — 表面を体につなぎ止めるものが何もないからです。かといって、よくある処方どおり体モデルで縛れば、体から離れてなびくゆったりした服の復元が制限されてしまいます。"
+    solution: "ハイブリッドです。明示的な SMPL-X ボディを足場として残し、前面・背面の法線マップを予測、それを積分して前後の詳細な表面 (d-BiNI) を得て体の助けで位置を合わせ、隙間を補完してから縫い合わせる — 陰関数級のディテールと明示表現級の頑健さを、なびく衣服にまで。"
+    limitations: "再構成のみで、画像ごとの最適化も残ります。本人いわく、SMPL-X の推定が失敗すれば ECON も失敗しうる。復元するのは幾何だけで、背面のテクスチャは生成するしかありません — そして ECON 的な再構成を大規模に集めて、服を着たアバターの生成モデルの学習データにする未来を描いています。"

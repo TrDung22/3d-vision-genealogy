@@ -7,9 +7,10 @@ branch: neural-rendering
 lane: scene-reps
 links:
   arxiv: "https://arxiv.org/abs/2006.10739"
+  code: "https://github.com/tancik/fourier-feature-networks"
   project: "https://bmild.github.io/fourfeat/"
 problem: >
-  NeRF only works because of a mysterious hack — the "positional encoding"
+  NeRF's fine detail hinges on a heuristic hack — the "positional encoding"
   that maps coordinates through sinusoids before the MLP. Why does it work,
   and what happens without it?
 solution: >
@@ -25,25 +26,26 @@ relations:
   - node: nerf2020
     type: builds-on
     note: >
-      From the NeRF team itself: extracts the one component NeRF couldn't
-      explain — positional encoding — and gives it a theory, turning an
-      empirical trick into reusable infrastructure for every coordinate
-      network since.
+      From the NeRF team itself: extracts the one component NeRF had
+      adopted as a heuristic — positional encoding — and gives it a theory,
+      turning an empirical trick into reusable infrastructure for coordinate
+      networks at large.
     i18n:
       ja:
-        note: "NeRF チーム自身の手による — NeRF が説明できなかった唯一の部品 (positional encoding) を取り出し、理論を与えました。経験則のトリックが、以後あらゆる座標ネットワークの再利用可能なインフラになったのです。"
+        note: "NeRF チーム自身の手による — NeRF がヒューリスティックとして採り入れていた部品 (positional encoding) を取り出し、理論を与えました。経験則のトリックが、座標ネットワーク全般で再利用できるインフラになったのです。"
   - node: siren2020
     type: independent
     note: >
-      Submitted the same week in June 2020, one campus apart: Stanford fixed
-      spectral bias inside the network (sine activations); Berkeley fixed it
-      at the input (Fourier mapping). Two doors into the same room.
+      Submitted the same week in June 2020, from Stanford and from
+      Berkeley/Google: SIREN put the high frequencies inside the network (sine
+      activations), Fourier Features at its input (a Fourier mapping that, by
+      its own analysis, overcomes spectral bias). Two doors into the same room.
     i18n:
       ja:
-        note: "2020年6月の同じ週に、キャンパス一つ隔てて投稿されました。Stanford はスペクトルバイアスをネットワークの内側で (正弦活性化)、Berkeley は入力側で (Fourier マッピング) 直した。同じ部屋への二つの扉です。"
+        note: "2020年6月の同じ週に、Stanford と Berkeley/Google から投稿されました。SIREN は高周波をネットワークの内側に (正弦活性化)、Fourier Features はその入力側に (自らの分析ではスペクトルバイアスを克服する Fourier マッピング) 持ち込みました。同じ部屋への二つの扉です。"
 status: seed
 i18n:
   ja:
-    problem: "NeRF が動くのは、謎めいたハック一つのおかげです — MLP に入れる前に座標を正弦関数へ写す「positional encoding」。なぜそれが効くのか、そして無ければどうなるのか?"
+    problem: "NeRF の細部は、ヒューリスティックなハック一つにかかっています — MLP に入れる前に座標を正弦関数へ写す「positional encoding」。なぜそれが効くのか、そして無ければどうなるのか?"
     solution: "neural-tangent-kernel の解析です。素の MLP は高周波では実用にならないほど遅く収束します (スペクトルバイアス)。ランダム Fourier 特徴のマッピングが NTK を調整可能な定常カーネルに変え、鋭いディテールを解き放ちました。ハックが理論になった — 周波数帯域のつまみ付きで。"
     limitations: "帯域はグローバルかつ手動調整です。低すぎればぼやけ、高すぎればノイズが乗る。スケールをまたぐエイリアシングは未処理のまま (mip-NeRF の入口)、符号化も密でした — ハッシュグリッドがのちにそれを疎で高速にします。"

@@ -1,12 +1,13 @@
 title: "pixelSplat: 3D Gaussian Splats from Image Pairs for Scalable Generalizable 3D Reconstruction"
 short: "pixelSplat (2023)"
 authors: "David Charatan, Sizhe Lester Li, Andrea Tagliasacchi, Vincent Sitzmann"
-venue: "CVPR 2024 (Oral, Best Paper Runner-Up)"
+venue: "CVPR 2024 (Oral, Best Paper Honorable Mention)"
 year: 2023
 branch: neural-rendering
 lane: feedforward
 links:
   arxiv: "https://arxiv.org/abs/2312.12337"
+  code: "https://github.com/dcharatan/pixelsplat"
   project: "https://davidcharatan.com/pixelsplat/"
 problem: >
   Generalizable view synthesis (the pixelNeRF line) predicts radiance fields
@@ -16,13 +17,15 @@ solution: >
   Predict 3D GAUSSIANS feed-forward from an image pair: an epipolar
   transformer resolves the scale ambiguity, and a probabilistic depth
   parameterization keeps gradients flowing despite the primitives' local
-  support. Real-time rendering, orders faster training, and an explicit,
-  editable output.
+  support. Real-time rendering (about 650x faster than the next-fastest
+  baseline), far less training memory, and an explicit, editable output.
 limitations: >
-  Two-view, small-baseline interpolation on scene-level data; depth
-  prediction is implicit and parameter-heavy — the cost-volume repair
-  (MVSplat) and the "why predict 3D at all" challenge (LVSM) both arrived
-  within the year.
+  Two views in, and by its own account the per-view Gaussians are simply
+  unioned rather than fused, unseen parts are not modeled generatively, and
+  epipolar attention turns "prohibitively expensive" in memory with many
+  views. As MVSplat showed, depth sampled from a learned distribution is
+  also unreliable and parameter-heavy — the cost-volume repair (MVSplat) and
+  LVSM's challenge to predicting 3D at all both arrived within the year.
 relations:
   - node: 3dgs2023
     type: builds-on
@@ -37,16 +40,17 @@ relations:
   - node: pixelnerf2020
     type: fixes
     note: >
-      A cross-branch repair inside the same lab (Sitzmann): keeps
-      pixelNeRF's pixel-aligned, feed-forward recipe but swaps the implicit
-      field for explicit Gaussians, fixing the rendering-cost bottleneck
-      that kept generalizable NeRFs from scaling.
+      A cross-branch repair: keeps pixelNeRF's pixel-aligned, feed-forward
+      recipe but swaps the implicit field for explicit Gaussians, fixing the
+      cost pixelSplat names, citing pixelNeRF, as the line's key weakness —
+      differentiable rendering "requires evaluating dozens or hundreds of
+      points along each camera ray".
     i18n:
       ja:
-        note: "同じ研究室 (Sitzmann) の中での枝またぎの直しです。pixelNeRF のピクセル整列・フィードフォワードのレシピを保ちつつ、陰的な場を明示的なガウシアンに置き換え、汎化 NeRF のスケールを阻んでいたレンダリングコストのボトルネックを直しました。"
+        note: "枝をまたいだ直しです。pixelNeRF のピクセル整列・feed-forward のレシピを保ちつつ、陰的な場を明示的なガウシアンに置き換えました。直したのは、pixelSplat が pixelNeRF を引いてこの路線の最大の弱点と名指ししたコスト — 微分可能レンダリングは「カメラの光線ごとに数十から数百の点を評価する必要がある」ことです。"
 status: seed
 i18n:
   ja:
     problem: "汎化する視点合成 (pixelNeRF 路線) は放射輝度場をフィードフォワードで予測しますが、レンダリングは体積サンプリング — 実動画で大規模に学習するのが非現実的なほど遅く、リアルタイム利用は論外です。"
-    solution: "画像ペアから3Dガウシアンをフィードフォワードで予測します。epipolar トランスフォーマーがスケールの曖昧性を解き、確率的な深度パラメータ化がプリミティブの局所的な台にもかかわらず勾配を流し続ける。リアルタイムレンダリング、桁違いに速い学習、そして明示的で編集可能な出力です。"
-    limitations: "シーンレベルのデータでの、二視点・狭ベースラインの補間です。深度予測は陰的でパラメータも重い — cost volume による直し (MVSplat) と「そもそもなぜ3Dを予測するのか」という挑戦 (LVSM) が、どちらも年内に到着しました。"
+    solution: "画像ペアから3Dガウシアンを feed-forward で予測します。epipolar トランスフォーマーがスケールの曖昧性を解き、確率的な深度パラメータ化がプリミティブの局所的な台にもかかわらず勾配を流し続ける。リアルタイムレンダリング (次に速いベースラインの約650倍)、はるかに少ない学習時のメモリ、そして明示的で編集可能な出力です。"
+    limitations: "入力は二視点です。本人たちの言うとおり、視点ごとのガウシアンは融合されずに和集合として出力されるだけで、見えない部分の生成的なモデリングも扱わず、視点を増やすと epipolar アテンションのメモリが「法外に高く」つきます。MVSplat が示したとおり、学習された分布からサンプルする深度は信頼性にも欠け、パラメータも重い — cost volume による直し (MVSplat) と、そもそも3Dを予測すること自体への LVSM の挑戦が、どちらも年内に到着しました。"

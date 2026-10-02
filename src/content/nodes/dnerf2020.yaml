@@ -17,10 +17,11 @@ solution: >
   deformation MLP mapping each (point, time) back into canonical space.
   Time becomes an input; the renderer stays NeRF.
 limitations: >
-  Synthetic-scene scope, and the deformation field is a low-frequency warp —
-  topology changes (mouths opening) and long sequences break it. The
-  canonical+warp blueprint, though, became the default for four years of
-  dynamic radiance fields.
+  Synthetic-scene scope (eight short rendered sequences), and a continuous
+  warp of one canonical scene cannot change topology — HyperNeRF's later
+  diagnosis, with mouths opening as the example. The canonical+warp
+  blueprint, though, became a staple of dynamic radiance fields for years
+  to come.
 relations:
   - node: nerf2020
     type: fixes
@@ -36,14 +37,14 @@ relations:
     note: >
       Same November 2020, same idea, different worlds: D-NeRF bent synthetic
       scenes with a time-conditioned warp; Nerfies bent real selfie videos
-      with an elastically-regularized one. Neither cites the other's
-      preprint — the canonical+deformation answer was simply ripe.
+      with an elastically-regularized one. Each cites the other only as
+      concurrent work — the canonical+deformation answer was simply ripe.
     i18n:
       ja:
-        note: "同じ2020年11月、同じアイデア、異なる世界です。D-NeRF は時間条件の warp で合成シーンを曲げ、Nerfies は弾性正則化した warp で実際の自撮り動画を曲げた。互いのプレプリントを引用してもいません — canonical + 変形という答えは、ただ熟していたのです。"
+        note: "同じ2020年11月、同じアイデア、異なる世界です。D-NeRF は時間条件の warp で合成シーンを曲げ、Nerfies は弾性正則化した warp で実際の自撮り動画を曲げた。互いを引用するのは並行研究としてだけです — canonical + 変形という答えは、ただ熟していたのです。"
 status: seed
 i18n:
   ja:
     problem: "NeRF の世界は凍りついています。物体が一つ動くだけで、その学習が頼る多視点一貫性は破られる。放射輝度場は、変化するシーンを表現できるのか — 同期リグなしの、一本のカメラ経路から?"
     solution: "時間を空間から切り離します。canonical な静的放射輝度場と、各 (点, 時刻) を canonical 空間へ写し戻す変形 MLP。時間が入力になり、レンダラーは NeRF のまま。"
-    limitations: "扱えるのは合成シーンの範囲で、変形場は低周波の warp です — トポロジー変化 (口が開く) や長いシーケンスで破綻します。ただし canonical + warp という設計図は、その後4年間、動的放射輝度場の既定になりました。"
+    limitations: "扱えるのは合成シーン (短いレンダリング系列8本) の範囲で、一つの canonical なシーンを連続的に warp するだけではトポロジーを変えられません — 口が開く例を挙げた、のちの HyperNeRF の診断です。ただし canonical + warp という設計図は、その後何年にもわたって動的放射輝度場の定番になりました。"

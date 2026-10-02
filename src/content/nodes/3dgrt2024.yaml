@@ -16,7 +16,8 @@ solution: >
   Trace the particles instead: wrap each Gaussian in a bounding mesh to ride
   hardware ray-triangle units (RT cores), shade intersections in depth-order
   batches. Secondary rays, distorted cameras, and stochastic sampling come
-  back — at speeds competitive with rasterization.
+  back — at real-time rates, though about three times slower than
+  rasterization on Mip-NeRF 360 (78 vs 238 FPS).
 limitations: >
   Still slower than a tuned rasterizer on plain pinhole novel-view synthesis,
   and inherits 3DGS's blob geometry; the hybrid follow-up (3DGUT) later let
@@ -25,16 +26,18 @@ relations:
   - node: 3dgs2023
     type: challenges
     note: >
-      Questions the conclusion everyone drew from 3DGS — that rasterization
-      won: the sorted-splatting shortcut silently gave up everything ray
-      tracing was invented for, and hardware RT cores make the "slow" path
-      fast enough to take it back.
+      Questions 3DGS's bet on rasterization: by 3DGRT's diagnosis the
+      tile-based splatter gives up distorted and rolling-shutter cameras,
+      secondary rays (reflections, refractions, shadows) and stochastic ray
+      sampling, and hardware RT cores now make tracing the same particles
+      fast enough — 1.7 to 3 times slower than rasterization on plain pinhole
+      views — to take them back.
     i18n:
       ja:
-        note: "3DGS から誰もが引き出した結論 — ラスタライズが勝った — を問い直します。ソート済みスプラッティングの近道は、レイトレーシングが発明された目的すべてを黙って手放していました。そしてハードウェアの RT コアが、その「遅い」道を、取り戻せるほど速くするのです。"
+        note: "3DGS のラスタライズへの賭けを問い直します。3DGRT の診断では、タイルベースのスプラッティングは、歪んだカメラやローリングシャッター、二次光線 (反射・屈折・影)、確率的な光線サンプリングを手放しています。そしてハードウェアの RT コアが、同じ粒子をトレースする道を、それらを取り戻せるほど速くしました — 素のピンホール視点ではラスタライズの1.7〜3倍遅いものの。"
 status: seed
 i18n:
   ja:
     problem: "3DGS はラスタライザに溶接されています — 一つのピンホールカメラ、コヒーレントな一次光線。魚眼レンズ、ローリングシャッター、影、反射、センサーシミュレーション — 非コヒーレントな光線を要するものはすべて、このパラダイムの外です。"
-    solution: "代わりに粒子をトレースします。各ガウシアンをバウンディングメッシュで包んでハードウェアの ray-triangle ユニット (RT コア) に載せ、交差を深度順のバッチでシェーディング。二次光線、歪んだカメラ、確率的サンプリングが戻ってくる — ラスタライズと張り合う速度で。"
+    solution: "代わりに粒子をトレースします。各ガウシアンをバウンディングメッシュで包んでハードウェアの ray-triangle ユニット (RT コア) に載せ、交差を深度順のバッチでシェーディング。二次光線、歪んだカメラ、確率的サンプリングが戻ってくる — リアルタイムの速度で。ただし Mip-NeRF 360 ではラスタライズの約3分の1 (78 対 238 FPS) です。"
     limitations: "素のピンホール新規視点合成では、チューニングされたラスタライザにはまだ及ばず、3DGS のblob幾何も相続します。のちのハイブリッド後継 (3DGUT) が、二つのパイプラインに一つのシーンを共有させました。"

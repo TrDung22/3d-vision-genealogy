@@ -1,7 +1,7 @@
-title: "CLAY: A Controllable Large-scale Generative Model for 3D Assets"
+title: "CLAY: A Controllable Large-scale Generative Model for Creating High-quality 3D Assets"
 short: "CLAY (2024)"
-authors: "Longwen Zhang, Ziyu Wang, Qixuan Zhang, Qiwei Qiu, Anqi Pang, Haoran Jiang, Wei Yang, Lan Xu, Jingyi Yu (ShanghaiTech, Deemos, Influxus)"
-venue: "SIGGRAPH 2024"
+authors: "Longwen Zhang, Ziyu Wang, Qixuan Zhang, Qiwei Qiu, Anqi Pang, Haoran Jiang, Wei Yang, Lan Xu, Jingyi Yu (ShanghaiTech, Deemos, HUST)"
+venue: "SIGGRAPH 2024 (Best Paper Honorable Mention)"
 year: 2024
 branch: single-image-3d
 lane: generative
@@ -20,24 +20,30 @@ solution: >
   clean, watertight geometry with multi-modal control (text, image, voxel,
   point cloud) at a fidelity earlier 3D diffusion couldn't touch.
 limitations: >
-  Geometry-first means a multi-stage pipeline — shape, then texture, then
-  material — and each output format is still produced by its own decoder. The
-  unresolved wish: one STRUCTURED latent that decodes to whichever
+  Geometry-first means a multi-stage pipeline — shape, then remeshing and UV
+  unwrapping, then PBR materials — which the authors admit is "not yet
+  complete end-to-end"; and its latent encodes shape alone, decoding to a
+  single occupancy field. The unresolved wish: one STRUCTURED latent that
+  carries geometry and appearance together and decodes to whichever
   representation you need, in a single generation (→ TRELLIS).
 relations:
   - node: pointe-shape2022
-    type: builds-on
+    type: fixes
     note: >
-      Keeps Point-E/Shap-E's core bet — diffusion straight on a 3D
-      representation — but replaces coarse point/implicit outputs with a scaled
-      latent-set DiT, turning native 3D generation from a proof of concept into
-      production-grade geometry.
+      Repairs the weakness it diagnoses in the 3D-native line Point-E and
+      Shap-E belong to: such models "have not sufficiently explored rich
+      geometric features embedded in the datasets", and "their small model
+      size limits the capability of generalization and diversification".
+      Keeping the bet — diffusion straight on a 3D representation — it mines
+      the data with tailored geometry processing and scales a latent-set DiT
+      to 1.5B parameters, turning native 3D generation from a proof of concept
+      into production-grade geometry.
     i18n:
       ja:
-        note: "Point-E/Shap-E の核心の賭け — 3D表現の上で直接 diffusion する — を受け継ぎつつ、粗い点群・陰関数の出力を、スケールした latent-set の DiT に置き換えます。native 3D generation を、概念実証から production 級の幾何へと引き上げたのです。"
+        note: "Point-E と Shap-E が属する 3D native 路線に CLAY が見出した弱点を直します。こうしたモデルは「データセットに埋め込まれた豊かな幾何的特徴を十分に掘り下げておらず」、しかも「モデルサイズの小ささが汎化と多様化の能力を制限している」。3D表現の上で直接 diffusion するという賭けはそのままに、作り込んだ幾何処理でデータを掘り起こし、latent-set の DiT を15億パラメータまでスケールして、native 3D generation を概念実証から production 級の幾何へと引き上げました。"
 status: seed
 i18n:
   ja:
     problem: "初期の 3D diffusion (Point-E、Shap-E) は3Dを native に生成できることを示しましたが、幾何は粗いままで、production 品質にも細かなユーザー制御にもスケールしませんでした。native 3D generation は、2D diffusion を現象にした忠実度と操作性に届くのか?"
     solution: "蒸留ではなく、3D latent 自体をスケールします。CLAY は形状をニューラルな latent set (3DShape2VecSet 系) に圧縮し、その上で大きな diffusion transformer (DiT) を学習 — 幾何を先に、次に別段のマテリアル生成 — 丁寧に集めたアセット群の上で15億パラメータまで押し上げます。結果は、清潔で水密な幾何と、多様な入力 (テキスト、画像、ボクセル、点群) による制御を、従来の 3D diffusion が届かなかった忠実度で実現しました。"
-    limitations: "geometry-first は多段のパイプラインを意味します — 形状、次にテクスチャ、次にマテリアル — そして各出力フォーマットは依然それぞれのデコーダが作ります。積み残した願いは、構造を持つ一つの latent が、望むどの表現へでも一度の生成でデコードすること (→ TRELLIS) です。"
+    limitations: "geometry-first は多段のパイプラインを意味します — 形状、次にリメッシュと UV 展開、次に PBR マテリアル — 著者ら自身も「まだ完全な end-to-end ではない」と認めています。しかも latent は形状だけを符号化し、一つの occupancy 場へデコードするのみ。積み残した願いは、幾何と見た目をまとめて担う構造を持つ一つの latent が、望むどの表現へでも一度の生成でデコードすること (→ TRELLIS) です。"

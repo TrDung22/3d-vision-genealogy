@@ -1,7 +1,7 @@
 title: "NeRF in the Wild: Neural Radiance Fields for Unconstrained Photo Collections"
 short: "NeRF-W (2020)"
 authors: "Ricardo Martin-Brualla, Noha Radwan, Mehdi S. M. Sajjadi, Jonathan T. Barron, Alexey Dosovitskiy, Daniel Duckworth (Google)"
-venue: "CVPR 2021 (Oral)"
+venue: "CVPR 2021 (Oral, per authors' project page)"
 year: 2020
 branch: neural-rendering
 lane: radiance-fields
@@ -20,7 +20,7 @@ solution: >
 limitations: >
   Embeddings must be optimized per image (no feed-forward), transients are
   discarded rather than understood, and it inherits NeRF's per-scene training
-  cost — now on thousands of photos.
+  cost — now on roughly 600 to 2,000 photos per scene.
 relations:
   - node: nerf2020
     type: fixes
@@ -37,4 +37,4 @@ i18n:
   ja:
     problem: "NeRF が前提とするのは実験室です — 固定照明、固定シーン、一台のカメラ。ブランデンブルク門のインターネット写真 (天気も露出も観光客もバラバラ) に向けると、その混沌を平均してしまい、霧になります。"
     solution: "画像ごとに、それぞれの言い分を与えます。画像ごとの appearance embedding が照明と後処理を吸収し、学習された不確実性を持つ transient ヘッドが観光客や車を吸い取る — 共有される静的な放射輝度場は、本当に恒久的なものだけを説明すればよくなります。"
-    limitations: "embedding は画像ごとに最適化が必要 (フィードフォワードではない)、transient は理解されるのではなく捨てられ、NeRF のシーンごとの学習コストも相続します — しかも今度は何千枚もの写真の上で。"
+    limitations: "embedding は画像ごとに最適化が必要 (feed-forward ではない)、transient は理解されるのではなく捨てられ、NeRF のシーンごとの学習コストも相続します — しかも今度は、シーンあたり約600〜2,000枚の写真の上で。"

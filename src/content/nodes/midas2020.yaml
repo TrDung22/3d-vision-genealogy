@@ -9,12 +9,13 @@ links:
   arxiv: "https://arxiv.org/abs/1907.01341"
   code: "https://github.com/isl-org/MiDaS"
 problem: >
-  Eigen's five-year-old debt: a depth model trained on one dataset dies the
-  moment it leaves that dataset. How do you make it work on ANY image?
+  Eigen's five-year-old debt: a depth model trained on one dataset is prone to
+  fail the moment it leaves that dataset. How do you make it work on ANY image?
 solution: >
   Mix datasets of fundamentally different nature (3D movies, web stereo photos,
-  LiDAR...) with a scale- and shift-invariant loss — accept predicting only
-  relative depth in exchange for genuine zero-shot generalization.
+  SfM reconstructions, RGB-D...) with a scale- and shift-invariant loss —
+  accept predicting only relative depth in exchange for genuine zero-shot
+  generalization.
 limitations: >
   The price of the mix: absolute scale is gone (no "how many meters"). Relative
   depth is enough for photo effects but not for robotics — a metric debt left
@@ -31,6 +32,6 @@ relations:
 status: seed
 i18n:
   ja:
-    problem: "Eigen が残した5年越しの借金 — 一つのデータセットで学習した深度モデルは、そこを出た瞬間に死にます。どうすれば「どんな画像でも」動くのか?"
-    solution: "性質のまるで違うデータセット (3D映画、ウェブのステレオ写真、LiDAR...) を、スケールとシフトに不変なロスで混ぜ合わせます。相対深度しか予測しないことを受け入れ、その引き換えに本物のゼロショット汎化を手に入れました。"
+    problem: "Eigen が残した5年越しの借金 — 一つのデータセットで学習した深度モデルは、そこを一歩出た途端に失敗しがちです。どうすれば「どんな画像でも」動くのか?"
+    solution: "性質のまるで違うデータセット (3D映画、ウェブのステレオ写真、SfM による再構成、RGB-D...) を、スケールとシフトに不変なロスで混ぜ合わせます。相対深度しか予測しないことを受け入れ、その引き換えに本物のゼロショット汎化を手に入れました。"
     limitations: "混ぜることの代償 — 絶対スケールが消えました (「何メートルか」が言えない)。相対深度は写真のエフェクトには十分でも、ロボティクスには足りません。この metric の借金は 2023年以降の世代まで持ち越されます。"

@@ -7,6 +7,7 @@ branch: single-image-3d
 lane: scene
 links:
   arxiv: "https://arxiv.org/abs/2012.02190"
+  code: "https://github.com/sxyu/pixel-nerf"
   project: "https://alexyu.net/pixelnerf/"
 problem: >
   NeRF needs dozens of posed images and per-scene training — useless for the
@@ -16,9 +17,12 @@ solution: >
   the NeRF MLP, so one network trained across scenes renders novel views from
   as little as ONE input image, feed-forward, no per-scene optimization.
 limitations: >
-  Blurry beyond small view changes — a regression model guessing the unseen,
-  not imagining it; the crisp-unseen-region problem waited for diffusion
-  priors (ZeroNVS, Zero-1-to-3 era) to be treated as generation instead.
+  Not crisp from a single image — a regression model guessing the unseen,
+  not imagining it: ZeroNVS later counted it among methods that "do not
+  produce renderings resembling crisp natural images from a single image",
+  and the crisp-unseen-region problem waited for diffusion priors (ZeroNVS,
+  Zero-1-to-3 era) to be treated as generation instead. By its own account,
+  rendering also stays as slow as NeRF's.
 relations:
   - node: nerf2020
     type: fixes
@@ -54,4 +58,4 @@ i18n:
   ja:
     problem: "NeRF には何十枚ものポーズ付き画像とシーンごとの学習が必要です — 単一画像の設定には、作りからして役に立ちません。"
     solution: "放射輝度場を画像で条件付けます。ピクセル整列の CNN 特徴を NeRF の MLP へ流し込み、シーンをまたいで学習した一つのネットワークが、たった一枚の入力から新規視点をフィードフォワードで描く — シーンごとの最適化はもう要りません。"
-    limitations: "視点が少し大きく動くだけでぼやけます — 見えない部分を「想像」ではなく「推測」する回帰モデルだからです。隠れた領域を鮮明に描く問題は、拡散 prior (ZeroNVS、Zero-1-to-3 の時代) が生成問題として扱い直すのを待つことになりました。"
+    limitations: "一枚の画像からでは鮮明に描けません — 見えない部分を「想像」ではなく「推測」する回帰モデルだからです。ZeroNVS はのちに、これを「一枚の画像から、鮮明な自然画像に見えるレンダリングを生み出せない」手法の一つに数えました。隠れた領域を鮮明に描く問題は、拡散 prior (ZeroNVS、Zero-1-to-3 の時代) が生成問題として扱い直すのを待つことになります。本人たちの言うとおり、レンダリングも NeRF と同じく遅いままです。"

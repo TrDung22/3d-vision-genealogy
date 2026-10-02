@@ -16,20 +16,23 @@ solution: >
   the milestone that opened the deep-learning era of monocular depth.
 limitations: >
   Trained and evaluated inside a single dataset (NYU Depth / KITTI): the model
-  learned "NYU-style rooms", not "the world". That in-domain ceiling hung over
-  the field for five years, until MiDaS.
+  learned NYU-style rooms, not the world. That in-domain ceiling hung over the
+  field for years; MiDaS made breaking it — zero-shot cross-dataset transfer —
+  the explicit goal.
 relations:
   - node: saxena2008
     type: fixes
     note: >
-      Repairs exactly the weakness Make3D left behind: hand-crafted features +
-      MRF replaced by representations learned end-to-end from data.
+      Fixes the weakness Eigen et al. name in Make3D — it "relies on horizontal
+      alignment of images, and suffers in less controlled settings", and could
+      not scale beyond 700 KITTI training images — by replacing hand-crafted
+      features + MRF with a network learned end-to-end from raw data.
     i18n:
       ja:
-        note: "Make3D が残した弱点をまさにその一点で直しました。手作りの特徴と MRF は、データから end-to-end で学んだ表現に置き換えられたのです。"
+        note: "Eigen らが Make3D に名指しした弱点 — 「画像の水平な位置合わせに頼り、条件の整っていない環境では性能が落ちる」こと、そして KITTI では700枚を超える学習にスケールできなかったこと — を、手作りの特徴と MRF を生データから end-to-end で学ぶネットワークに置き換えることで直しました。"
 status: seed
 i18n:
   ja:
     problem: "画像から深度マップを直接回帰する — 特徴もグラフィカルモデルも、人間が設計せずに。"
     solution: "粗から密への二段構え CNN が深度を end-to-end で予測します。構造の誤差とスケールの誤差を切り分けるスケール不変ロスも加わり — 単眼深度の深層学習時代を開いた一里塚です。"
-    limitations: "学習も評価も単一のデータセット (NYU Depth / KITTI) の中だけ。モデルが覚えたのは「NYU 風の部屋」であって「世界」ではありません。このドメイン内の天井は、MiDaS が現れるまで5年間、分野の頭上に垂れ込めていました。"
+    limitations: "学習も評価も単一のデータセット (NYU Depth / KITTI) の中だけ。モデルが覚えたのは NYU 風の部屋であって、世界ではありません。このドメイン内の天井は長年、分野の頭上に垂れ込めていました — それを破ること、つまりゼロショットのデータセット間転移を、はっきりと目標に据えたのが MiDaS です。"

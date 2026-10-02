@@ -1,7 +1,7 @@
 title: "Mip-Splatting: Alias-free 3D Gaussian Splatting"
 short: "Mip-Splatting (2023)"
 authors: "Zehao Yu, Anpei Chen, Binbin Huang, Torsten Sattler, Andreas Geiger"
-venue: "CVPR 2024 (Best Student Paper)"
+venue: "CVPR 2024 (Oral, Best Student Paper)"
 year: 2023
 branch: neural-rendering
 lane: gaussians
@@ -10,9 +10,10 @@ links:
   project: "https://niujinshuchong.github.io/mip-splatting/"
 problem: >
   Change the camera distance or focal length at test time and 3DGS falls
-  apart: thin Gaussians alias into needles when zooming out, and the fixed
-  screen-space dilation makes zoom-ins bloat — erosion and swelling artifacts
-  the training views never reveal.
+  apart: zoom in and its degenerate, too-thin Gaussians show erosion and
+  high-frequency artifacts; zoom out and the fixed screen-space dilation
+  bloats and brightens fine structure — artifacts the training views never
+  reveal.
 solution: >
   Two principled filters: a 3D smoothing filter capping each Gaussian's
   frequency by the maximal sampling rate seen during training, and a 2D mip
@@ -45,6 +46,6 @@ relations:
 status: seed
 i18n:
   ja:
-    problem: "テスト時にカメラ距離や焦点距離を変えると 3DGS は崩れます。薄いガウシアンはズームアウトで針状にエイリアスし、固定のスクリーン空間 dilation はズームインで膨れ上がる — 学習ビューが決して見せない、痩せと膨張のアーティファクトです。"
+    problem: "テスト時にカメラ距離や焦点距離を変えると 3DGS は崩れます。ズームインすると、縮退して細すぎるガウシアンが痩せ (erosion) と高周波のアーティファクトを見せ、ズームアウトすると、固定のスクリーン空間 dilation が細い構造を太らせ、明るくする — 学習ビューが決して見せないアーティファクトです。"
     solution: "原理的な二つのフィルタです。各ガウシアンの周波数を学習中に見た最大サンプリングレートで抑える3D平滑化フィルタと、dilation のハックを置き換える2D mip フィルタ — ピクセルの物理的なボックス footprint を近似します。どのスケールでもエイリアスのないスプラッティングを。"
     limitations: "直すのはサンプリングであって構造ではありません。幾何は依然として視点不一致のblob、メモリも変わらず、学習のサンプリング帯域を超えた分布外のズームは今も劣化します。"

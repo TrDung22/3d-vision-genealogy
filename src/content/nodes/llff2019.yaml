@@ -9,8 +9,8 @@ links:
   arxiv: "https://arxiv.org/abs/1905.00889"
   project: "https://bmild.github.io/llff/"
 problem: >
-  Light fields answered "no geometry needed" with "then give me thousands of
-  photos". How few HANDHELD photos can view synthesis survive on — and can
+  Light fields did away with geometry only by demanding hundreds to thousands
+  of photos. How few HANDHELD photos can view synthesis survive on — and can
   anyone say how few is enough?
 solution: >
   Expand each input view into a local layered representation (multiplane
@@ -35,6 +35,6 @@ relations:
 status: seed
 i18n:
   ja:
-    problem: "ライトフィールドは「幾何は不要」の代わりに「なら写真を何千枚ください」と答えました。手持ち撮影の写真が何枚あれば視点合成は成立するのか — そして「何枚で十分か」を言える人はいるのか?"
+    problem: "ライトフィールドは幾何を不要にしましたが、その代わりに何百、何千枚もの写真を要求しました。手持ち撮影の写真が何枚あれば視点合成は成立するのか — そして、何枚で十分かを言える人はいるのか?"
     solution: "各入力視点を局所的な層状表現 (multiplane images) へ展開し、近くの局所ライトフィールドをブレンドして新しい視点を作ります。肝心なのは、plenoptic サンプリング解析が処方箋となる下限を与えたこと — Nyquist 流の光線サンプリングより最大4000分の1の枚数で済むのです。"
     limitations: "MPI はメモリを食い、視点もそれなりに密で前向きでなければなりません。一年のうちに同じグループが層状の機構まるごとを一つの MLP に置き換え — LLFF のデータセットは NeRF のベンチマークとして相続されました。"

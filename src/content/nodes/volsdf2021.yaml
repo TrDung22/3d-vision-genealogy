@@ -1,7 +1,7 @@
 title: "Volume Rendering of Neural Implicit Surfaces"
 short: "VolSDF (2021)"
 authors: "Lior Yariv, Jiatao Gu, Yoni Kasten, Yaron Lipman (Weizmann & Facebook AI)"
-venue: "NeurIPS 2021"
+venue: "NeurIPS 2021 (Oral)"
 year: 2021
 branch: neural-rendering
 lane: surfaces
@@ -14,27 +14,27 @@ problem: >
   don't scale to real scenes.
 solution: >
   Model density as a transformed signed distance function (Laplace CDF of
-  the SDF), giving a principled probabilistic meaning to opacity plus an
+  the SDF), giving the learned geometry a useful inductive bias plus an
   error-bounded sampling algorithm — clean surfaces from volume rendering,
   with a disentangled geometry/appearance split.
 limitations: >
   Same per-scene cost and smoothness ceiling as NeuS; the two papers'
-  density constructions differ enough that the field spent the next year
-  benchmarking which bias wins where.
+  density constructions differ enough that later work kept benchmarking
+  them side by side.
 relations:
   - node: neus2021
     type: independent
     note: >
-      arXiv within two weeks of each other (June 2021), both at NeurIPS
-      2021: Hong Kong/MPI and Weizmann/Facebook independently rederived
-      "SDF-induced density" with different math — the 2019 implicit wave's
+      arXiv two days apart (June 20 and 22, 2021), both at NeurIPS 2021:
+      Hong Kong/MPI and Weizmann/Facebook independently rederived an
+      SDF-induced density with different math — the 2019 implicit wave's
       sequel, played out in volume rendering.
     i18n:
       ja:
-        note: "arXiv 投稿は二週間差 (2021年6月)、ともに NeurIPS 2021 — 香港/MPI と Weizmann/Facebook が「SDF から誘導される密度」を、異なる数式で独立に導き直しました。2019年の陰関数の波の続編が、ボリュームレンダリングの舞台で演じられたのです。"
+        note: "arXiv 投稿は二日差 (2021年6月20日と22日)、ともに NeurIPS 2021 — 香港/MPI と Weizmann/Facebook が、SDF から誘導される密度を、異なる数式で独立に導き直しました。2019年の陰関数の波の続編が、volume rendering の舞台で演じられたのです。"
 status: seed
 i18n:
   ja:
     problem: "NeuS が同じ月に診断したのと同じ病です。NeRF の密度はレンダリングの装置であって幾何ではなく、マスク依存の表面手法は実シーンへスケールしません。"
-    solution: "密度を、変換された符号付き距離関数 (SDF の Laplace CDF) としてモデル化します。不透明度に原理的な確率的意味を与え、誤差有界のサンプリングアルゴリズムも添える — ボリュームレンダリングから綺麗な表面を、幾何と見た目を切り分けた形で得るのです。"
-    limitations: "NeuS と同じシーンごとのコストと滑らかさの天井。二本の論文の密度の作り方は十分に異なり、分野はその後一年を「どちらの偏りがどこで勝つか」のベンチマークに費やしました。"
+    solution: "密度を、変換された符号付き距離関数 (SDF の Laplace CDF) としてモデル化します。学習される幾何に有用な帰納バイアスを与え、誤差有界のサンプリングアルゴリズムも添える — volume rendering から綺麗な表面を、幾何と見た目を切り分けた形で得るのです。"
+    limitations: "NeuS と同じシーンごとのコストと滑らかさの天井。二本の論文の密度の作り方は十分に異なるため、後続の研究は両者を並べて benchmark し続けました。"

@@ -10,8 +10,9 @@ links:
   project: "https://svraster.github.io/"
 problem: >
   Gaussians won on speed but carry quirks — popping under view rotation
-  (the global sort is only approximately correct) and fuzzy blobs where
-  scenes want crisp axis-aligned structure.
+  (sorting by Gaussian centers does not guarantee correct depth order) and
+  an ill-defined volume density wherever Gaussians overlap, which makes
+  surface reconstruction awkward.
 solution: >
   Rasterize adaptive SPARSE VOXELS instead of Gaussians: an octree-style
   layout up to 65,536^3 effective resolution, rendered in exactly correct
@@ -19,19 +20,21 @@ solution: >
   network, no Gaussians, no popping, 4dB over prior neural-free voxels at
   10x their framerate.
 limitations: >
-  Hard voxel boundaries handle semi-transparent, soft matter less gracefully
-  than Gaussians; the grid, however sparse, still trades memory for detail.
+  Voxels come in far greater numbers than Gaussians: by its own account that
+  means a larger model and more GPU memory — the grid, however sparse, still
+  trades memory for detail — and meshes extracted from it pick up spurious
+  bumps from texture detail.
 relations:
   - node: plenoxels2021
     type: revives
     note: >
       Brings the voxel heresy back from the dead after Gaussians had
-      seemingly buried it: the same "no neural network, just a sparse grid"
-      creed, now with adaptive level-of-detail and a rasterizer instead of
-      ray marching — voxels made competitive with splats.
+      seemingly buried it: the same no-neural-network, sparse-grid creed,
+      now with adaptive level-of-detail and a rasterizer instead of ray
+      marching — voxels made competitive with splats.
     i18n:
       ja:
-        note: "ガウシアンが葬り去ったかに見えたボクセルの異端を、死から呼び戻します。同じ「ニューラルネット不要、疎なグリッドだけ」の信条を、今度は適応的な level-of-detail とレイマーチングに代わるラスタライザとともに — ボクセルをスプラットと張り合えるようにしました。"
+        note: "ガウシアンが葬り去ったかに見えたボクセルの異端を、死から呼び戻します。ニューラルネット不要、疎なグリッドだけ、という同じ信条を、今度は適応的な level-of-detail とレイマーチングに代わるラスタライザとともに — ボクセルをスプラットと張り合えるようにしました。"
   - node: 3dgs2023
     type: challenges
     note: >
@@ -44,6 +47,6 @@ relations:
 status: seed
 i18n:
   ja:
-    problem: "ガウシアンは速度で勝ちましたが、癖も持ち込みました — 視点回転でのポッピング (グローバルソートは近似的にしか正しくない) と、シーンが鋭い軸整列構造を求める場所での曖昧なblobです。"
+    problem: "ガウシアンは速度で勝ちましたが、癖も持ち込みました — 視点回転でのポッピング (ガウシアンの中心でソートしても正しい深度順は保証されない) と、ガウシアンが重なる場所での体積密度の曖昧さで、これが表面再構成を厄介にします。"
     solution: "ガウシアンではなく適応的な疎ボクセルをラスタライズします。実効解像度 65,536³ までの octree 風レイアウトを、光線方向依存の Morton 順序で厳密に正しい深度順に描く — ニューラルネットなし、ガウシアンなし、ポッピングなし。従来のニューラルネット不要ボクセルを 4dB 上回り、フレームレートは10倍です。"
-    limitations: "硬いボクセル境界は、半透明で柔らかい物質をガウシアンほど優雅には扱えません。グリッドは、どれだけ疎でも、やはりメモリと引き換えに細部を得ます。"
+    limitations: "ボクセルはガウシアンよりはるかに多くの数を要します。論文自身によれば、そのぶんモデルは大きく GPU メモリも多く食い — グリッドは、どれだけ疎でも、やはりメモリと引き換えに細部を得るのです — 抽出したメッシュにはテクスチャの細部に由来する余計な凹凸が乗ります。"

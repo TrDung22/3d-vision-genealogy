@@ -10,11 +10,12 @@ links:
   code: "https://github.com/DepthAnything/Depth-Anything-V2"
 problem: >
   V1 scaled unlabeled data but kept noisy real labels — and real depth labels
-  (LiDAR gaps, stereo mismatches) are precisely what destroys fine detail.
+  (sensors failing on glass, stereo mismatches, coarse boundaries) are
+  precisely what destroys fine detail.
 solution: >
   A surprising inversion: throw away ALL labeled real images. Train the teacher
   on 595K synthetic images only (perfect labels), scale the teacher up, then
-  transfer to students through 62M+ pseudo-labeled real images — synthetic
+  transfer to students through 62M pseudo-labeled real images — synthetic
   precision plus real-world diversity, without the noise of either.
 limitations: >
   Still relative depth at the core with fine-tuned metric variants; and the
@@ -25,14 +26,15 @@ relations:
     type: fixes
     note: >
       Repairs V1's own bottleneck: noisy real labels capped fine-grained
-      detail. The synthetic-first move quietly vindicates Marigold's
-      small-but-clean-synthetic insight — arrived at from the opposite end.
+      detail. The synthetic-first move is one V2 credits to Stable
+      Diffusion-based models such as Marigold, which train only on synthetic
+      depth — their clean-label insight carried over to a discriminative model.
     i18n:
       ja:
-        note: "V1 自身のボトルネック — ノイズの多い実ラベルが微細ディテールの上限を決めていた — を直します。この synthetic-first の一手は、Marigold の「小さくても綺麗な合成データ」という洞察を、反対側の道から静かに立証しました。"
+        note: "V1 自身のボトルネック — ノイズの多い実ラベルが微細ディテールの上限を決めていた — を直します。この synthetic-first の一手は、合成データだけで学習する Marigold などの Stable Diffusion 系モデルに着想を得たと V2 自身が述べるもので、その綺麗なラベルという洞察を識別モデルへ持ち込みました。"
 status: seed
 i18n:
   ja:
-    problem: "V1 はラベルなしデータをスケールさせつつ、ノイズの多い実ラベルを残しました — そして実の深度ラベル (LiDAR の抜け、ステレオの不一致) こそが、微細なディテールを壊す張本人なのです。"
-    solution: "意表を突く逆転の一手 — ラベル付きの実画像をすべて捨てる。teacher は完璧なラベルを持つ59.5万枚の合成画像だけで学習し、それを大きくスケールさせ、6,200万枚超の擬似ラベル付き実画像を介して student へ受け渡します。合成の精密さと実世界の多様性を、双方のノイズ抜きで。"
+    problem: "V1 はラベルなしデータをスケールさせつつ、ノイズの多い実ラベルを残しました — そして実の深度ラベル (ガラスを捉えられないセンサー、ステレオの不一致、粗い境界) こそが、微細なディテールを壊す張本人なのです。"
+    solution: "意表を突く逆転の一手 — ラベル付きの実画像をすべて捨てる。teacher は完璧なラベルを持つ59.5万枚の合成画像だけで学習し、それを大きくスケールさせ、6,200万枚の擬似ラベル付き実画像を介して student へ受け渡します。合成の精密さと実世界の多様性を、双方のノイズ抜きで。"
     limitations: "核は依然として相対深度で、metric 版は微調整頼み。そしてレシピ全体が今度は合成データパイプラインのリアルさに寄りかかります — 分野が新たに相続した依存関係です。"

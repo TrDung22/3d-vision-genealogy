@@ -1,7 +1,7 @@
 title: "Zip-NeRF: Anti-Aliased Grid-Based Neural Radiance Fields"
 short: "Zip-NeRF (2023)"
 authors: "Jonathan T. Barron, Ben Mildenhall, Dor Verbin, Pratul P. Srinivasan, Peter Hedman"
-venue: "ICCV 2023 (Best Paper Finalist)"
+venue: "ICCV 2023 (Oral, Best Paper Finalist)"
 year: 2023
 branch: neural-rendering
 lane: radiance-fields
@@ -15,8 +15,9 @@ problem: >
 solution: >
   Reconcile the rivals: multisample the hash grid inside each conical
   frustum (approximating integration over the footprint) with
-  scale-dependent feature downweighting. Mip-NeRF 360's anti-aliasing at
-  Instant-NGP's speed — error rates drop up to 76% against the grid baseline.
+  scale-dependent feature downweighting. Mip-NeRF 360's anti-aliasing with
+  24x faster training (though still ~6x slower than Instant-NGP) — error
+  rates drop up to 77% against the grid baseline.
 limitations: >
   Still per-scene optimization and still ray marching — real-time rendering
   remained out of reach, which is precisely the gap 3D Gaussian Splatting
@@ -35,14 +36,14 @@ relations:
     type: builds-on
     note: >
       The same authors port their cone-tracing machinery onto the rival
-      camp's data structure — the moment the "MLP vs grid" war ended in
+      camp's data structure — the moment the MLP-versus-grid war ended in
       synthesis rather than victory.
     i18n:
       ja:
-        note: "同じ著者たちが、自分たちの cone-tracing の機構をライバル陣営のデータ構造へ移植しました — 「MLP 対グリッド」の戦争が、勝利ではなく統合で終わった瞬間です。"
+        note: "同じ著者たちが、自分たちの cone-tracing の機構をライバル陣営のデータ構造へ移植しました — MLP 対グリッドの戦争が、勝利ではなく統合で終わった瞬間です。"
 status: seed
 i18n:
   ja:
     problem: "2023年、分野は二つに割れていました。mip 路線は品質はあるが学習に数時間。グリッド路線 (Instant-NGP) は数分で学習できるがエイリアスする — ハッシュグリッドにはピクセルの footprint という概念がなく、スケールが変わると揺らめくのです。"
-    solution: "二人の好敵手を仲直りさせます。各円錐台の内側でハッシュグリッドをマルチサンプルし (footprint 上の積分を近似)、スケールに応じて特徴を減衰させる。Mip-NeRF 360 のアンチエイリアスを Instant-NGP の速度で — グリッドのベースラインに対して誤差を最大76%削減しました。"
+    solution: "二人の好敵手を仲直りさせます。各円錐台の内側でハッシュグリッドをマルチサンプルし (footprint 上の積分を近似)、スケールに応じて特徴を減衰させる。Mip-NeRF 360 のアンチエイリアスを、mip-NeRF 360 の24倍速い学習で (それでも Instant-NGP よりは約6倍遅い) — グリッドのベースラインに対して誤差を最大77%削減しました。"
     limitations: "依然としてシーンごとの最適化で、依然としてレイマーチング — リアルタイムレンダリングは手の届かないまま。それこそ、4か月後に 3D Gaussian Splatting がくぐり抜けた、まさにその隙間です。"

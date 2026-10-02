@@ -15,23 +15,27 @@ problem: >
   SDF optimization.
 solution: >
   Make the hash grid behave: numerical (finite-difference) gradients that
-  spread learning signal across neighboring hash cells, plus
-  coarse-to-fine curvature scheduling — RGB-video-only surface
-  reconstruction with detail that had previously required laser scanners.
+  spread learning signal across neighboring hash cells, plus coarse-to-fine
+  optimization that shrinks the gradient step and switches on finer hash
+  levels as it goes — detailed, large-scale surface reconstruction from RGB
+  video alone, with no depth or segmentation inputs.
 limitations: >
-  Hours of optimization per scene and dense capture still required;
-  reflective and textureless surfaces still confuse the photometric loss.
+  Hours of optimization per scene (500k iterations) and dense capture still
+  required; on highly reflective surfaces it loses detail even against NeuS
+  — a drawback the paper traces to the hash encoding — and simply textured
+  objects gain little.
 relations:
   - node: neus2021
     type: fixes
     note: >
-      Repairs the fidelity ceiling of SDF volume rendering: the missing
-      high frequencies weren't a modeling limit but an optimization one —
-      analytic hash-grid gradients starve neighboring cells of signal, and
-      numerical gradients feed them.
+      Repairs the fidelity ceiling of SDF volume rendering, which Neuralangelo
+      pins on MLP capacity ("does not scale well with the capacity of MLPs"):
+      a hash grid supplies the capacity, and numerical gradients fix what
+      breaks when you swap it in — analytic hash-grid gradients reach only
+      the local cell, leaving the surfaces noisy.
     i18n:
       ja:
-        note: "SDF ボリュームレンダリングの忠実度の天井を直します。欠けていた高周波は、モデリングの限界ではなく最適化の限界でした — ハッシュグリッドの解析的勾配は隣接セルの信号を飢えさせ、数値的勾配がそれを養うのです。"
+        note: "SDF ボリュームレンダリングの忠実度の天井を直します。Neuralangelo はその原因を MLP の容量に帰しています (「MLP の容量に応じてうまくスケールしない」)。容量はハッシュグリッドが補い、それを差し込んだときに壊れるもの — 解析的なハッシュグリッド勾配は局所のセルにしか届かず、表面がノイズだらけになる — を数値的勾配が直すのです。"
   - node: instantngp2022
     type: builds-on
     note: >
@@ -45,5 +49,5 @@ status: seed
 i18n:
   ja:
     problem: "SDF ボリュームレンダリング (NeuS/VolSDF) は水密だが滑らかな表面を作ります — 装飾、レンガ、レリーフはすべて削り落とされる。ハッシュグリッドにはその細部を表す容量がありますが、その勾配は局所的すぎて安定した SDF 最適化には向きません。"
-    solution: "ハッシュグリッドを行儀よくさせます。学習信号を隣接するハッシュセルへ広げる数値的 (有限差分) 勾配と、粗から密への曲率スケジューリング — RGB 映像だけから、かつてはレーザースキャナーを要した細部を持つ表面を再構成します。"
-    limitations: "依然としてシーンごとに数時間の最適化と密な撮影が必要で、反射的・テクスチャのない表面は今も測光ロスを混乱させます。"
+    solution: "ハッシュグリッドを行儀よくさせます。学習信号を隣接するハッシュセルへ広げる数値的 (有限差分) 勾配と、勾配のステップを縮めながら細かいハッシュレベルを順に有効にしていく粗から密への最適化 — 深度もセグメンテーションも使わず、RGB 映像だけから大規模で細密な表面を再構成します。"
+    limitations: "依然としてシーンごとに数時間の最適化 (50万イテレーション) と密な撮影が必要です。強い反射のある表面では NeuS にさえ細部で劣り — 論文はこれをハッシュ符号化に由来する欠点としています — 単純なテクスチャの物体ではほとんど改善しません。"

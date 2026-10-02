@@ -25,22 +25,24 @@ relations:
   - node: nerf2020
     type: fixes
     note: >
-      Repairs the training-cost catastrophe head-on: from ~1 day to ~5
-      seconds on a single GPU, collapsing NeRF's iteration loop from
-      "overnight experiment" to "interactive tool".
+      Repairs the training-cost catastrophe head-on: from 1-2 days to
+      NeRF-competitive quality in ~15 seconds on a single GPU, collapsing
+      NeRF's iteration loop from an overnight experiment to an interactive
+      tool.
     i18n:
       ja:
-        note: "学習コストの大惨事を正面から直します。単一 GPU で約1日から約5秒へ — NeRF の反復ループを「一晩がかりの実験」から「対話的なツール」へ畳み込みました。"
+        note: "学習コストの大惨事を正面から直します。単一 GPU で1〜2日かかっていたものが、約15秒で NeRF に並ぶ品質へ — NeRF の反復ループを、一晩がかりの実験から対話的なツールへと畳み込みました。"
   - node: plenoxels2021
     type: independent
     note: >
       The grid insurgency arrived from two directions in the same winter:
-      Berkeley deleted the network entirely; NVIDIA kept a tiny one and made
-      the data structure learnable. Neither needed the big MLP — the field's
-      bitter lesson about where NeRF's capacity actually lived.
+      Berkeley deleted the network entirely; NVIDIA kept a tiny one and fed
+      it from a learned multiresolution hash table. Neither needed the big
+      MLP — the field's bitter lesson about where NeRF's capacity actually
+      lived.
     i18n:
       ja:
-        note: "グリッドの反乱は、同じ冬に二方向から来ました。Berkeley はネットワークを完全に消し、NVIDIA は小さなものを残してデータ構造を学習可能にした。どちらも大きな MLP を必要としなかった — NeRF の容量が実際どこに宿っていたか、という分野の苦い教訓です。"
+        note: "グリッドの反乱は、同じ冬に二方向から来ました。Berkeley はネットワークを完全に消し、NVIDIA は小さなものを残して、学習される多重解像度ハッシュテーブルからそれに特徴を供給した。どちらも大きな MLP を必要としなかった — NeRF の容量が実際どこに宿っていたか、という分野の苦い教訓です。"
 status: seed
 i18n:
   ja:
