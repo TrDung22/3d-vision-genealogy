@@ -13,15 +13,20 @@ problem: >
   networks actually "reconstruct" anything, or do they just recall shapes
   they've seen?
 solution: >
-  A controlled experiment: retrieval baselines (look up the nearest training
-  shape) and simple clustering BEAT the sophisticated networks on their own
-  benchmarks. Conclusion: they perform recognition in disguise, not
-  reconstruction.
+  A controlled experiment with two baselines that cannot reconstruct by
+  design: clustering the training shapes, and retrieving the nearest training
+  shape through a learned image-to-shape embedding. On ShapeNet's
+  object-centered setup they match or beat AtlasNet, OGN and Matryoshka
+  Networks, which turn out "statistically indistinguishable" from them.
+  Conclusion: recognition in disguise, not reconstruction. Switching to
+  viewer-centered coordinates and the F-score narrows the gap — retrieval "is
+  no longer a clear winner".
 limitations: >
-  As a critique paper it offers no alternative — but it reset the evaluation
-  standards and planted doubt exactly where it belonged: the problem was the
-  closed ShapeNet world. Four years later, the generative line answered with
-  internet-scale priors.
+  Its remedies are partial by its own account: it recommends a viewer-centered
+  coordinate frame and the F-score, but "another critical problem, the dataset
+  composition, is identified but left unaddressed". The viewer-centered advice
+  was taken up as a core design choice (pixelNeRF builds on it); the dataset
+  question stayed open.
 relations:
   - node: shapenet2015
     type: challenges
@@ -38,11 +43,11 @@ relations:
     type: challenges
     note: >
       Challenges the entire line opened by 3D-R2N2: IoU metrics on ShapeNet had
-      been hiding the fact that the networks "recognize and recall" rather than
+      been hiding the fact that the networks recognize and recall rather than
       reconstruct.
     i18n:
       ja:
-        note: "3D-R2N2 が開いた路線そのものへの挑戦です。ShapeNet 上の IoU という指標が、ネットワークは再構成ではなく「認識して思い出している」だけという事実を覆い隠していました。"
+        note: "3D-R2N2 が開いた路線そのものへの挑戦です。ShapeNet 上の IoU という指標が、ネットワークは再構成ではなく認識して思い出しているだけという事実を覆い隠していました。"
   - node: psgn2017
     type: challenges
     note: >
@@ -58,5 +63,5 @@ status: seed
 i18n:
   ja:
     problem: "枝全体が避けてきた居心地の悪い問い — 単一画像3Dのネットワークは本当に何かを「再構成」しているのか、それとも見たことのある形状を思い出しているだけなのか?"
-    solution: "統制された実験です。検索ベースライン (学習データから最も近い形状を引いてくる) と単純なクラスタリングが、精巧なネットワークたちを彼ら自身のベンチマークで打ち負かしました。結論 — 彼らがやっていたのは再構成ではなく、変装した認識です。"
-    limitations: "批判の論文ゆえ代替案は示しません — それでも評価基準をリセットし、疑いを植えるべき場所に正しく植えました。問題は閉じた ShapeNet の世界にある、と。4年後、生成の路線がインターネット規模の事前知識でこれに答えます。"
+    solution: "設計上、再構成のしようがない二つのベースラインによる統制実験です。学習形状のクラスタリングと、学習した画像→形状の埋め込みを介して最も近い学習形状を引く検索。ShapeNet の object-centered な設定では、これらが AtlasNet・OGN・Matryoshka Networks に並ぶか上回り、両者は「統計的に区別できない」ことが分かりました。結論 — 変装した認識であって、再構成ではありません。viewer-centered な座標系と F-score に切り替えると差は縮まり、検索ベースラインは「もはや明確な勝者ではない」のです。"
+    limitations: "その処方は、本人たちの言うとおり部分的です。viewer-centered な座標系と F-score を推奨しつつも、「もう一つの重大な問題であるデータセットの構成は、指摘したものの手つかずのまま」。viewer-centered という助言は設計の核として採り入れられ (pixelNeRF がその上に立ちます)、データセットの問いは開いたまま残りました。"

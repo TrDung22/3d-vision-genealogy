@@ -38,6 +38,17 @@ relations:
     i18n:
       ja:
         note: "ピクセル整列特徴の技が、人間というニッチを飛び出します。PixelNeRF は PIFu 流の整列特徴をボリュームレンダリングに差し込みました — 人体レーンのアイデアが、シーンレーンのインフラになったのです。"
+  - node: tatarchenko2019
+    type: builds-on
+    note: >
+      Builds its central design choice on Tatarchenko's prescription: predict
+      in the input camera's view space rather than a canonical frame — a
+      choice that, citing Tatarchenko, "discourages the memorization of the
+      training set" — and carries it from shape prediction over to
+      image-conditioned radiance fields.
+    i18n:
+      ja:
+        note: "中心となる設計を Tatarchenko の処方の上に築きます。canonical な座標系ではなく、入力カメラの view space で予測する — Tatarchenko を引いて「学習セットの記憶を抑える」とされた選択です — そしてそれを、形状の予測から画像条件付きの radiance field へと持ち込みました。"
 status: seed
 i18n:
   ja:
