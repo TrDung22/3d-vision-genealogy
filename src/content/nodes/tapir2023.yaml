@@ -1,0 +1,70 @@
+title: "TAPIR: Tracking Any Point with per-frame Initialization and temporal Refinement"
+short: "TAPIR (2023)"
+authors: "Carl Doersch, Yi Yang, Mel Vecerik, Dilara Gokay, Ankush Gupta, Yusuf Aytar, Joao Carreira, Andrew Zisserman (Google DeepMind, UCL, Oxford VGG)"
+venue: "ICCV 2023"
+year: 2023
+branch: dynamic-4d
+lane: tracking
+links:
+  arxiv: "https://arxiv.org/abs/2306.08637"
+  paper: "https://openaccess.thecvf.com/content/ICCV2023/html/Doersch_TAPIR_Tracking_Any_Point_with_Per-Frame_Initialization_and_Temporal_Refinement_ICCV_2023_paper.html"
+  project: "https://deepmind-tapir.github.io/"
+  code: "https://github.com/google-deepmind/tapnet"
+problem: >
+  Tracking Any Point: given a video and query points on any solid surface,
+  report where each point is in every other frame, and when it is hidden.
+  Optical flow "operates only on subsequent frames, with no simple method
+  to track across long videos"; SfM keypoints are chosen to be easy to
+  track and "typically ignore occlusion". The two learned trackers each
+  held half the answer. TAP-Net searched every frame on its own — robust
+  to occlusion, but "jittery" — while PIPs refined tracks over time but
+  walked the video in chunks, each started from the last: it "struggles
+  with occlusion", and evaluating TAP-Vid-Kinetics took a month on one
+  GPU.
+solution: >
+  Join the halves. A per-frame initialization compares the query point's
+  feature with every location of every frame (stride-8 features), and a
+  small ConvNet turns each frame's slice of that cost volume into a
+  position, an occlusion logit and an uncertainty — the chance that the
+  guess is too far off to be useful. A temporal refinement then gathers
+  local score maps around the current track, on a feature pyramid down to
+  stride 4 and for all frames at once; a network of depthwise convolutions
+  in time (PIPs' MLP-Mixer recast as convolutions) updates positions,
+  occlusions, uncertainties and the query feature itself, iterated with
+  shared weights over sequences of any length. Trained on synthetic Kubric
+  video alone, it reaches 61.3 Average Jaccard on TAP-Vid-DAVIS (TAP-Net
+  38.4, PIPs 42.0) and 57.2 on Kinetics (46.6 and 35.3). Tracking 50
+  points through a 256×256 DAVIS clip takes about 0.3 seconds — roughly
+  150 frames per second — where PIPs needs 34.5.
+limitations: >
+  By its own account it still has "difficulty in precisely perceiving the
+  boundary between background and foreground", "may still struggle with
+  large appearance changes", and perhaps does less for textureless objects:
+  its gain on RGB-Stacking is "only 6.3%". Every query point is tracked on
+  its own. CoTracker (ECCV 2024) objected that trackers treat points "as
+  statistically independent", "even for recent techniques such as TAPIR",
+  although points "often have strong statistical dependencies (e.g.,
+  because they belong to the same object)", and tracked up to 70k of them
+  jointly. The tracks are 2D: lifted into 3D with monocular depth, by Shape
+  of Motion's account, they "tend to be noisy and erroneous".
+relations:
+  - node: raft2020
+    type: fixes
+    note: >
+      Repairs the limit TAPIR diagnoses in optical flow, the task RAFT
+      solves (RAFT is among the "deep learning approaches" it cites): flow
+      "operates only on subsequent frames, with no simple method to track
+      across long videos", while a point tracker must "robustly estimate
+      occlusions and recover when points reappear (unlike optical flow and
+      structure-from-motion keypoints)". TAPIR searches every frame for the
+      query point, then refines the whole track at once; on TAP-Vid-DAVIS,
+      where RAFT scores 30.0 Average Jaccard, TAPIR scores 61.3.
+    i18n:
+      ja:
+        note: "TAPIR がオプティカルフロー — RAFT が解く課題であり、RAFT は TAPIR が引く「深層学習のアプローチ」の一つです — に診断した限界を直します。フローは「連続するフレームの間でしか働かず、長い動画にわたって追跡する簡単な方法がない」。一方、点のトラッカーは「遮蔽を頑健に推定し、点が再び現れたときに回復しなければならない (オプティカルフローや Structure from Motion のキーポイントとは違って)」。TAPIR はすべてのフレームでクエリ点を探索し、そのうえで軌跡全体をまとめて磨きます。RAFT の Average Jaccard が 30.0 にとどまる TAP-Vid-DAVIS で、TAPIR は 61.3 を記録しました。"
+status: seed
+i18n:
+  ja:
+    problem: "Tracking Any Point — 動画と、任意の固体表面上のクエリ点が与えられたとき、各点がほかのすべてのフレームのどこにあるか、そしていつ隠れているかを答える問題です。オプティカルフローは「連続するフレームの間でしか働かず、長い動画にわたって追跡する簡単な方法がない」。SfM のキーポイントは追跡しやすいものが選ばれ、「たいてい遮蔽を無視します」。学習ベースの二つのトラッカーは、それぞれ答えの半分ずつを持っていました。TAP-Net は各フレームを独立に探索するので遮蔽には強いものの、軌跡は「がたつき」ます。PIPs は時間方向に軌跡を磨きますが、動画をチャンクに分け、前のチャンクの出力から次を始めて順に進むため、「遮蔽に苦戦し」、TAP-Vid-Kinetics の評価には GPU 1枚で1か月かかりました。"
+    solution: "二つの半分をつなぎます。フレームごとの初期化では、クエリ点の特徴をすべてのフレームのすべての位置と比べ (ストライド8の特徴)、小さな ConvNet がそのコストボリュームのフレームごとの断面を、位置、遮蔽のロジット、そして不確かさ — 推定が大きく外れて役に立たない確率 — に変えます。続く時間方向の精緻化では、現在の軌跡のまわりの局所的なスコアマップを、ストライド4まで下る特徴ピラミッド上で、全フレームについて一度に集めます。時間方向の depthwise 畳み込みからなるネットワーク (PIPs の MLP-Mixer を畳み込みに置き換えたもの) が、位置、遮蔽、不確かさ、そしてクエリ特徴そのものを更新し、重みを共有したまま任意の長さの系列にわたって反復します。合成の Kubric 動画だけで学習し、TAP-Vid-DAVIS で Average Jaccard 61.3 (TAP-Net は 38.4、PIPs は 42.0)、Kinetics で 57.2 (同じく 46.6 と 35.3) に達しました。256×256 の DAVIS クリップで50点を追跡するのにかかるのは約0.3秒 — 毎秒およそ150フレーム — で、PIPs は34.5秒を要します。"
+    limitations: "論文自身によれば、なお「背景と前景の境界を正確に捉えることの難しさ」があり、「大きな見た目の変化にはまだ苦戦することがある」うえ、テクスチャのない物体にはあまり効かないためか、RGB-Stacking での改善は「わずか 6.3%」にとどまります。クエリ点は一つずつ独立に追跡されます。CoTracker (ECCV 2024) は、トラッカーが点を「統計的に独立なものとして」扱っており、それは「TAPIR のような最近の手法でさえ」同じだと異を唱えました。点どうしは「しばしば強い統計的依存を持つ (たとえば同じ物体に属するため)」のに、というのです。そして最大7万点を同時に追跡しました。軌跡は2Dのままです。Shape of Motion によれば、単眼深度で3Dに持ち上げたその軌跡は「ノイズが多く、誤りを含みがち」です。"

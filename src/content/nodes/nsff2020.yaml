@@ -1,0 +1,59 @@
+title: "Neural Scene Flow Fields for Space-Time View Synthesis of Dynamic Scenes"
+short: "NSFF (2020)"
+authors: "Zhengqi Li, Simon Niklaus, Noah Snavely, Oliver Wang"
+venue: "CVPR 2021"
+year: 2020
+branch: dynamic-4d
+lane: flow
+links:
+  arxiv: "https://arxiv.org/abs/2011.13084"
+  paper: "https://openaccess.thecvf.com/content/CVPR2021/html/Li_Neural_Scene_Flow_Fields_for_Space-Time_View_Synthesis_of_Dynamic_CVPR_2021_paper.html"
+  project: "https://www.cs.cornell.edu/~zl548/NSFF/"
+  code: "https://github.com/zhengqili/Neural-Scene-Flow-Fields"
+problem: >
+  Most view synthesis assumed a static scene or a rig of synchronized
+  cameras; most videos shared online have neither. NSFF wanted new views in
+  space AND time from one monocular video with known poses, a problem
+  "highly ill-posed since there can be multiple scene configurations that
+  lead to the same observed image sequences". Using multi-view constraints
+  on moving objects would first require the dense 3D motion of every point:
+  the scene flow.
+solution: >
+  Give the radiance field a clock and a velocity. For each (point, time) an
+  MLP returns color, density, forward and backward 3D scene flow, and
+  disocclusion weights; each frame is volume-rendered again from its
+  neighbors' scene, warped along the predicted flow, and must still match
+  the input. Monocular depth and optical flow from pretrained networks keep
+  early optimization out of bad minima, and a static NeRF, blended in,
+  regains full multi-view constraints in rigid regions. New moments are
+  rendered by splatting along the flow. In the dynamic regions of the Nvidia
+  benchmark, PSNR rose from 17.34 (the best baseline) to 21.91.
+limitations: >
+  By its own account it is slow (about two days of training per scene on
+  two V100s, some 6 s per 512x288 frame), cannot extrapolate content the
+  input never saw, and degrades as sequences grow longer "given default
+  number of model parameters" (most ran 1-2 seconds) or motion turns
+  extreme. DynIBaR, from the same first author, later made this its target:
+  NSFF "only claims good performance for 1-second, forward-facing videos".
+  And its benchmark, by its own description, simulates a moving monocular
+  camera by sampling a different rig camera at each instant, the
+  teleportation DyCheck later flagged.
+relations:
+  - node: nerf2020
+    type: builds-on
+    note: >
+      Stands on NeRF, the "prior work for static scenes" it builds upon, "to
+      which we add the notion of time, and estimate 3D motion by explicitly
+      modeling forward and backward scene flow as dense 3D vector fields".
+      NeRF's MLP, positional encoding and volume rendering carry over; the
+      flow outputs and the flow-warped photometric loss are new, and a NeRF
+      variant stays inside the model as its static half.
+    i18n:
+      ja:
+        note: "NeRF の上に立ちます。NSFF が土台にする「静的シーンのための先行研究」に、「時間の概念を加え、前方・後方のシーンフローを密な3次元ベクトル場として明示的にモデル化することで、3次元の動きを推定する」のです。NeRF の MLP、位置エンコーディング、volume rendering はそのまま引き継がれ、フローの出力と、フローで warp した光度損失が新しい部分です。そして NeRF の変種が、静的な半分としてモデルの中に残ります。"
+status: seed
+i18n:
+  ja:
+    problem: "これまでの view synthesis の多くは、静止したシーンか、同期したカメラのリグを前提にしていました。ネットで共有される動画の大半には、そのどちらもありません。NSFF が求めたのは、pose が既知の単眼動画一本から、空間と時間の両方で新しい視点を合成することです。これは「同じ画像列を生み出すシーンの構成が複数ありうるため、きわめて ill-posed」な問題です。動く物体に多視点の拘束を使うには、まずすべての点の密な3次元の動き — シーンフロー — を知らなければなりません。"
+    solution: "radiance field に時計と速度を与えます。MLP は各 (点, 時刻) について、色、密度、前方・後方の3次元シーンフロー、そして disocclusion の重みを返します。各フレームは、予測したフローに沿って warp した近隣時刻のシーンから改めて volume rendering され、それでも入力と一致しなければなりません。事前学習済みネットワークによる単眼深度とオプティカルフローが最適化の初期を悪い局所解から遠ざけ、ブレンドされる静的な NeRF が、剛体の領域で多視点の拘束を完全に取り戻します。新しい瞬間は、フローに沿ったスプラッティングでレンダリングします。Nvidia の benchmark の動的領域では、PSNR が最良のベースラインの 17.34 から 21.91 に上がりました。"
+    limitations: "論文自身によれば、遅く (シーンごとに V100 2枚で約2日の学習、512x288 の1フレームに約6秒)、入力に一度も映らなかった内容は外挿できず、系列が長くなると「デフォルトのモデルパラメータ数のままでは」(多くは1〜2秒で学習) 品質が落ち、動きが極端なときも同様です。同じ筆頭著者による DynIBaR は、のちにそこを標的にしました。NSFF は「1秒の前向き (forward-facing) の動画でしか良い性能を主張していない」というのです。さらにその benchmark は、論文自身の説明どおり、時刻ごとにリグの別のカメラを選んで動く単眼カメラを模擬しています — DyCheck がのちに指摘したテレポーテーションです。"

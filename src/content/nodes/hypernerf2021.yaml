@@ -1,0 +1,61 @@
+title: "HyperNeRF: A Higher-Dimensional Representation for Topologically Varying Neural Radiance Fields"
+short: "HyperNeRF (2021)"
+authors: "Keunhong Park, Utkarsh Sinha, Peter Hedman, Jonathan T. Barron, Sofien Bouaziz, Dan B Goldman, Ricardo Martin-Brualla, Steven M. Seitz"
+venue: "SIGGRAPH Asia 2021 (journal track, ACM TOG)"
+year: 2021
+branch: dynamic-4d
+lane: deformation
+links:
+  arxiv: "https://arxiv.org/abs/2106.13228"
+  project: "https://hypernerf.github.io/"
+  code: "https://github.com/google/hypernerf"
+problem: >
+  Nerfies could bend a canonical NeRF to follow a face, but not open its
+  mouth. Deformation-based dynamic NeRFs warp every frame into one template,
+  and the warp, an MLP, is continuous; cutting a lemon, tearing paper or
+  parting lips is not. "Topological openings or closings require a
+  discontinuity in the deformation field at the seam of the closing, which
+  MLPs cannot model easily."
+solution: >
+  Borrow the old trick of level-set methods, which model a changing shape
+  as slices through one static, higher-dimensional function. The canonical
+  NeRF gains extra ambient coordinates (two, in every experiment), and a
+  deformable slicing surface, itself an MLP, chooses for each point of each
+  frame where to cut through them, so different parts of the scene can sit
+  in different states. Nerfies' spatial deformation field stays to carry
+  ordinary motion. Against Nerfies, LPIPS drops by 4.1% when interpolating
+  between moments and by 8.6% on novel views.
+limitations: >
+  By its own account it imposes no domain-specific priors and "can only
+  reconstruct what is observed": moments the capture barely sees, as under
+  rapid motion, are lost, and camera registration still bounds quality.
+  DyCheck later found that its multi-camera evaluation sequences "sample
+  alternating frames from two physical cameras" and that its 13
+  single-camera sequences show quasi-static motion; DynIBaR, that
+  canonical-model methods like it are "mostly constrained to object-centric
+  scenes with controlled camera paths".
+relations:
+  - node: nerfies2020
+    type: fixes
+    note: >
+      Repairs the failure Nerfies itself admitted and explained: it
+      "struggles with topological changes e.g., opening/closing of the
+      mouth", because the discontinuity needed is "difficult for our
+      continuous MLP to predict". The same team's comparison shows the cost
+      ("Nerfies is unable to model the topological variation with its
+      deformation field and therefore distorts the geometry in implausible
+      ways in order to explain the training data"). HyperNeRF keeps the
+      Nerfies machinery ("We build directly upon this technique"), latent
+      codes and coarse-to-fine annealing included, and lets the template
+      slide along ambient dimensions where the warp alone would tear; the
+      elastic loss goes, since topological variations "directly violate its
+      assumptions".
+    i18n:
+      ja:
+        note: "Nerfies 自身が認め、原因まで説明していた失敗を直します。Nerfies は「トポロジーの変化、たとえば口の開閉に苦戦」し、それは必要な不連続が「連続な MLP には予測しにくい」からでした。同じチームの比較がその代償を示します (「Nerfies は変形場ではトポロジーの変化をモデル化できず、学習データを説明するために形状をありえない形に歪めてしまう」)。HyperNeRF は Nerfies の仕組みを、潜在コードや粗から密へのアニーリングまで含めて受け継ぎ (「この手法の上に直接構築する」)、warp だけでは裂けるしかないところで、テンプレートを ambient 次元に沿って滑らせます。弾性損失は外されました。トポロジーの変化は「その前提を直接破る」からです。"
+status: seed
+i18n:
+  ja:
+    problem: "Nerfies は canonical な NeRF を顔の動きに合わせて曲げることはできても、その口を開かせることはできませんでした。変形ベースの動的 NeRF は各フレームを一つのテンプレートへ warp しますが、その warp は MLP であり、連続です。レモンを切る、紙を破る、唇が開く — こうした動きは連続ではありません。「トポロジーが開いたり閉じたりするには、閉じ目の継ぎ目で変形場が不連続にならなければならず、MLP はそれを容易にはモデル化できない」のです。"
+    solution: "等値面 (level set) 法の古い技を借ります。変化する形状を、一つの静的な高次元関数の切り口として表す方法です。canonical な NeRF に ambient 座標を加え (どの実験でも2次元)、それ自体も MLP である変形可能なスライス面が、各フレームの各点についてそれをどこで切るかを選びます。こうしてシーンの部分ごとに別々の状態をとれるようになります。ふつうの動きは、そのまま残した Nerfies の空間変形場が担います。Nerfies と比べ、瞬間どうしの補間で LPIPS を4.1%、novel view synthesis で8.6%下げました。"
+    limitations: "論文自身によれば、ドメイン固有の prior を課さないので「観測されたものしか再構成できない」のです。撮影にほとんど映らない瞬間 (速い動きのときなど) は失われ、カメラの位置合わせの精度も品質を縛ります。のちに DyCheck は、その多カメラ評価シーケンスが「2台の物理カメラから交互にフレームを取って」いること、単一カメラの13本がほぼ静止した (quasi-static) 動きしか含まないことを示しました。DynIBaR は、HyperNeRF のような canonical モデル型の手法が「物体中心のシーンと、制御されたカメラ経路にほぼ限られる」と指摘しています。"

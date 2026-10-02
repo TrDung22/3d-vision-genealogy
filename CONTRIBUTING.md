@@ -124,7 +124,7 @@ DeepSDF → NeRF → Zero-1-to-3).
 | 1 | `#3987e5` | single-image-3d |
 | 2 | `#199e70` | neural-rendering |
 | 3 | `#c98500` | multi-view-geometry |
-| 4 | `#008300` | |
+| 4 | `#008300` | dynamic-4d |
 | 5 | `#9085e9` | |
 
 Don't reorder the slots and don't invent new colors — the slot order itself is

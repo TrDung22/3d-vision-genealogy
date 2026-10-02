@@ -28,7 +28,9 @@ limitations: >
   A diagnosis, not a cure: harder data and fairer metrics, but no new method
   to meet them. EMF is only a first cut at "difficulty" — appearance changes,
   lighting and motion complexity are left "for future works". Its iPhone
-  benchmark became the yardstick later monocular 4D methods report on.
+  benchmark became the yardstick later monocular 4D methods report on:
+  Shape of Motion scores its 3D tracks and novel views there, MegaSaM its
+  cameras and depth.
 relations:
   - node: nerfies2020
     type: challenges
@@ -50,9 +52,40 @@ relations:
     i18n:
       ja:
         note: "問われるのは手法ではなくベンチマークです (D-NeRF 自体は再実行されていません)。一台の動くカメラ、同期リグなし — とされたその合成シーケンスは、事実上100〜200台のカメラの間をテレポートしており、測定されたどのデータセットよりも高い effective multi-view factor を示しました。"
+  - node: hypernerf2021
+    type: challenges
+    note: >
+      The other half of the Nerfies-HyperNeRF data goes on trial with the
+      method: HyperNeRF's evaluation captures alternate frames between two
+      rig cameras, as Nerfies' do, and its 13 single-camera sequences, shown
+      only qualitatively, all have quasi-static motion. Retrained without
+      teleporting, HyperNeRF still renders the most photorealistic frames by
+      masked LPIPS, but with "distorted artifacts that do not align well with
+      the ground truth", and a plain time-conditioned NeRF (T-NeRF) beats it
+      on masked PSNR; on the iPhone captures it "produces visually
+      implausible results with ghosting effects".
+    i18n:
+      ja:
+        note: "Nerfies-HyperNeRF データのもう半分も、手法とともに審判にかけられます。HyperNeRF の評価用撮影は、Nerfies と同じく2台のリグカメラから交互にフレームを取っており、定性的に示されただけの単一カメラのシーケンス13本は、すべて準静的な動きでした。テレポートなしで学習し直すと、HyperNeRF は masked LPIPS では最もフォトリアルな描画を見せるものの、「ground truth とうまく合わない歪んだアーティファクト」を伴い、素朴な時間条件付きの NeRF (T-NeRF) に masked PSNR で負けます。iPhone の撮影では、「ゴーストを伴う、視覚的にありえない結果を生み」ました。"
+  - node: nsff2020
+    type: challenges
+    note: >
+      NSFF's benchmark is audited with the rest: by DyCheck's reading it
+      "samples alternating frames" across a camera rig, the teleporting
+      protocol DyCheck finds in 22
+      of the 23 multi-camera sequences prior works evaluated on. Re-run on
+      truly monocular data, it has the lowest masked PSNR of the four
+      methods tested — 19.53 on the rectified Nerfies-HyperNeRF data and
+      15.46 on iPhone, against 21.55 and 16.96 for a plain T-NeRF — and its
+      official code "fails to converge" on the iPhone dataset; its NDC
+      parameterization, designed for forward-facing scenes, leaves layered
+      artifacts on inward-facing ones.
+    i18n:
+      ja:
+        note: "NSFF の benchmark も、ほかと同じく監査されます。DyCheck の読みでは、NSFF はリグのカメラから「交互にフレームを取って」おり、これは、先行研究が評価に使った多カメラのシーケンス23本のうち22本に DyCheck が見出した、テレポートのプロトコルです。本当に単眼のデータで再実行すると、NSFF の masked PSNR は評価した4手法の中で最も低くなりました (テレポートをなくした Nerfies-HyperNeRF のデータで 19.53、iPhone で 15.46。素朴な T-NeRF はそれぞれ 21.55 と 16.96)。公式のコードは iPhone データセットで「収束せず」、前方を向いたシーン向けに設計された NDC の表現は、内向きのシーンに層状のアーティファクトを残します。"
 status: seed
 i18n:
   ja:
     problem: "2年にわたる動的放射輝度場 (D-NeRF、Nerfies、HyperNeRF、NSFF) は、気ままに動く一台のカメラから動くシーンを、と約束してきました — そしてベンチマークもそれを裏付けているように見えた。そのベンチマークは、本当に単眼だったのでしょうか?"
     solution: "測ってみます。effective multi-view factor (EMF) が、「単眼」の撮影にどれだけ多視点の信号が漏れ込んでいるかを数値化する。D-NeRF の合成データは「事実上100〜200台のカメラの間をテレポートして」おり、Nerfies と HyperNeRF は「2台の物理カメラから交互にフレームを取って」いて、多カメラ評価シーケンス23本のうち22本がテレポートしていました。修正したプロトコル — 共可視性 (co-visibility) でマスクした指標と、本当に気軽に撮った iPhone データセット — で測ると、最先端手法は多視点の手がかりがないだけで masked PSNR を 1〜2 dB、複雑な動きでは 4〜5 dB 失います。"
-    limitations: "診断であって、治療ではありません。より難しいデータとより公正な指標はあっても、それに応える新しい手法はない。EMF も「難しさ」の最初の切り口にすぎず、見え方の変化、照明、動きの複雑さは「今後の課題」に残されています。その iPhone ベンチマークは、後の単眼4D手法が成績を報告する物差しになりました。"
+    limitations: "診断であって、治療ではありません。より難しいデータとより公正な指標はあっても、それに応える新しい手法はない。EMF も「難しさ」の最初の切り口にすぎず、見え方の変化、照明、動きの複雑さは「今後の課題」に残されています。その iPhone ベンチマークは、後の単眼4D手法が成績を報告する物差しになりました。Shape of Motion は3Dの軌跡と novel view synthesis を、MegaSaM はカメラと深度を、そこで測っています。"

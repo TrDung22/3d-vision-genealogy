@@ -17,11 +17,11 @@ solution: >
   deformation MLP mapping each (point, time) back into canonical space.
   Time becomes an input; the renderer stays NeRF.
 limitations: >
-  Synthetic-scene scope (eight short rendered sequences), and a continuous
-  warp of one canonical scene cannot change topology — HyperNeRF's later
-  diagnosis, with mouths opening as the example. The canonical+warp
-  blueprint, though, became a staple of dynamic radiance fields for years
-  to come.
+  Synthetic-scene scope (eight short rendered sequences), slow training (by
+  its own account, two days on a single GTX 1080), and a continuous warp of
+  one canonical scene cannot change topology — HyperNeRF's later diagnosis,
+  with mouths opening as the example. The canonical+warp blueprint, though,
+  became a staple of dynamic radiance fields for years to come.
 relations:
   - node: nerf2020
     type: fixes
@@ -47,4 +47,4 @@ i18n:
   ja:
     problem: "NeRF の世界は凍りついています。物体が一つ動くだけで、その学習が頼る多視点一貫性は破られる。放射輝度場は、変化するシーンを表現できるのか — 同期リグなしの、一本のカメラ経路から?"
     solution: "時間を空間から切り離します。canonical な静的放射輝度場と、各 (点, 時刻) を canonical 空間へ写し戻す変形 MLP。時間が入力になり、レンダラーは NeRF のまま。"
-    limitations: "扱えるのは合成シーン (短いレンダリング系列8本) の範囲で、一つの canonical なシーンを連続的に warp するだけではトポロジーを変えられません — 口が開く例を挙げた、のちの HyperNeRF の診断です。ただし canonical + warp という設計図は、その後何年にもわたって動的放射輝度場の定番になりました。"
+    limitations: "扱えるのは合成シーン (短いレンダリング系列8本) の範囲で、学習も遅く (本人たちによれば GTX 1080 一枚で2日)、一つの canonical なシーンを連続的に warp するだけではトポロジーを変えられません — 口が開く例を挙げた、のちの HyperNeRF の診断です。ただし canonical + warp という設計図は、その後何年にもわたって動的放射輝度場の定番になりました。"

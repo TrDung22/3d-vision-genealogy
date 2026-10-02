@@ -1,0 +1,70 @@
+title: "MonST3R: A Simple Approach for Estimating Geometry in the Presence of Motion"
+short: "MonST3R (2024)"
+authors: "Junyi Zhang, Charles Herrmann, Junhwa Hur, Varun Jampani, Trevor Darrell, Forrester Cole, Deqing Sun, Ming-Hsuan Yang (UC Berkeley, Google DeepMind, Stability AI, UC Merced)"
+venue: "ICLR 2025 (Spotlight)"
+year: 2024
+branch: dynamic-4d
+lane: monocular
+links:
+  arxiv: "https://arxiv.org/abs/2410.03825"
+  paper: "https://openreview.net/forum?id=lJpqxFgWCM"
+  project: "https://monst3r-project.github.io/"
+  code: "https://github.com/Junyi42/monst3r"
+problem: >
+  Geometry from a video of a moving scene — cameras, depth, a point cloud,
+  while things move. The usual route split the problem into depth, optical
+  flow or trajectories and stitched the pieces back with global
+  optimization, and such multi-stage methods "are usually slow, brittle,
+  and prone to error at each step". DUSt3R had shown that geometry can be
+  regressed directly, but only for static scenes: trained on static data,
+  it often aligns a pair of frames on the moving foreground and misplaces
+  the background. And the posed, depth-labelled dynamic video needed to
+  retrain it is scarce.
+solution: >
+  Keep DUSt3R's pointmaps, but tie each one to a single timestep: a pair of
+  frames yields two pointmaps in the first camera's frame, and a moving
+  object simply appears wherever it was. MonST3R starts from DUSt3R's
+  weights, freezes the encoder and fine-tunes decoder and heads on four
+  posed, depth-labelled video datasets — synthetic PointOdyssey, TartanAir
+  and Spring plus real Waymo driving — with frame strides of 1 to 9 and
+  field-of-view augmentation: a day on two GPUs. Downstream, intrinsics
+  come from the pointmap, relative pose from PnP and RANSAC, static masks
+  from where optical flow disagrees with the flow camera motion alone would
+  induce, and a sliding-window global alignment (DUSt3R's loss plus camera
+  smoothness and flow projection) yields per-frame cameras and a dynamic
+  point cloud. On Sintel its camera error (ATE) is 0.108, against 0.417 for
+  DUSt3R given ground-truth motion masks and 0.175 for DROID-SLAM given
+  ground-truth intrinsics.
+limitations: >
+  By its own account it can in theory handle changing intrinsics, but "in
+  practice, this requires careful hyperparameter tuning or manual
+  constraints"; its small sliding window leaves it "vulnerable to long-term
+  occlusion"; and it "struggles with out-of-distribution inputs, such as
+  open fields". It still thinks in pairs, fused by an optimization. MegaSaM,
+  released two months later and calling it concurrent work, found that it
+  "incorrectly treats rotational camera movement as translational one",
+  and measured its camera error on DyCheck's handheld iPhone videos at
+  0.690, against 0.020 for its own.
+relations:
+  - node: dust3r2023
+    type: fixes
+    note: >
+      Repairs the two limitations MonST3R identifies "stemming from the
+      distribution of DUSt3R's training data". Trained only on static
+      scenes, DUSt3R "fails to correctly align pointmaps of scenes with
+      moving objects", often aligning on the moving foreground and
+      misaligning the background; trained mostly on buildings and
+      backgrounds, it "sometimes fails to correctly estimate the geometry of
+      foreground objects" and places them in the background. MonST3R keeps
+      DUSt3R's network and weights and fine-tunes decoder and heads on
+      dynamic video. On Sintel camera pose, DUSt3R reaches an ATE of 0.417
+      even when given ground-truth motion masks; MonST3R, 0.108.
+    i18n:
+      ja:
+        note: "MonST3R が見出した、「DUSt3R の学習データの分布に由来する」二つの限界を直します。静的なシーンだけで学習した DUSt3R は「動く物体を含むシーンの点マップを正しく位置合わせできず」、しばしば動く前景に合わせて位置合わせした結果、背景がずれてしまいます。学習データの大半が建物と背景なので、「前景の物体の幾何を正しく推定できないことがあり」、それを背景の中に置いてしまいます。MonST3R は DUSt3R のネットワークと重みを引き継ぎ、デコーダとヘッドを動的な動画で微調整しました。Sintel のカメラ pose では、ground truth の動きマスクを与えても DUSt3R の ATE は 0.417、MonST3R は 0.108 です。"
+status: seed
+i18n:
+  ja:
+    problem: "動くシーンの動画から幾何を — 物が動くあいだのカメラ、深度、点群を。従来の道筋は、問題を深度、オプティカルフロー、軌跡といった部分問題に分け、大域最適化で縫い合わせるもので、こうした多段の手法は「たいてい遅く、もろく、各段で誤りを生みやすい」のです。DUSt3R は幾何を直接回帰できることを示しましたが、対象は静的なシーンだけでした。静的なデータだけで学習したため、フレームのペアをしばしば動く前景に合わせて位置合わせしてしまい、背景がずれます。しかも、再学習に必要な、pose と深度のラベルが付いた動的な動画は、ほとんどありません。"
+    solution: "DUSt3R の点マップを保ちつつ、それぞれを一つの時刻に結び付けます。2フレームのペアは最初のカメラの座標系で2枚の点マップを返し、動く物体は、それがいた場所にそのまま現れます。MonST3R は DUSt3R の重みから出発し、エンコーダを凍結して、デコーダとヘッドだけを、pose と深度のラベルを持つ4つの動画データセット — 合成の PointOdyssey、TartanAir、Spring と、実写の Waymo の走行データ — で微調整します。フレーム間隔は1〜9、視野角の augmentation を加え、学習は GPU 2枚で1日です。その先では、内部パラメータは点マップから、相対 pose は PnP と RANSAC から、静的マスクは推定したオプティカルフローとカメラの動きだけが生むはずのフローが食い違う場所から求め、スライディングウィンドウの global alignment (DUSt3R の損失に、カメラの滑らかさとフロー投影の項を加えたもの) が、フレームごとのカメラと動的な点群を与えます。Sintel のカメラ誤差 (ATE) は 0.108 で、ground truth の動きマスクを与えた DUSt3R の 0.417、ground truth の内部パラメータを与えた DROID-SLAM の 0.175 を下回りました。"
+    limitations: "論文自身によれば、変化する内部パラメータも理論上は扱えるものの、「実際には、注意深いハイパーパラメータ調整か手動の制約を要し」、小さなスライディングウィンドウのせいで「長期の遮蔽に弱く」、「開けた野原のような分布外の入力に苦戦します」。考える単位は今もペアで、それを最適化で融合しています。2か月後に現れ、MonST3R を並行研究と呼んだ MegaSaM は、それが「回転するカメラの動きを誤って並進として扱う」ことを見出し、DyCheck の手持ちの iPhone 動画でのカメラ誤差を、自身の 0.020 に対して 0.690 と測りました。"

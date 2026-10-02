@@ -1,0 +1,71 @@
+title: "HexPlane: A Fast Representation for Dynamic Scenes"
+short: "HexPlane (2023)"
+authors: "Ang Cao, Justin Johnson"
+venue: "CVPR 2023"
+year: 2023
+branch: dynamic-4d
+lane: spacetime
+links:
+  arxiv: "https://arxiv.org/abs/2301.09632"
+  paper: "https://openaccess.thecvf.com/content/CVPR2023/html/Cao_HexPlane_A_Fast_Representation_for_Dynamic_Scenes_CVPR_2023_paper.html"
+  project: "https://caoang327.github.io/HexPlane/"
+  code: "https://github.com/Caoang327/HexPlane"
+problem: >
+  Dynamic radiance fields were still big MLPs, queried many times per pixel
+  whether they output a color or a warp into a canonical scene, and training
+  was just as slow, "requiring up to days of GPU time to model a single
+  dynamic scene" (DyNeRF: a week on 8 GPUs). The explicit alternative, one
+  voxel grid per timestep, takes 48 GB for a 512³ RGB volume over just 32
+  frames, and the handful of cameras that see each instant cannot fill it
+  alone.
+solution: >
+  Six planes of learned features, one per pair of the axes x, y, z, t. Each
+  spatial plane is paired with the spacetime plane on the other two axes
+  (XY with ZT, XZ with YT, YZ with XT); a point's feature is the three
+  pairwise products, concatenated, and a tiny MLP turns it into color for
+  volume rendering. The planes are TensoRF's factorization with time folded
+  in. DyNeRF-level quality in 12 GPU-hours instead of 1,344, and 31.04 dB on
+  D-NeRF's scenes in 11.5 minutes, with no deformation field at all.
+limitations: >
+  By its own account, giving up the deformation field costs it on monocular
+  video: its basis sharing is "still less effective than the aforementioned
+  deformation field" when views are extremely sparse, its renders show
+  "color jittering and artifacts", and fast motion degrades them. It named
+  the next steps itself: "using HexPlane to represent deformation fields",
+  which 4D Gaussian Splatting did, and "dynamic scene generation", which
+  MAV3D, with Johnson among its authors, posted three days later. It trains
+  fast but renders slowly (2.5 fps at 800×800 for its slim version, in
+  4D-GS's comparison), and as an Eulerian grid it gives no correspondence
+  over time, as Dynamic 3D Gaussians pointed out.
+relations:
+  - node: tensorf2022
+    type: builds-on
+    note: >
+      "We build on TensoRF", HexPlane says, and it derives its planes from
+      TensoRF's vector-matrix factorization in two steps: first each
+      low-rank component gets a weight that varies over time, then each line
+      vector and its time weight are replaced by one joint plane over that
+      axis and time. TensoRF's three plane-and-line pairs become HexPlane's
+      three pairs of a spatial and a spacetime plane.
+    i18n:
+      ja:
+        note: "HexPlane は「TensoRF の上に構築する」と述べ、TensoRF のベクトル・行列分解から二段階で自らの平面を導きます。まず各低ランク成分に時間とともに変わる重みを与え、次に各ベクトルとその時間重みを、その軸と時間にまたがる一枚の平面に置き換える。TensoRF の三組の「平面と線」が、HexPlane の三組の「空間平面と時空間平面」になるのです。"
+  - node: dnerf2020
+    type: fixes
+    note: >
+      Repairs the cost HexPlane diagnoses in implicit dynamic NeRFs, those
+      outputting color and those outputting "a deformation to a canonical
+      static scene", D-NeRF among them: "rendering images from novel views is
+      expensive since each generated pixel requires many MLP evaluations",
+      and training takes days. On D-NeRF's own synthetic scenes, 31.04 dB in
+      11.5 minutes against D-NeRF's 30.50 dB in 20 hours, without any
+      deformation field.
+    i18n:
+      ja:
+        note: "HexPlane が陰的な動的 NeRF — 色を出力するものも、「canonical な静的シーンへの変形」を出力するもの (D-NeRF もその一つ) も — に見たコストを直します。「生成する各ピクセルが多数の MLP 評価を必要とするため、新しい視点からの画像のレンダリングは高価」で、学習には数日かかる。D-NeRF 自身の合成シーンで、D-NeRF の20時間・30.50 dB に対し、変形場を一切使わずに11.5分・31.04 dB です。"
+status: seed
+i18n:
+  ja:
+    problem: "動的な radiance field は依然として大きな MLP で、色を出すにせよ canonical なシーンへの warp を出すにせよ、1ピクセルごとに何度も問い合わせる必要がありました。学習も同じく遅く、「一つの動的シーンをモデル化するのに最大で数日分の GPU 時間」を要します (DyNeRF は GPU 8枚で1週間)。陽的な代替として時刻ごとにボクセルグリッドを持てば、512³ の RGB ボリュームをわずか32フレーム分で 48 GB。しかも各瞬間を見ているのは数台のカメラだけで、そのグリッドを単独では埋められないのです。"
+    solution: "x, y, z, t の軸の組ごとに一枚、計六枚の学習された特徴平面です。各空間平面は残り二軸の時空間平面と対になり (XY と ZT、XZ と YT、YZ と XT)、点の特徴は三組それぞれの積を連結したもの。小さな MLP がそれを色に変え、volume rendering で画像にします。平面は、TensoRF の分解に時間を折り込んだものです。DyNeRF 並みの品質を 1,344 GPU 時間ではなく12 GPU 時間で、D-NeRF のシーンでは変形場をまったく使わずに 31.04 dB を11.5分で達成しました。"
+    limitations: "論文自身によれば、変形場を手放した代償は単眼動画で表れます。視点が極端に疎なとき、基底の共有は「先に述べた変形場ほど効果的ではない」のです。レンダリングには「色のちらつきやアーティファクト」が出て、速い動きでは劣化します。次の一手も自ら挙げていました。「HexPlane で変形場を表現する」こと — 4D Gaussian Splatting が実現しました — と「動的シーンの生成」で、こちらは Johnson を著者に含む MAV3D が三日後に公開しています。学習は速くても描画は遅く (4D-GS の比較では、軽量版で 800×800 時に 2.5 fps)、オイラー的なグリッドなので時間を通じた対応関係は得られません — Dynamic 3D Gaussians の指摘です。"

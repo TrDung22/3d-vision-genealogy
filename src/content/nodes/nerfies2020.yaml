@@ -18,9 +18,12 @@ solution: >
   local deformation), a background prior, and coarse-to-fine annealing of
   the deformation's frequencies — casually captured humans, reconstructed.
 limitations: >
-  Warps cannot change topology (opening mouths defeated it — spawning
-  HyperNeRF from the same team), motion must be modest, and per-scene
-  training is slow.
+  By its own account it "struggles with topological changes e.g.,
+  opening/closing of the mouth", since the seam of the lips needs "a sharp
+  discontinuity in the deformation", which is "difficult for our continuous
+  MLP to predict"; it may also fail on frames with rapid motion, and trains
+  slowly (a week on 8 V100s for full-HD models). HyperNeRF, from the same
+  team, took that diagnosis as its starting point.
 relations:
   - node: nerf2020
     type: fixes
@@ -49,4 +52,4 @@ i18n:
   ja:
     problem: "気ままに振り回したスマホからの、フォトリアルで自由視点の「自撮り」。被写体は呼吸し、揺れ、まばたきする — 非剛体だらけで、NeRF の静的仮定は砕け散ります。"
     solution: "観測ごとの変形場が各フレームを共有 canonical NeRF へ warp し、それを弾性正則化 (非剛体な局所変形にペナルティ)、背景 prior、変形の周波数の粗から密へのアニーリングで手なずける — 気軽に撮った人間を再構成します。"
-    limitations: "warp はトポロジーを変えられず (口が開くのに敗れ、同チームから HyperNeRF が生まれました)、動きは控えめでなければならず、シーンごとの学習は遅いのです。"
+    limitations: "論文自身によれば、「トポロジーの変化、たとえば口の開閉に苦戦」します。唇の継ぎ目には「変形の鋭い不連続」が要り、それは「連続な MLP には予測しにくい」からです。さらに速い動きのあるフレームでは失敗することがあり、学習も遅い (フル HD のモデルで V100 8枚を使って1週間) のです。同じチームの HyperNeRF は、この診断を出発点にしました。"

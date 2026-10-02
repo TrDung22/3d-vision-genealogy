@@ -1,0 +1,57 @@
+title: "Text-To-4D Dynamic Scene Generation"
+short: "MAV3D (2023)"
+authors: "Uriel Singer, Shelly Sheynin, Adam Polyak, Oron Ashual, Iurii Makarov, Filippos Kokkinos, Naman Goyal, Andrea Vedaldi, Devi Parikh, Justin Johnson, Yaniv Taigman (Meta AI)"
+venue: "ICML 2023"
+year: 2023
+branch: dynamic-4d
+lane: generation
+links:
+  arxiv: "https://arxiv.org/abs/2301.11280"
+  paper: "https://proceedings.mlr.press/v202/singer23a.html"
+  project: "https://make-a-video3d.github.io/"
+problem: >
+  Text could already become an image, a video, or a static 3D object
+  (DreamFusion), but "these two categories of generative models have been
+  studied in isolation to date". A moving 3D scene from text has nothing to
+  learn from: "there is no readily available collection of 4D models, with
+  or without textual annotations".
+solution: >
+  Use a text-to-video model as "a ‘statistical’ multi-camera setup": render
+  a dynamic NeRF, a HexPlane, from moving virtual cameras and let Meta's
+  Make-A-Video score the clips through a temporal score distillation
+  (SDS-T). It has to go in stages: a static scene first, fitted with a
+  text-to-image model on the three spatial planes alone, then the three
+  time planes switched on for the video model, then super-resolution
+  fine-tuning. No 3D or 4D data at all; the first text-to-4D results, at
+  83.7% CLIP R-Precision against 6-11% for reconstructing Make-A-Video
+  clips frame by frame or with D-NeRF.
+limitations: >
+  By its own account it is "bounded by" Make-A-Video's performance, its
+  view-dependent prompts only mitigate the multi-face problem, and it
+  reaches real time only by converting to "a sequence of disjoint meshes",
+  inefficient where predicted vertex trajectories would do. Each prompt
+  costs about 6.5 hours on 8 A100 GPUs, and, as 4D-fy noted, its video
+  teacher was proprietary. 4D-fy later found that "MAV3D noticeably lacks
+  detail", though its raters judged MAV3D's motion roughly on par with
+  4D-fy's.
+relations:
+  - node: hexplane2023
+    type: builds-on
+    note: >
+      Its 4D scene is a HexPlane, adopted three days after HexPlane was
+      posted, with HexPlane's co-author Justin Johnson on the paper: "We thus
+      adopt HexPlane (Cao & Johnson, 2023), a recently proposed
+      representation for dynamic scenes". The planes' split into space and
+      spacetime becomes the training curriculum: spatial planes alone for the
+      static stage, time planes switched on for the video stage. The motion
+      comes from the video model; swapping in D-NeRF barely matters (81.9 vs
+      83.7 R-Precision), MAV3D being "not sensitive to the dynamic backbone".
+    i18n:
+      ja:
+        note: "4Dシーンは HexPlane です。HexPlane の公開から三日後、その共著者 Justin Johnson を著者に含むこの論文が採用しました。「そこで、動的シーンのために最近提案された表現である HexPlane (Cao & Johnson, 2023) を採用する」。平面の空間/時空間への分割が、そのまま学習のカリキュラムになります — 静的な段階では空間平面だけ、動画の段階で時間平面を加える。動きを生むのは動画モデルの方で、D-NeRF に差し替えてもほとんど変わらず (R-Precision 81.9 対 83.7)、MAV3D は「動的バックボーンに敏感ではない」のです。"
+status: seed
+i18n:
+  ja:
+    problem: "テキストはすでに画像にも、動画にも、静的な3D物体 (DreamFusion) にもなれました。しかし「これら二種類の生成モデルは、これまで切り離して研究されてきた」。動く3Dシーンをテキストから作ろうにも、学ぶべきものがありません。「テキスト注釈の有無を問わず、手軽に使える4Dモデルの集まりは存在しない」のです。"
+    solution: "テキストから動画を作るモデルを「『統計的な』マルチカメラ構成」として使います。動的 NeRF — HexPlane — を動く仮想カメラからレンダリングし、そのクリップを Meta の Make-A-Video に時間方向の score distillation (SDS-T) で採点させるのです。段階を踏む必要があります。まず三枚の空間平面だけを使い、text-to-image モデルで静的なシーンを当てはめ、次に三枚の時間平面を加えて動画モデルへ、最後に超解像のファインチューニング。3D や 4D のデータは一切使いません。初の text-to-4D の結果で、CLIP R-Precision は 83.7% — Make-A-Video のクリップをフレームごと、あるいは D-NeRF で再構成した場合の 6〜11% を大きく上回りました。"
+    limitations: "論文自身によれば、性能は Make-A-Video の性能に「縛られ」、視点依存のプロンプトも multi-face 問題を和らげるにとどまり、リアルタイム用途には「互いに独立したメッシュの列」への変換が必要です — 頂点の軌跡を直接予測すれば済むところを、非効率に。プロンプト一つに A100 GPU 8枚で約6.5時間かかり、動画の教師モデルは非公開でした (4D-fy の指摘)。のちに 4D-fy は「MAV3D は明らかに細部を欠く」と評しましたが、その評価者たちは MAV3D の動きの質を 4D-fy とほぼ互角と判断しています。"

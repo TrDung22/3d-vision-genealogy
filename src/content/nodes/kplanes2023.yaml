@@ -1,0 +1,96 @@
+title: "K-Planes: Explicit Radiance Fields in Space, Time, and Appearance"
+short: "K-Planes (2023)"
+authors: "Sara Fridovich-Keil, Giacomo Meanti, Frederik Rahbæk Warburg, Benjamin Recht, Angjoo Kanazawa"
+venue: "CVPR 2023"
+year: 2023
+branch: dynamic-4d
+lane: spacetime
+links:
+  arxiv: "https://arxiv.org/abs/2301.10241"
+  paper: "https://openaccess.thecvf.com/content/CVPR2023/html/Fridovich-Keil_K-Planes_Explicit_Radiance_Fields_in_Space_Time_and_Appearance_CVPR_2023_paper.html"
+  project: "https://sarafridov.github.io/K-Planes/"
+  code: "https://github.com/sarafridov/K-Planes"
+problem: >
+  Dynamic radiance fields need a 4D volume, but "storing a 4D volume
+  directly is prohibitively expensive due to the curse of dimensionality",
+  and the factorizations that had made static fields compact "do not easily
+  extend to higher dimensional volumes". The dynamic models leaned on MLPs
+  instead, the fully implicit ones "completely black-box" and slow: DyNeRF
+  trained a single scene on 8 GPUs for a week.
+solution: >
+  One plane for every pair of dimensions, "d-choose-2" in all: three for a
+  static scene (a tri-plane), six for a video (xy, xz, yz plus the spacetime
+  planes xt, yt, zt), with a per-image appearance code for photo
+  collections. Plane features are multiplied rather than added, so that
+  they can single out a point. Time planes start at 1, the multiplicative
+  identity, and a sparsity prior keeps them there wherever nothing moves, so
+  static and dynamic parts separate on their own. With a linear decoder over
+  a learned color basis the model stays explicit, "white-box": a 4D volume
+  that would need more than 300 GB fits in 200 MB, in pure PyTorch.
+limitations: >
+  By its own account it beats D-NeRF on D-NeRF's own scenes (31.61 vs 29.67
+  dB, in 52 minutes rather than 48 hours) but not the very recent hybrids
+  TiNeuVox and V4D. Later papers diagnosed what the planes leave out: in 4D
+  Gaussian Splatting's comparison it renders below 1 fps at 800×800, and
+  Dynamic 3D Gaussians noted that such Eulerian grids "do not give rise to
+  correspondence over time". The planes record what is where, not where
+  each thing went.
+relations:
+  - node: hexplane2023
+    type: independent
+    note: >
+      One day apart in January 2023, two groups factored spacetime into the
+      same six feature planes, one per pair of x, y, z, t, and combined them
+      by multiplication; K-Planes even calls its 4D model "hex-planes".
+      K-Planes never cites HexPlane, and HexPlane's camera-ready names
+      K-Planes in its paragraph on concurrent work as "most closely related".
+      They differ in fusion and reach: HexPlane multiplies each space plane
+      with its spacetime partner and concatenates the three products,
+      K-Planes multiplies all six and generalizes to any dimension.
+    i18n:
+      ja:
+        note: "2023年1月、一日違いで、二つのグループが時空間を同じ六枚の特徴平面 — x, y, z, t の組ごとに一枚 — に分解し、掛け算で組み合わせました。K-Planes は自らの4Dモデルを「hex-planes」とまで呼んでいます。K-Planes は HexPlane を引用しておらず、HexPlane のカメラレディ版が並行研究の段落で K-Planes を「最も近い関連研究」と挙げています。違いは融合の仕方と射程です。HexPlane は各空間平面を対になる時空間平面と掛けて三つの積を連結し、K-Planes は六枚すべてを掛け合わせて任意の次元へ一般化しました。"
+  - node: eg3d2021
+    type: builds-on
+    note: >
+      Generalizes EG3D's tri-plane from a 3D GAN's feature volume to any
+      number of dimensions: in 3D, K-Planes says, its model "reduces to the
+      tri-plane factorization", similar to EG3D's "except that the elements
+      are multiplied". That switch from adding to multiplying is its own: a
+      product can localize a point where a sum only draws intersecting
+      lines, and with K-Planes' linear decoder it is worth 35.29 vs 28.78 dB
+      on Lego.
+    i18n:
+      ja:
+        note: "EG3D の tri-plane を、3D GAN の特徴ボリュームから任意の次元へ一般化します。K-Planes によれば、3D では自らのモデルは「tri-plane 分解に帰着」し、EG3D と似ているが「要素を掛け合わせる点が異なる」。足し算から掛け算への切り替えは K-Planes 独自のもので、積なら一点を局在させられるのに対し和では交差する線しか描けません。K-Planes の線形デコーダーでは、Lego で 35.29 dB 対 28.78 dB の差になります。"
+  - node: tensorf2022
+    type: builds-on
+    note: >
+      Carries TensoRF's lesson, that a radiance field factorizes into
+      compact low-rank factors, from static scenes into time and appearance.
+      Among its inspirations K-Planes singles out "the tensor decomposition"
+      of TensoRF, next to EG3D's tri-plane; and TensoRF, which "offers both
+      hybrid and explicit versions" as K-Planes does, is the static
+      yardstick it measures itself against.
+    i18n:
+      ja:
+        note: "radiance field はコンパクトな低ランクの因子に分解できる — という TensoRF の教訓を、静的シーンから時間と見え方へ持ち込みます。K-Planes は着想源として、EG3D の tri-plane と並んで TensoRF の「テンソル分解」を名指しします。K-Planes と同じく「ハイブリッド版と陽的版の両方を備える」TensoRF は、K-Planes が自らを測る静的シーンの物差しでもあります。"
+  - node: plenoxels2021
+    type: fixes
+    note: >
+      Repairs the scaling of Plenoxels' voxel grid, which K-Planes, from the
+      same group, diagnoses: it "grows exponentially with dimension, making
+      it challenging to scale to high resolution and completely intractable
+      for 4D dynamic volumes". K-Planes keeps the explicit modeling it
+      credits to Plenoxels and swaps the grid for planes: about 33M
+      parameters against Plenoxels' ~500M on the synthetic scenes, and 4D
+      within reach.
+    i18n:
+      ja:
+        note: "Plenoxels のボクセルグリッドのスケーリングを直します。同じグループの K-Planes の診断では、それは「次元とともに指数的に増大し、高解像度へのスケールを難しくし、4D の動的ボリュームでは完全に手に負えなくなる」。K-Planes は Plenoxels に負うと明言する陽的なモデリングを保ったまま、グリッドを平面に置き換えました。合成シーンで Plenoxels の約5億に対して約3,300万パラメータ、そして4Dが手の届くところに来ました。"
+status: seed
+i18n:
+  ja:
+    problem: "動的な radiance field には4Dボリュームが要ります。しかし「次元の呪いのため、4Dボリュームをそのまま保存するのは法外に高くつく」うえ、静的な場をコンパクトにした分解は「より高次元のボリュームへは簡単には拡張できない」。動的モデルは代わりに MLP に頼り、完全に陰的なものは「完全なブラックボックス」で、しかも遅い — DyNeRF は一つのシーンの学習に GPU 8枚で1週間をかけました。"
+    solution: "次元の組ごとに一枚の平面、全部で「d-choose-2」枚です。静的シーンなら三枚 (tri-plane)、動画なら六枚 (xy, xz, yz と時空間平面 xt, yt, zt)、写真コレクションには画像ごとの appearance コードを添えます。平面の特徴は足さずに掛け合わせるので、一点を選び出せる。時間平面は乗法の単位元である1から始まり、スパース性の prior が、何も動かない場所ではそこにとどめます — 静的な部分と動的な部分がひとりでに分かれるのです。学習された色の基底に対する線形デコーダーを使えば、モデルは陽的な「ホワイトボックス」のまま。300 GB を超えるはずの4Dボリュームが、純粋な PyTorch 実装で 200 MB に収まります。"
+    limitations: "論文自身によれば、D-NeRF 自身のシーンでは D-NeRF に勝つ (31.61 dB 対 29.67 dB、48時間ではなく52分) ものの、ごく最近のハイブリッド手法 TiNeuVox と V4D には及びません。平面が取りこぼすものは、後続の論文が診断しました。4D Gaussian Splatting の比較では 800×800 で 1 fps に届かず、Dynamic 3D Gaussians はこうしたオイラー的なグリッドが「時間を通じた対応関係を生まない」と指摘しました。平面が記録するのは何がどこにあるかであって、それぞれがどこへ行ったかではないのです。"
