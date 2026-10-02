@@ -1,0 +1,66 @@
+title: "PyMAF: 3D Human Pose and Shape Regression with Pyramidal Mesh Alignment Feedback Loop"
+short: "PyMAF (2021)"
+authors: "Hongwen Zhang, Yating Tian, Xinchi Zhou, Wanli Ouyang, Yebin Liu, Limin Wang, Zhenan Sun"
+venue: "ICCV 2021 (Oral, per authors' project page)"
+year: 2021
+branch: single-image-3d
+lane: human
+links:
+  arxiv: "https://arxiv.org/abs/2103.16507"
+  paper: "https://openaccess.thecvf.com/content/ICCV2021/html/Zhang_PyMAF_3D_Human_Pose_and_Shape_Regression_With_Pyramidal_Mesh_ICCV_2021_paper.html"
+  project: "https://zhanghongwen.cn/pymaf/"
+  code: "https://github.com/HongwenZhang/PyMAF"
+problem: >
+  Regression made human mesh recovery a single feed-forward pass, but its
+  meshes sit only loosely on the photo. SMPL stores each joint as a
+  rotation relative to its parent, so "minor rotation errors accumulated
+  along the kinematic chain can result in noticeable drifts of joint
+  positions"; fitting methods align well but are slow and sensitive to
+  initialization; and at test time the regressors either run open-loop
+  or, like HMR, iterate on one global feature vector that cannot show
+  where the current mesh lands on the image.
+solution: >
+  Feed the alignment back. Deconvolution layers turn the ResNet-50
+  feature into a pyramid of spatial maps (14×14, 28×28, 56×56). The first
+  step reads the coarsest map on a uniform grid; each later step projects
+  the current SMPL mesh (downsampled to 431 vertices), samples the next,
+  finer map at those points — "mesh-aligned evidences" of where the
+  estimate actually sits — and regresses a parameter correction, so a
+  coarsely aligned mesh is moved in large steps on low-resolution features
+  first. An auxiliary dense-correspondence (IUV) head, used only in
+  training, keeps the spatial features clean. Against a baseline with
+  HMR's architecture trained the same way, MPJPE drops by 5.7 mm on 3DPW
+  and 7.1 mm on Human3.6M, and on LSP its projected meshes segment the
+  body better than every method compared, optimization-based ones
+  included.
+limitations: >
+  By its own account, the alignment it repairs lives on the 2D image
+  plane: it "can still hardly address the depth ambiguity problem in 3D
+  space", it "fails to handle extreme shapes due to the lack of training
+  data", and it may fail when heavy occlusion or ambiguous limb
+  connections leave the first estimate far off. Nor is the fit
+  pixel-exact: ICON, which chose PyMAF as its body estimator for its
+  alignment, still refines the SMPL fit at test time, because "in
+  practice, human pose and shape (HPS) regressors do not give
+  pixel-aligned SMPL fits".
+relations:
+  - node: hmr2017
+    type: fixes
+    note: >
+      Repairs the weakness PyMAF diagnoses in HMR's iterative error
+      feedback: the loop "uses the same global features each time for
+      parameter update, which lacks fine-grained information and is not
+      adaptive to new predictions", so its regressors "hardly perceive the
+      mesh-image misalignment in the inference phase". PyMAF keeps HMR's
+      regressor architecture and its three iterations, but after a first
+      coarse step, each step reads features sampled where the current mesh
+      projects, from a progressively finer feature map.
+    i18n:
+      ja:
+        note: "PyMAF が HMR の反復誤差フィードバック (IEF) に見出した弱点を直します。このループは「パラメータを更新するたびに同じグローバル特徴を使うため、細かな情報に欠け、新しい予測にも適応しない」。そのため回帰器は「推論の段階で、メッシュと画像のずれをほとんど感知できない」。PyMAF は HMR の回帰器の構造と3回の反復を受け継ぎつつ、最初の粗いステップの後は、各ステップに、いまのメッシュが投影される位置でサンプルした特徴を、段階的に細かくなる特徴マップから読ませます。"
+status: seed
+i18n:
+  ja:
+    problem: "回帰によって人体メッシュ復元は一回の feed-forward になりましたが、そのメッシュは写真の上にゆるくしか乗っていません。SMPL は各関節を親に対する相対回転として持つため、「運動連鎖に沿って積み重なった小さな回転誤差が、関節位置の目に見えるずれを生む」のです。フィッティング手法は位置をよく合わせますが、遅く、初期値に敏感です。そして推論時の回帰器は、開ループのまま走るか、HMR のように一つのグローバル特徴ベクトルの上で反復するだけで、いまのメッシュが画像のどこに落ちているかは見えません。"
+    solution: "位置合わせの具合をフィードバックします。deconvolution 層が ResNet-50 の特徴を空間特徴マップのピラミッド (14×14、28×28、56×56) に変えます。最初のステップは最も粗いマップを一様なグリッドで読み、以降の各ステップでは、いまの SMPL メッシュ (431頂点に間引き) を投影し、次の、より細かいマップをその点でサンプルします — 推定が実際にどこにあるかを示す「メッシュに整列した証拠」です — そこからパラメータの補正を回帰します。粗く合ったメッシュは、まず低解像度の特徴の上で大きな歩幅で動かされるわけです。学習時だけ使う密な対応 (IUV) の補助ヘッドが、空間特徴をきれいに保ちます。HMR と同じ構造で同じ条件で学習したベースラインに比べ、MPJPE は 3DPW で 5.7 mm、Human3.6M で 7.1 mm 下がり、LSP では投影したメッシュによる体のセグメンテーションで、最適化ベースの手法も含め、比較したすべての手法を上回りました。"
+    limitations: "本人いわく、直した位置合わせは2D画像平面の上だけのものです。「3D空間における奥行きの曖昧さの問題には、なおほとんど対処できない」し、「学習データが足りないため、極端な体型は扱えない」。重い遮蔽や紛らわしい手足のつながりで最初の推定が大きく外れると、失敗することもあります。フィットはピクセル単位で正確でもありません。位置合わせの良さを買って PyMAF を体の推定器に選んだ ICON でさえ、推論時に SMPL のフィットを磨き直しています — 「実際には、人体の pose と体型 (HPS) の回帰器は、ピクセル単位で整列した SMPL フィットを出さない」からです。"

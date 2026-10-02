@@ -26,18 +26,19 @@ limitations: >
   own comparison includes the open-source 3DTopia-XL, which it says also
   outputs PBR material maps.
 relations:
-  - node: trellis2024
-    type: independent
+  - node: shape2vecset2023
+    type: builds-on
     note: >
-      The same industrial wave, the same core bet — a large flow-matching
-      transformer generating a native 3D latent from one image — split on
-      the latent: TRELLIS unifies geometry and appearance in one structured
-      latent; Hunyuan3D keeps a shape-only latent and paints texture with a
-      separately scaled multi-view model. Hunyuan3D 2 only benchmarks
-      TRELLIS; neither derives from the other.
+      Its shape latent is the vector set: Hunyuan3D-ShapeVAE "employs vector
+      sets, a compact neural representation for 3D shapes proposed by
+      3DShape2VecSet", encoding surface points through 3DShape2VecSet's point
+      queries, with Michelangelo's VAE design on top. It samples extra points
+      on edges and corners and decodes an SDF instead of occupancy; at the
+      same 1,024-token length, its own reconstruction table puts its volume
+      IoU at 93.6% against 87.88% for 3DShape2VecSet.
     i18n:
       ja:
-        note: "同じ産業化の波、同じ核心の賭けです — 一枚の画像からネイティブな3D潜在を生成する、大規模な flow matching トランスフォーマー。分かれたのは潜在の設計でした。TRELLIS は幾何と見た目を一つの構造化潜在にまとめ、Hunyuan3D は形状だけの潜在を保ち、テクスチャは別々にスケールさせた多視点モデルで塗ります。Hunyuan3D 2 は TRELLIS を比較対象として測っただけで、どちらも他方から生まれてはいません。"
+        note: "形状の潜在は vector set です。Hunyuan3D-ShapeVAE は「3DShape2VecSet が提案した、3D形状のコンパクトなニューラル表現である vector set」を用い、3DShape2VecSet の point query で表面点を符号化し、その上に Michelangelo の VAE 設計を重ねます。エッジや角に点を多めに取り、occupancy ではなく SDF をデコード。同じ1,024トークン長で比べた自身の再構成表では、体積 IoU が 3DShape2VecSet の 87.88% に対して 93.6% です。"
 status: seed
 i18n:
   ja:

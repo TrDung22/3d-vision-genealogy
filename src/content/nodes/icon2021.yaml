@@ -53,6 +53,21 @@ relations:
     i18n:
       ja:
         note: "ICON が PIFu と PIFuHD の両方に見出した壊れ方を直します。両者の「形状の復元には正則化が欠けていて、折れたりちぎれたりした手足、ディテールの欠落、幾何的なノイズといったアーティファクトをしばしば生む」。ICON は PIFuHD の前面・背面の法線マップ予測をネットワーク構造まで受け継ぎつつ、それを SMPL ボディで条件づけ、画像エンコーダのグローバルな特徴を、体を基準にした局所的な特徴に置き換えました。"
+  - node: pymaf2021
+    type: builds-on
+    note: >
+      Stands on PyMAF's body estimate. ICON's pipeline starts from a SMPL
+      mesh, and it takes that mesh from PyMAF "due to its better
+      mesh-to-image alignment compared to other methods"; the body conditions
+      both of ICON's modules, the clothed-normal prediction and the
+      body-relative local features of the implicit surface. Because "in
+      practice, human pose and shape (HPS) regressors do not give
+      pixel-aligned SMPL fits", ICON then carries the estimate further with
+      a test-time loop that refines its shape, pose and translation against
+      the predicted clothed-body normals and the silhouette.
+    i18n:
+      ja:
+        note: "PyMAF の体の推定の上に立ちます。ICON のパイプラインは SMPL メッシュから始まり、そのメッシュを PyMAF から得ます — 「他の手法に比べて、メッシュと画像の位置合わせが良い」からです。得られた体は、ICON の二つのモジュール — 服を着た体の法線の予測と、陰関数の表面のための体基準の局所特徴 — の両方を条件づけます。そして「実際には、人体の pose と体型 (HPS) の回帰器は、ピクセル単位で整列した SMPL フィットを出さない」ため、ICON は推論時のループを加え、予測した服を着た体の法線とシルエットに合わせて、この推定の形状・pose・並進を磨き直します。"
 status: seed
 i18n:
   ja:

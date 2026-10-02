@@ -41,13 +41,13 @@ relations:
   - node: deepsdf2019
     type: independent
     note: >
-      The third front of the 2019 implicit wave: DeepSDF and OccNet hit
-      continuous coordinate-MLPs for SHAPE; SRN hit the same representation
-      for appearance + rendering, simultaneously and independently — from
-      supervision by posed images instead of 3D data.
+      The third front of the 2019 implicit wave: DeepSDF and Occupancy
+      Networks hit continuous coordinate-MLPs for SHAPE; SRN hit the same
+      representation for appearance + rendering, simultaneously and
+      independently — from supervision by posed images instead of 3D data.
     i18n:
       ja:
-        note: "2019年の陰関数の波、その第三戦線です。DeepSDF と OccNet は形状のために連続座標 MLP へ到達し、SRN は同じ表現に見た目とレンダリングの側から、同時かつ独立にたどり着きました — 教師信号は3Dデータではなく、pose 付きの画像です。"
+        note: "2019年の陰関数の波、その第三戦線です。DeepSDF と Occupancy Networks は形状のために連続座標 MLP へ到達し、SRN は同じ表現に見た目とレンダリングの側から、同時かつ独立にたどり着きました — 教師信号は3Dデータではなく、pose 付きの画像です。"
 status: seed
 i18n:
   ja:

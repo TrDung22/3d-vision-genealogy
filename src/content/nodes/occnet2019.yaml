@@ -19,7 +19,9 @@ solution: >
 limitations: >
   Still lives in the closed ShapeNet world with canonicalized objects; every
   query point costs a forward pass — even with its hierarchical extraction
-  (MISE), a mesh takes about 3 s.
+  (MISE), a mesh takes about 3 s. And one global latent code drives the whole
+  field: the design in which, as 3DShape2VecSet later put it, "a major
+  limitation is the ability to encode shape details".
 relations:
   - node: pixel2mesh2018
     type: fixes
@@ -34,4 +36,4 @@ i18n:
   ja:
     problem: "ボクセルかメッシュかというジレンマからの脱出 — 解像度にもトポロジーにも縛られない3D表現を。"
     solution: "問いの立て方ごと変えます。データ構造を選ぶのをやめて、関数を学ぶのです。ネットワークは連続的な陰関数 f(点, 画像) → 物体の内側にある確率を学習し、メッシュは後から marching cubes で、好きな解像度で取り出せます。"
-    limitations: "それでも、姿勢を正規化した物体が並ぶ閉じた ShapeNet の世界の住人です。クエリ点一つごとに forward 一回 — 階層的な抽出 (MISE) を使っても、メッシュ一つに約3秒かかります。"
+    limitations: "それでも、姿勢を正規化した物体が並ぶ閉じた ShapeNet の世界の住人です。クエリ点一つごとに forward 一回 — 階層的な抽出 (MISE) を使っても、メッシュ一つに約3秒かかります。そして場全体を一つの大域 latent が駆動します — のちに 3DShape2VecSet が「形状の細部を符号化する能力に大きな限界がある」と診断した設計です。"

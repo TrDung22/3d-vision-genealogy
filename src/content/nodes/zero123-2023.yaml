@@ -27,13 +27,13 @@ relations:
     type: fixes
     note: >
       Settles the closed-world debt it diagnoses in the ShapeNet-trained
-      reconstruction line, OccNet included: such models "are constrained by
-      the variety of the used 3D data collection and show poor generalization
-      capabilities". The fix swaps a ShapeNet prior of ~50,000 CAD models in
-      13 categories for diffusion's internet-scale prior.
+      reconstruction line, Occupancy Networks included: such models "are
+      constrained by the variety of the used 3D data collection and show poor
+      generalization capabilities". The fix swaps a ShapeNet prior of ~50,000
+      CAD models in 13 categories for diffusion's internet-scale prior.
     i18n:
       ja:
-        note: "Zero-1-to-3 が自ら診断した、ShapeNet で学習する再構成路線 (OccNet を含む) の「閉じた世界」の借金を清算します。その路線のモデルは「使われた3Dデータコレクションの多様性に縛られ、汎化能力に乏しい」のです。修正は、13カテゴリ・約5万個の CAD モデルからなる ShapeNet prior を、拡散モデルのインターネット規模の prior に置き換えることでした。"
+        note: "Zero-1-to-3 が自ら診断した、ShapeNet で学習する再構成路線 (Occupancy Networks を含む) の「閉じた世界」の借金を清算します。その路線のモデルは「使われた3Dデータコレクションの多様性に縛られ、汎化能力に乏しい」のです。修正は、13カテゴリ・約5万個の CAD モデルからなる ShapeNet prior を、拡散モデルのインターネット規模の prior に置き換えることでした。"
   - node: nerf2020
     type: builds-on
     note: >

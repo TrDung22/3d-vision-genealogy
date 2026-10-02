@@ -57,6 +57,21 @@ relations:
     i18n:
       ja:
         note: "手法ではなく知見の上に築きます。TRELLIS は多数のレンダリング視点から集めた DINOv2 特徴を平均して各3Dアセットを符号化しますが、DINOv2 を選んだのは「実証された強い3D認識能力 (3D awareness)」ゆえ — その証拠として引くのが、この probing 研究です。"
+  - node: 3dgs2023
+    type: builds-on
+    note: >
+      Its structured latents are learned through splatting: each active SLAT
+      voxel decodes into 32 3D Gaussians (offsets, colors, scales, opacities,
+      rotations) rendered against ground-truth views, and "we adopt Gaussians
+      to learn the encoder and decoder end-to-end due to their high fidelity
+      and efficiency"; the radiance-field and mesh decoders are trained
+      afterwards on the frozen encoder. 3DGS's density control gives way to
+      volume and opacity regularizers, since "original density control
+      schemes are not applicable when Gaussians are predicted by neural
+      networks".
+    i18n:
+      ja:
+        note: "構造化潜在 (SLAT) は Gaussian splatting を通して学習されます。SLAT の有効な各ボクセルは32個の 3D Gaussian (オフセット・色・スケール・不透明度・回転) にデコードされ、そのレンダリングが ground truth の視点画像と比べられます。TRELLIS は「高い忠実度と効率ゆえに、Gaussian を用いてエンコーダとデコーダを end-to-end で学習する」とし、radiance field とメッシュのデコーダは、凍結したエンコーダの上で後から学習します。3DGS の密度制御は体積と不透明度の正則化に取って代わられました — 「ネットワークが Gaussian を予測する場合、元の密度制御の仕組みは適用できない」からです。"
 status: seed
 i18n:
   ja:

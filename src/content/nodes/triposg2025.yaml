@@ -39,6 +39,29 @@ relations:
     i18n:
       ja:
         note: "2025年の産業向け形状生成レースに並走した二つのエントリー — どちらもフローベースで、互いに独立に開発されました。"
+  - node: shape2vecset2023
+    type: builds-on
+    note: >
+      Its VAE follows "the design of 3DShape2Vecset" — "we choose the latent
+      vector set as our latent representation" — down to the point-query
+      variant that seeds the latents with subsampled surface points instead
+      of learnable embeddings. What it changes is the field: occupancy, it
+      argues, "has limited geometric representation capabilities compared to
+      SDF", so its VAE predicts a truncated SDF, with surface-normal guidance.
+    i18n:
+      ja:
+        note: "VAE は「3DShape2Vecset の設計」に従います — 「latent vector set を潜在表現として選び」、学習可能な埋め込みではなく間引いた表面点を latent の初期 query とする point query 版まで踏襲。変えたのは場のほうです。occupancy は「SDF に比べて幾何の表現能力が限られる」と論じ、VAE は表面法線のガイダンスつきで truncated SDF を予測します。"
+  - node: clay2024
+    type: fixes
+    note: >
+      Repairs what TripoSG diagnoses in CLAY's image conditioning: freezing a
+      text-conditioned base and training 352M added parameters for images
+      "limits the ability to fully update model parameters based on image
+      information", costing fine-grained consistency with the input. TripoSG
+      conditions its rectified-flow transformer on the image itself.
+    i18n:
+      ja:
+        note: "TripoSG が CLAY の画像条件付けに見出した弱点を直します。テキスト条件の基盤モデルを凍結し、画像用に3.52億パラメータを追加で学習する方式は、「画像の情報にもとづいてモデルのパラメータを十分に更新する能力を制限する」ため、入力との細部の一貫性が損なわれる、と。TripoSG は rectified flow のトランスフォーマーを、画像そのもので条件付けます。"
 status: seed
 i18n:
   ja:

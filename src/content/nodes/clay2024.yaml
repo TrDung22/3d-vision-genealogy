@@ -50,6 +50,19 @@ relations:
     i18n:
       ja:
         note: "データの幹です。幾何は ShapeNet と Objaverse から精製した52.7万物体で、マテリアルの拡散モデルは高品質な PBR マテリアルを持つ4万以上の Objaverse 物体で学習します。"
+  - node: shape2vecset2023
+    type: builds-on
+    note: >
+      Its latent is 3DShape2VecSet's, scaled up: "We adopt the representation
+      and architecture from 3DShape2VecSet but augment it with new scaling-up
+      strategies." The augmentation answers the gap CLAY names — "In
+      3DShape2VecSet, the point clouds are generally of small sizes and
+      therefore are insufficient to capture fine geometric details" — with a
+      multi-resolution VAE (2,048 to 8,192 input points, the latent length
+      growing with them) beneath a 1.5B-parameter DiT.
+    i18n:
+      ja:
+        note: "latent は 3DShape2VecSet のものを、スケールさせて使います。「3DShape2VecSet の表現とアーキテクチャを採用し、新たなスケールアップの戦略で補強する」。補強が応えるのは CLAY 自身が名指しした隙間 — 「3DShape2VecSet では点群が総じて小さく、細かな幾何ディテールを捉えるには不十分」— で、入力を2,048〜8,192点で切り替え、latent の長さもそれに応じて伸びる多解像度 VAE を、15億パラメータの DiT の下に据えました。"
 status: seed
 i18n:
   ja:

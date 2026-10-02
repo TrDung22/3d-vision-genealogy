@@ -32,6 +32,21 @@ relations:
     i18n:
       ja:
         note: "UniDepth が Metric3D (と ZeroDepth) に見出した、推論時の前提を直します。汎化をめざす metric 深度でありながら「カメラ内部パラメータを含め、推論時に管理された設定」を前提とするため、カメラのノイズが「モデルに直接注入される」。Metric3D は与えられたカメラを正規化して消し (canonical 空間)、UniDepth は画像そのものからカメラを予測します。"
+  - node: zoedepth2023
+    type: fixes
+    note: >
+      Repairs the weakness UniDepth diagnoses in ZoeDepth, a model pitched
+      on zero-shot transfer: with a capacity similar to UniDepth's ViT model
+      and pre-training on the diverse MiDaS mix, ZoeDepth still "shows
+      limitations in general zero-shot scenarios", "exhibiting performance
+      comparable to traditional MMDE methods especially on scale-invariant
+      metrics". ZoeDepth's flagship learns metric scale by fine-tuning on two
+      datasets, one light head per domain; UniDepth trains a single model on
+      roughly 3M images from many cameras and domains, and conditions its
+      depth on a camera it predicts from the image.
+    i18n:
+      ja:
+        note: "UniDepth が ZoeDepth — ゼロショット転移を看板に掲げたモデル — に見出した弱点を直します。容量は UniDepth の ViT モデルと同程度で、多様な MiDaS のデータ混合で事前学習されているにもかかわらず、ZoeDepth は「一般的なゼロショットの状況では限界を見せ」、「とりわけスケール不変の指標で、従来の単眼 metric 深度推定 (MMDE) の手法と同程度の性能」にとどまります。ZoeDepth の旗艦モデルは、二つのデータセットでの微調整によって、ドメインごとに一つの軽量ヘッドで metric スケールを学びます。UniDepth は、多様なカメラとドメインにまたがる約300万枚の画像で単一のモデルを学習し、画像から予測したカメラで深度を条件づけます。"
 status: seed
 i18n:
   ja:

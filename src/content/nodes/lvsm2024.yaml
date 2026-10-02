@@ -29,13 +29,30 @@ relations:
   - node: mvsplat2024
     type: challenges
     note: >
-      Challenges the premise of its own subfield: pixelSplat and MVSplat
-      compete on BETTER 3D machinery, and LVSM outperforms both with none —
-      arguing the geometry priors everyone was refining are training wheels
-      that scale eventually removes.
+      Challenges the premise of its own subfield at its newest repair:
+      MVSplat had answered pixelSplat with BETTER 3D machinery, a
+      plane-sweep cost volume, and LVSM counts exactly such "plane-sweep
+      volumes" among the 3D inductive biases that "inherently limit model
+      flexibility". With none of them, LVSM beats MVSplat on RealEstate10K
+      (29.67 vs 26.39 dB PSNR), and by 1.3 dB even when both are trained on
+      a single GPU.
     i18n:
       ja:
-        note: "自らのサブ分野の前提を問い直します。pixelSplat と MVSplat が「より良い3Dの仕掛け」で競うなか、LVSM は仕掛けゼロで両者を上回る — 皆が磨いていた幾何 prior は、スケールがいずれ外す補助輪だ、と論じるのです。"
+        note: "自らのサブ分野の前提を、その最新の直しの地点で問い直します。MVSplat は pixelSplat に、より良い3Dの仕掛け — 平面掃引の cost volume — で応えたばかりでしたが、LVSM はまさにそうした「平面掃引ボリューム」を、「本質的にモデルの柔軟性を制限する」3D帰納バイアスの一つに数えます。その仕掛けを一切使わずに、LVSM は RealEstate10K で MVSplat を上回り (PSNR 29.67 対 26.39 dB)、どちらも GPU 1枚で学習した条件でも 1.3 dB 上回りました。"
+  - node: pixelsplat2023
+    type: challenges
+    note: >
+      Challenges the architectural premise pixelSplat stands on. LVSM names
+      it among the feed-forward methods that build "additional 3D inductive
+      biases, such as projective epipolar lines or plane-sweep volumes,"
+      into their architectures, and argues that "these 3D inductive biases
+      inherently limit model flexibility". It then tests the claim on
+      pixelSplat's own ground — RealEstate10K, with pixelSplat's train/test
+      split — using no epipolar attention and no Gaussians, and reaches
+      29.67 dB PSNR to pixelSplat's 26.09.
+    i18n:
+      ja:
+        note: "pixelSplat が拠って立つアーキテクチャ上の前提に挑戦します。LVSM は pixelSplat を、「射影的な epipolar 線や平面掃引ボリュームといった、追加の3D帰納バイアス」をアーキテクチャに組み込む feed-forward 手法の一つとして名指しし、「こうした3D帰納バイアスは、本質的にモデルの柔軟性を制限する」と論じます。そして pixelSplat 自身の土俵 — RealEstate10K、それも pixelSplat の学習/テスト分割 — で、epipolar アテンションもガウシアンも使わずにこの主張を確かめ、PSNR 29.67 dB を記録して pixelSplat の 26.09 dB を上回りました。"
   - node: srt2021
     type: fixes
     note: >

@@ -54,6 +54,21 @@ relations:
     i18n:
       ja:
         note: "arXiv 投稿は二か月差 (2021年4月20日と6月20日)。Tübingen と香港/MPI が、ともに陰関数の表面を volume rendering 越しに学習しました。NeuS は UNISURF を、同じく「volume rendering によって陰関数の表面を学習する」並行研究として挙げています。橋の架け方は違います — あちらは占有率としだいに狭まるサンプリング区間、こちらは SDF から導いた偏りのない重みです。"
+  - node: idr2020
+    type: fixes
+    note: >
+      Repairs the failure NeuS diagnoses in IDR, which "fails to reconstruct
+      objects with complex structures that causes abrupt depth changes"
+      because its surface rendering "only considers a single surface
+      intersection point for each ray": the gradient is too local, and
+      "object masks are needed as supervision for converging to a valid
+      surface". In volume rendering, all samples along the ray "produce
+      gradient signals for back propagation". NeuS keeps an IDR-like network
+      and initialization, and on DTU it beats masked IDR (mean Chamfer 0.90)
+      with masks (0.77) and without them (0.84).
+    i18n:
+      ja:
+        note: "NeuS が IDR に下した診断を直します。IDR は「急な深度変化を生む複雑な構造の物体の再構成に失敗する」。その表面レンダリングが「光線ごとに表面との交点を一つしか考えない」ため、勾配が局所的すぎ、「妥当な表面に収束するには物体マスクによる教師が必要」になるからです。volume rendering なら、光線上のすべてのサンプルが「逆伝播のための勾配信号を生む」のです。NeuS は IDR に似たネットワークと初期化を受け継ぎ、DTU ではマスク付きの IDR (平均 Chamfer 距離 0.90) を、マスクありでも (0.77) なしでも (0.84) 上回りました。"
 status: seed
 i18n:
   ja:

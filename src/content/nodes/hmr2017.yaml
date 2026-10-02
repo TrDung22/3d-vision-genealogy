@@ -23,11 +23,14 @@ limitations: >
   The output is a naked, smooth parametric mannequin — no clothing, no hair
   (the opening PIFu drove through) — hands and face are rigid, and in-the-wild
   robustness under occlusion and rare poses remained the lineage's standing
-  debt for years: SAM 3D Body was still diagnosing it in 2025.
+  debt for years: SAM 3D Body was still diagnosing it in 2025. HMR's
+  meshes also align only coarsely with the image, which PyMAF blamed in
+  part on the iterative error feedback: it "uses the same global features
+  each time for parameter update".
 relations: []
 status: seed
 i18n:
   ja:
     problem: "一枚の写真から、3D人体の姿勢と体型の両方を。最適化ベースのフィッティング (SMPLify) は遅くて脆く、3D人体とペアになった画像はほとんど存在しません — 野外の写真ならなおさらです。"
     solution: "SMPL パラメータをネットワークで直接、end-to-end に回帰します。乏しいペアの3D教師信号の代わりを2Dキーポイントの再投影ロスが務め (ペアの3Dデータなしでも学習できます)、敵対的 prior (実在の人体パラメータ上の discriminator) が回帰された体を解剖学的に妥当な範囲に保つ。パラメトリックな人体復元が、野外画像への一回の feed-forward になりました。"
-    limitations: "出力はつるりとした裸のパラメトリック・マネキンです — 服も髪もない (まさに PIFu が突いた穴)。手と顔は硬直したままで、遮蔽や珍しい姿勢への頑健さは、この血統に長年積み残された借金でした — 2025年の SAM 3D Body がなお指摘していたほどに。"
+    limitations: "出力はつるりとした裸のパラメトリック・マネキンです — 服も髪もない (まさに PIFu が突いた穴)。手と顔は硬直したままで、遮蔽や珍しい姿勢への頑健さは、この血統に長年積み残された借金でした — 2025年の SAM 3D Body がなお指摘していたほどに。HMR のメッシュと画像の位置合わせも粗いままで、PyMAF はその一因を反復誤差フィードバックに求めました — 「パラメータを更新するたびに同じグローバル特徴を使う」のです。"

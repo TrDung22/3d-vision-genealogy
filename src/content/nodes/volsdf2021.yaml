@@ -10,8 +10,8 @@ links:
   project: "https://lioryariv.github.io/volsdf/"
 problem: >
   The same disease NeuS diagnosed the same month: NeRF's density is a
-  rendering device, not a geometry — and mask-dependent surface methods
-  don't scale to real scenes.
+  rendering device, not a geometry — and surface rendering (IDR) needs
+  object masks and tends to grow extraneous surface parts.
 solution: >
   Model density as a transformed signed distance function (Laplace CDF of
   the SDF), giving the learned geometry a useful inductive bias plus an
@@ -56,9 +56,24 @@ relations:
     i18n:
       ja:
         note: "NeRF が密度の中に暗黙のまま残した幾何を直します。VolSDF の診断はこうです —「予測された密度から表面を取り出すための適切なしきい値を見つけるのは容易ではなく、復元された幾何は満足にはほど遠い」。密度を SDF の関数にすることで、その背後に明確な表面があることが保証され、しかも NeRF のマスク不要の volume rendering はそのまま残ります。"
+  - node: idr2020
+    type: fixes
+    note: >
+      The first author's own surface renderer, repaired (Yariv, Kasten and
+      Lipman are on both papers). VolSDF names IDR's "two drawbacks": "it
+      requires object masks for training, which is a strong supervision
+      signal", and setting each pixel's color from "the single point of
+      intersection of the corresponding viewing ray" invites local minima
+      that sometimes show up as extraneous surface parts. Volume rendering an
+      SDF-derived density answers both while keeping IDR's normal-aware
+      radiance field; on DTU, without masks, VolSDF is "on par with IDR"
+      (mean Chamfer 0.86 against 0.90).
+    i18n:
+      ja:
+        note: "第一著者自身の表面レンダラーを直したものです (Yariv、Kasten、Lipman は両方の論文に名を連ねています)。VolSDF は IDR の「二つの欠点」を挙げます。一つは「学習に物体マスクを必要とし、それは強い教師信号である」こと。もう一つは、各ピクセルの色を「対応する視線の、ただ一つの交点」から決めるために局所解に陥りやすく、それがときに余計な表面の断片として現れることです。SDF から導いた密度を volume rendering することで両方に応え、しかも IDR の法線を考慮した radiance field は保ちました。DTU では、マスクを使わない VolSDF が「IDR と同等」です (平均 Chamfer 距離 0.86 対 0.90)。"
 status: seed
 i18n:
   ja:
-    problem: "NeuS が同じ月に診断したのと同じ病です。NeRF の密度はレンダリングの装置であって幾何ではなく、マスク依存の表面手法は実シーンへスケールしません。"
+    problem: "NeuS が同じ月に診断したのと同じ病です。NeRF の密度はレンダリングの装置であって幾何ではありません。そして表面レンダリング (IDR) は物体マスクを必要とし、余計な表面の断片を生やしがちです。"
     solution: "密度を、変換された符号付き距離関数 (SDF の Laplace CDF) としてモデル化します。学習される幾何に有用な帰納バイアスを与え、誤差有界のサンプリングアルゴリズムも添える — volume rendering から綺麗な表面を、幾何と見た目を切り分けた形で得るのです。"
     limitations: "NeuS と同じシーンごとのコストと滑らかさの天井。二本の論文の密度の作り方は十分に異なるため、後続の研究は両者を並べて benchmark し続けました。"
