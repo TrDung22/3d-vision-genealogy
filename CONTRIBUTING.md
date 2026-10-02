@@ -30,6 +30,7 @@ venue: "CVPR 2025"                   # award/oral/spotlight in this string ⇒ g
 year: 2025
 branch: single-image-3d              # branch id
 lane: depth                          # lane id within that branch (see the branch YAML)
+kind: method                         # method (default) | analysis | dataset — drawn ● ◆ ■
 links:
   arxiv: "https://arxiv.org/abs/..."
   code: "https://github.com/..."
@@ -46,6 +47,13 @@ relations:
 status: seed                         # seed → draft → written
 # post: some-blog-slug               # attach the deep-dive post once written
 ```
+
+`kind` marks what sort of work a node is. Leave it out for methods. Use
+`analysis` for papers whose contribution is a finding about what the field's
+methods or benchmarks actually show (Tatarchenko 2019, DyCheck), and `dataset`
+for data or benchmark trunks other nodes stand on (ShapeNet, Objaverse). A
+non-method node is admitted only if it connects to a node already in the graph.
+Analysis pages read *Question → Finding* instead of *Problem → Core idea*.
 
 ### The relation vocabulary (the heart of the project)
 

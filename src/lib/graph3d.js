@@ -11,9 +11,12 @@
  *
  * Other encodings:
  * - node color = branch (theme-aware), bigger node = has a full article
+ * - node solid = kind of work: sphere method, octahedron analysis, cube
+ *   dataset (the 3D twin of the timeline's ● ◆ ■ marks)
  * - gold ring sprite = awarded / oral / spotlight work
  * - moving particles along an edge = "fixes", red edge = "challenges"
  * - hovering a node dims everything but its direct relations (focus mode)
+ * - the legend's kind chips fade the kinds switched off (never hide them)
  * - click a node → docked info panel; background click closes it
  */
 import ForceGraph3D from '3d-force-graph';
@@ -56,11 +59,23 @@ export function mount3D({ el, infoEl, data, root, strings }) {
     nbr.get(e.target)?.add(e.source);
   }
   let hoverId = null;
+  let activeKinds = null; // null = every kind on; the kind filter fades the rest
+  const kindOn = (n) => !activeKinds || activeKinds.has(n.kind);
   const related = (id) => !hoverId || nbr.get(hoverId)?.has(id);
   const linkTouches = (l) => {
     const s = l.source?.id ?? l.source;
     const t = l.target?.id ?? l.target;
     return hoverId && (s === hoverId || t === hoverId);
+  };
+  // lit = drawn in full: the hover neighborhood while hovering (focus beats
+  // the kind filter), otherwise whatever the kind filter leaves on
+  const nodeLit = (n) => (hoverId ? related(n.id) : kindOn(n));
+  const linkLit = (l) => {
+    if (hoverId) return linkTouches(l);
+    if (!activeKinds) return true;
+    const s = nodeById.get(l.source?.id ?? l.source);
+    const t = nodeById.get(l.target?.id ?? l.target);
+    return Boolean((s && kindOn(s)) || (t && kindOn(t)));
   };
 
   const nodeVal = (n) => (n.hasPost || n.status === 'written' ? 7 : 3);
@@ -76,12 +91,33 @@ export function mount3D({ el, infoEl, data, root, strings }) {
   const graph = ForceGraph3D()(el)
     .graphData({ nodes: allNodes, links: allLinks })
     .backgroundColor(tok('--page'))
-    .nodeColor((n) => (related(n.id) ? bColor(n.branch) : tok('--baseline')))
+    .nodeColor((n) => (nodeLit(n) ? bColor(n.branch) : tok('--baseline')))
     .nodeVal(nodeVal)
     .nodeOpacity(0.92)
-    .nodeThreeObjectExtend(true)
+    // methods keep the default sphere; analyses and datasets replace it
+    .nodeThreeObjectExtend((n) => n.kind !== 'analysis' && n.kind !== 'dataset')
     .nodeThreeObject((n) => {
       const group = new THREE.Group();
+      // objects can be (re)built after a filter or hover is already active,
+      // so they start from the CURRENT focus state, not fully lit
+      const lit = nodeLit(n);
+      if (n.kind === 'analysis' || n.kind === 'dataset') {
+        const r = nodeRadius(n);
+        const geometry =
+          n.kind === 'analysis'
+            ? new THREE.OctahedronGeometry(r * 1.3)
+            : new THREE.BoxGeometry(r * 1.55, r * 1.55, r * 1.55);
+        const mesh = new THREE.Mesh(
+          geometry,
+          new THREE.MeshLambertMaterial({
+            color: lit ? bColor(n.branch) : tok('--baseline'),
+            transparent: true,
+            opacity: 0.92,
+          }),
+        );
+        group.add(mesh);
+        n.__mesh = mesh;
+      }
       // always-readable label: skips the depth buffer, drawn after geometry
       const label = new SpriteText(n.short);
       label.color = tok('--ink-2');
@@ -90,6 +126,7 @@ export function mount3D({ el, infoEl, data, root, strings }) {
       label.material.depthWrite = false;
       label.material.depthTest = false;
       label.renderOrder = 999;
+      label.material.opacity = lit ? 1 : 0.12;
       group.add(label);
       n.__label = label;
       if (n.award) {
@@ -98,6 +135,7 @@ export function mount3D({ el, infoEl, data, root, strings }) {
             map: awardTex,
             color: tok('--award'),
             transparent: true,
+            opacity: lit ? 1 : 0.12,
             depthWrite: false,
           }),
         );
@@ -117,7 +155,7 @@ export function mount3D({ el, infoEl, data, root, strings }) {
       </div>`,
     )
     .linkColor((l) =>
-      hoverId && !linkTouches(l)
+      !linkLit(l)
         ? tok('--grid')
         : l.type === 'challenges'
           ? tok('--danger')
@@ -226,8 +264,10 @@ export function mount3D({ el, infoEl, data, root, strings }) {
     graph.nodeColor(graph.nodeColor());
     graph.linkColor(graph.linkColor());
     for (const n of allNodes) {
-      if (n.__label) n.__label.material.opacity = related(n.id) ? 1 : 0.12;
-      if (n.__ring) n.__ring.material.opacity = related(n.id) ? 1 : 0.12;
+      const lit = nodeLit(n);
+      if (n.__label) n.__label.material.opacity = lit ? 1 : 0.12;
+      if (n.__ring) n.__ring.material.opacity = lit ? 1 : 0.12;
+      if (n.__mesh) n.__mesh.material.color.set(lit ? bColor(n.branch) : tok('--baseline'));
     }
   }
 
@@ -270,6 +310,7 @@ export function mount3D({ el, infoEl, data, root, strings }) {
     infoEl.innerHTML = `
       <button class="gg-3d-close" type="button" aria-label="${esc(strings.close)}">×</button>
       <span class="chip"><span class="dot" style="background:${bColor(n.branch)}"></span>${esc(branch?.title ?? n.branch)}</span>
+      ${n.kind && n.kind !== 'method' ? `<span class="badge">${esc(data.nodeKinds?.[n.kind]?.label ?? n.kind)}</span>` : ''}
       <h3>${esc(n.short)}</h3>
       <p class="gg-3d-full">${esc(n.title)}</p>
       <p class="gg-3d-meta">${n.year}${n.venue ? ` · ${esc(n.venue)}` : ''}</p>
@@ -306,6 +347,13 @@ export function mount3D({ el, infoEl, data, root, strings }) {
     setTimeout(() => graph.zoomToFit(400, 46), 650); // re-frame once the sim resettles
   }
 
+  // ---- kind filter (driven by the legend's kind chips): fades, never hides,
+  // so no re-simulation — nodes keep their places
+  function setKinds(kinds) {
+    activeKinds = kinds ? new Set(kinds) : null;
+    refreshFocus();
+  }
+
   // default view: frame the whole graph tightly. We fit instantly (ms = 0, no
   // camera tween) so the framing is deterministic — a tween can be left half
   // finished, stranding the camera too far out so the cloud looks tiny in a sea
@@ -326,5 +374,5 @@ export function mount3D({ el, infoEl, data, root, strings }) {
   resize();
   window.addEventListener('resize', resize);
 
-  return { graph, resize, applyTheme, setFilter };
+  return { graph, resize, applyTheme, setFilter, setKinds };
 }

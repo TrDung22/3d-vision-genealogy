@@ -5,6 +5,7 @@ venue: "CVPR 2019"
 year: 2019
 branch: single-image-3d
 lane: object
+kind: analysis
 links:
   arxiv: "https://arxiv.org/abs/1905.03678"
 problem: >

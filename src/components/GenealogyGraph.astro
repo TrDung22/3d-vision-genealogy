@@ -4,8 +4,9 @@
  *
  * Timeline (top) — a D3 timeline DAG: x = years (compressed), horizontal
  * lanes grouped by branch, stroke-style-coded relation edges (old → new),
- * gold rings on awarded works, hover focus-mode dimming everything but a
- * node's direct relations. Fully theme-aware: colors are read from CSS
+ * mark shape = kind of work (● method, ◆ analysis, ■ dataset), gold rings on
+ * awarded works, hover focus-mode dimming everything but a node's direct
+ * relations. Fully theme-aware: colors are read from CSS
  * custom properties at render time and the view re-renders on `themechange`.
  *
  * 3D (below, always on) — a force graph (three.js) from src/lib/graph3d.js:
@@ -70,6 +71,17 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
   const truncate = (s, n) => (s.length > n ? `${s.slice(0, n).trimEnd()}…` : s);
 
+  // mark shape per kind of work. `r` is the radius of the circle the shape
+  // stands in for; diamonds and squares are scaled to a similar visual weight
+  // (a diamond's points read larger than its area).
+  const SHAPE_SCALE = { circle: 1, diamond: 1.17, square: 0.86 };
+  function shapePath(shape, r) {
+    const s = r * (SHAPE_SCALE[shape] ?? 1);
+    if (shape === 'diamond') return `M0,${-s}L${s},0L0,${s}L${-s},0Z`;
+    if (shape === 'square') return `M${-s},${-s}H${s}V${s}H${-s}Z`;
+    return `M${s},0A${s},${s} 0 1,1 ${-s},0A${s},${s} 0 1,1 ${s},0Z`;
+  }
+
   init().catch((err) => console.error('genealogy graph:', err));
 
   async function init() {
@@ -103,6 +115,20 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
         .filter((id) => activeBranches.has(id));
       if (picked.length) activeBranches = new Set(picked);
     }
+
+    // ---- kind filter: FADES the kinds switched off instead of hiding them —
+    // an analysis paper means little without the edges to the works it
+    // questions, and a fade keeps the layout still. Shareable via ?kinds=a,b.
+    const kindIds = Object.keys(data.nodeKinds ?? {}).filter((k) => data.nodes.some((n) => n.kind === k));
+    const allKinds = () => new Set(kindIds);
+    let activeKinds = allKinds();
+    {
+      const picked = (new URLSearchParams(location.search).get('kinds') ?? '')
+        .split(',')
+        .filter((k) => activeKinds.has(k));
+      if (picked.length) activeKinds = new Set(picked);
+    }
+    const shapeOf = (n) => data.nodeKinds?.[n.kind]?.shape ?? 'circle';
 
     // ---- layout: a pure function of the visible branches (theme-independent).
     // Hidden branches take their lanes AND their years with them, so the
@@ -188,6 +214,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     // the axis skips empty years, so a raw-year slider would have dead zones.
     let currentIdx = view.years.length - 1; // default: the whole genealogy
     let applyYear = () => {}; // rebound by every renderTimeline() run
+    let applyKinds = () => {}; // likewise
 
     const timebar = document.getElementById('gg-timebar');
     const playBtn = document.getElementById('gg-play');
@@ -334,23 +361,26 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
         .attr('transform', (n) => `translate(${pos.get(n.id).x},${pos.get(n.id).y})`)
         .style('cursor', 'pointer');
 
-      // surface-colored spacer ring so edges never touch the mark
-      nodeSel.append('circle').attr('r', 10).attr('fill', tok('--surface'));
-      // mark: filled = has an article, hollow = seed awaiting a write-up
+      // surface-colored spacer so edges never touch the mark
+      nodeSel.append('path').attr('d', (n) => shapePath(shapeOf(n), 10)).attr('fill', tok('--surface'));
+      // mark: filled = has an article, hollow = seed awaiting a write-up;
+      // shape = kind of work
       nodeSel
-        .append('circle')
-        .attr('r', 7)
+        .append('path')
+        .attr('d', (n) => shapePath(shapeOf(n), 7))
         .attr('fill', (n) => (n.hasPost || n.status === 'written' ? bColor(n.branch) : tok('--surface')))
         .attr('stroke', (n) => bColor(n.branch))
-        .attr('stroke-width', 2);
-      // gold ring for awarded / oral / spotlight works
+        .attr('stroke-width', 2)
+        .attr('stroke-linejoin', 'round');
+      // gold ring (in the mark's own shape) for awarded / oral / spotlight works
       nodeSel
         .filter((n) => n.award)
-        .append('circle')
-        .attr('r', 12)
+        .append('path')
+        .attr('d', (n) => shapePath(shapeOf(n), 12))
         .attr('fill', 'none')
         .attr('stroke', tok('--award'))
-        .attr('stroke-width', 1.6);
+        .attr('stroke-width', 1.6)
+        .attr('stroke-linejoin', 'round');
       // direct label on every node (the secondary encoding for CVD)
       nodeSel
         .append('text')
@@ -364,16 +394,19 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       // ---- hover focus-mode: dim everything but the direct relations;
       // edges touching the focus get `gg-lit`, which un-fades cross-branch ones
       function focusNode(id) {
+        svg.classed('gg-focusing', true);
         nodeSel.classed('gg-dim', (n) => !nbr.get(id)?.has(n.id));
         edgeSel.classed('gg-dim', (e) => e.source !== id && e.target !== id);
         edgeSel.classed('gg-lit', (e) => e.source === id || e.target === id);
       }
       function focusEdge(edge) {
+        svg.classed('gg-focusing', true);
         nodeSel.classed('gg-dim', (n) => n.id !== edge.source && n.id !== edge.target);
         edgeSel.classed('gg-dim', (e) => e !== edge);
         edgeSel.classed('gg-lit', (e) => e === edge);
       }
       function unfocus() {
+        svg.classed('gg-focusing', false);
         nodeSel.classed('gg-dim', false);
         edgeSel.classed('gg-dim', false);
         edgeSel.classed('gg-lit', false);
@@ -484,36 +517,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
         d3.zoomIdentity.translate(M.left * (1 - fitK), M.top * (1 - fitK)).scale(fitK),
       );
 
-      // ---- legend: branch chips double as the filter (click = toggle,
-      // alt-click = solo). Rendered from state on every pass, so theme and
-      // filter changes both repaint them correctly.
-      const sample = bColor(data.branches[0]?.id);
-      document.getElementById('gg-legend').innerHTML = `
-        <div class="legend-group">
-          ${filterable
-            .map((b) => {
-              const on = activeBranches.has(b.id);
-              const dot = on
-                ? `background:${bColor(b.id)}`
-                : `background:transparent;box-shadow:inset 0 0 0 2px ${bColor(b.id)}`;
-              return `<button type="button" class="chip gg-chip${on ? '' : ' gg-chip-off'}" data-branch="${esc(b.id)}" aria-pressed="${on}" title="${esc(STR.filterHint)}"><span class="dot" style="${dot}"></span>${esc(b.title)}</button>`;
-            })
-            .join('')}
-        </div>
-        <div class="legend-group">
-          ${Object.entries(data.edgeTypes)
-            .map(([type, meta]) => {
-              const s = EDGE_STYLE[type];
-              if (!s) return '';
-              return `<span class="legend-item"><svg width="34" height="10" aria-hidden="true"><line x1="1" y1="5" x2="33" y2="5" stroke="${s.stroke}" stroke-width="${s.width}"${s.dash ? ` stroke-dasharray="${s.dash}"` : ''}/></svg>${esc(meta.label)}</span>`;
-            })
-            .join('')}
-        </div>
-        <div class="legend-group">
-          <span class="legend-item"><svg width="14" height="14" aria-hidden="true"><circle cx="7" cy="7" r="5" fill="${sample}"/></svg>${esc(STR.hasArticle)}</span>
-          <span class="legend-item"><svg width="14" height="14" aria-hidden="true"><circle cx="7" cy="7" r="5" fill="${tok('--surface')}" stroke="${sample}" stroke-width="2"/></svg>${esc(STR.seed)}</span>
-          <span class="legend-item"><svg width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="4" fill="${sample}"/><circle cx="8" cy="8" r="7" fill="none" stroke="${tok('--award')}" stroke-width="1.6"/></svg>${esc(STR.award)}</span>
-        </div>`;
+      renderLegend();
 
       // ---- time-machine filter: hide everything newer than the year cursor
       applyYear = () => {
@@ -526,6 +530,61 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
         yearReadout.textContent = years.length ? `${years[currentIdx]} · ${visible}/${nodes.length}` : '';
       };
       applyYear();
+
+      // ---- kind filter: fade switched-off kinds; an edge stays lit while
+      // either of its ends is still on
+      applyKinds = () => {
+        const on = (id) => activeKinds.has(nodeById.get(id).kind);
+        nodeSel.classed('gg-kind-off', (n) => !activeKinds.has(n.kind));
+        edgeSel.classed('gg-kind-off', (e) => !on(e.source) && !on(e.target));
+      };
+      applyKinds();
+    }
+
+    // ---- legend: branch chips and kind chips double as the two filters
+    // (click = toggle, alt-click = solo). Rendered from state, so theme and
+    // filter changes both repaint it correctly.
+    function renderLegend() {
+      const sample = bColor(data.branches[0]?.id);
+      const ink = tok('--ink-2');
+      document.getElementById('gg-legend').innerHTML = `
+        <div class="legend-group">
+          ${filterable
+            .map((b) => {
+              const on = activeBranches.has(b.id);
+              const dot = on
+                ? `background:${bColor(b.id)}`
+                : `background:transparent;box-shadow:inset 0 0 0 2px ${bColor(b.id)}`;
+              return `<button type="button" class="chip gg-chip${on ? '' : ' gg-chip-off'}" data-branch="${esc(b.id)}" aria-pressed="${on}" title="${esc(STR.filterHint)}"><span class="dot" style="${dot}"></span>${esc(b.title)}</button>`;
+            })
+            .join('')}
+        </div>
+        ${
+          kindIds.length > 1
+            ? `<div class="legend-group">
+          ${kindIds
+            .map((k) => {
+              const on = activeKinds.has(k);
+              const d = shapePath(data.nodeKinds[k].shape, 4.6);
+              return `<button type="button" class="chip gg-chip${on ? '' : ' gg-chip-off'}" data-kind="${esc(k)}" aria-pressed="${on}" title="${esc(STR.kindHint)}"><svg width="14" height="14" viewBox="-7 -7 14 14" aria-hidden="true"><path d="${d}" fill="${on ? ink : 'none'}" stroke="${ink}" stroke-width="1.4" stroke-linejoin="round"/></svg>${esc(data.nodeKinds[k].label)}</button>`;
+            })
+            .join('')}
+        </div>`
+            : ''
+        }
+        <div class="legend-group">
+          ${Object.values(data.edgeTypes)
+            .map((m) => {
+              const stroke = tok(m.stroke);
+              return `<span class="legend-item"><svg width="34" height="10" aria-hidden="true"><line x1="1" y1="5" x2="33" y2="5" stroke="${stroke}" stroke-width="${m.width}"${m.dash ? ` stroke-dasharray="${m.dash}"` : ''}/></svg>${esc(m.label)}</span>`;
+            })
+            .join('')}
+        </div>
+        <div class="legend-group">
+          <span class="legend-item"><svg width="14" height="14" aria-hidden="true"><circle cx="7" cy="7" r="5" fill="${sample}"/></svg>${esc(STR.hasArticle)}</span>
+          <span class="legend-item"><svg width="14" height="14" aria-hidden="true"><circle cx="7" cy="7" r="5" fill="${tok('--surface')}" stroke="${sample}" stroke-width="2"/></svg>${esc(STR.seed)}</span>
+          <span class="legend-item"><svg width="16" height="16" aria-hidden="true"><circle cx="8" cy="8" r="4" fill="${sample}"/><circle cx="8" cy="8" r="7" fill="none" stroke="${tok('--award')}" stroke-width="1.6"/></svg>${esc(STR.award)}</span>
+        </div>`;
     }
 
     // ---- tooltip
@@ -546,7 +605,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
     const nodeTipHtml = (n) => `
       <strong>${esc(n.short)}</strong>
-      <span class="tip-meta">${n.year}${n.venue ? ` · ${esc(n.venue)}` : ''}</span>
+      <span class="tip-meta">${n.year}${n.venue ? ` · ${esc(n.venue)}` : ''}${n.kind && n.kind !== 'method' ? ` · ${esc(data.nodeKinds[n.kind]?.label ?? n.kind)}` : ''}</span>
       <p>${esc(truncate(n.problem, 170))}</p>
       <span class="tip-hint">${esc(STR.tipOpen)}</span>`;
 
@@ -566,6 +625,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     document.getElementById('gg-legend').addEventListener('click', (ev) => {
       const chip = ev.target.closest('.gg-chip');
       if (!chip) return;
+      if (chip.dataset.kind) return toggleKind(chip.dataset.kind, ev.altKey);
       const id = chip.dataset.branch;
       if (ev.altKey) {
         const soloed = activeBranches.size === 1 && activeBranches.has(id);
@@ -597,7 +657,28 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       renderTimeline();
       syncTables();
       g3d?.setFilter(activeBranches);
-      // shareable URL: ?branches=… (dropped when everything is on)
+      syncUrl();
+    }
+
+    // a kind toggle only re-fades — no relayout, so pan/zoom stay put
+    function toggleKind(k, solo) {
+      if (solo) {
+        const soloed = activeKinds.size === 1 && activeKinds.has(k);
+        activeKinds = soloed ? allKinds() : new Set([k]);
+      } else if (activeKinds.has(k)) {
+        activeKinds.delete(k);
+        if (activeKinds.size === 0) activeKinds = allKinds(); // never fade everything
+      } else {
+        activeKinds.add(k);
+      }
+      renderLegend();
+      applyKinds();
+      g3d?.setKinds(activeKinds);
+      syncUrl();
+    }
+
+    // shareable URL: ?branches=…&kinds=… (each dropped when everything is on)
+    function syncUrl() {
       const params = new URLSearchParams(location.search);
       if (activeBranches.size === filterable.length) params.delete('branches');
       else
@@ -605,6 +686,8 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
           'branches',
           filterable.filter((b) => activeBranches.has(b.id)).map((b) => b.id).join(','),
         );
+      if (activeKinds.size === kindIds.length) params.delete('kinds');
+      else params.set('kinds', kindIds.filter((k) => activeKinds.has(k)).join(','));
       const qs = params.toString();
       history.replaceState(null, '', `${location.pathname}${qs ? `?${qs}` : ''}${location.hash}`);
     }
@@ -625,6 +708,7 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
       window.addEventListener('themechange', () => g3d.applyTheme());
       // catch up with a filter chosen before the 3D chunk finished loading
       if (activeBranches.size !== filterable.length) g3d.setFilter(activeBranches);
+      if (activeKinds.size !== kindIds.length) g3d.setKinds(activeKinds);
     } catch (err) {
       el3d.innerHTML = `<p class="gg-3d-loading">${esc(STR.error3d)}</p>`;
       console.error('genealogy 3d:', err);
@@ -671,6 +755,16 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
     opacity: 0.14;
   }
 
+  /* kind filter: switched-off kinds fade but keep their place; an edge fades
+     only when both of its ends are off. Hover focus (below) overrides it. */
+  .gg-node.gg-kind-off {
+    opacity: 0.16;
+  }
+
+  .gg-edge.gg-kind-off {
+    opacity: 0.05;
+  }
+
   .gg-node.gg-dim {
     opacity: 0.12;
   }
@@ -681,6 +775,11 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 
   .gg-edge.gg-dim {
     opacity: 0.06;
+  }
+
+  /* a hovered node's neighborhood shows in full even if its kind is faded */
+  #gg-svg.gg-focusing .gg-node.gg-kind-off:not(.gg-dim) {
+    opacity: 1;
   }
 
   /* time machine: future work stays hidden even under hover focus-mode */

@@ -55,6 +55,19 @@ export const EDGE_TYPES = {
 export type EdgeType = keyof typeof EDGE_TYPES;
 
 /**
+ * What kind of work a node is. Most nodes are methods; the other two kinds
+ * are drawn as different mark shapes so the genealogy's critiques and data
+ * trunks stand out (shape, not color — color already means "branch").
+ */
+export const NODE_KINDS = {
+  method: { shape: 'circle' },
+  analysis: { shape: 'diamond' },
+  dataset: { shape: 'square' },
+} as const satisfies Record<string, { shape: 'circle' | 'diamond' | 'square' }>;
+
+export type NodeKind = keyof typeof NODE_KINDS;
+
+/**
  * Localized prose of a node entry — each field falls back to the English
  * original, so untranslated nodes degrade gracefully instead of breaking.
  */
@@ -118,6 +131,7 @@ export interface GraphData {
     venue?: string;
     branch: string;
     lane: string; // laneKey = "<branch>/<lane>"
+    kind: NodeKind;
     status: string;
     hasPost: boolean;
     award: boolean;
@@ -128,6 +142,7 @@ export interface GraphData {
     EdgeType,
     { label: string; description: string; stroke: string; dash: string | null; width: number }
   >;
+  nodeKinds: Record<NodeKind, { label: string; shape: (typeof NODE_KINDS)[NodeKind]['shape'] }>;
 }
 
 const graphCache = new Map<Lang, Promise<GraphData>>();
@@ -182,6 +197,7 @@ async function buildGraphUncached(lang: Lang): Promise<GraphData> {
     venue: n.data.venue,
     branch: n.data.branch.id,
     lane: `${n.data.branch.id}/${n.data.lane}`,
+    kind: n.data.kind,
     status: n.data.status,
     hasPost: Boolean(n.data.post),
     award: AWARD_RE.test(n.data.venue ?? ''),
@@ -207,5 +223,12 @@ async function buildGraphUncached(lang: Lang): Promise<GraphData> {
     ]),
   ) as GraphData['edgeTypes'];
 
-  return { branches, lanes, nodes, edges, edgeTypes };
+  const nodeKinds = Object.fromEntries(
+    (Object.keys(NODE_KINDS) as NodeKind[]).map((k) => [
+      k,
+      { shape: NODE_KINDS[k].shape, label: t(lang, `kind.${k}`) },
+    ]),
+  ) as GraphData['nodeKinds'];
+
+  return { branches, lanes, nodes, edges, edgeTypes, nodeKinds };
 }

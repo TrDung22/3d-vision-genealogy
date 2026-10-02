@@ -15,6 +15,8 @@ const root = `${base}/${lang}`;
 const graph = await buildGraph(lang);
 
 const shortOf = new Map(graph.nodes.map((n) => [n.id, n.short]));
+// the table's echo of the graph's mark shapes (methods stay unmarked)
+const KIND_GLYPH: Record<string, string> = { analysis: '◆', dataset: '■' };
 const laneTitle = new Map(graph.lanes.map((l) => [l.id, l.title]));
 const rows = [...graph.nodes].sort((a, b) => a.year - b.year || a.short.localeCompare(b.short));
 
@@ -118,6 +120,11 @@ const fmtDate = (d: Date) =>
                   <tr>
                     <td>{n.year}</td>
                     <td>
+                      {KIND_GLYPH[n.kind] && (
+                        <span class="kind-glyph" title={t(lang, `kind.${n.kind}`)} aria-label={t(lang, `kind.${n.kind}`)}>
+                          {KIND_GLYPH[n.kind]}
+                        </span>
+                      )}
                       <a href={`${root}/nodes/${n.id}/`}>{n.short}</a>
                     </td>
                     <td class="muted">{laneTitle.get(n.lane) ?? ''}</td>
@@ -226,6 +233,12 @@ const fmtDate = (d: Date) =>
 
   .branch-table table {
     margin-top: 1rem;
+  }
+
+  .kind-glyph {
+    color: var(--muted);
+    font-size: 0.8em;
+    margin-right: 0.4em;
   }
 
   .post-list {

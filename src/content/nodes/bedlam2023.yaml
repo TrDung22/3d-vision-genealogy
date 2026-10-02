@@ -5,6 +5,7 @@ venue: "CVPR 2023 (Highlight)"
 year: 2023
 branch: single-image-3d
 lane: human
+kind: dataset
 links:
   arxiv: "https://arxiv.org/abs/2306.16940"
   paper: "https://openaccess.thecvf.com/content/CVPR2023/html/Black_BEDLAM_A_Synthetic_Dataset_of_Bodies_Exhibiting_Detailed_Lifelike_Animated_CVPR_2023_paper.html"

@@ -5,6 +5,7 @@ venue: "arXiv 2015 (technical report)"
 year: 2015
 branch: single-image-3d
 lane: object
+kind: dataset
 links:
   arxiv: "https://arxiv.org/abs/1512.03012"
   project: "https://shapenet.org/"

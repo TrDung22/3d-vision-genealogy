@@ -5,6 +5,7 @@ venue: "NeurIPS 2022"
 year: 2022
 branch: neural-rendering
 lane: dynamic
+kind: analysis
 links:
   arxiv: "https://arxiv.org/abs/2210.13445"
   paper: "https://proceedings.neurips.cc/paper_files/paper/2022/hash/dab5a29f6614ec47ea0ca85c140226fd-Abstract-Conference.html"

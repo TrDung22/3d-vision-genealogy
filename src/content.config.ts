@@ -56,6 +56,10 @@ const nodes = defineCollection({
     year: z.number(),
     branch: reference('branches'),
     lane: z.string(),
+    // What kind of work this is — drawn as the mark's shape on both graphs.
+    // analysis = probes / critiques of what the field's methods and benchmarks
+    // actually show; dataset = data or benchmark trunks other nodes stand on.
+    kind: z.enum(['method', 'analysis', 'dataset']).default('method'),
     links: z.record(z.string().url()).default({}),
     problem: z.string(), // the problem it went after
     solution: z.string(), // the core idea

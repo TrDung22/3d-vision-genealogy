@@ -48,7 +48,8 @@ write-ups drop on the floor.
   reconstruction** (the most classically ill-posed problem of all) and
   **neural rendering** (1984 volume rendering → light fields → NeRF → 3DGS →
   the post-3D-bias era). Gold rings mark award / oral / spotlight recognition,
-  verified against official sources.
+  verified against official sources; the mark's shape tells methods (●) from
+  analyses (◆) and datasets (■).
 
 <table>
   <tr>

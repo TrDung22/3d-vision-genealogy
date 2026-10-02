@@ -23,6 +23,10 @@ const byId = new Map(all.map((n) => [n.id, n]));
 const prose = nodeProse(entry.data, lang);
 const branchTitle = branch?.data.i18n?.[lang]?.title ?? branch?.data.title;
 const statusWord = t(lang, `status.${entry.data.status}`);
+// an analysis answers a question with a finding; methods and datasets keep
+// the problem → core-idea framing
+const kind = entry.data.kind;
+const isAnalysis = kind === 'analysis';
 
 // outgoing: what this node says about older nodes
 const outgoing = entry.data.relations
@@ -55,6 +59,7 @@ const LINK_LABELS: Record<string, string> = {
           <a href={`${root}/branches/${branch?.id}/`}>{branchTitle}</a>
         </span>
         <span class="badge">{statusWord}</span>
+        {kind !== 'method' && <span class="badge">{t(lang, `kind.${kind}`)}</span>}
       </p>
       <h1>{entry.data.short}</h1>
       <p class="full-title">{entry.data.title}</p>
@@ -76,9 +81,9 @@ const LINK_LABELS: Record<string, string> = {
     </header>
 
     <section class="panel node-summary">
-      <h2>{t(lang, 'node.problem')}</h2>
+      <h2>{t(lang, isAnalysis ? 'node.question' : 'node.problem')}</h2>
       <p>{prose.problem}</p>
-      <h2>{t(lang, 'node.coreIdea')}</h2>
+      <h2>{t(lang, isAnalysis ? 'node.finding' : 'node.coreIdea')}</h2>
       <p>{prose.solution}</p>
       {
         prose.limitations && (

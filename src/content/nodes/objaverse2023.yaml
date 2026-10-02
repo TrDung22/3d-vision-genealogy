@@ -5,6 +5,7 @@ venue: "CVPR 2023 / NeurIPS 2023"
 year: 2023
 branch: single-image-3d
 lane: generative
+kind: dataset
 links:
   arxiv: "https://arxiv.org/abs/2307.05663"
   project: "https://objaverse.allenai.org/"
