@@ -478,17 +478,24 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
         .text((y) => y);
 
       // ---- zoom/pan: main layer gets the full transform, gutter labels only their own axis
-      // label opacity mixes two concerns in ONE place (attr, not CSS): hidden
-      // behind the left gutter wins, then future years (time machine) dim
+      // label opacity mixes three concerns in ONE place (attr, not CSS): hidden
+      // behind the left gutter wins; zoomed out, only every step-th year keeps a
+      // label (plus the time machine's current one, which clears its close
+      // neighbours) so they never run together; then future years dim
+      const YEAR_LABEL_MIN = 40; // px between neighbouring year labels
       let lastT = d3.zoomIdentity;
       function applyTransform(t) {
         lastT = t;
         g.attr('transform', t.toString());
+        const step = Math.max(1, Math.ceil(YEAR_LABEL_MIN / (YEAR_W * t.k)));
         yearLabels
           .attr('x', (y) => t.applyX(yearX.get(y)))
-          .attr('opacity', (y) =>
-            t.applyX(yearX.get(y)) < M.left - 10 ? 0 : yearIdx.get(y) > currentIdx ? 0.25 : 1,
-          );
+          .attr('opacity', (y) => {
+            const i = yearIdx.get(y);
+            if (t.applyX(yearX.get(y)) < M.left - 10) return 0;
+            if (i !== currentIdx && (i % step !== 0 || Math.abs(i - currentIdx) < step)) return 0;
+            return i > currentIdx ? 0.25 : 1;
+          });
         laneLabels.attr('y', (l) => t.applyY(laneCenter.get(l.id)) + 4);
         // branch heading clamps to stay above its first lane's label at ANY zoom
         branchLabels.attr('y', (b) => {
