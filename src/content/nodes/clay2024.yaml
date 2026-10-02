@@ -41,6 +41,15 @@ relations:
     i18n:
       ja:
         note: "Point-E と Shap-E が属する 3D native 路線に CLAY が見出した弱点を直します。こうしたモデルは「データセットに埋め込まれた豊かな幾何的特徴を十分に掘り下げておらず」、しかも「モデルサイズの小ささが汎化と多様化の能力を制限している」。3D表現の上で直接 diffusion するという賭けはそのままに、作り込んだ幾何処理でデータを掘り起こし、latent-set の DiT を15億パラメータまでスケールして、native 3D generation を概念実証から production 級の幾何へと引き上げました。"
+  - node: objaverse2023
+    type: builds-on
+    note: >
+      Its data trunk: geometry is learned from 527K objects refined from
+      ShapeNet and Objaverse, and its material diffusion from over 40,000
+      Objaverse objects chosen for high-quality PBR materials.
+    i18n:
+      ja:
+        note: "データの幹です。幾何は ShapeNet と Objaverse から精製した52.7万物体で、マテリアルの拡散モデルは高品質な PBR マテリアルを持つ4万以上の Objaverse 物体で学習します。"
 status: seed
 i18n:
   ja:

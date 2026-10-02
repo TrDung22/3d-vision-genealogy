@@ -31,6 +31,15 @@ relations:
     i18n:
       ja:
         note: "LRM のアーキテクチャを受け継ぎ、MIT ライセンスで公開することで、比較対象とした再実装 OpenLRM よりも強いオープンなモデルを提供しました — コミュニティがこの路線の肩に乗れる道を開いたのです。"
+  - node: objaverse2023
+    type: builds-on
+    note: >
+      Trained exclusively on Objaverse: its data improvements are "a
+      carefully curated subset of the Objaverse dataset" and renderings closer
+      to real-world images.
+    i18n:
+      ja:
+        note: "学習データは Objaverse だけです。データ面の改良は「Objaverse データセットから丁寧に選び抜いたサブセット」と、実写の画像分布に近づけたレンダリングでした。"
 status: seed
 i18n:
   ja:

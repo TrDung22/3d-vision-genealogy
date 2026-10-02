@@ -37,6 +37,17 @@ relations:
     i18n:
       ja:
         note: "深度レーン全体のゴールポストを動かしました。Depth Anything V2 が予測するのは深度マップで、MoGe の言葉を借りれば「3D点群の結果を得るには ground truth のカメラ焦点距離が必要」です。MoGe は点マップそのものをカメラ幾何ごと予測し、従来のスケール・シフト整列が外れ値に弱いか近似どまりだったところを、最適な整列ソルバーで学習します。"
+  - node: depthpro2024
+    type: fixes
+    note: >
+      MoGe-2 names the weakness: Depth Pro sharpens depth maps "but still
+      falls short in geometric accuracy", having trained its second stage on
+      synthetic data only. MoGe-2 keeps real data throughout — filtering out
+      its false depth values — and recovers metric point maps with sharp
+      detail as well.
+    i18n:
+      ja:
+        note: "MoGe-2 が弱点を名指しします。Depth Pro は深度マップを鮮明にした「が、幾何の精度ではなお及ばない」 — 第2段階を合成データだけで学習したためです。MoGe-2 は誤った深度値を除きながら実データを最後まで使い、鋭いディテールまで備えた metric な点マップを復元します。"
 status: seed
 i18n:
   ja:

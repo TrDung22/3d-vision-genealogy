@@ -42,6 +42,15 @@ relations:
     i18n:
       ja:
         note: "5週間後、TripoSR をベースラインに据えてその弱点を名指しします。一枚の画像からでは、入力が自由なスタイルだと「想像力を欠き、背面の幾何とテクスチャが劣化しがち」。見えない視点をまず多視点拡散で想像し、そこから再構成する — それが修正でした。"
+  - node: objaverse2023
+    type: builds-on
+    note: >
+      Both halves train on this data: its sparse-view reconstructor on ~270K
+      high-quality instances filtered from Objaverse's 800K, and its Zero123++
+      fine-tune on renders of Objaverse's LVIS subset.
+    i18n:
+      ja:
+        note: "二つの部品はどちらもこのデータで学習します。疎視点の再構成モデルは Objaverse の80万から選んだ約27万の高品質な物体で、Zero123++ のファインチューニングは Objaverse の LVIS サブセットのレンダリングで。"
 status: seed
 i18n:
   ja:

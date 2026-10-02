@@ -43,6 +43,15 @@ relations:
     i18n:
       ja:
         note: "3D への持ち上げは NeRF 流の radiance field を介します。視点条件付きモデルが、score distillation でボクセルの radiance field を教師するのです — 枝をまたぐ関係です。ニューラルレンダリングが、単一画像3Dのインフラになりました。"
+  - node: objaverse2023
+    type: builds-on
+    note: >
+      Its viewpoint control is learned from this data: Zero-1-to-3 fine-tunes
+      Stable Diffusion on renders of Objaverse — "800K+ 3D models created by
+      100K+ artists" — with 12 random views per object.
+    i18n:
+      ja:
+        note: "視点の制御は、このデータから学ばれます。Zero-1-to-3 は Objaverse — 「10万人以上のアーティストが作った80万以上の3Dモデル」 — のレンダリングで Stable Diffusion をファインチューニングします。物体ごとにランダムな12視点です。"
 status: seed
 i18n:
   ja:
