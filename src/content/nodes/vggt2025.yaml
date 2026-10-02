@@ -3,8 +3,8 @@ short: "VGGT (2025)"
 authors: "Jianyuan Wang, Minghao Chen, Nikita Karaev, Andrea Vedaldi, Christian Rupprecht, David Novotny (Oxford VGG + Meta AI)"
 venue: "CVPR 2025 (Oral, Best Paper Award)"
 year: 2025
-branch: single-image-3d
-lane: scene
+branch: multi-view-geometry
+lane: feedforward
 links:
   arxiv: "https://arxiv.org/abs/2503.11651"
   code: "https://github.com/facebookresearch/vggt"

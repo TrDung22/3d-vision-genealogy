@@ -3,8 +3,8 @@ short: "DUSt3R (2023)"
 authors: "Shuzhe Wang, Vincent Leroy, Yohann Cabon, Boris Chidlovskii, Jerome Revaud (Aalto University + Naver Labs Europe)"
 venue: "CVPR 2024"
 year: 2023
-branch: single-image-3d
-lane: scene
+branch: multi-view-geometry
+lane: feedforward
 links:
   arxiv: "https://arxiv.org/abs/2312.14132"
   code: "https://github.com/naver/dust3r"

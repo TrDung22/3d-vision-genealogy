@@ -38,6 +38,6 @@ lanes:
     i18n:
       ja: { title: "人体とアバター" }
   - id: scene
-    title: "Scene & any-view geometry"
+    title: "Scenes from few images"
     i18n:
-      ja: { title: "シーンと任意視点幾何" }
+      ja: { title: "少数画像からのシーン" }
