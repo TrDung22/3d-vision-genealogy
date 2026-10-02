@@ -1,0 +1,65 @@
+title: "DROID-SLAM: Deep Visual SLAM for Monocular, Stereo, and RGB-D Cameras"
+short: "DROID-SLAM (2021)"
+authors: "Zachary Teed, Jia Deng (Princeton University)"
+venue: "NeurIPS 2021 (Oral)"
+year: 2021
+branch: multi-view-geometry
+lane: sfm
+links:
+  arxiv: "https://arxiv.org/abs/2108.10869"
+  code: "https://github.com/princeton-vl/DROID-SLAM"
+problem: >
+  Visual SLAM — tracking a camera through a long video while mapping the
+  scene, a special form of SfM — ran on least-squares bundle adjustment
+  (ORB-SLAM3 and kin): accurate, but "Failures come in many forms, such as
+  lost feature tracks, divergence in the optimization algorithm, and
+  accumulation of drift." Learned systems were sometimes more robust but
+  "fall far short of the accuracy of their classical counterparts", and the
+  end-to-end ones covered two to a dozen frames, with no loop closure or
+  global bundle adjustment.
+solution: >
+  RAFT's recurrent update, lifted from flow to geometry. Every frame
+  carries a pose and a dense inverse-depth map; for each edge of a
+  co-visibility frame graph, a convolutional GRU looks up all-pairs
+  correlation volumes at the correspondences the current geometry implies
+  and predicts a flow revision with per-pixel confidence, and a
+  differentiable Dense Bundle Adjustment layer turns all the revisions into
+  one Gauss-Newton update of every pose and per-pixel depth. A backend runs
+  global bundle adjustment over all keyframes, closing loops through
+  long-range edges. Trained once on synthetic monocular video (TartanAir),
+  the same model takes stereo or RGB-D without retraining; it cut error by
+  62% (monocular) and 60% (stereo) against the best prior TartanAir SLAM
+  challenge results, and tracked 30 of 32 ETH3D RGB-D sequences where the
+  next best managed 19.
+limitations: >
+  By its own account "memory and resource requirements are currently the
+  biggest limitation": real time took two RTX 3090s, the longest videos a
+  24 GB GPU, and TartanAir's fast motion ran at only 8 fps; the camera
+  intrinsics are taken as given. DPVO, from the same lab, put numbers on
+  the cost — even without the backend, DROID "averages 40FPS on an
+  RTX-3090 using 8.7GB GPU memory, which can be impractical for
+  resource-constrained devices" — and beat its odometry front end with
+  sparse patches instead of dense flow, using a third of the memory at
+  three times the speed.
+relations:
+  - node: raft2020
+    type: builds-on
+    note: >
+      Builds directly on its authors' own RAFT: DROID-SLAM "consists of
+      recurrent iterative updates, building upon RAFT", and borrows its
+      feature and context encoders, its pooled all-pairs correlation pyramid
+      and its memory-efficient on-demand lookup. What changes is the target:
+      "unlike RAFT, which iteratively updates optical flow, we iteratively
+      update camera poses and depth", and "Whereas RAFT operates on two
+      frames, our updates are applied to an arbitrary number of frames" —
+      each predicted flow revision is turned into geometry by a Dense Bundle
+      Adjustment layer.
+    i18n:
+      ja:
+        note: "著者たち自身の RAFT の上にまっすぐ立ちます。DROID-SLAM は「RAFT の上に築いた、反復的な再帰更新からなる」システムで、特徴エンコーダとコンテキストエンコーダ、プーリングした全ペア相関のピラミッド、そしてメモリ効率のよいオンデマンドの参照を RAFT から借りています。変わったのは更新する対象です。「RAFT がオプティカルフローを反復的に更新するのに対し、私たちはカメラ pose と深度を反復的に更新する」。そして「RAFT が2フレームを扱うのに対し、私たちの更新は任意の枚数のフレームに適用される」 — 予測されたフローの修正は、それぞれ Dense Bundle Adjustment 層によって幾何へと変換されます。"
+status: seed
+i18n:
+  ja:
+    problem: "Visual SLAM — 長い動画のなかでカメラを追跡しながらシーンの地図をつくる、SfM の特別な形 — は、最小二乗のバンドル調整 (ORB-SLAM3 とその仲間) の上に成り立っていました。精度は高いものの、「失敗はさまざまな形でやってくる — 特徴トラックの喪失、最適化の発散、ドリフトの蓄積」。学習ベースのシステムはときに頑健でしたが、「古典的な対応物の精度には遠く及ばず」、end-to-end のものは2枚から十数枚のフレームしか扱えず、ループクロージングも大域的なバンドル調整も持っていませんでした。"
+    solution: "RAFT の再帰的な更新を、フローから幾何へと持ち上げます。各フレームは pose と密な逆深度マップを持ちます。共視関係を表すフレームグラフの各辺について、畳み込み GRU が、現在の幾何から導かれる対応点の位置で全ペアの相関ボリュームを参照し、ピクセルごとの信頼度つきでフローの修正を予測します。そして微分可能な Dense Bundle Adjustment 層が、それらの修正をまとめて、すべての pose とピクセルごとの深度への一回の Gauss-Newton 更新に変換します。バックエンドはすべてのキーフレームにわたる大域的なバンドル調整を走らせ、長距離の辺でループを閉じます。合成の単眼動画 (TartanAir) で一度学習しただけのモデルが、再学習なしでステレオや RGB-D も受け付けます。TartanAir の SLAM チャレンジでは、これまでの最良の結果に対して誤差を単眼で62%、ステレオで60%下げ、ETH3D の RGB-D では32系列のうち30系列を追跡しきりました (次点は19系列)。"
+    limitations: "本人たちの言うとおり、「メモリと計算資源の要求が、現時点でこのシステムの最大の限界」です。リアルタイム動作には RTX 3090 が2枚、最も長い動画には 24 GB の GPU が必要で、カメラの動きが速い TartanAir では 8 fps しか出ませんでした。カメラの内部パラメータも既知として与えられます。同じ研究室の DPVO が、このコストを数字で示しました。バックエンドを外してさえ、DROID は「RTX-3090 で平均 40FPS、8.7GB の GPU メモリを使い、資源の限られたデバイスには実用的でないことがある」。DPVO は密なフローの代わりに疎なパッチを使って、その odometry のフロントエンドを、3分の1のメモリと3倍の速度で上回りました。"

@@ -10,9 +10,11 @@ links:
   code: "https://github.com/facebookresearch/vggt"
 problem: >
   Scene geometry was still a pipeline: SfM for cameras, MVS or per-scene
-  optimization for dense geometry — slow and brittle. DUSt3R had begun to
-  predict geometry instead, but only two images at a time, fusing the pairs
-  afterwards with a costly global alignment.
+  optimization for dense geometry — adding, in VGGT's words, "complexity and
+  computational cost". DUSt3R and its
+  evolution MASt3R had begun to predict geometry instead, but only two
+  images at a time, fusing the pairs afterwards with a costly global
+  alignment.
 solution: >
   One feed-forward transformer that ingests 1 to hundreds of unposed images
   and directly outputs cameras, depth maps, point maps, and 3D point tracks in
@@ -38,9 +40,36 @@ relations:
     i18n:
       ja:
         note: "VGGT が DUSt3R とその発展形 MASt3R に名指しした弱点を直します。これらのネットワークは「一度に2枚の画像しか処理できず、より多くの画像を再構成するには後処理に頼り、ペアごとの再構成を融合する」のです。VGGT は、最初のカメラの座標系で表す DUSt3R の点マップを受け継ぎつつ、すべての視点を一度の forward で読み込み、global alignment を要しません。どちらも ground truth のカメラなしで走る DTU で、Overall の誤差は 1.741 から 0.382 に下がりました。"
+  - node: mast3r2024
+    type: fixes
+    note: >
+      Repairs the same debt in DUSt3R's evolution: VGGT counts MASt3R among
+      the methods that "still require costly iterative post-optimization to
+      obtain usable results", and, like DUSt3R, it can "only process two
+      images at once". On ETH3D, where MASt3R needs global alignment and about
+      9 seconds per scene, VGGT's feed-forward point cloud (from its depth and
+      camera heads) cuts the Overall error from 0.826 to 0.677 in about 0.2.
+    i18n:
+      ja:
+        note: "DUSt3R の発展形に残った同じ借金を返します。VGGT は MASt3R を「使える結果を得るには、なおコストのかかる反復的な後最適化を必要とする」手法の一つに数え、DUSt3R と同じく「一度に2枚の画像しか処理できない」としています。MASt3R が global alignment を経て1シーンに約9秒かける ETH3D で、VGGT は feed-forward の点群 (深度ヘッドとカメラヘッドから構成) によって、約0.2秒で Overall の誤差を 0.826 から 0.677 に下げました。"
+  - node: colmap2016
+    type: fixes
+    note: >
+      Repairs the cost VGGT diagnoses in the line COLMAP represents, "the most
+      popular framework based on the traditional pipeline" of matching,
+      triangulation and bundle adjustment: even with learning inside, "visual
+      geometry still plays a major role in 3D reconstruction, which increases
+      complexity and computational cost". VGGT reads the cameras off one
+      forward pass. On RealEstate10K, AUC@30 rises from 45.2 for COLMAP with
+      SuperPoint and SuperGlue, in about 15 seconds, to 85.3 in about 0.2,
+      with no bundle adjustment at all; run on VGGT's output, bundle
+      adjustment still lifts it to 93.5.
+    i18n:
+      ja:
+        note: "VGGT が、COLMAP に代表される系譜に診断したコストを直します。COLMAP は、マッチング・三角測量・バンドル調整からなる「伝統的なパイプラインに基づく最も一般的なフレームワーク」です。学習が内部に入り込んでもなお、「視覚幾何は3D再構成で大きな役割を担い続け、それが複雑さと計算コストを増している」のです。VGGT はカメラを一度の forward で読み取ります。RealEstate10K の AUC@30 は、SuperPoint と SuperGlue を組み込んだ COLMAP の 45.2 (約15秒) から、バンドル調整をまったく使わずに 85.3 (約0.2秒) まで上がりました。それでも、VGGT の出力にバンドル調整をかければ、さらに 93.5 まで伸びます。"
 status: seed
 i18n:
   ja:
-    problem: "シーンの幾何は依然としてパイプラインでした。カメラは SfM、密な幾何は MVS かシーンごとの最適化 — 遅く、脆いものです。DUSt3R は幾何を予測する方向へ踏み出しましたが、一度に扱えるのは2枚だけで、ペアどうしは後からコストのかかる global alignment で継ぎ合わせていました。"
+    problem: "シーンの幾何は依然としてパイプラインでした。カメラは SfM、密な幾何は MVS かシーンごとの最適化 — VGGT の言葉では、それが「複雑さと計算コスト」を増やしていました。DUSt3R とその発展形 MASt3R は幾何を予測する方向へ踏み出しましたが、一度に扱えるのは2枚だけで、ペアどうしは後からコストのかかる global alignment で継ぎ合わせていました。"
     solution: "一つの feed-forward トランスフォーマーが、pose なしの画像を1枚から数百枚まで飲み込み、カメラ・深度マップ・点マップ・3Dポイントトラックを数秒で直接出力します — 幾何を最適化するのではなく予測するという DUSt3R 路線の賭けを論理的な果てまで進めた、CVPR 2025 のベストペーパーです。"
     limitations: "タスクごとに別ヘッド、視点数に対して二乗のアテンション。本人たちの言うとおり、大きな非剛体変形のある場面では破綻し、極端な入力の回転では再構成の性能が落ち、魚眼やパノラマの画像にも対応していません。後継はすぐに現れました — Depth Anything 3 が、素のトランスフォーマー + 単一の depth-ray ターゲットでマルチヘッド設計に決定的に勝てることを示したのです。"

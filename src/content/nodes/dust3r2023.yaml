@@ -13,8 +13,8 @@ problem: >
   problems — matching, essential matrices, triangulation, SfM for the
   cameras, then MVS — each step adding noise to the next, and the camera
   stage "known to fail in many common situations": few views,
-  non-Lambertian surfaces, too little camera motion. Without those cameras,
-  MVS cannot even start.
+  non-Lambertian surfaces, too little or too much camera motion. Without
+  those cameras, MVS cannot even start.
 solution: >
   Regress geometry instead of solving for it. A generic transformer
   (CroCo-pretrained ViT encoder, two cross-attending decoders, DPT head)
@@ -28,15 +28,47 @@ limitations: >
   anything more goes through pairwise inference plus a global alignment
   optimization, and regression stays short of triangulation — on DTU it
   "does not reach the accuracy levels of the best methods", which know
-  their cameras. VGGT later named the pairwise design itself as the debt:
-  such networks "can only process two images at once and rely on
+  their cameras. MASt3R then found its matches "relatively imprecise,
+  despite being extremely robust to viewpoint changes", and gave it a head
+  trained to match. VGGT later named the pairwise design itself as the
+  debt: such networks "can only process two images at once and rely on
   post-processing to reconstruct more images, fusing pairwise
   reconstructions"; in VGGT's tests DUSt3R ran out of memory beyond 32
   frames.
-relations: []
+relations:
+  - node: colmap2016
+    type: fixes
+    note: >
+      Repairs the weakness DUSt3R diagnoses in COLMAP-style SfM, which its
+      pipeline cites for structure from motion and bundle adjustment: the
+      camera stage "is typically known to fail in many common situations,
+      e.g. when the number of scene views is low", for non-Lambertian
+      surfaces, "in case of insufficient or overly large camera motion".
+      DUSt3R needs no cameras to begin with; it reads them off pointmaps
+      regressed from image pairs. On CO3Dv2, ten random frames per sequence,
+      the share of pairs within 15° of the true relative rotation rises from
+      36.1% for COLMAP with SuperPoint and SuperGlue to 96.2%.
+    i18n:
+      ja:
+        note: "DUSt3R が COLMAP 流の SfM に診断した弱点を直します (DUSt3R が描くパイプラインは、Structure from Motion とバンドル調整の文献として COLMAP を引いています)。カメラを推定するこの段は「多くのありふれた状況で失敗することが知られて」います — 視点が少ないとき、非ランバート面、そして「カメラの動きが足りないか大きすぎる場合」。DUSt3R はそもそもカメラを必要とせず、画像ペアから回帰した点マップからカメラを読み取ります。シーケンスごとにランダムな10フレームを使う CO3Dv2 では、相対回転の誤差が15°以内に収まるペアの割合が、SuperPoint と SuperGlue を組み込んだ COLMAP の 36.1% から 96.2% に上がりました。"
+  - node: mvsnet2018
+    type: fixes
+    note: >
+      Repairs the dependency DUSt3R diagnoses in learned MVS, MVSNet among the
+      methods it cites: like handcrafted MVS, they "all depend on camera
+      parameter estimates obtained via complex calibration procedures", and
+      "the inaccuracy of pre-estimated camera parameters can be detrimental
+      for these algorithms to work properly". DUSt3R asks for no pose, depth
+      range or intrinsics; on its five-dataset multi-view depth test it
+      averages a relative error of 4.73 after median scaling, against 18.6
+      for MVSNet given all three. On DTU, the ground MVSNet trains on, known
+      cameras still win: 0.462 mm Overall for MVSNet, 1.741 for DUSt3R.
+    i18n:
+      ja:
+        note: "DUSt3R が学習ベースの MVS に診断した依存を直します (DUSt3R が引く手法には MVSNet も含まれます)。手作りの MVS と同じく、これらは「複雑なキャリブレーション手順で得たカメラパラメータの推定値に依存」しており、「事前に推定したカメラパラメータの不正確さが、これらのアルゴリズムの正常な動作を損ないかねない」のです。DUSt3R は pose も深度範囲も内部パラメータも求めません。5つのデータセットにまたがる多視点深度のテストでは、中央値によるスケール合わせのうえで平均相対誤差 4.73 を記録し、三つすべてを与えられた MVSNet の 18.6 を下回りました。ただし MVSNet が学習に使う DTU では、カメラを知っている側がなお勝ちます — Overall は MVSNet が 0.462 mm、DUSt3R が 1.741 mm です。"
 status: seed
 i18n:
   ja:
-    problem: "実環境での密な3D復元は、最小問題の連鎖として解かれていました — マッチング、基本行列、三角測量、カメラを求める SfM、そして MVS。各段がノイズを次の段へ持ち込み、しかもカメラを求める段は「多くのありふれた状況で失敗することが知られて」います。視点が少ないとき、非ランバート面、カメラの動きが足りないとき。カメラがなければ、MVS は始めることさえできません。"
+    problem: "実環境での密な3D復元は、最小問題の連鎖として解かれていました — マッチング、基本行列、三角測量、カメラを求める SfM、そして MVS。各段がノイズを次の段へ持ち込み、しかもカメラを求める段は「多くのありふれた状況で失敗することが知られて」います。視点が少ないとき、非ランバート面、カメラの動きが小さすぎるときや大きすぎるとき。カメラがなければ、MVS は始めることさえできません。"
     solution: "幾何を解くのではなく、回帰します。汎用のトランスフォーマー (CroCo で事前学習した ViT エンコーダ、互いにクロスアテンションする二つのデコーダ、DPT ヘッド) が、内部パラメータも pose もない2枚の画像を受け取り、最初のカメラの座標系で表した2枚の点マップを、ピクセルごとの信頼度とともに出力します。カメラも深度も対応点も点マップから取り出せ、1枚の画像はペア (I, I) として扱うだけ。それ以上の枚数は、3D空間で直接行う global alignment で数秒のうちに統合します。学習には、8つのデータセットから抽出した850万の画像ペアを使います。"
-    limitations: "本人たちの言うとおり、このネットワークは「画像のペアしか扱えません」。それ以上の枚数はペアごとの推論と global alignment の最適化を経由するしかなく、回帰は三角測量の精度に届きません — DTU では「最良の手法の精度水準には届かない」のです (その最良の手法はカメラを知っています)。のちに VGGT は、このペア単位の設計そのものを借金として名指ししました。こうしたネットワークは「一度に2枚の画像しか処理できず、より多くの画像を再構成するには後処理に頼り、ペアごとの再構成を融合する」のです。VGGT の実験では、DUSt3R は32フレームを超えるとメモリが足りなくなりました。"
+    limitations: "本人たちの言うとおり、このネットワークは「画像のペアしか扱えません」。それ以上の枚数はペアごとの推論と global alignment の最適化を経由するしかなく、回帰は三角測量の精度に届きません — DTU では「最良の手法の精度水準には届かない」のです (その最良の手法はカメラを知っています)。その後 MASt3R は、その対応点が「視点の変化にはきわめて頑健なのに、比較的不正確」だと指摘し、マッチングのために学習するヘッドを与えました。のちに VGGT は、このペア単位の設計そのものを借金として名指ししました。こうしたネットワークは「一度に2枚の画像しか処理できず、より多くの画像を再構成するには後処理に頼り、ペアごとの再構成を融合する」のです。VGGT の実験では、DUSt3R は32フレームを超えるとメモリが足りなくなりました。"

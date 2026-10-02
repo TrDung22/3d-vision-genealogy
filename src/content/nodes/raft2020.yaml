@@ -1,0 +1,46 @@
+title: "RAFT: Recurrent All-Pairs Field Transforms for Optical Flow"
+short: "RAFT (2020)"
+authors: "Zachary Teed, Jia Deng (Princeton University)"
+venue: "ECCV 2020 (Oral, Best Paper Award)"
+year: 2020
+branch: multi-view-geometry
+lane: features
+links:
+  arxiv: "https://arxiv.org/abs/2003.12039"
+  code: "https://github.com/princeton-vl/RAFT"
+problem: >
+  Optical flow, the per-pixel motion between two frames, had been a
+  hand-built energy for decades — a data term traded against a smoothness
+  prior — and further progress looked hard because of "the difficulties in
+  hand-designing an optimization objective that is robust to a variety of
+  corner cases". Deep networks had matched the best classical methods while
+  running much faster, but most estimated flow coarse-to-fine, which makes
+  errors at coarse resolution hard to undo, misses small fast-moving
+  objects, and often takes over a million iterations to train.
+solution: >
+  Keep a single flow field at one resolution and refine it the way an
+  optimizer would, with every piece learned. A feature encoder embeds each
+  pixel of both frames at 1/8 scale; inner products over ALL pairs of
+  pixels form a 4D correlation volume, pooled into a pyramid so that every
+  lookup sees small and large displacements at once; a convolutional GRU,
+  its weights tied across iterations, reads correlation, current flow and
+  context features and proposes the next update — 2.7M parameters that
+  "can be applied 100+ times during inference without divergence". It cut
+  Sintel (final) end-point error by 30% to 2.855 px and KITTI F1-all by 16%
+  to 5.10%, and was ECCV 2020's Best Paper.
+limitations: >
+  Two frames and 2D motion: it outputs flow, not cameras or depth. Its
+  accuracy is bought with iterations — GMFlow (CVPR 2022) objected that
+  "such a large number of sequential refinements introduce linearly
+  increasing inference time", and matched pixels globally instead. Its
+  all-pairs volume grows as O(N²) in the pixel count: no bottleneck for one
+  pair at video size, by its own measurements, but when its authors carried
+  the design into SLAM, storing every pair's volume "would quickly exceed
+  video memory", and DROID-SLAM fell back on RAFT's on-demand lookup.
+relations: []
+status: seed
+i18n:
+  ja:
+    problem: "オプティカルフロー、つまり2フレーム間のピクセルごとの動きは、何十年ものあいだ手作りのエネルギー最小化 — データ項と滑らかさの prior の綱引き — として解かれてきました。そしてその先の進歩は、「さまざまな特殊ケースに頑健な最適化の目的関数を手で設計することの難しさ」のために、容易ではないように見えていました。深層ネットワークは最良の古典手法に並び、推論もはるかに速くなっていましたが、その多くはフローを粗い解像度から細かい解像度へと推定していました。これでは粗い段の誤りを取り返しにくく、小さく速く動く物体を見逃し、学習にもしばしば100万回を超える反復がかかります。"
+    solution: "フロー場を一つの解像度に一枚だけ保ち、それを最適化手法のように磨いていきます — ただし部品はすべて学習したものです。特徴エンコーダが両フレームの各ピクセルを 1/8 の解像度で埋め込み、「すべての」ピクセルの組の内積が4次元の相関ボリュームをなします。これをピラミッド状にプーリングしておくので、一回の参照で小さな変位も大きな変位も同時に見えます。反復のあいだ重みを共有する畳み込み GRU が、相関・現在のフロー・コンテキスト特徴を読み取って次の更新を提案します — わずか 2.7M のパラメータで、「推論時に100回以上適用しても発散しない」のです。Sintel (final) の end-point error を30%下げて 2.855 px に、KITTI の F1-all を16%下げて 5.10% にし、ECCV 2020 のベストペーパーに選ばれました。"
+    limitations: "扱うのは2フレームと2次元の動きだけで、出力はフローであってカメラでも深度でもありません。その精度は反復で買ったものです — GMFlow (CVPR 2022) は「これほど多くの逐次的な修正は、線形に増える推論時間をもたらす」と異を唱え、代わりにピクセルを大域的にマッチングしました。全ペアの相関ボリュームはピクセル数の2乗 (O(N²)) で増えます。本人たちの測定では、動画サイズの1ペアならボトルネックにはなりません。しかし著者たちがこの設計を SLAM に持ち込むと、すべてのペアのボリュームを保持すれば「すぐにビデオメモリを超えてしまう」ため、DROID-SLAM は RAFT のオンデマンドな参照に頼ることになりました。"

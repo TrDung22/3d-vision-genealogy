@@ -1,0 +1,76 @@
+title: "Grounding Image Matching in 3D with MASt3R"
+short: "MASt3R (2024)"
+authors: "Vincent Leroy, Yohann Cabon, Jerome Revaud (Naver Labs Europe)"
+venue: "ECCV 2024 (Oral)"
+year: 2024
+branch: multi-view-geometry
+lane: feedforward
+links:
+  arxiv: "https://arxiv.org/abs/2406.09756"
+  paper: "https://www.ecva.net/papers/eccv_2024/papers_ECCV/html/9080_ECCV_2024_paper.php"
+  code: "https://github.com/naver/mast3r"
+problem: >
+  Image matching, the first stage of nearly every 3D pipeline, was still
+  solved in 2D: keypoints described patch by patch, or — since LoFTR — whole
+  images matched by attention. Even LoFTR scored "a relatively disappointing
+  VCRE precision of 34%" on the Map-free relocalization benchmark, where a
+  camera must be placed from a single reference image and no map, across
+  viewpoint changes of up to 180°. DUSt3R had shown another route: by
+  MASt3R's account, matches read off its 3D pointmaps topped that
+  leaderboard and shrugged off extreme viewpoint changes, but they were
+  "relatively imprecise".
+solution: >
+  Ground the matching in 3D. MASt3R starts from DUSt3R's checkpoint, keeps
+  its pointmap head (now metric wherever the ground truth is), and attaches
+  a second head that regresses a dense local feature per pixel, trained with
+  an InfoNCE loss that rewards only the right pixel, "not a nearby pixel". A
+  fast reciprocal matcher — nearest neighbours iterated from a sparse grid,
+  keeping the pairs that close a cycle — runs 64 times faster than full
+  matching at k = 3000 and is more accurate for it; overlapping 512-pixel
+  windows carry the matches to full resolution. Trained on a mix of 14
+  datasets, it lifts the VCRE AUC on the Map-free test set to 0.933, against
+  0.748 for the best prior method (MicKey) and 0.634 for LoFTR.
+limitations: >
+  By its own account it stays binocular: DUSt3R's global alignment goes
+  unused — "we do not make use of this step and restrict ourselves to the
+  binocular case" — and quadratic attention caps its input at 512 pixels, so
+  large images must be cut into windows. Pose read straight off the
+  regressed pointmap, without matching, is "rather poor" on the large Aachen
+  and InLoc scenes. VGGT later charged it with DUSt3R's debt: these networks
+  "can only process two images at once and rely on post-processing to
+  reconstruct more images, fusing pairwise reconstructions".
+relations:
+  - node: dust3r2023
+    type: fixes
+    note: >
+      Repairs the flaw MASt3R names in DUSt3R: matches read off its regressed
+      pointmaps survive extreme viewpoint changes, yet "the resulting
+      correspondences are rather imprecise" — regression is noisy, and
+      "DUSt3R was never explicitly trained for matching". MASt3R starts from
+      DUSt3R's weights and adds a head of local features trained to match.
+      All else equal, matching those features beats matching its own 3D
+      points, which the authors take as confirmation that "regression is
+      inherently unsuited to compute pixel correspondences".
+    i18n:
+      ja:
+        note: "MASt3R が DUSt3R に名指しした欠点を直します。回帰した点マップから読み取る対応点は極端な視点変化にも耐えますが、「得られる対応はかなり不正確」です — 回帰はノイズを免れず、しかも「DUSt3R はマッチングのために明示的に学習されたことがない」からです。MASt3R は DUSt3R の重みから出発し、マッチングのために学習する局所特徴のヘッドを加えました。ほかの条件をそろえると、3D点どうしより特徴どうしでマッチングするほうが良く、著者たちはこれを「回帰は本質的にピクセル対応の計算に向かない」ことの裏付けと受け取っています。"
+  - node: loftr2021
+    type: challenges
+    note: >
+      Questions the framing LoFTR shares with "practically all matching
+      approaches", which "have been treating matching as a 2D problem in
+      image space", whereas "pixels that correspond are pixels that observe
+      the same 3D point". MASt3R blames that framing for LoFTR's "relatively
+      disappointing" Map-free score and tests it there: VCRE precision is
+      34.3% for LoFTR, 54.2% for MASt3R with borrowed DPT depth for scale,
+      79.3% with its own metric depth. On Aachen Day-Night, by its own
+      account, it is only "competitive".
+    i18n:
+      ja:
+        note: "LoFTR が「ほぼすべてのマッチング手法」と共有する枠組みを問い直します。それらは「マッチングを画像空間の2D問題として扱ってきた」けれど、本当は「対応するピクセルとは、同じ3D点を観測しているピクセル」なのだ、と。MASt3R は LoFTR の「比較的期待外れ」な Map-free のスコアをこの枠組みのせいだとし、同じ場で検証します。VCRE precision は LoFTR が 34.3%、MASt3R は借りた DPT の深度でスケールを決めても 54.2%、自前のメトリック深度なら 79.3% です。ただし Aachen Day-Night では、本人たちの言うとおり「競争力がある」程度にとどまります。"
+status: seed
+i18n:
+  ja:
+    problem: "画像マッチングは、ほぼすべての3Dパイプラインの最初の段でありながら、依然として2Dで解かれていました。キーポイントをパッチごとに記述するか、LoFTR 以降は画像全体をアテンションで対応付けるか。その LoFTR でさえ、Map-free relocalization の benchmark では「比較的期待外れの VCRE precision 34%」にとどまりました。地図なしで参照画像1枚だけを手がかりに、最大180°の視点変化を越えてカメラを定位しなければならない benchmark です。DUSt3R は別の道を示していました。MASt3R によれば、その3D点マップから読み取った対応点はこのリーダーボードの首位に立ち、極端な視点変化もものともしませんでした — ただし「比較的不正確」だったのです。"
+    solution: "マッチングを3Dに根付かせます。MASt3R は DUSt3R のチェックポイントから出発して点マップのヘッドを残し (ground truth がメトリックな場合は出力もメトリックに)、ピクセルごとに密な局所特徴を回帰する第二のヘッドを取り付けます。このヘッドを学習する InfoNCE 損失は、正しいピクセルを当てたときにだけ報います — 「近くのピクセルではなく」。高速な相互最近傍マッチャー (疎なグリッドから最近傍探索を往復させ、サイクルが閉じたペアだけを残す) は、k = 3000 で全探索より64倍速く、しかもより正確です。重なり合う512ピクセルの窓が、対応点をフル解像度まで運びます。14のデータセットを混ぜて学習し、Map-free のテストセットで VCRE AUC を 0.933 まで押し上げました (それまでの最高は MicKey の 0.748、LoFTR は 0.634)。"
+    limitations: "本人たちの言うとおり、二視点のままです。DUSt3R の global alignment は使わず、「このステップは用いず、二眼の場合に限定する」と明言しています。二乗のアテンションのため入力は512ピクセルが上限で、大きな画像は窓に切り分けるしかありません。マッチングを経ずに回帰した点マップから直接求めた pose は、大規模な Aachen や InLoc のシーンでは「かなり貧弱」です。のちに VGGT は、DUSt3R と同じ借金をこの手法にも突きつけました。これらのネットワークは「一度に2枚の画像しか処理できず、より多くの画像を再構成するには後処理に頼り、ペアごとの再構成を融合する」のです。"

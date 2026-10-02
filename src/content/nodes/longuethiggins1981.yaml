@@ -1,0 +1,46 @@
+title: "A computer algorithm for reconstructing a scene from two projections"
+short: "8-Point (Longuet-Higgins 1981)"
+authors: "H. C. Longuet-Higgins (University of Sussex)"
+venue: "Nature, 1981"
+year: 1981
+branch: multi-view-geometry
+lane: two-view
+links:
+  paper: "https://www.nature.com/articles/293133a0"
+problem: >
+  Recover the 3D structure of a scene from two perspective views when the
+  relative position and orientation of the two cameras are unknown.
+  Photogrammetrists knew that, in general, five point correspondences fix
+  that relative orientation, but computing it meant "the iterative solution
+  of five simultaneous third-order equations". The other half of the problem
+  Longuet-Higgins set aside: "I shall assume that the correspondence problem
+  has been solved".
+solution: >
+  Trade minimality for linearity. Corresponding rays must meet in space, and
+  that condition ties the two images' coordinates through one 3×3 matrix,
+  Q = RS — the rotation times the skew-symmetric matrix of the translation,
+  the matrix now called the essential matrix. Each point match gives one
+  linear equation in its nine entries, so eight matches fix it "by a direct
+  method which calls for nothing more difficult than the solution of a set
+  of simultaneous linear equations". Translation and rotation are then read
+  off in closed form; of the four sign choices, only one puts every point in
+  front of both cameras; the points' 3D coordinates follow.
+limitations: >
+  By its own account there are "'degenerate' eight-point configurations for
+  which the algorithm fails" — four of the points on a line, seven in a
+  plane, even the eight corners of a cube — and its accuracy claim assumes
+  image coordinates "accurate to a few seconds of arc". It works in
+  calibrated cameras' coordinates (as Hartley 1995 notes) and leaves
+  correspondence to someone else. Carried over to uncalibrated pixel
+  coordinates as the fundamental-matrix algorithm, it acquired the
+  reputation Hartley recorded: it "has often been criticized for being
+  excessively sensitive to noise in the specification of the matched
+  points" — a fault he traced to the conditioning of the equations, not to
+  the idea.
+relations: []
+status: seed
+i18n:
+  ja:
+    problem: "2台のカメラの相対的な位置と向きがわからないまま、2枚の透視投影からシーンの3D構造を復元する。写真測量では、一般に5点の対応でその相対的な向きが決まることが知られていましたが、実際に計算するには「5本の連立3次方程式を反復的に解く」必要がありました。そして問題のもう半分を、Longuet-Higgins は脇に置きます。「対応付けの問題はすでに解かれているものと仮定する」。"
+    solution: "最小性を手放して、線形性を取ります。対応する光線どうしは空間内で交わらなければならず、この条件が2枚の画像の座標を一つの3×3行列 Q = RS で結びつけます — 回転と、並進の歪対称行列との積。いまでいう基本行列 (essential matrix) です。点の対応1組ごとに、その9成分についての線形方程式が1本。8組あれば、行列は「連立一次方程式を解くこと以上に難しいことは何も要らない直接的な方法」で決まります。並進と回転はそこから閉形式で読み取り、4通りある符号の選び方のうち、すべての点を両方のカメラの前方に置くものだけを残す。あとは各点の3D座標が求まります。"
+    limitations: "本人も認めるとおり、「アルゴリズムが破綻する『退化した』8点配置」があります — 4点が一直線上にあるとき、7点が一つの平面上にあるとき、さらには立方体の8つの頂点でさえ。精度についての主張も、画像座標が「数秒角の精度」で得られることを前提にしています。扱うのは校正済みカメラの座標で (Hartley 1995 の指摘)、対応付けは誰か他の人の仕事として残されました。のちに校正なしのピクセル座標へ持ち込まれ、基礎行列 (fundamental matrix) を求めるアルゴリズムになると、Hartley が書き留めた評判がついて回ります。それは「対応点の指定に含まれるノイズに過度に敏感だと、たびたび批判されてきた」のです — 彼はその欠陥を、アイデアではなく方程式の条件の悪さのせいだと突き止めました。"

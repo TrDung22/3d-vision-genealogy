@@ -44,10 +44,11 @@ write-ups drop on the floor.
   a page generated *entirely* from the graph's edges: who proved an entire
   branch was fooling itself, which ideas landed everywhere at once
   (the 2019 implicit wave!), and what came back from the dead decades later.
-- **88 works, 1970 → 2025**, across two full branches: **single-image 3D
-  reconstruction** (the most classically ill-posed problem of all) and
+- **105 works, 1970 → 2025**, across three full branches: **single-image 3D
+  reconstruction** (the most classically ill-posed problem of all),
   **neural rendering** (1984 volume rendering → light fields → NeRF → 3DGS →
-  the post-3D-bias era). Gold rings mark award / oral / spotlight recognition,
+  the post-3D-bias era) and **multi-view geometry** (the 1981 essential
+  matrix → SIFT → COLMAP → learned matching → DUSt3R → VGGT). Gold rings mark award / oral / spotlight recognition,
   verified against official sources; the mark's shape tells methods (●) from
   analyses (◆) and datasets (■).
 
@@ -105,6 +106,7 @@ in [CONTRIBUTING.md](CONTRIBUTING.md).
 
 - [ ] First deep-dive posts (candidates: Eigen 2014, or the Tatarchenko 2019 "challenges" moment)
 - [x] Open the full neural-rendering branch (80s volume rendering → light fields → SRN → NeRF → 3DGS → LVSM)
+- [x] Open the multi-view geometry branch (two-view geometry → SIFT → Photo Tourism → COLMAP → learned matching → DUSt3R → VGGT)
 - [ ] Guided tours through the graph (story mode)
 - [x] Localize node content for `/ja/`
 - [ ] RSS feed + Open Graph images

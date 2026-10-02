@@ -1,0 +1,74 @@
+title: "SuperGlue: Learning Feature Matching with Graph Neural Networks"
+short: "SuperGlue (2019)"
+authors: "Paul-Edouard Sarlin, Daniel DeTone, Tomasz Malisiewicz, Andrew Rabinovich (ETH Zurich + Magic Leap)"
+venue: "CVPR 2020 (Oral)"
+year: 2019
+branch: multi-view-geometry
+lane: features
+links:
+  arxiv: "https://arxiv.org/abs/1911.11763"
+  project: "https://psarlin.com/superglue/"
+  code: "https://github.com/magicleap/SuperGluePretrainedNetwork"
+problem: >
+  Features were being learned; matching them was still heuristic. The
+  classical pipeline, "often based on SIFT", pairs descriptors by
+  nearest-neighbor search and "filters matches with Lowe's ratio test", the
+  mutual check and similar heuristics, and learned features were still
+  followed by what SuperGlue calls "simple matching heuristics and tricks".
+  Learned outlier filters such as PointCN and OANet only sort the matches that
+  nearest-neighbor search has proposed, and "thus ignore the assignment
+  structure and discard visual information".
+solution: >
+  Learn the matching itself, as a "middle-end" between feature extraction
+  and pose estimation. A graph neural network reads both images' keypoints,
+  positions and descriptors together, and alternates self-attention within
+  an image with cross-attention between the two. Its scores feed a
+  differentiable optimal-transport layer (Sinkhorn iterations over a score
+  matrix augmented with a "dustbin") that returns a partial assignment:
+  one-to-one matches, with occluded and non-repeatable points left
+  unmatched. Trained end-to-end on image pairs with ground-truth poses, it
+  learns priors about 3D scenes, and it runs in real time, about 15 FPS for
+  an indoor pair on a GTX 1080.
+limitations: >
+  It can only match the keypoints it is handed, and by its own account
+  (appendix) it fails "due to unlikely motion or lack of repeatable
+  keypoints". LoFTR named this "the fundamental drawback" of a
+  "detector-dependent method", and added that SuperGlue's attention is
+  "limited to the detected interest points only". MASt3R pressed further:
+  "leveraging global context during matching might be too late, if
+  keypoints and their descriptors do not already encode enough
+  information."
+relations:
+  - node: superpoint2017
+    type: builds-on
+    note: >
+      Stands on SuperPoint as its front-end. SuperGlue "works particularly
+      well with SuperPoint", which "produces repeatable and sparse
+      keypoints"; its internal representations have "the same dimension
+      D = 256 as the SuperPoint descriptors", SuperPoint detects and
+      describes on the fly during training, and the headline results are
+      SuperPoint + SuperGlue. On wide-baseline ScanNet pairs it lifts
+      SuperPoint's pose AUC@20° from 36.40 (nearest neighbor + mutual check)
+      to 51.84.
+    i18n:
+      ja:
+        note: "SuperPoint をフロントエンドとして、その上に立ちます。SuperGlue は「SuperPoint と組み合わせたときに特によく機能」し、SuperPoint は「再現性が高く疎なキーポイントを生み出し」ます。内部の表現は「SuperPoint の記述子と同じ D = 256 の次元」を持ち、学習中は SuperPoint の検出と記述をその場で回し、看板となる結果も SuperPoint + SuperGlue です。ベースラインの広い ScanNet のペアでは、SuperPoint の pose AUC@20° を 36.40 (最近傍 + 相互チェック) から 51.84 に引き上げました。"
+  - node: sift1999
+    type: fixes
+    note: >
+      Repairs the matching stage of SIFT's recipe, nearest-neighbor search
+      filtered by Lowe's ratio test. On SIFT's own features SuperGlue finds up
+      to ten times more correct matches than the ratio test, "because it
+      operates on the full set of possible matches, rather than the limited
+      set of nearest neighbors". On wide-baseline ScanNet pairs the matching
+      score rises from 1.0% to 9.8% and pose AUC@20° from 22.47 to 28.67;
+      outdoors, on PhotoTourism, AUC@20° rises from 35.30 to 49.44.
+    i18n:
+      ja:
+        note: "SIFT のレシピのうちマッチングの段 — Lowe の ratio test でふるいにかける最近傍探索 — を直します。SIFT 自身の特徴の上で、SuperGlue は ratio test の最大10倍の正しい対応を見つけます。「最近傍の限られた集合ではなく、可能な対応の全体を相手にするから」です。ベースラインの広い ScanNet のペアではマッチングスコアが 1.0% から 9.8% に、pose AUC@20° が 22.47 から 28.67 に上がり、屋外の PhotoTourism でも AUC@20° が 35.30 から 49.44 に上がりました。"
+status: seed
+i18n:
+  ja:
+    problem: "特徴は学習されるようになっていましたが、その対応付けはまだヒューリスティクス頼みでした。「多くの場合 SIFT に基づく」古典的なパイプラインは、記述子を最近傍探索で対にし、「Lowe の ratio test で対応をふるいにかけ」、相互チェックなどのヒューリスティクスを重ねます。学習した特徴のあとにも、SuperGlue の言う「単純なマッチングのヒューリスティクスと小細工」が続いていました。PointCN や OANet のような学習ベースの外れ値フィルタも、最近傍探索がすでに提案した対応を仕分けるだけで、「そのため割り当ての構造を無視し、見た目の情報を捨ててしまう」のです。"
+    solution: "マッチングそのものを学習します — 特徴抽出と pose 推定のあいだに置く「ミドルエンド」として。グラフニューラルネットワークが両画像のキーポイントを位置と記述子ごと読み込み、画像内のセルフアテンションと画像間のクロスアテンションを交互に重ねます。そのスコアは微分可能な最適輸送の層 (「dustbin」を加えたスコア行列の上で回す Sinkhorn 反復) に送られ、部分的な割り当てが返ります。対応は一対一で、遮蔽された点や再現しなかった点は対応なしのまま残せます。ground truth の pose 付きの画像ペアで end-to-end に学習し、3D シーンについての prior を身につけます。実行はリアルタイムで、GTX 1080 で屋内の画像ペア1組あたり約15 FPS です。"
+    limitations: "渡されたキーポイントしかマッチングできず、本人たちの言うとおり (付録)、「ありそうにない動き、あるいは再現性のあるキーポイントの欠如のために」失敗します。LoFTR はこれを「検出器に依存する手法」の「根本的な欠点」と呼び、SuperGlue のアテンションが「検出された特徴点に限られている」ことも指摘しました。MASt3R はさらに踏み込みます。「キーポイントとその記述子が十分な情報をあらかじめ符号化していなければ、マッチングの段階で大域的な文脈を活用しても手遅れかもしれない」。"

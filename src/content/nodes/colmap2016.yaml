@@ -1,0 +1,63 @@
+title: "Structure-from-Motion Revisited"
+short: "COLMAP (2016)"
+authors: "Johannes L. Schönberger, Jan-Michael Frahm (UNC Chapel Hill + ETH Zürich)"
+venue: "CVPR 2016"
+year: 2016
+branch: multi-view-geometry
+lane: sfm
+links:
+  paper: "https://openaccess.thecvf.com/content_cvpr_2016/html/Schonberger_Structure-From-Motion_Revisited_CVPR_2016_paper.html"
+  project: "https://colmap.github.io/"
+  code: "https://github.com/colmap/colmap"
+problem: >
+  A decade after Photo Tourism, incremental SfM was "the most popular
+  strategy" for unordered photo collections, yet still no general-purpose
+  tool: "robustness, accuracy, completeness, and scalability remain the key
+  problems". Systems would "fail to register a large fraction of images
+  that empirically should be registrable", or break their models through
+  mis-registration and drift.
+solution: >
+  Rebuild every stage of the incremental loop for robustness. Geometric
+  verification labels each image pair as general, panoramic or planar, and
+  drops pairs linked only by watermarks, timestamps or frames, so the
+  reconstruction seeds only from non-panoramic pairs. The next image is
+  chosen by a multi-resolution score of how many triangulated points it
+  sees and how evenly they spread. Each feature track is triangulated by
+  recursive RANSAC, recovering points a single mismatch had merged. Bundle
+  adjustment, re-triangulation and filtering are iterated until they have
+  little left to change, and redundant views in dense collections are
+  grouped to cheapen bundle adjustment. Released open-source as COLMAP —
+  today a full SfM and multi-view stereo pipeline, its MVS from a companion
+  ECCV 2016 paper — it is where NeRF and 3DGS get their cameras.
+limitations: >
+  Still a chain of hand-built stages, and not the fastest: by its own
+  account it "achieves slightly worse timings than VisualSFM". The
+  feed-forward line named the rest. DUSt3R wrote that the SfM stage "is
+  typically known to fail in many common situations" — few views,
+  non-Lambertian surfaces, "insufficient or overly large camera motion".
+  VGGT, calling COLMAP "the most popular framework based on the traditional
+  pipeline", argued that such visual geometry "increases complexity and
+  computational cost", and read the cameras off a single forward pass
+  instead.
+relations:
+  - node: phototourism2006
+    type: fixes
+    note: >
+      Repairs the weakness COLMAP diagnoses in Bundler, the released form of
+      Photo Tourism's SfM, which it benchmarks as "Bundler [53]" (Photo
+      Tourism): its track triangulation "is not robust to outliers, as it is
+      not possible to recover independent points merged into one track", and
+      "has significant computational cost due to exhaustive pairwise
+      triangulation". COLMAP triangulates each track by recursive RANSAC
+      instead. As a whole system it registers 20,918 of Rome's 74,394 photos
+      to Bundler's 13,455 and, by its own measure, runs "more than 50 times
+      faster than Bundler".
+    i18n:
+      ja:
+        note: "COLMAP が Bundler に診断した弱点を直します。Bundler は Photo Tourism の SfM が公開された姿で、COLMAP は実験でこれを「Bundler [53]」(Photo Tourism) として比較しています。そのトラック三角測量は「外れ値に頑健でなく、一本のトラックに融合された独立な点を取り戻すことができない」うえに、「総当たりのペアごとの三角測量のために計算コストが大きい」。COLMAP は代わりに、各トラックを再帰的な RANSAC で三角測量します。システム全体としては Rome の74,394枚のうち20,918枚を登録し (Bundler は13,455枚)、本人たちの計測では「Bundler より50倍以上速い」のです。"
+status: seed
+i18n:
+  ja:
+    problem: "Photo Tourism から10年、逐次型 SfM は順序のない写真集合を扱う「最も一般的な戦略」になっていました。それでも汎用の道具にはなりきれません。「頑健性、精度、完全性、スケーラビリティが依然として主要な問題」で、システムは「経験的には登録できるはずの画像の大部分を登録できない」か、誤登録とドリフトでモデルを壊してしまうのです。"
+    solution: "逐次ループの全段を、頑健さのために作り直します。幾何的検証で画像ペアを一般・パノラマ・平面のいずれかに分類し、透かし・タイムスタンプ・枠だけでつながったペアは捨てて、復元の種はパノラマでないペアからだけ取る。次に加える画像は、三角測量済みの点がいくつ見え、それがどれだけ均等に散らばっているかを多重解像度で測るスコアで選びます。各特徴トラックは再帰的な RANSAC で三角測量し、たった一つの誤対応で一本に融合してしまった点を取り戻す。バンドル調整・再三角測量・フィルタリングは、変えるものがほとんどなくなるまで繰り返し、密な写真集合では冗長な視点をまとめてバンドル調整を軽くします。COLMAP としてオープンソースで公開され、いまでは SfM と多視点ステレオを備えたパイプラインです (MVS は姉妹論文の ECCV 2016)。NeRF も 3DGS も、カメラをここから得ています。"
+    limitations: "それでも手作りの段を連ねたパイプラインで、最速でもありません — 本人たちの計測では「VisualSFM よりやや遅い」のです。残りはフィードフォワードの系譜が名指ししました。DUSt3R は、SfM の段が「多くのありふれた状況で失敗することが知られて」いると書きます — 視点が少ないとき、非ランバート面、「カメラの動きが足りないか大きすぎる場合」。VGGT は COLMAP を「伝統的なパイプラインに基づく最も一般的なフレームワーク」と呼んだうえで、そうした視覚幾何が「複雑さと計算コストを増している」と論じ、カメラを一度の forward で読み取ってみせました。"

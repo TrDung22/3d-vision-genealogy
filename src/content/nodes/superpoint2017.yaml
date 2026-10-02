@@ -1,0 +1,62 @@
+title: "SuperPoint: Self-Supervised Interest Point Detection and Description"
+short: "SuperPoint (2017)"
+authors: "Daniel DeTone, Tomasz Malisiewicz, Andrew Rabinovich (Magic Leap)"
+venue: "CVPR 2018 Workshops (Deep Learning for Visual SLAM)"
+year: 2017
+branch: multi-view-geometry
+lane: features
+links:
+  arxiv: "https://arxiv.org/abs/1712.07629"
+  code: "https://github.com/magicleap/SuperPointPretrainedNetwork"
+problem: >
+  SLAM, structure from motion and camera calibration all begin by extracting
+  interest points, and the best-known detectors and descriptors were still
+  hand-engineered, SIFT first among them. Learning a detector looked
+  natural, but unlike body keypoints, which human annotators can label, "the
+  notion of interest point detection is semantically ill-defined", so
+  training with "strong supervision of interest points is non-trivial".
+  LIFT, a convolutional replacement for SIFT, stayed patch-based and needed
+  "supervision from a classical SfM system".
+solution: >
+  Let a detector label its own data. MagicPoint, a fully-convolutional
+  detector, is first trained on Synthetic Shapes, rendered triangles,
+  quadrilaterals, lines, cubes, checkerboards and stars whose corners are
+  known exactly. Homographic Adaptation then labels real, unlabeled MS-COCO
+  images: warp each image by many random homographies, run the detector on
+  every warp, un-warp the responses and aggregate them into pseudo-ground
+  truth. On those labels a single network, a shared VGG-style encoder with a
+  detector head and a 256-D descriptor head, learns points and descriptors
+  together: a full image in one forward pass, about 70 FPS at 480x640.
+limitations: >
+  Learned, yet not better than SIFT everywhere: on HPatches homography
+  estimation it "performs comparably to SIFT", which still wins at the
+  1-pixel threshold (.424 vs .310) and in localization error, likely thanks
+  to its "extra sub-pixel localization". By its own account it also fails
+  under "extreme in-plane rotation not seen in the training examples".
+  Matching stayed plain nearest-neighbor search, the stage SuperGlue, from
+  the same lab, would learn next. And it is still a detector: LoFTR later
+  named the drawback of the detector-based line it belongs to, since without
+  repeatable interest points "it is impossible to find correct
+  correspondences even with perfect descriptors".
+relations:
+  - node: sift1999
+    type: fixes
+    note: >
+      Repairs what SuperPoint diagnoses in hand-tuned features like SIFT's.
+      Its learned descriptor beats SIFT's on HPatches in nearest-neighbor mAP
+      (.821 vs .694) and matching score (.470 vs .313), which SuperPoint reads
+      as confirming that "learned representations for descriptor matching
+      outperform hand-tuned representations"; and one shared encoder replaces
+      traditional systems that "first detect interest points, then compute
+      descriptors and lack the ability to share computation and
+      representation across the two tasks". SIFT keeps the edge at the
+      1-pixel threshold.
+    i18n:
+      ja:
+        note: "SuperPoint が SIFT のような手作り特徴に診断した弱点を直します。学習した記述子は HPatches で、最近傍 mAP (.821 対 .694) とマッチングスコア (.470 対 .313) において SIFT の記述子を上回り、SuperPoint はこれを「記述子マッチングでは学習した表現が手作りの表現を上回る」ことの裏付けと読みます。さらに一つの共有エンコーダが、「先に特徴点を検出してから記述子を計算し、二つのタスクのあいだで計算と表現を共有する能力を欠いている」従来のシステムに取って代わります。ただし1ピクセルの閾値では SIFT が優位を保ちます。"
+status: seed
+i18n:
+  ja:
+    problem: "SLAM も Structure from Motion もカメラキャリブレーションも、まず画像から特徴点を取り出すところから始まります。そして最もよく知られた検出器と記述子は、SIFT を筆頭に、依然として手作りでした。検出器を学習するのは自然な発想に見えましたが、人手でラベルを付けられる身体のキーポイントと違って、「特徴点の検出という概念は意味的に定義が曖昧」で、「特徴点を強い教師信号で学習させるのは容易ではない」のです。SIFT の畳み込み版の代替である LIFT はパッチ単位のままで、「古典的な SfM システムからの教師信号」を必要としていました。"
+    solution: "検出器に、自分のデータへ自分でラベルを付けさせます。まず全畳み込みの検出器 MagicPoint を、コーナーの位置が正確にわかる三角形・四角形・線分・立方体・チェッカーボード・星を描画した Synthetic Shapes で学習します。次に Homographic Adaptation が、ラベルのない実画像 (MS-COCO) にラベルを付けます。各画像をランダムなホモグラフィで何通りにも変形し、変形ごとに検出器を走らせ、応答を元の座標に戻して集約し、疑似的な ground truth とするのです。そのラベルで、VGG 風の共有エンコーダに検出ヘッドと256次元の記述子ヘッドを載せた一つのネットワークが、特徴点と記述子を同時に学習します。画像全体を一度の forward で処理し、480x640 で約70 FPS です。"
+    limitations: "学習ベースとはいえ、どこでも SIFT より優れているわけではありません。HPatches のホモグラフィ推定では「SIFT と同程度の性能」で、1ピクセルの閾値 (.424 対 .310) と位置誤差では SIFT がなお勝ちます — おそらく、SIFT が行う「追加のサブピクセル位置推定」のおかげです。本人たちの言うとおり、「学習データになかった極端な面内回転」でも失敗します。マッチングは素朴な最近傍探索のままで、その段は同じラボの SuperGlue が次に学習することになります。そして依然として検出器です。のちに LoFTR は、SuperPoint も属する検出器ベースの系譜の欠点を名指ししました。再現性のある特徴点がなければ、「完璧な記述子があっても正しい対応を見つけることはできない」のです。"

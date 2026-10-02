@@ -57,6 +57,20 @@ relations:
     i18n:
       ja:
         note: "「ニューラルネット不要」という異端を、大規模で立証しました。3DGS もまた純粋な明示的プリミティブ + 微分可能レンダリングで、どこにも MLP はありません — ただし固定のボクセル格子を、シーンが必要とする場所で動き・伸び・増えるプリミティブに置き換えたのです。"
+  - node: colmap2016
+    type: builds-on
+    note: >
+      Starts from COLMAP's output: the input is "a set of images of a static
+      scene, together with the corresponding cameras calibrated by SfM
+      [Schönberger and Frahm 2016] which produces a sparse point cloud", and
+      "From these points we create a set of 3D Gaussians". The dependence is
+      measured: initialized instead from points sampled uniformly in a cube,
+      3DGS avoids complete failure but "degrades mainly in the background" —
+      over its three ablation scenes, average PSNR at 30K iterations falls
+      from 26.05 to 20.42.
+    i18n:
+      ja:
+        note: "COLMAP の出力から出発します。入力は「静的なシーンの画像の集合と、疎な点群を生み出す SfM [Schönberger and Frahm 2016] で校正された、対応するカメラ」であり、「これらの点から3Dガウシアンの集合を作る」のです。その依存は測られています。代わりに立方体の中で一様にサンプリングした点から初期化すると、3DGS は完全な破綻こそ免れるものの「主に背景で劣化」し、三つのアブレーション用シーンの平均 PSNR は 30K 反復時点で 26.05 から 20.42 に落ちます。"
 status: seed
 i18n:
   ja:

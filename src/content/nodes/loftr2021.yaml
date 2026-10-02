@@ -1,0 +1,63 @@
+title: "LoFTR: Detector-Free Local Feature Matching with Transformers"
+short: "LoFTR (2021)"
+authors: "Jiaming Sun, Zehong Shen, Yuang Wang, Hujun Bao, Xiaowei Zhou (Zhejiang University + SenseTime Research)"
+venue: "CVPR 2021"
+year: 2021
+branch: multi-view-geometry
+lane: features
+links:
+  arxiv: "https://arxiv.org/abs/2104.00680"
+  project: "https://zju3dv.github.io/loftr/"
+  code: "https://github.com/zju3dv/LoFTR"
+problem: >
+  Detect, describe, match: even with SuperGlue, a matcher could only pair
+  the points a detector found, and "a feature detector may fail to extract
+  enough interest points that are repeatable between images" under poor
+  texture, repetitive patterns, viewpoint or illumination change and motion
+  blur, above all indoors, where low-texture regions or repetitive patterns
+  can fill most of the view. Detector-free dense matchers (NCNet and its
+  successors) skipped detection, but their CNN features have a "limited
+  receptive field which may not distinguish indistinctive regions".
+solution: >
+  Drop the detector. A CNN with a feature pyramid extracts coarse (1/8
+  resolution) and fine (1/2) feature maps from both images; the coarse maps
+  pass through interleaved self- and cross-attention layers, SuperGlue's
+  attention applied to every location instead of detected keypoints and
+  made affordable by linear attention. Dense matches are read off the
+  transformed features with a dual-softmax (or optimal transport) at the
+  coarse level, and each confident match is refined to sub-pixel accuracy
+  in a local window of the fine maps. The global receptive field lets it
+  place a texture-less wall by its position relative to the edges around
+  it.
+limitations: >
+  By its own account the vanilla Transformer "is impractical even when the
+  input length is reduced by the local feature CNN" to a 1/8-resolution
+  grid, so attention has to be linearized; it leaves "matching images with
+  severe seasonal changes" to future work, and its own table has
+  SuperPoint + SuperGlue still slightly ahead in daytime localization on
+  Aachen. MASt3R later noted that even LoFTR scores "a relatively
+  disappointing VCRE precision of 34%" on the Map-free benchmark, and
+  blamed practically all matchers for "treating matching as a 2D problem in
+  image space", the opening for matching grounded in 3D.
+relations:
+  - node: superglue2019
+    type: fixes
+    note: >
+      Repairs the weakness LoFTR names in SuperGlue: "being a
+      detector-dependent method, it has the fundamental drawback of being
+      unable to detect repeatable interest points in indistinctive regions",
+      and "The attention range in SuperGlue is also limited to the detected
+      interest points only." LoFTR keeps SuperGlue's self- and
+      cross-attention but runs it over dense features, with no detector at
+      all. Against SuperPoint + SuperGlue, pose AUC@20° rises from 51.84 to
+      57.62 on ScanNet and from 75.96 to 81.18 on MegaDepth (dual-softmax
+      variant).
+    i18n:
+      ja:
+        note: "LoFTR が SuperGlue に名指しした弱点を直します。「検出器に依存する手法であるため、見分けのつきにくい領域では再現性のある特徴点を検出できないという根本的な欠点を抱え」、しかも「SuperGlue のアテンションの範囲は、検出された特徴点に限られている」のです。LoFTR は SuperGlue のセルフアテンションとクロスアテンションを受け継ぎつつ、検出器なしの密な特徴の上でそれを走らせます。SuperPoint + SuperGlue と比べて、pose AUC@20° は ScanNet で 51.84 から 57.62 に、MegaDepth で 75.96 から 81.18 に上がりました (dual-softmax 版)。"
+status: seed
+i18n:
+  ja:
+    problem: "検出し、記述し、マッチングする。SuperGlue を使っても、マッチングできるのは検出器が見つけた点だけでした。そして「特徴検出器は、画像間で再現性のある特徴点を十分に取り出せないことがある」のです — テクスチャの乏しさ、繰り返しパターン、視点や照明の変化、モーションブラーのために。とりわけ屋内では、テクスチャの乏しい領域や繰り返しパターンが視野の大半を占めることもあります。検出器を使わない密なマッチング (NCNet とその後継) は検出を省きましたが、その CNN 特徴は「受容野が限られ、見分けのつきにくい領域を区別できないことがある」ものでした。"
+    solution: "検出器を捨てます。特徴ピラミッド付きの CNN が両画像から粗い (1/8 解像度) 特徴マップと細かい (1/2) 特徴マップを取り出し、粗いマップはセルフアテンションとクロスアテンションを交互に重ねた層を通ります — SuperGlue のアテンションを、検出したキーポイントではなくすべての位置に適用し、線形アテンションで計算量を抑えたものです。粗いレベルでは、変換後の特徴から dual-softmax (または最適輸送) で密な対応を読み取り、確信度の高い対応ごとに、細かいマップの局所窓の中でサブピクセル精度まで詰めます。大域的な受容野のおかげで、テクスチャのない壁も周囲のエッジとの位置関係から見分けられます。"
+    limitations: "本人たちの言うとおり、素のトランスフォーマーは、局所特徴 CNN で入力を 1/8 解像度の格子まで縮めても「実用的ではない」ため、アテンションを線形化する必要がありました。「季節の大きな変化がある画像どうしのマッチング」は今後の課題として残され、自身の表でも、Aachen の昼間の位置推定では SuperPoint + SuperGlue がわずかに上回っています。のちに MASt3R は、LoFTR でさえ Map-free benchmark で「比較的期待外れの VCRE 適合率 34%」にとどまると指摘し、ほぼすべてのマッチング手法が「マッチングを画像空間の2D問題として扱ってきた」ことに原因を求めました — 3D に根ざしたマッチングへの入口です。"

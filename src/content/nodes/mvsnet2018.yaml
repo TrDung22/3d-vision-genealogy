@@ -1,0 +1,68 @@
+title: "MVSNet: Depth Inference for Unstructured Multi-view Stereo"
+short: "MVSNet (2018)"
+authors: "Yao Yao, Zixin Luo, Shiwei Li, Tian Fang, Long Quan (HKUST + Altizure)"
+venue: "ECCV 2018 (Oral)"
+year: 2018
+branch: multi-view-geometry
+lane: mvs
+links:
+  arxiv: "https://arxiv.org/abs/1804.02505"
+  code: "https://github.com/YoYo000/MVSNet"
+problem: >
+  Learned stereo had begun to beat hand-crafted stereo, but on rectified
+  pairs, where matching reduces to horizontal disparity. Multi-view stereo
+  takes images of "arbitrary camera geometries", and the learned pipelines
+  so far, SurfaceNet and LSM, reasoned in regular voxel grids whose memory
+  kept them to small-scale or synthetic scenes. The leaderboards
+  still belonged to hand-crafted methods, whose similarity metrics and
+  regularizers falter where low-textured, specular and reflective regions
+  "make dense matching intractable and thus lead to incomplete
+  reconstructions".
+solution: >
+  One depth map at a time, with the cameras inside the network. Deep
+  features of a reference image and its source images are warped by
+  differentiable homographies onto fronto-parallel planes of the reference
+  camera's frustum — a plane sweep run on learned features; a
+  variance-based cost folds any number of views into one cost volume; a
+  multi-scale 3D CNN regularizes it into a probability volume, whose
+  expectation (soft argmin) gives depth and whose probability mass near
+  that depth gives a confidence for filtering outliers; a residual network
+  refines the boundaries against the reference image. Trained on DTU, it
+  led every method there on completeness and overall score, ran about 100x
+  faster than COLMAP, and ranked first on Tanks and Temples (before April
+  18, 2018) without fine-tuning.
+limitations: >
+  By its own account memory is the bill: it grows with image size and
+  depth samples, full-resolution Tanks and Temples needed a 16 GB GPU, and
+  training needs depth maps rendered from ground-truth meshes, which are
+  incomplete on DTU and missing on Tanks and Temples. R-MVSNet, from the
+  same group a year later, named the bottleneck: 3D-CNN regularization of
+  the cost volume "is extremely memory expensive", its memory growing
+  "cubically with the model resolution". And it starts from known cameras
+  and a depth range — on Tanks and Temples both came from an OpenMVG SfM
+  run. DUSt3R counted learned MVS among the methods that "all depend on
+  camera parameter estimates obtained via complex calibration procedures";
+  VGGT, given no ground-truth cameras, reached a lower DTU Overall error
+  (0.382) than MVSNet with them (0.462).
+relations:
+  - node: pmvs2007
+    type: fixes
+    note: >
+      Repairs the weakness MVSNet names in hand-crafted MVS, with PMVS among
+      the state of the art it cites: "hand-crafted similarity metrics and
+      engineered regularizations" (PMVS scores its patches by NCC) break
+      down on low-textured, specular and reflective regions, so these
+      methods "perform very well on the accuracy, the reconstruction
+      completeness still has large room for improvement". Learned features
+      and a learned 3D-CNN regularizer fill those regions in: on DTU the
+      completeness error falls from 0.941 mm for PMVS to 0.527, and the
+      overall error from 0.777 to 0.462.
+    i18n:
+      ja:
+        note: "MVSNet が手作りの MVS に名指しした弱点を直します (MVSNet が引く最先端の手法には PMVS も含まれます)。「手作りの類似度指標と作り込んだ正則化」(PMVS はパッチを NCC で評価します) は、テクスチャの乏しい領域や鏡面・反射する領域で行き詰まり、そのためこれらの手法は「精度ではとても良い成績を上げるが、再構成の網羅性にはまだ大きな改善の余地がある」のです。学習した特徴と学習した 3D CNN の正則化が、そうした領域を埋めます。DTU では、網羅性の誤差が PMVS の 0.941 mm から 0.527 mm に、総合 (overall) の誤差が 0.777 mm から 0.462 mm に下がりました。"
+status: seed
+i18n:
+  ja:
+    problem: "学習ベースのステレオは手作りの手法を追い越しはじめていましたが、それは平行化済みの画像ペア、つまりマッチングが水平方向の視差の推定に帰着する場合の話でした。多視点ステレオに入力される画像は「任意のカメラ幾何」を持ちます。それまでの学習ベースのパイプライン、SurfaceNet と LSM は規則的なボクセルグリッドで推論するため、メモリに縛られて小規模なシーンや合成データにとどまりました。リーダーボードはなお手作りの手法のものでしたが、その類似度指標と正則化は、テクスチャの乏しい領域や鏡面・反射する領域でつまずきます。そうした領域は「密なマッチングを手に負えないものにし、それゆえ不完全な再構成を招く」のです。"
+    solution: "深度マップを一枚ずつ推定し、カメラはネットワークの内部に組み込みます。参照画像とソース画像の深層特徴を、微分可能なホモグラフィで参照カメラの視錐台の前額平行な平面群へワープします — 学習した特徴の上で行う平面掃引です。分散にもとづくコストが任意の枚数の視点を一つの cost volume にまとめ、マルチスケールの 3D CNN がそれを正則化して確率ボリュームにします。その期待値 (soft argmin) が深度を与え、推定した深度の近くに集まった確率の量が、外れ値を除くための信頼度になります。最後に残差ネットワークが、参照画像を手がかりに境界を整えます。DTU で学習すると、網羅性と総合スコアで既存のすべての手法を上回り、COLMAP より約100倍速く、ファインチューニングなしで Tanks and Temples の首位にも立ちました (2018年4月18日時点)。"
+    limitations: "本人たちの言うとおり、代償はメモリです。必要なメモリは画像サイズと深度サンプル数とともに増え、フル解像度の Tanks and Temples には 16 GB の GPU が要りました。学習には ground truth のメッシュからレンダリングした深度マップが必要ですが、そのメッシュは DTU では不完全で、Tanks and Temples には存在しません。翌年、同じグループの R-MVSNet がボトルネックを名指ししました。cost volume を 3D CNN で正則化する段は「きわめてメモリを食い」、そのメモリは「モデルの解像度の3乗で増える」のです。しかも出発点には既知のカメラと深度範囲が要ります — Tanks and Temples では、どちらも OpenMVG による SfM から得ていました。DUSt3R は学習ベースの MVS を、「複雑なキャリブレーション手順で得たカメラパラメータの推定値にすべて依存する」手法の一つに数えました。VGGT は ground truth のカメラなしで、カメラを与えられた MVSNet (0.462) よりも低い DTU の Overall 誤差 (0.382) を記録しています。"

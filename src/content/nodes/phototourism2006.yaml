@@ -1,0 +1,75 @@
+title: "Photo Tourism: Exploring Photo Collections in 3D"
+short: "Photo Tourism (2006)"
+authors: "Noah Snavely, Steven M. Seitz, Richard Szeliski (University of Washington + Microsoft Research)"
+venue: "SIGGRAPH 2006"
+year: 2006
+branch: multi-view-geometry
+lane: sfm
+links:
+  project: "https://phototour.cs.washington.edu/"
+  paper: "https://phototour.cs.washington.edu/Photo_Tourism.pdf"
+  code: "https://www.cs.cornell.edu/~snavely/bundler/"
+problem: >
+  Make sense of the photographs the Internet already holds: thousands of
+  shots of the same landmark, from "hundreds of different cameras, zoom
+  levels, resolutions", across seasons and weather, with no GPS and EXIF
+  focal lengths that are "sometimes inaccurate". Two earlier systems for the
+  same SfM problem, Brown and Lowe's and Schaffalitzky and Zisserman's, had
+  been tested only on "much simpler datasets with more limited variation in
+  imaging conditions"; recovering every photo's viewpoint from such a crowd
+  was what a 3D photo browser needed first.
+solution: >
+  A robust incremental SfM pipeline as the front end of a photo explorer.
+  SIFT keypoints are matched between every pair of images; RANSAC around
+  the eight-point algorithm keeps only matches consistent with a fundamental
+  matrix; the survivors are chained into tracks. Reconstruction starts from
+  the pair with the most matches that a single homography cannot explain,
+  then adds cameras incrementally — initialized by DLT and EXIF focal
+  lengths — re-running bundle adjustment and discarding outlier tracks as
+  the model grows. The cameras and sparse points then drive the browser:
+  transitions between photos, object-based browsing, annotation transfer.
+  By its own account, "the first successful demonstration of SfM techniques
+  being applied to the kinds of real-world image sets found on Google and
+  Flickr".
+limitations: >
+  By its own account the SfM "becomes slow as the number of registered
+  cameras grows": from a few hours for Great Wall (82 photos registered) to
+  about two weeks for Notre Dame (597 registered of 2,635), mostly in bundle
+  adjustment. Its camera model "does not handle lens distortion", scenes
+  with repeating structures or without strong features are "challenging to
+  reconstruct automatically", and only one connected component is
+  reconstructed. The SfM lived on as Bundler (released 2008), the baseline
+  whose track triangulation COLMAP later found "not robust to outliers" and
+  costly "due to exhaustive pairwise triangulation".
+relations:
+  - node: sift1999
+    type: builds-on
+    note: >
+      Stands on SIFT for every correspondence it finds: "We use the SIFT
+      keypoint detector [Lowe 2004], because of its invariance to image
+      transformations" (citing SIFT's 2004 journal paper) — several thousand
+      keypoints per image, their descriptors matched across every image pair,
+      for collections spanning "hundreds of different cameras, zoom levels,
+      resolutions". The tracks, and so the reconstruction, are built from
+      those matches.
+    i18n:
+      ja:
+        note: "見つけるすべての対応を SIFT の上に築いています。「画像変換に対する不変性ゆえに、SIFT キーポイント検出器を使う」(SIFT の2004年のジャーナル論文を引用)。1枚あたり数千のキーポイントを検出し、その記述子をすべての画像ペアの間で照合します — 「何百もの異なるカメラ、ズーム、解像度」にまたがる画像集合を相手に。トラックも、したがって復元も、この対応から組み上がります。"
+  - node: hartley1995
+    type: builds-on
+    note: >
+      Every image pair is verified with two-view geometry: "During each RANSAC
+      iteration, we compute a candidate fundamental matrix using the
+      eight-point algorithm" — cited through Hartley & Zisserman's textbook,
+      whose algorithm for F is the normalized one this node introduced.
+      Matches that disagree with that fundamental matrix are discarded before
+      any track is built.
+    i18n:
+      ja:
+        note: "画像ペアはすべて二視点幾何で検証されます。「RANSAC の各反復で、8点アルゴリズムによって候補となる基礎行列を計算する」 — 出典は Hartley と Zisserman の教科書で、そこで F を求めるアルゴリズムは、このノードが導入した正規化版です。その基礎行列に合わない対応は、トラックを組む前に捨てられます。"
+status: seed
+i18n:
+  ja:
+    problem: "インターネットがすでに抱えている写真に意味を与える。同じ名所を撮った何千枚もの写真は、「何百もの異なるカメラ、ズーム、解像度」にまたがり、季節も天気もばらばら。GPS はなく、EXIF の焦点距離も「ときに不正確」です。同じ SfM の問題に取り組んだ先行の二つのシステム (Brown と Lowe、Schaffalitzky と Zisserman) も、試されたのは「撮影条件のばらつきがずっと小さい、はるかに単純なデータセット」だけでした。この群衆の一枚一枚から視点を取り戻すことが、3Dの写真ブラウザにまず必要なことだったのです。"
+    solution: "写真エクスプローラのフロントエンドとして、頑健な逐次型 SfM を組みます。すべての画像ペアの間で SIFT キーポイントを照合し、8点アルゴリズムを包む RANSAC で基礎行列 (fundamental matrix) と矛盾しない対応だけを残し、生き残った対応をつないでトラックにします。復元は、対応が最も多く、しかも一つのホモグラフィでは説明できないペアから始め、そこへカメラを順に加えていきます — DLT と EXIF の焦点距離で初期化し、モデルが育つたびにバンドル調整をかけ直しては外れ値のトラックを捨てながら。得られたカメラと疎な点群が、写真間の遷移、物体ベースのブラウジング、注釈の転送を動かします。本人たちによれば、これは「Google や Flickr にあるような実世界の画像集合に SfM の技術を適用して成功した、最初の実証」でした。"
+    limitations: "本人たちが認めるとおり、この SfM は「登録したカメラの数が増えるにつれて遅くなり」ます。Great Wall (82枚を登録) で数時間、Notre Dame (2,635枚中597枚を登録) では約2週間かかり、その大半はバンドル調整に費やされました。カメラモデルは「レンズ歪みを扱えず」、繰り返し構造や強い特徴のないシーンは「自動で復元するのが難しく」、復元されるのは連結成分ひとつだけです。その SfM は Bundler (2008年公開) として生き続け、のちに COLMAP の比較相手になりました。COLMAP はそのトラック三角測量を、「外れ値に頑健でない」うえに「総当たりのペアごとの三角測量のために」コストが高いと診断しています。"

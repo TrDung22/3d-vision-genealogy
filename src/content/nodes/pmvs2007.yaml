@@ -1,0 +1,49 @@
+title: "Accurate, Dense, and Robust Multi-View Stereopsis"
+short: "PMVS (2007)"
+authors: "Yasutaka Furukawa, Jean Ponce (UIUC + ENS Paris)"
+venue: "CVPR 2007 (journal version: TPAMI 2010)"
+year: 2007
+branch: multi-view-geometry
+lane: mvs
+links:
+  paper: "https://ieeexplore.ieee.org/document/4270271"
+  journal: "https://ieeexplore.ieee.org/document/5226635"
+  code: "https://www.di.ens.fr/pmvs/"
+problem: >
+  Multi-view stereo in 2007 was mostly variational: find the surface that
+  minimizes a global photometric discrepancy under explicit smoothness
+  constraints. That worked for compact objects photographed from all
+  around, but it "typically requires determining a bounding volume (valid
+  depth range, bounding box, or visual hull)" before the optimization can
+  start — not feasible for outdoor scenes or cluttered images, let alone
+  crowds walking in front of a building.
+solution: >
+  Grow the surface patch by patch instead of evolving it. Harris and
+  Difference-of-Gaussians features are matched across views along epipolar
+  lines into a sparse set of small oriented rectangles, each patch's centre
+  and normal refined by maximizing its average NCC score over the images
+  that see it. Three rounds of expand (spread patches into empty
+  neighbouring image cells) and filter (drop patches that break visibility)
+  then grow the seeds into a quasi-dense surfel cloud — no bounding volume,
+  no smoothing across nearby features, outliers and moving obstacles
+  discarded on the way. It led accuracy and completeness on four of the six
+  Middlebury datasets, and its software page lists ILM, Weta Digital and
+  Google among production users of the released code (PMVS2).
+limitations: >
+  By its own account the patches cover the surfaces "except in small
+  textureless or occluded regions", and it traded speed for accuracy: the
+  expansion step alone took from about 20 minutes to a few hours per
+  dataset. The journal version adds that, lacking strong regularization, it
+  reconstructs points only where texture is reliable, leaves holes for
+  post-processing, and assumes Lambertian surfaces under constant light.
+  MVSNet later diagnosed the propagation itself: proceeding sequentially,
+  such methods are "difficult to be fully parallelized and usually take a
+  long time in processing" — and like the rest of hand-crafted MVS they
+  leave completeness with "large room for improvement".
+relations: []
+status: seed
+i18n:
+  ja:
+    problem: "2007年の多視点ステレオは、ほとんどが変分法でした。明示的な滑らかさの制約のもとで、全体の測光的な食い違いを最小にする表面を探すのです。周りをぐるりと撮影したコンパクトな物体ならそれでうまくいきますが、最適化を始める前に「境界ボリューム (有効な深度範囲、バウンディングボックス、visual hull)」をたいてい決めておかなければなりません — 屋外のシーンや散らかった画像ではそれができず、建物の前を人が行き交うシーンならなおさらです。"
+    solution: "表面を変形させるのではなく、パッチ一枚ずつ育てていきます。Harris と Difference-of-Gaussians の特徴をエピポーラ線に沿って視点間で対応付け、小さな向き付きの矩形パッチの疎な集合をつくります。各パッチの中心と法線は、そのパッチが見える画像どうしの平均 NCC スコアを最大化して詰めます。続いて「拡張」(空いている隣の画像セルへパッチを広げる) と「フィルタ」(可視性に反するパッチを捨てる) を3回繰り返し、種を準密な surfel の雲へと育てます — 境界ボリュームは要らず、近くの特徴どうしを平滑化することもなく、外れ値や動く障害物は途中で自動的に捨てられます。Middlebury の6つのデータセットのうち4つで精度と網羅性の首位に立ち、ソフトウェアのページは、公開されたコード (PMVS2) を実制作に使う組織として ILM、Weta Digital、Google を挙げています。"
+    limitations: "本人たちの言うとおり、パッチが表面を覆うのは「小さなテクスチャのない領域や隠れた領域を除いて」であり、速度と引き換えに精度を取りました。拡張の段だけで、データセットごとに約20分から数時間かかります。ジャーナル版はさらにこう付け加えています。強い正則化を欠くため、点を復元できるのは信頼できるテクスチャのある場所だけで、穴埋めは後処理に任され、しかも一定の照明のもとでのランバート面を仮定しています。のちに MVSNet は、この伝播そのものを診断しました。逐次的に進むため、こうした手法は「完全な並列化が難しく、処理に長い時間がかかりがち」であり、手作りの MVS の例に漏れず、網羅性には「大きな改善の余地」が残る、と。"
