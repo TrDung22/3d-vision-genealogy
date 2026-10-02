@@ -111,7 +111,7 @@ const LIGHT_VARIANT: Record<string, string> = {
 
 /** Venue strings that count as "recognized" — rendered as a gold ring on both graphs.
  *  (CVPR has no "spotlight"; its "Highlight" tier, ~top 10%, is the equivalent.) */
-const AWARD_RE = /best paper|honorable mention|oral|spotlight|highlight|award/i;
+const AWARD_RE = /best (?:student )?paper|honorable mention|oral|spotlight|highlight|award/i;
 
 export interface GraphData {
   branches: {
