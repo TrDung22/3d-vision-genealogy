@@ -1,0 +1,62 @@
+title: "Scene Representation Transformer: Geometry-Free Novel View Synthesis Through Set-Latent Scene Representations"
+short: "SRT (2021)"
+authors: "Mehdi S. M. Sajjadi, Henning Meyer, Etienne Pot, Urs Bergmann, Klaus Greff, Noha Radwan, Suhani Vora, Mario Lučić, Daniel Duckworth, Alexey Dosovitskiy, Jakob Uszkoreit, Thomas Funkhouser, Andrea Tagliasacchi (Google Research)"
+venue: "CVPR 2022"
+year: 2021
+branch: neural-rendering
+lane: feedforward
+links:
+  arxiv: "https://arxiv.org/abs/2111.13152"
+  project: "https://srt-paper.github.io/"
+problem: >
+  Render a never-seen scene from a few images, at interactive rates. NeRF
+  trains per scene; re-projection methods like pixelNeRF need precise poses
+  and still run their network hundreds of times per pixel; and latent
+  models, usually geometry-free, "generally fail to scale to complex
+  real-world datasets".
+solution: >
+  A transformer encoder turns patches from all input images, posed or not,
+  into a SET of latent tokens — the scene representation — and a light-field
+  decoder renders each pixel by letting its ray attend into that set: no
+  volume, no projection, one feed-forward pass. It renders at 121 fps, has a
+  pose-free variant (UpSRT), and scales to real Street View scenes.
+limitations: >
+  Blurry: by its own account renders blur even near the input views on
+  complex scenes, the geometry-free model "will not work as well on very
+  small datasets", and with close views and perfect poses pixelNeRF often
+  still wins; its light field also carries no theoretical consistency
+  guarantee. LVSM later found such geometry-free renderers "lack model
+  capacity and scalability", and blamed SRT's CNN tokenizer and its
+  cross-attention decoder.
+relations:
+  - node: gqn2018
+    type: builds-on
+    note: >
+      Carries on the line SRT traces to GQN — methods that "learn to
+      represent a scene with a latent vector from which novel views can be
+      synthesized": encode the views, render any query with a learned
+      decoder, no explicit geometry. What SRT changes is the latent, a set
+      of tokens instead of one flat vector, "one of the main novelties of
+      SRT"; collapsing it back to a flat latent costs 2.5 dB on
+      MultiShapeNet.
+    i18n:
+      ja:
+        note: "SRT が GQN までさかのぼる路線 — 「潜在ベクトルでシーンを表し、そこから新規視点を合成できる」手法 — を受け継ぎます。視点を符号化し、学習されたデコーダで任意のクエリを描き、明示的な幾何は使わない。SRT が変えたのは潜在表現のほうです。一本の平坦なベクトルではなくトークンの集合 — 「SRT の主要な新規性の一つ」 — で、平坦な潜在表現に戻すと MultiShapeNet で 2.5 dB 落ちます。"
+  - node: pixelnerf2020
+    type: fixes
+    note: >
+      Repairs two costs of pixelNeRF's re-projection that SRT measures:
+      speed, which pixelNeRF itself concedes ("Like NeRF, our rendering time
+      is slow"; 1.3 fps against SRT's 121), and the pose dependence SRT
+      diagnoses in the whole line — "reliance on explicit camera projections
+      requires precise camera poses". Under pose noise pixelNeRF "degrades
+      sharply"; UpSRT runs on unposed images.
+    i18n:
+      ja:
+        note: "SRT が測った、pixelNeRF の再投影の二つのコストを直します。一つは速度で、pixelNeRF 自身が認めています (「NeRF と同じく、レンダリング時間は遅い」。1.3 fps に対して SRT は 121 fps)。もう一つは、SRT がこの路線全体に見た pose への依存 — 「明示的なカメラ射影に頼るには、正確なカメラ pose が要る」 — です。pose にノイズが乗ると pixelNeRF は「急激に劣化」しますが、UpSRT は pose のない画像でも動きます。"
+status: seed
+i18n:
+  ja:
+    problem: "見たことのないシーンを、数枚の画像から対話的な速度で描くこと。NeRF はシーンごとに学習が要り、pixelNeRF のような再投影の手法は正確な pose を必要としたうえ、ピクセルごとにネットワークを何百回も走らせます。そして潜在表現のモデル — たいていは幾何を使わない — は「複雑な実世界のデータセットへはおおむねスケールしない」のです。"
+    solution: "トランスフォーマーのエンコーダが、すべての入力画像 (pose 付きでも、なしでも) のパッチを潜在トークンの「集合」に変えます — それがシーン表現です。ライトフィールドのデコーダは、各ピクセルの光線をその集合へアテンションさせて描く。ボリュームも射影もなく、一度の feed-forward で終わります。レンダリングは 121 fps、pose を使わない変種 (UpSRT) もあり、実世界の Street View のシーンにまでスケールします。"
+    limitations: "ぼやけます。本人たちの言うとおり、複雑なシーンでは入力視点の近くでさえ描画がぼやけ、幾何を使わないモデルは「とても小さなデータセットではうまく働かない」。視点が近く pose が完璧なら、しばしば pixelNeRF のほうが勝ちます。そのライトフィールドには、一貫性の理論的な保証もありません。LVSM はのちに、こうした幾何を使わないレンダラーは「モデルの容量とスケーラビリティに欠ける」と見て、その原因を SRT の CNN トークナイザとクロスアテンションのデコーダに帰しました。"

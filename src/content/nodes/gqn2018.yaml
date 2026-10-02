@@ -22,12 +22,13 @@ limitations: >
   datasets and hardware; and, as SRN later put it, its representation and
   renderer are both "oblivious to the scene's 3D structure", so nothing
   guarantees 3D consistency. The field's verdict was to ADD 3D structure back
-  (SRN, NeRF) — though rendering without explicit 3D came back at transformer
-  scale, through SRT and then LVSM.
+  (SRN, NeRF) — though GQN's geometry-free recipe lived on: SRT carried it to
+  transformer scale and real Street View imagery, and LVSM, repairing SRT,
+  pushed it further.
 relations: []
 status: seed
 i18n:
   ja:
     problem: "システムは、人が作った3Dの仕掛けを一切使わずに — 幾何も、射影も、ラベルもなしに — ただ画像を見て動くだけで、3Dシーンの知覚を学べるのか?"
     solution: "Generative Query Network です。エンコーダがポーズ付きの数枚を潜在ベクトルへ圧縮し、生成デコーダが任意のクエリ視点からシーンを描く。表現もレンダラーも、すべてがデータから end-to-end で学習されます。"
-    limitations: "示されたのは合成環境 (部屋、迷路、ロボットアーム) だけです — 著者たちによれば、統制された分析のためであり、また適した実データとハードウェアが足りなかったためです。そして SRN がのちに指摘したとおり、表現もレンダラーも「シーンの3D構造を意識していない」ため、3D一貫性を保証するものは何もありません。分野の判決は「3D構造を戻す」でした (SRN、NeRF) — ただし、明示的な3Dなしでレンダリングするという路線は、SRT、そして LVSM を通じて、トランスフォーマー規模で戻ってきました。"
+    limitations: "示されたのは合成環境 (部屋、迷路、ロボットアーム) だけです — 著者たちによれば、統制された分析のためであり、また適した実データとハードウェアが足りなかったためです。そして SRN がのちに指摘したとおり、表現もレンダラーも「シーンの3D構造を意識していない」ため、3D一貫性を保証するものは何もありません。分野の判決は「3D構造を戻す」でした (SRN、NeRF) — ただし、GQN の幾何を使わないレシピは生き続けました。SRT がそれをトランスフォーマー規模と実世界の Street View 画像へ運び、SRT を直した LVSM がさらに先へ押し進めたのです。"

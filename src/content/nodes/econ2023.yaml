@@ -11,8 +11,9 @@ links:
 problem: >
   The implicit human line breaks where it matters: novel poses or clothes
   yield disembodied limbs and degenerate blobs, because nothing anchors the
-  surface to a body — yet the usual fix, constraining it with a body model,
-  limits the recovery of loose clothing that drifts away from the body.
+  surface to a body — yet the usual fix, constraining it with a body model
+  as PaMIR and ICON do, limits the recovery of loose clothing that drifts
+  away from the body.
 solution: >
   A hybrid: keep the explicit SMPL-X body as scaffold, predict front/back
   normal maps, integrate them into detailed front and back surfaces (d-BiNI)
@@ -26,6 +27,21 @@ limitations: >
   ECON-like reconstructions at scale as training data for generative models
   of clothed avatars.
 relations:
+  - node: icon2021
+    type: fixes
+    note: >
+      Repairs the weakness ICON admitted and ECON diagnosed. By ICON's own
+      account, its strong body prior means loose clothing far from the body
+      "may be difficult to reconstruct"; in ECON's words, ICON and PaMIR
+      "regularize shape to a body shape, but over-constrain the skirts, or
+      over-smooth the wrinkles". ECON keeps ICON's front end (it fine-tunes
+      ICON's back-normal predictor and reuses its body-refinement losses)
+      but demotes the body to a "canvas": the normals are integrated into
+      front and back surfaces instead of being regressed through a
+      body-conditioned implicit function.
+    i18n:
+      ja:
+        note: "ICON 自身が認め、ECON が診断した弱点を直します。ICON 本人いわく、強い体の prior のせいで、体から離れたゆったりした服は「復元が難しいことがある」。ECON の言葉では、ICON と PaMIR は「形状を体の形に正則化するが、スカートを縛りすぎ、しわをならしすぎる」。ECON は ICON の前段を引き継ぎ (背面の法線予測器を微調整し、体のリファインのロスも再利用)、そのうえで体を「キャンバス」の役に格下げしました。法線は、体で条件づけた陰関数で回帰されるのではなく、積分されて前面と背面の表面になります。"
   - node: pifuhd2020
     type: fixes
     note: >
@@ -33,13 +49,14 @@ relations:
       knowledge about the human body's structure", pixel-aligned implicits
       "produce disembodied limbs or degenerate shapes for images with novel
       poses". ECON's explicit SMPL-X scaffold anchors the details to a human
-      body.
+      body, as ICON had already done, while aiming to keep the clothing
+      detail PIFuHD recovers.
     i18n:
       ja:
-        note: "ECON が PIFu(HD) に見出した壊れ方を直します。「人体の構造についての明示的な知識を持たない」ピクセル整列の陰関数は、「見慣れない pose の画像に対して、ちぎれた手足や崩れた形状を生み出す」。ECON の明示的な SMPL-X 足場は、ディテールを人間の体につなぎ止めます。"
+        note: "ECON が PIFu(HD) に見出した壊れ方を直します。「人体の構造についての明示的な知識を持たない」ピクセル整列の陰関数は、「見慣れない pose の画像に対して、ちぎれた手足や崩れた形状を生み出す」。ECON の明示的な SMPL-X 足場は、ICON がすでにしていたように、ディテールを人間の体につなぎ止めます。それでいて、PIFuHD が復元する服のディテールは手放さないことを目指しています。"
 status: seed
 i18n:
   ja:
-    problem: "陰関数の人体路線は、肝心なところで壊れます。見慣れない pose や服では、ちぎれた手足や崩れた塊が出てくる — 表面を体につなぎ止めるものが何もないからです。かといって、よくある処方どおり体モデルで縛れば、体から離れてなびくゆったりした服の復元が制限されてしまいます。"
+    problem: "陰関数の人体路線は、肝心なところで壊れます。見慣れない pose や服では、ちぎれた手足や崩れた塊が出てくる — 表面を体につなぎ止めるものが何もないからです。かといって、PaMIR や ICON のように、よくある処方どおり体モデルで縛れば、体から離れてなびくゆったりした服の復元が制限されてしまいます。"
     solution: "ハイブリッドです。明示的な SMPL-X ボディを足場として残し、前面・背面の法線マップを予測、それを積分して前後の詳細な表面 (d-BiNI) を得て体の助けで位置を合わせ、隙間を補完してから縫い合わせる — 陰関数級のディテールと明示表現級の頑健さを、なびく衣服にまで。"
     limitations: "再構成のみで、画像ごとの最適化も残ります。本人いわく、SMPL-X の推定が失敗すれば ECON も失敗しうる。復元するのは幾何だけで、背面のテクスチャは生成するしかありません — そして ECON 的な再構成を大規模に集めて、服を着たアバターの生成モデルの学習データにする未来を描いています。"

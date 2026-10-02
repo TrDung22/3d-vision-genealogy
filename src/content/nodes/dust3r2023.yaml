@@ -1,0 +1,42 @@
+title: "DUSt3R: Geometric 3D Vision Made Easy"
+short: "DUSt3R (2023)"
+authors: "Shuzhe Wang, Vincent Leroy, Yohann Cabon, Boris Chidlovskii, Jerome Revaud (Aalto University + Naver Labs Europe)"
+venue: "CVPR 2024"
+year: 2023
+branch: single-image-3d
+lane: scene
+links:
+  arxiv: "https://arxiv.org/abs/2312.14132"
+  code: "https://github.com/naver/dust3r"
+problem: >
+  Dense 3D reconstruction in the wild ran through a chain of minimal
+  problems — matching, essential matrices, triangulation, SfM for the
+  cameras, then MVS — each step adding noise to the next, and the camera
+  stage "known to fail in many common situations": few views,
+  non-Lambertian surfaces, too little camera motion. Without those cameras,
+  MVS cannot even start.
+solution: >
+  Regress geometry instead of solving for it. A generic transformer
+  (CroCo-pretrained ViT encoder, two cross-attending decoders, DPT head)
+  takes two images — no intrinsics, no poses — and outputs two pointmaps in
+  the first camera's frame, with per-pixel confidence. Cameras, depth and
+  matches fall out of the pointmaps; one image is just the pair (I, I); more
+  images are fused by a global alignment run directly in 3D, in seconds.
+  Training draws on 8.5M image pairs from eight datasets.
+limitations: >
+  By its own account the network "can only handle a pair of images":
+  anything more goes through pairwise inference plus a global alignment
+  optimization, and regression stays short of triangulation — on DTU it
+  "does not reach the accuracy levels of the best methods", which know
+  their cameras. VGGT later named the pairwise design itself as the debt:
+  such networks "can only process two images at once and rely on
+  post-processing to reconstruct more images, fusing pairwise
+  reconstructions"; in VGGT's tests DUSt3R ran out of memory beyond 32
+  frames.
+relations: []
+status: seed
+i18n:
+  ja:
+    problem: "実環境での密な3D復元は、最小問題の連鎖として解かれていました — マッチング、基本行列、三角測量、カメラを求める SfM、そして MVS。各段がノイズを次の段へ持ち込み、しかもカメラを求める段は「多くのありふれた状況で失敗することが知られて」います。視点が少ないとき、非ランバート面、カメラの動きが足りないとき。カメラがなければ、MVS は始めることさえできません。"
+    solution: "幾何を解くのではなく、回帰します。汎用のトランスフォーマー (CroCo で事前学習した ViT エンコーダ、互いにクロスアテンションする二つのデコーダ、DPT ヘッド) が、内部パラメータも pose もない2枚の画像を受け取り、最初のカメラの座標系で表した2枚の点マップを、ピクセルごとの信頼度とともに出力します。カメラも深度も対応点も点マップから取り出せ、1枚の画像はペア (I, I) として扱うだけ。それ以上の枚数は、3D空間で直接行う global alignment で数秒のうちに統合します。学習には、8つのデータセットから抽出した850万の画像ペアを使います。"
+    limitations: "本人たちの言うとおり、このネットワークは「画像のペアしか扱えません」。それ以上の枚数はペアごとの推論と global alignment の最適化を経由するしかなく、回帰は三角測量の精度に届きません — DTU では「最良の手法の精度水準には届かない」のです (その最良の手法はカメラを知っています)。のちに VGGT は、このペア単位の設計そのものを借金として名指ししました。こうしたネットワークは「一度に2枚の画像しか処理できず、より多くの画像を再構成するには後処理に頼り、ペアごとの再構成を融合する」のです。VGGT の実験では、DUSt3R は32フレームを超えるとメモリが足りなくなりました。"

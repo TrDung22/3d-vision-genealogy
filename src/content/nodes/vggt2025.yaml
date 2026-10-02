@@ -10,8 +10,9 @@ links:
   code: "https://github.com/facebookresearch/vggt"
 problem: >
   Scene geometry was still a pipeline: SfM for cameras, MVS or per-scene
-  optimization for dense geometry — slow, brittle, and structurally unable to
-  run from a single image.
+  optimization for dense geometry — slow and brittle. DUSt3R had begun to
+  predict geometry instead, but only two images at a time, fusing the pairs
+  afterwards with a costly global alignment.
 solution: >
   One feed-forward transformer that ingests 1 to hundreds of unposed images
   and directly outputs cameras, depth maps, point maps, and 3D point tracks in
@@ -20,24 +21,26 @@ solution: >
 limitations: >
   A head per task and quadratic attention over views; by its own account it
   fails under substantial non-rigid deformation, degrades under extreme input
-  rotations, and does not support fisheye or panoramic images. Its own succession came fast: Depth Anything 3 showed
-  a single plain transformer with one depth-ray target beats the multi-head
-  design decisively.
+  rotations, and does not support fisheye or panoramic images. Its own
+  succession came fast: Depth Anything 3 showed a single plain transformer
+  with one depth-ray target beats the multi-head design decisively.
 relations:
-  - node: pixelnerf2020
+  - node: dust3r2023
     type: fixes
     note: >
-      Completes what conditioning began — though VGGT never cites pixelNeRF:
-      pixelNeRF removed per-scene training but still needed posed inputs and,
-      by its own account, rendered as slowly as NeRF; VGGT takes unposed
-      images and predicts cameras and geometry directly, feed-forward, from
-      one to hundreds of views.
+      Repairs the weakness VGGT names in DUSt3R and its evolution MASt3R:
+      these networks "can only process two images at once and rely on
+      post-processing to reconstruct more images, fusing pairwise
+      reconstructions". VGGT keeps DUSt3R's pointmaps in the first camera's
+      frame but reads every view in one forward pass, with no global
+      alignment: on DTU, where both run without ground-truth cameras, the
+      Overall error falls from 1.741 to 0.382.
     i18n:
       ja:
-        note: "条件付けが始めたことを完成させます — ただし VGGT 自身は pixelNeRF を引用していません。pixelNeRF はシーンごとの学習を取り除いたものの、pose 付きの入力を必要とし、本人たちの言うとおりレンダリングは NeRF と同じく遅いままでした。VGGT は pose なしの画像から、カメラと幾何を、1枚から数百枚までの視点で feed-forward に直接予測します。"
+        note: "VGGT が DUSt3R とその発展形 MASt3R に名指しした弱点を直します。これらのネットワークは「一度に2枚の画像しか処理できず、より多くの画像を再構成するには後処理に頼り、ペアごとの再構成を融合する」のです。VGGT は、最初のカメラの座標系で表す DUSt3R の点マップを受け継ぎつつ、すべての視点を一度の forward で読み込み、global alignment を要しません。どちらも ground truth のカメラなしで走る DTU で、Overall の誤差は 1.741 から 0.382 に下がりました。"
 status: seed
 i18n:
   ja:
-    problem: "シーンの幾何は依然としてパイプラインでした。カメラは SfM、密な幾何は MVS かシーンごとの最適化 — 遅く、脆く、そして構造上、一枚の画像からは走れません。"
+    problem: "シーンの幾何は依然としてパイプラインでした。カメラは SfM、密な幾何は MVS かシーンごとの最適化 — 遅く、脆いものです。DUSt3R は幾何を予測する方向へ踏み出しましたが、一度に扱えるのは2枚だけで、ペアどうしは後からコストのかかる global alignment で継ぎ合わせていました。"
     solution: "一つの feed-forward トランスフォーマーが、pose なしの画像を1枚から数百枚まで飲み込み、カメラ・深度マップ・点マップ・3Dポイントトラックを数秒で直接出力します — 幾何を最適化するのではなく予測するという DUSt3R 路線の賭けを論理的な果てまで進めた、CVPR 2025 のベストペーパーです。"
     limitations: "タスクごとに別ヘッド、視点数に対して二乗のアテンション。本人たちの言うとおり、大きな非剛体変形のある場面では破綻し、極端な入力の回転では再構成の性能が落ち、魚眼やパノラマの画像にも対応していません。後継はすぐに現れました — Depth Anything 3 が、素のトランスフォーマー + 単一の depth-ray ターゲットでマルチヘッド設計に決定的に勝てることを示したのです。"

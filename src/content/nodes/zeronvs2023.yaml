@@ -1,0 +1,66 @@
+title: "ZeroNVS: Zero-Shot 360-Degree View Synthesis from a Single Image"
+short: "ZeroNVS (2023)"
+authors: "Kyle Sargent, Zizhang Li, Tanmay Shah, Charles Herrmann, Hong-Xing Yu, Yunzhi Zhang, Eric Ryan Chan, Dmitry Lagun, Li Fei-Fei, Deqing Sun, Jiajun Wu (Stanford + Google Research)"
+venue: "CVPR 2024"
+year: 2023
+branch: single-image-3d
+lane: scene
+links:
+  arxiv: "https://arxiv.org/abs/2310.17994"
+  project: "https://kylesargent.github.io/zeronvs/"
+  code: "https://github.com/kylesargent/ZeroNVS"
+problem: >
+  Single-image 360° view synthesis worked for objects on masked backgrounds,
+  not for real scenes: the methods that handled scenes were not crisp, and
+  the diffusion methods were object-only. Scenes bring cameras with six
+  degrees of freedom, a scale no single image can settle, a background that
+  can no longer be ignored — and no Objaverse-XL of scenes to learn from.
+solution: >
+  Fine-tune Zero-1-to-3's view-conditioned diffusion model on about 95,000
+  real scenes (CO3D, RealEstate10K, ACID) under a new camera conditioning: a
+  full 6-DoF relative pose plus field of view, with the translation scaled by
+  the input view's own depth, so the mixed datasets agree on what a unit
+  means. Then distill it into a NeRF by SDS, with "SDS anchoring" —
+  DDIM-sampled anchor views as conditions — so unseen backgrounds stop
+  collapsing to gray. Zero-shot, it set a new state-of-the-art LPIPS on DTU,
+  ahead of methods fine-tuned there.
+limitations: >
+  Still a per-scene optimization: by its own account "the long run time of
+  SDS-based methods" makes even FID too costly to measure. Its appendix also
+  concedes that camera elevation, field of view and content scale are
+  assumed given, with the world scale grid-searched per scene for
+  evaluation, and that the zero-shot methods "generally do worse on
+  pixel-aligned metrics like SSIM and PSNR" than ones fine-tuned on DTU.
+relations:
+  - node: pixelnerf2020
+    type: fixes
+    note: >
+      Repairs the weakness ZeroNVS names in PixelNeRF and DietNeRF: they "do
+      not produce renderings resembling crisp natural images from a single
+      image". The repair is a generative prior distilled into a NeRF, and the
+      gain shows in the metric ZeroNVS weighs most, LPIPS: on DTU it beats
+      PixelNeRF (0.380 vs 0.535) without training there, while PixelNeRF
+      keeps the higher PSNR (15.55 vs 13.55).
+    i18n:
+      ja:
+        note: "ZeroNVS が PixelNeRF と DietNeRF に名指しした弱点を直します。これらは「一枚の画像から、鮮明な自然画像に見えるレンダリングを生み出せない」のです。直し方は、NeRF へ蒸留される生成 prior です。成果は ZeroNVS が最も重く見る指標 LPIPS に表れます。DTU で学習しないまま PixelNeRF を上回る (0.380 対 0.535) 一方、PSNR では PixelNeRF が上のままです (15.55 対 13.55)。"
+  - node: zero123-2023
+    type: builds-on
+    note: >
+      Stands directly on Zero-1-to-3: it initializes from the pretrained
+      Zero-1-to-3-XL, builds on its public code and keeps its two-stage
+      recipe — view-conditioned diffusion, then score distillation — but
+      swaps out the conditioning module, since a 3-DoF pose (elevation,
+      azimuth, radius) cannot represent roll or "cameras positioned and
+      oriented arbitrarily in space". The new camera carries the method from
+      masked objects to the scenes with complex backgrounds that Zero-1-to-3
+      itself left as an open challenge.
+    i18n:
+      ja:
+        note: "Zero-1-to-3 の上に直接立っています。学習済みの Zero-1-to-3-XL から初期化し、その公開コードを土台に、二段構えのレシピ — 視点条件付きの拡散モデル、そして score distillation — をそのまま受け継ぎます。ただし条件付けのモジュールは取り替えました。仰角・方位角・半径の3自由度の pose では、ロールも「空間内に任意の位置と向きで置かれたカメラ」も表せないからです。新しいカメラ表現が、この手法をマスクされた物体から、Zero-1-to-3 自身が未解決の課題として残した、複雑な背景を持つシーンへと運びました。"
+status: seed
+i18n:
+  ja:
+    problem: "一枚の画像からの360°の novel view synthesis は、背景をマスクした物体では動いても、現実のシーンでは動きませんでした。シーンを扱える手法は鮮明さを欠き、拡散モデルの手法は物体専用です。シーンには6自由度のカメラ、一枚の画像では決まらないスケール、もはや無視できない背景があり — しかも学習に使える、シーン版の Objaverse-XL は存在しません。"
+    solution: "Zero-1-to-3 の視点条件付き拡散モデルを、約95,000の実シーン (CO3D、RealEstate10K、ACID) で微調整します。カメラ条件付けは新しく、6自由度の相対 pose に画角を加え、並進のスケールを入力視点自身の深度で正規化します。混ぜ合わせたデータセットどうしで、1単位が何を意味するかをそろえるためです。それを SDS で NeRF へ蒸留し、「SDS anchoring」(DDIM でサンプルしたアンカー視点を条件に使う) によって、見えない背景が灰色一色に潰れるのを防ぎます。ゼロショットで DTU の LPIPS の最高記録を塗り替え、DTU で微調整した手法をも上回りました。"
+    limitations: "依然としてシーンごとの最適化です。本人たちの言うとおり、「SDS ベース手法の長い実行時間」のせいで、FID を測ることさえ割に合いません。付録では、カメラの仰角・画角・内容のスケールは与えられたものと仮定し、評価では世界のスケールをシーンごとにグリッド探索したことも認めています。そしてゼロショットの手法は、DTU で微調整した手法に比べて「SSIM や PSNR のようなピクセル整列の指標では概して劣る」のです。"

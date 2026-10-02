@@ -44,7 +44,7 @@ write-ups drop on the floor.
   a page generated *entirely* from the graph's edges: who proved an entire
   branch was fooling itself, which ideas landed everywhere at once
   (the 2019 implicit wave!), and what came back from the dead decades later.
-- **82 works, 1970 → 2025**, across two full branches: **single-image 3D
+- **88 works, 1970 → 2025**, across two full branches: **single-image 3D
   reconstruction** (the most classically ill-posed problem of all) and
   **neural rendering** (1984 volume rendering → light fields → NeRF → 3DGS →
   the post-3D-bias era). Gold rings mark award / oral / spotlight recognition,

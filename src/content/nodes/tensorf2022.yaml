@@ -20,10 +20,11 @@ limitations: >
   One bounding box only: by its own account it cannot handle unbounded
   scenes with background content, and its CP variant needs ever more
   components (and training time) as scenes get complex. Its lasting legacy
-  is the factored plane itself, carried into dynamic fields (K-Planes);
-  generative 3D's triplane is a sibling, not an heir — EG3D published it
-  first (TensoRF reads it as a special case of its VM factorization), and
-  LRM took it from EG3D.
+  is the factored plane itself, carried into dynamic fields by K-Planes,
+  which credits both TensoRF and EG3D; generative 3D's triplane is a
+  sibling, not an heir — EG3D published it three months earlier (TensoRF
+  later read it as a special case of its VM factorization), and LRM took it
+  from EG3D.
 relations:
   - node: plenoxels2021
     type: fixes
@@ -36,9 +37,21 @@ relations:
     i18n:
       ja:
         note: "すべてのボクセルを直接最適化することに伴うメモリの膨張 — TensoRF が Plenoxels に見た「巨大なモデルサイズ」 — を直します。速い直接最適化のレシピを保ちつつ、グリッドを低ランクのベクトルと行列に分解しました。Synthetic-NeRF で、Plenoxels の 778 MB に対し TensoRF-VM は 72 MB (CP なら 4 MB 未満) です。"
+  - node: eg3d2021
+    type: independent
+    note: >
+      Two groups factored the 3D feature grid into axis-aligned planes three
+      months apart, for different problems: EG3D to make a 3D GAN affordable,
+      TensoRF to make per-scene radiance fields compact. TensoRF's first
+      preprint never cites EG3D and its ECCV paper only lists it among
+      generative NeRFs; a later revision files it under "Concurrent work",
+      as "a special VM version that has constant vectors".
+    i18n:
+      ja:
+        note: "二つのグループが三か月違いで、別々の問題のために、3D の特徴グリッドを軸に沿った平面へ分解しました。EG3D は 3D GAN を手の届くものにするため、TensoRF はシーンごとの radiance field をコンパクトにするためです。TensoRF の最初のプレプリントは EG3D を引いておらず、ECCV 版も生成系の NeRF の一つとして挙げるだけです。のちの改訂版が「Concurrent work」の段落に入れ、「定数ベクトルを持つ VM の特別版」と位置づけました。"
 status: seed
 i18n:
   ja:
     problem: "グリッドの反乱は、メモリを支払って速度を買いました。radiance のボクセルグリッドは巨大な4Dテンソルで、その大半は冗長なのです。"
     solution: "それを分解します。シーンのテンソルをコンパクトなベクトル・行列成分 (低ランクの平面と線) に分ける。数分の学習で NeRF を超える品質を、ボクセルごとのグリッドなら数百 MB かかるところ数十 MB で — シーンを低ランクの対象として扱うのです。"
-    limitations: "使えるのはバウンディングボックス一つだけです。論文自身によれば、背景を含む非有界シーンは扱えず、CP 版はシーンが複雑になるほど多くの成分 (と学習時間) を要します。最も長く残った遺産は分解された平面そのもので、動的場 (K-Planes) へと受け継がれました。生成3D の triplane は子孫ではなく兄弟です — 先に発表したのは EG3D で (TensoRF 自身はそれを自らの VM 分解の特殊形と読んでいます)、LRM は EG3D からそれを受け継ぎました。"
+    limitations: "使えるのはバウンディングボックス一つだけです。論文自身によれば、背景を含む非有界シーンは扱えず、CP 版はシーンが複雑になるほど多くの成分 (と学習時間) を要します。最も長く残った遺産は分解された平面そのもので、TensoRF と EG3D の両方を引く K-Planes によって動的場へと受け継がれました。生成3D の triplane は子孫ではなく兄弟です — 三か月早く発表したのは EG3D で (TensoRF はのちに、それを自らの VM 分解の特殊形と読みました)、LRM は EG3D からそれを受け継ぎました。"

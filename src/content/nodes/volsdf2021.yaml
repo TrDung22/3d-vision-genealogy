@@ -32,6 +32,30 @@ relations:
     i18n:
       ja:
         note: "arXiv 投稿は二日差 (2021年6月20日と22日)、ともに NeurIPS 2021 — 香港/MPI と Weizmann/Facebook が、SDF から誘導される密度を、異なる数式で独立に導き直しました。2019年の陰関数の波の続編が、volume rendering の舞台で演じられたのです。"
+  - node: unisurf2021
+    type: independent
+    note: >
+      Two months apart on arXiv (April 20 and June 22, 2021), Tübingen and
+      Weizmann/Facebook put an implicit surface inside volume rendering;
+      VolSDF says UNISURF did so "concurrently with our work here", with an
+      "implicit surface representation incorporated into volume rendering".
+      Same discovery, different bridge: occupancy as the local transparency
+      there, a Laplace CDF of the SDF here.
+    i18n:
+      ja:
+        note: "arXiv 投稿は二か月差 (2021年4月20日と6月22日)。Tübingen と Weizmann/Facebook が、陰関数の表面を volume rendering の中に組み込みました。VolSDF 自身、UNISURF は「この研究と並行して」、「volume rendering に組み込んだ陰関数の表面表現」を使ったと書いています。発見は同じで、橋が違う — あちらは局所的な透明度としての占有率、こちらは SDF の Laplace CDF です。"
+  - node: nerf2020
+    type: fixes
+    note: >
+      Repairs the geometry NeRF leaves implicit in its density. VolSDF's
+      diagnosis: "it is non-trivial to find a proper threshold to extract
+      surfaces from the predicted density, and the recovered geometry is far
+      from satisfactory". Making density a function of an SDF guarantees a
+      well-defined surface behind it, while keeping NeRF's mask-free volume
+      rendering.
+    i18n:
+      ja:
+        note: "NeRF が密度の中に暗黙のまま残した幾何を直します。VolSDF の診断はこうです —「予測された密度から表面を取り出すための適切なしきい値を見つけるのは容易ではなく、復元された幾何は満足にはほど遠い」。密度を SDF の関数にすることで、その背後に明確な表面があることが保証され、しかも NeRF のマスク不要の volume rendering はそのまま残ります。"
 status: seed
 i18n:
   ja:

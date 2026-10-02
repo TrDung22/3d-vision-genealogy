@@ -1,0 +1,61 @@
+title: "ICON: Implicit Clothed humans Obtained from Normals"
+short: "ICON (2021)"
+authors: "Yuliang Xiu, Jinlong Yang, Dimitrios Tzionas, Michael J. Black"
+venue: "CVPR 2022"
+year: 2021
+branch: single-image-3d
+lane: human
+links:
+  arxiv: "https://arxiv.org/abs/2112.09127"
+  paper: "https://openaccess.thecvf.com/content/CVPR2022/html/Xiu_ICON_Implicit_Clothed_Humans_Obtained_From_Normals_CVPR_2022_paper.html"
+  project: "https://icon.is.tue.mpg.de/"
+  code: "https://github.com/YuliangXiu/ICON"
+problem: >
+  Pixel-aligned implicits recover the hair and clothing a parametric body
+  lacks, but break on in-the-wild poses: broken or disembodied limbs,
+  missing details, non-human shapes. ICON names two causes — small,
+  hand-curated scan datasets with very limited pose variation, and implicit
+  functions fed by global image or voxel encoders that are "sensitive to
+  global pose" — and, since varied 3D data remains scarce, it changes the
+  model rather than the data.
+solution: >
+  Put a body in the loop and keep every feature local. A SMPL(-X) estimate
+  (from PyMAF) is rendered into front and back body-normal maps that guide
+  the prediction of clothed-body normals; the implicit surface is then
+  regressed from local features alone — signed distance to the body, the
+  nearest body point's normal, the clothed normal at the point's
+  projection — none of which depends on global pose. At inference, a
+  feedback loop alternates between refining the SMPL fit against the
+  predicted normals and re-predicting them. State-of-the-art accuracy with
+  as little as 12% of the training data, robustness to out-of-distribution
+  poses and out-of-frame crops; per-frame reconstructions from video become
+  an animatable avatar through a modified SCANimate.
+limitations: >
+  By its own account, the strong body prior is also a leash: loose clothing
+  far from the body "may be difficult to reconstruct", a badly failed body
+  fit becomes a failed reconstruction, and training on orthographic views
+  leaves it struggling with strong perspective. ECON, its successor from
+  the same group, sharpened the first point: ICON and PaMIR "regularize
+  shape to a body shape, but over-constrain the skirts, or over-smooth the
+  wrinkles". Looking ahead, ICON names a dataset of clothed avatars built
+  from images alone as a key future application.
+relations:
+  - node: pifuhd2020
+    type: fixes
+    note: >
+      Repairs the failure ICON diagnoses in PIFu and PIFuHD alike: their
+      "shape reconstruction lacks regularization, and often produces
+      artifacts like broken or disembodied limbs, missing details, or
+      geometric noise". ICON keeps PIFuHD's front/back normal-map
+      prediction, down to the network architecture, but conditions it on a
+      SMPL body, and swaps the image encoder's global features for local,
+      body-relative ones.
+    i18n:
+      ja:
+        note: "ICON が PIFu と PIFuHD の両方に見出した壊れ方を直します。両者の「形状の復元には正則化が欠けていて、折れたりちぎれたりした手足、ディテールの欠落、幾何的なノイズといったアーティファクトをしばしば生む」。ICON は PIFuHD の前面・背面の法線マップ予測をネットワーク構造まで受け継ぎつつ、それを SMPL ボディで条件づけ、画像エンコーダのグローバルな特徴を、体を基準にした局所的な特徴に置き換えました。"
+status: seed
+i18n:
+  ja:
+    problem: "ピクセル整列の陰関数は、パラメトリックな体には欠けている髪や服を復元できます。ところが野外の pose では壊れてしまう — 折れたりちぎれたりした手足、ディテールの欠落、人間離れした形状。ICON は原因を二つ挙げます。手作業で集めた小さなスキャンのデータセットは pose の幅がごく限られていること、そして陰関数に特徴を渡すグローバルな画像エンコーダやボクセルエンコーダが「グローバルな pose に敏感」なこと。多様な3Dデータは依然として乏しいため、ICON はデータではなくモデルのほうを変えます。"
+    solution: "体をループに組み込み、特徴はすべて局所的に保ちます。SMPL(-X) の推定 (PyMAF による) を前面・背面の体の法線マップとしてレンダリングし、それを手がかりに服を着た体の法線を予測します。陰関数の表面は局所的な特徴だけから回帰します — 体までの符号付き距離、最も近い体の点の法線、その点の投影位置での服の法線 — どれもグローバルな pose には依存しません。推論時には、予測した法線に合わせて SMPL のフィットを改善する段階と、法線を予測し直す段階を、フィードバックループが交互に繰り返します。学習データのわずか12%で最先端の精度に届き、分布外の pose にも、体がフレームの外に切れた画像にも強い。動画の各フレームから得た再構成は、改良版の SCANimate を通じてアニメーション可能なアバターになります。"
+    limitations: "本人いわく、強い体の prior は同時に足かせでもあります。体から離れたゆったりした服は「復元が難しいことがある」し、体のフィットが大きく外れれば再構成も失敗します。さらに正射影の視点で学習しているため、強い透視効果には弱い。同じグループの後継 ECON は一つ目の点をさらに鋭く突きました — ICON と PaMIR は「形状を体の形に正則化するが、スカートを縛りすぎ、しわをならしすぎる」。ICON 自身は先を見据えて、画像だけから服を着たアバターのデータセットを作ることを、重要な今後の応用に挙げています。"

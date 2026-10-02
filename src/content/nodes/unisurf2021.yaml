@@ -1,0 +1,62 @@
+title: "UNISURF: Unifying Neural Implicit Surfaces and Radiance Fields for Multi-View Reconstruction"
+short: "UNISURF (2021)"
+authors: "Michael Oechsle, Songyou Peng, Andreas Geiger"
+venue: "ICCV 2021 (Oral, per authors' README)"
+year: 2021
+branch: neural-rendering
+lane: surfaces
+links:
+  arxiv: "https://arxiv.org/abs/2104.10078"
+  project: "https://moechsle.github.io/unisurf/"
+  code: "https://github.com/autonomousvision/unisurf"
+problem: >
+  Two ways to learn a surface from images, each missing half. Surface
+  rendering (DVR, IDR) gives accurate geometry but needs per-pixel object
+  masks, because its gradients exist only where a ray meets the surface.
+  NeRF needs no masks, but its density is not a surface: level sets of it
+  come out non-smooth and full of artifacts.
+solution: >
+  Read NeRF's alpha as occupancy. For solid objects, alpha compositing
+  reduces to taking the color of the first occupied sample, so UNISURF
+  predicts an occupancy field instead of a density and can render it both
+  ways. Training starts with samples spread over the whole volume, which
+  settles coarse structure without masks, then squeezes them into a
+  shrinking interval around the surface found by root-finding — volume
+  rendering that, in the limit, becomes surface rendering.
+limitations: >
+  Solid, opaque surfaces only, by design; by its own account overexposed,
+  textureless and rarely seen regions still come out inaccurate or rough,
+  even with the explicit smoothness term it adds. NeuS, comparing on DTU,
+  credits its SDF zero-level set with "better reconstruction accuracy than
+  UNISURF", the gap showing on objects with abrupt depth changes.
+relations:
+  - node: nerf2020
+    type: fixes
+    note: >
+      Repairs the geometry under NeRF's density, which UNISURF diagnoses
+      directly: level sets of it "are usually non-smooth and contain
+      artifacts" because the radiance field "does not sufficiently constrain
+      the 3D geometry in the presence of ambiguities". Predicting occupancy
+      instead of density keeps NeRF's mask-free volume rendering and gives
+      the optimization a surface to converge to.
+    i18n:
+      ja:
+        note: "NeRF の密度の下にある幾何を直します。UNISURF の診断ははっきりしています。密度の等値面は「たいてい滑らかさを欠き、アーティファクトを含む」— radiance field の表現が柔軟すぎて、「曖昧さがあるとき3D幾何を十分に拘束しない」からです。密度の代わりに占有率を予測することで、NeRF のマスク不要の volume rendering を保ったまま、最適化に収束すべき表面を与えました。"
+  - node: occnet2019
+    type: builds-on
+    note: >
+      Same group (Oechsle and Geiger are on both papers): the geometry is an
+      Occupancy Network, the surface its 0.5 decision boundary, and meshes
+      come out through that paper's multiresolution extraction (MISE). What
+      changes is the supervision — images through volume rendering instead
+      of ground-truth 3D shapes (the group's DVR had already used images,
+      through surface rendering and with masks).
+    i18n:
+      ja:
+        note: "同じグループです (Oechsle と Geiger は両方の論文に名を連ねています)。幾何は Occupancy Network そのもので、表面はその 0.5 の決定境界、メッシュはあの論文の多重解像度抽出 (MISE) で取り出します。変わったのは教師信号です — ground truth の3D形状ではなく、volume rendering 越しの画像 (同じグループの DVR がすでに画像を使っていましたが、それは表面レンダリング越しで、マスク付きでした)。"
+status: seed
+i18n:
+  ja:
+    problem: "画像から表面を学ぶ方法は二つあり、どちらも半分が欠けていました。表面レンダリング (DVR、IDR) は正確な幾何を与えますが、勾配が光線と表面の交点にしか生じないため、ピクセル単位の物体マスクを必要とします。NeRF はマスクを要しませんが、その密度は表面ではありません。等値面を取り出すと、滑らかさを欠き、アーティファクトだらけになります。"
+    solution: "NeRF のアルファを占有率として読み替えます。不透明な物体なら、アルファ合成は光線上で最初に占有されたサンプルの色を取ることに帰着します。そこで UNISURF は密度の代わりに占有場を予測し、二通りの方法でレンダリングできるようにしました。学習の序盤はサンプルを空間全体に散らして、マスクなしで大まかな構造を固め、その後は root-finding で見つけた表面のまわりの、しだいに狭まる区間へサンプルを絞り込みます — 極限では表面レンダリングになる volume rendering です。"
+    limitations: "設計上、扱えるのは不透明な固体の表面だけです。論文自身の説明によれば、露出オーバーの領域、テクスチャのない領域、ほとんど写らない領域は、明示的な平滑化の項を加えてもなお不正確で粗いまま残ります。DTU で比較した NeuS は、自らの SDF のゼロ等値面が「UNISURF より高い再構成精度」をもたらすとし、その差は深度が急に変わる物体で表れると述べています。"

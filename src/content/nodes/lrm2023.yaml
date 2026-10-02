@@ -41,6 +41,16 @@ relations:
     i18n:
       ja:
         note: "出力は triplane の放射輝度場 — NeRF のインフラです。ただし最適化するのではなく、予測するのです。"
+  - node: eg3d2021
+    type: builds-on
+    note: >
+      Its triplane is EG3D's: LRM employs "the triplane-NeRF formulation" and
+      picks "the triplane spatial encoding function proposed by EG3D" for its
+      O(N²) tokens rather than a voxel grid's O(N³) — the planes a GAN once
+      painted, now regressed from a single image by a transformer.
+    i18n:
+      ja:
+        note: "その triplane は EG3D のものです。LRM は「triplane-NeRF の定式化」を採用し、ボクセルグリッドの O(N³) ではなく O(N²) のトークンで済むことから、「EG3D が提案した triplane の空間符号化関数」を選びました — かつて GAN が描いた平面を、今度はトランスフォーマーが一枚の画像から回帰するのです。"
   - node: objaverse2023
     type: builds-on
     note: >

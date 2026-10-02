@@ -43,6 +43,17 @@ relations:
     i18n:
       ja:
         note: "枝をまたぐ結婚です。物体再構成の路線から来た SDF 表現が、ground truth の3D形状ではなく、volume rendering 越しに画像だけで教師付けされるようになりました。"
+  - node: unisurf2021
+    type: independent
+    note: >
+      arXiv two months apart (April 20 and June 20, 2021): Tübingen and Hong
+      Kong/MPI both learned an implicit surface through volume rendering, and
+      NeuS names UNISURF as concurrent work that "also learns an implicit
+      surface via volume rendering". The bridges differ — occupancy and a
+      shrinking sampling interval there, an unbiased SDF-derived weight here.
+    i18n:
+      ja:
+        note: "arXiv 投稿は二か月差 (2021年4月20日と6月20日)。Tübingen と香港/MPI が、ともに陰関数の表面を volume rendering 越しに学習しました。NeuS は UNISURF を、同じく「volume rendering によって陰関数の表面を学習する」並行研究として挙げています。橋の架け方は違います — あちらは占有率としだいに狭まるサンプリング区間、こちらは SDF から導いた偏りのない重みです。"
 status: seed
 i18n:
   ja:

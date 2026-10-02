@@ -32,6 +32,18 @@ relations:
     i18n:
       ja:
         note: "1996年の光線リサンプリング枠組みの直系です。ライトフィールド補間をレンダリングエンジンに残したまま、その致命的な弱点 — 撮影密度 — を局所幾何の層とサンプリング理論による「写真を何枚借りているか」の予算で攻めました。"
+  - node: lumigraph1996
+    type: builds-on
+    note: >
+      Stands on the Lumigraph's finding, which LLFF credits outright: it
+      "showed that using approximate scene geometry can ameliorate artifacts
+      due to undersampled or irregularly sampled views". LLFF turns that dial
+      into a budget: extending plenoptic sampling theory (Chai et al. 2000),
+      it shows that local layered geometry with D depth planes cuts the views
+      needed by a factor of D² against Nyquist.
+    i18n:
+      ja:
+        note: "Lumigraph の知見の上に立っています。LLFF ははっきりとその功績を認めています — Lumigraph は「近似的なシーン幾何を使えば、サンプリング不足や不規則なサンプリングによるアーティファクトを和らげられることを示した」。LLFF はそのダイヤルを予算に変えました。plenoptic サンプリング理論 (Chai et al. 2000) を拡張し、D 枚の深度平面を持つ局所的な層状幾何なら、必要な視点数が Nyquist に比べて D² 分の1になることを示したのです。"
 status: seed
 i18n:
   ja:

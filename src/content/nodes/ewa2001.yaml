@@ -21,7 +21,9 @@ limitations: >
   Gaussians from photographs. Point-based graphics faded as GPU triangle
   pipelines won; after a few hardware-accelerated follow-ups (2002–2005) the
   technique stayed a niche for close to two decades, until differentiable
-  rendering needed exactly this math.
+  rendering needed exactly this math. Its screen-space filter later drew a
+  diagnosis of its own: Mip-Splatting found its size "chosen empirically",
+  oversmoothing images when zooming out.
 relations:
   - node: kajiya1984
     type: builds-on
@@ -38,4 +40,4 @@ i18n:
   ja:
     problem: "メッシュもレイマーチングも使わずに点群とボリュームをレンダリングする。点には接続関係がなく、素朴な点描画は穴とエイリアシングだらけです。"
     solution: "データを異方性ガウスカーネルで表し、スプラットします。各3Dガウシアンをスクリーン空間の2Dガウシアンへ射影し (EWA — 楕円加重平均 — フィルタ)、奥から手前へ合成する。閉形式の射影、正しいアンチエイリアシング、光線は不要です。"
-    limitations: "スキャンされた点やボリュームデータのための順方向レンダラーです — ガウシアンを写真から最適化する者は現れませんでした。GPU の三角形パイプラインの勝利とともに点ベースグラフィックスは廃れ、ハードウェア実装の後続研究 (2002〜2005年) を経たあと、この技法は20年近くニッチにとどまります — 微分可能レンダリングがまさにこの数学を必要とするまで。"
+    limitations: "スキャンされた点やボリュームデータのための順方向レンダラーです — ガウシアンを写真から最適化する者は現れませんでした。GPU の三角形パイプラインの勝利とともに点ベースグラフィックスは廃れ、ハードウェア実装の後続研究 (2002〜2005年) を経たあと、この技法は20年近くニッチにとどまります — 微分可能レンダリングがまさにこの数学を必要とするまで。そのスクリーン空間フィルタにも、のちに診断が下ります。Mip-Splatting は、その大きさが「経験的に選ばれている」ため、ズームアウトすると画像が過度に平滑になると指摘しました。"

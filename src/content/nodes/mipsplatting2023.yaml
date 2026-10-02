@@ -43,6 +43,19 @@ relations:
     i18n:
       ja:
         note: "mip のアイデアがパラダイムをまたぎます。integrated positional encoding がレイマーチングの放射輝度場にしたことを、帯域制限フィルタがラスタライズされたガウシアンにする — 同じアンチエイリアスの借金を、新しい通貨で。"
+  - node: ewa2001
+    type: fixes
+    note: >
+      Repairs EWA's screen-space filter, whose size Mip-Splatting calls
+      "chosen empirically": EWA advocates an identity covariance, "effectively
+      occupying a 3x3 pixel region on the screen", which "leads to overly
+      smooth results when zooming out". The 2D Mip filter swaps it for an
+      approximation of one pixel's box filter, and beats 3DGS + EWA — the
+      baseline that replaces 3DGS's dilation with the EWA filter — most
+      clearly at lower resolutions.
+    i18n:
+      ja:
+        note: "EWA のスクリーン空間フィルタを直します。Mip-Splatting によれば、そのサイズは「経験的に選ばれた」ものです。EWA は単位共分散 —「画面上で実質的に3×3ピクセルの領域を占める」— を勧めますが、これは「ズームアウト時に過度に滑らかな結果を招く」。2D Mip フィルタはそれを1ピクセル分のボックスフィルタの近似に置き換え、3DGS の dilation を EWA フィルタに差し替えたベースライン 3DGS + EWA を、とりわけ低解像度で上回りました。"
 status: seed
 i18n:
   ja:

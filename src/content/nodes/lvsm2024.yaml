@@ -36,18 +36,19 @@ relations:
     i18n:
       ja:
         note: "自らのサブ分野の前提を問い直します。pixelSplat と MVSplat が「より良い3Dの仕掛け」で競うなか、LVSM は仕掛けゼロで両者を上回る — 皆が磨いていた幾何 prior は、スケールがいずれ外す補助輪だ、と論じるのです。"
-  - node: gqn2018
-    type: revives
+  - node: srt2021
+    type: fixes
     note: >
-      GQN's 2018 creed — rendering as pure learning, no human 3D machinery —
-      was sidelined once SRN and NeRF showed structure wins, kept alive only
-      by a geometry-free minority (LFN, SRT) that LVSM says lacked "model
-      capacity and scalability". LVSM never cites GQN, but it brings the
-      direction back at transformer scale and outperforms the structured
-      lineage that displaced it.
+      Repairs what LVSM diagnoses in the geometry-free renderers SRT stands
+      among: they "lack model capacity and scalability, preventing them from
+      capturing high-frequency detail" (SRT admits its blur), and in SRT it
+      names "the CNN-based token extractor and the use of cross-attention in
+      the decoder". LVSM patchifies its inputs and decodes with
+      bidirectional self-attention; putting SRT's pure cross-attention
+      decoder back costs 3.5 dB on GSO.
     i18n:
       ja:
-        note: "GQN の2018年の信条 — レンダリングは純粋な学習であり、人間の3Dの仕掛けは要らない — は、SRN と NeRF が構造の勝利を示したとき脇へ追いやられ、幾何を使わない少数派 (LFN、SRT) だけが細々と受け継ぎました。LVSM はそれらを「モデルの容量とスケーラビリティ」に欠けると評しています。LVSM は GQN を引用していませんが、この方向をトランスフォーマー規模で呼び戻し、自分を追いやった構造ありの血統を上回るのです。"
+        note: "LVSM が、SRT もその一つである幾何を使わないレンダラーに下した診断を直します。それらは「モデルの容量とスケーラビリティに欠け、高周波のディテールを捉えられない」(SRT 自身もぼやけを認めています)。SRT については「CNN ベースのトークン抽出器と、デコーダでのクロスアテンションの使用」を名指ししました。LVSM は入力をパッチに切り、双方向の self-attention でデコードします。SRT の純粋なクロスアテンション・デコーダに戻すと、GSO で 3.5 dB 落ちます。"
 status: seed
 i18n:
   ja:

@@ -20,7 +20,8 @@ limitations: >
   Each view is generated on its own, so — as SyncDreamer showed — the views
   are not multiview-consistent with each other; lifting to 3D by score
   distillation takes around 30 minutes per object; and, by its own account,
-  generalizing to scenes with complex backgrounds remains a challenge.
+  generalizing to scenes with complex backgrounds remains a challenge — the
+  step ZeroNVS took.
 relations:
   - node: occnet2019
     type: fixes
@@ -57,4 +58,4 @@ i18n:
   ja:
     problem: "現実世界のどんな物体でも、単一画像から3Dへ — ShapeNet で育った物体再構成の路線が、ついに成し遂げられなかったことです。"
     solution: "Stable Diffusion をカメラ条件付きの新規視点生成器へ微調整し、一枚の画像から残りの視点を「想像」します。3Dへの持ち上げは score distillation (Score Jacobian Chaining) で行います。ランダムにサンプルした視点をこの生成器に教師させながら、ボクセルの radiance field を最適化するのです。"
-    limitations: "視点は一枚ずつ独立に生成されるため、SyncDreamer が示したとおり、視点どうしは多視点で一貫しません。score distillation による3D化には物体一つあたり約30分かかり、さらに論文自身が認めるとおり、複雑な背景を持つシーンへの汎化は依然として課題です。"
+    limitations: "視点は一枚ずつ独立に生成されるため、SyncDreamer が示したとおり、視点どうしは多視点で一貫しません。score distillation による3D化には物体一つあたり約30分かかり、さらに論文自身が認めるとおり、複雑な背景を持つシーンへの汎化は依然として課題です — その一歩を踏み出したのが ZeroNVS でした。"
