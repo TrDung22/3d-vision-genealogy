@@ -80,6 +80,12 @@ worth recording. Most node pairs share nothing and get no edge at all; an
 `independent` edge asserts the works are close kin whose only missing link is
 dependence.
 
+A note on `fixes`: the weakness has to be on the record, not inferred by us.
+Either the earlier work admits it, or the later work explicitly diagnoses it in
+the earlier one — papers rarely see all of their own flaws, and the diagnosis
+often comes from the paper that fixes it. When a `limitations` paragraph
+reports a weakness the work never admitted, it says whose diagnosis it is.
+
 Three editorial principles:
 
 1. Every node answers three questions: *what problem — what idea — what limitations it left behind*.
