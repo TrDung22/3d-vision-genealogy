@@ -40,17 +40,18 @@ limitations: >
   teleportation DyCheck later flagged.
 relations:
   - node: nerf2020
-    type: builds-on
+    type: fixes
     note: >
-      Stands on NeRF, the "prior work for static scenes" it builds upon, "to
-      which we add the notion of time, and estimate 3D motion by explicitly
-      modeling forward and backward scene flow as dense 3D vector fields".
-      NeRF's MLP, positional encoding and volume rendering carry over; the
-      flow outputs and the flow-warped photometric loss are new, and a NeRF
-      variant stays inside the model as its static half.
+      Repairs the static-scene assumption NSFF diagnoses in NeRF and its
+      kin: they "all assume a static scene with fixed appearance over time,
+      and hence cannot model temporal changes or dynamic scenes". Building on
+      NeRF ("prior work for static scenes"), it adds time and explicit
+      forward/backward scene flow; NeRF's MLP, positional encoding and volume
+      rendering carry over, and a NeRF variant stays inside the model as its
+      static half.
     i18n:
       ja:
-        note: "NeRF の上に立ちます。NSFF が土台にする「静的シーンのための先行研究」に、「時間の概念を加え、前方・後方のシーンフローを密な3次元ベクトル場として明示的にモデル化することで、3次元の動きを推定する」のです。NeRF の MLP、位置エンコーディング、volume rendering はそのまま引き継がれ、フローの出力と、フローで warp した光度損失が新しい部分です。そして NeRF の変種が、静的な半分としてモデルの中に残ります。"
+        note: "NSFF が NeRF とその仲間に見出した、静的シーンという前提を直します。それらは「どれも、見た目が時間で変わらない静的なシーンを仮定しており、時間的な変化や動的なシーンをモデル化できない」。NeRF (「静的シーンのための先行研究」) を土台に、時間と明示的な前方・後方のシーンフローを加えました。NeRF の MLP、位置エンコーディング、volume rendering はそのまま引き継がれ、NeRF の変種が静的な半分としてモデルの中に残ります。"
 status: seed
 i18n:
   ja:

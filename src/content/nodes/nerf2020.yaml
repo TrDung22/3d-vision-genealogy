@@ -42,15 +42,17 @@ relations:
       ja:
         note: "SRN の核心となる賭け — シーンを座標 MLP とし、微分可能なレイマーチングで描く — を保ちつつ、光線ごとに一つの深度と色しか選ばない「学習された」marcher を固定の volume rendering に置き換え、positional encoding を加えて、ぼやけを治しました。"
   - node: neuralvolumes2019
-    type: builds-on
+    type: fixes
     note: >
-      Keeps Neural Volumes' recipe — a volume optimized per scene and
-      rendered by differentiable ray marching — but swaps the memory-bound
-      voxel grid for a continuous MLP: resolution no longer costs cubic
-      memory.
+      Repairs the limit NeRF names in voxel-based volumetric methods, Neural
+      Volumes among them: scaling to higher resolution "is fundamentally
+      limited by poor time and space complexity due to their discrete
+      sampling". NeRF keeps the recipe — a volume optimized per scene and
+      rendered by differentiable ray marching — but encodes it as a
+      continuous MLP, so resolution no longer costs cubic memory.
     i18n:
       ja:
-        note: "シーンごとに最適化したボリュームを微分可能なレイマーチングで描く、という Neural Volumes のやり方を保ちつつ、メモリに縛られたボクセルグリッドを連続 MLP に置き換えました — 解像度がもう3乗のメモリを食わなくなったのです。"
+        note: "NeRF が、Neural Volumes を含むボクセルベースの volume 手法に名指しした限界を直します。高解像度へのスケールは「離散的なサンプリングに起因する時間・空間計算量の悪さによって、根本的に制限される」。NeRF はシーンごとに最適化したボリュームを微分可能なレイマーチングで描くというやり方を保ちつつ、それを連続 MLP として符号化しました — 解像度がもう3乗のメモリを食わなくなったのです。"
   - node: llff2019
     type: builds-on
     note: >

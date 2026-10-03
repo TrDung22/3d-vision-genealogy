@@ -85,6 +85,10 @@ Either the earlier work admits it, or the later work explicitly diagnoses it in
 the earlier one — papers rarely see all of their own flaws, and the diagnosis
 often comes from the paper that fixes it. When a `limitations` paragraph
 reports a weakness the work never admitted, it says whose diagnosis it is.
+When a later work both builds on an earlier one and repairs a weakness it
+names there, `fixes` wins if that repair is its core contribution (D-NeRF,
+Nerfies and NSFF each name NeRF's static-scene assumption and exist to lift
+it); `builds-on` is for extensions whose diagnosis is incidental.
 
 Three editorial principles:
 
