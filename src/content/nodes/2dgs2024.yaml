@@ -30,9 +30,6 @@ relations:
       blobs with oriented disks makes the represented surface view-consistent,
       turning splatting from a view-synthesis trick into a reconstruction
       method.
-    i18n:
-      ja:
-        note: "プリミティブそのものに潜む幾何の嘘を直します。体積的なblobを向きを持つ円盤に置き換えることで、表される表面が視点一貫になり、スプラッティングを視点合成のトリックから再構成の手法へと変えました。"
   - node: ewa2001
     type: builds-on
     note: >
@@ -40,12 +37,4 @@ relations:
       splatting; 2DGS brings back the other half — SURFACE splatting with
       oriented surfels — now recovered from photos alone, where earlier surfel
       methods, even differentiable ones, needed known geometry or depth.
-    i18n:
-      ja:
-        note: "EWA の復活を完成させます。3DGS は Zwicker のボリュームスプラッティングを呼び戻し、2DGS はもう半分 — 向きを持つ surfel による表面スプラッティング — を呼び戻す。今度は写真だけから復元されます。微分可能なものも含め、それ以前の surfel 手法は既知の幾何や深度を必要としていました。"
 status: seed
-i18n:
-  ja:
-    problem: "3DGS は見た目は正しく、計測は間違っています。光線が3Dのblobと出会う深度は視点ごとに異なるため、それが示唆する「表面」は視点不一致 — 抽出したメッシュはノイズだらけになります。"
-    solution: "プリミティブを平たくします。スクリーン空間の近似ではなく、正確に透視補正した ray-splat 交差を持つ、向きのある2Dガウシアン円盤 (surfel)。加えて深度歪みと法線一貫性の正則化 — レンダリングと再構成の両方を行うスプラッティングです。"
-    limitations: "surfel は世界を不透明な表面と仮定します。論文自身が認めるとおり、ガラスのような半透明の表面には弱く、densification は幾何の豊かな領域よりテクスチャの豊かな領域を優先し、正則化は幾何の向上と引き換えに画質をいくらか譲ります。"

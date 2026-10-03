@@ -32,21 +32,10 @@ relations:
       seemingly buried it: the same no-neural-network, sparse-grid creed,
       now with adaptive level-of-detail and a rasterizer instead of ray
       marching — voxels made competitive with splats.
-    i18n:
-      ja:
-        note: "ガウシアンが葬り去ったかに見えたボクセルの異端を、死から呼び戻します。ニューラルネット不要、疎なグリッドだけ、という同じ信条を、今度は適応的な level-of-detail とレイマーチングに代わるラスタライザとともに — ボクセルをスプラットと張り合えるようにしました。"
   - node: 3dgs2023
     type: challenges
     note: >
       Questions the assumption that the primitive must be a Gaussian:
       sorted-splat popping is an artifact of the primitive choice, and
       sorted voxels dissolve it while keeping the rasterization speed.
-    i18n:
-      ja:
-        note: "プリミティブは必ずガウシアンでなければならない、という仮定を問い直します。ソート済みスプラットのポッピングはプリミティブ選択のアーティファクトであり、ソート済みボクセルはラスタライズの速度を保ったままそれを溶かすのです。"
 status: seed
-i18n:
-  ja:
-    problem: "ガウシアンは速度で勝ちましたが、癖も持ち込みました — 視点回転でのポッピング (ガウシアンの中心でソートしても正しい深度順は保証されない) と、ガウシアンが重なる場所での体積密度の曖昧さで、これが表面再構成を厄介にします。"
-    solution: "ガウシアンではなく適応的な疎ボクセルをラスタライズします。実効解像度 65,536³ までの octree 風レイアウトを、光線方向依存の Morton 順序で厳密に正しい深度順に描く — ニューラルネットなし、ガウシアンなし、ポッピングなし。従来のニューラルネット不要ボクセルを 4dB 上回り、フレームレートは10倍です。"
-    limitations: "ボクセルはガウシアンよりはるかに多くの数を要します。論文自身によれば、そのぶんモデルは大きく GPU メモリも多く食い — グリッドは、どれだけ疎でも、やはりメモリと引き換えに細部を得るのです — 抽出したメッシュにはテクスチャの細部に由来する余計な凹凸が乗ります。"

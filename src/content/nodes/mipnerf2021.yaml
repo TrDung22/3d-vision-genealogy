@@ -29,12 +29,4 @@ relations:
       Repairs NeRF's point-sampling fallacy — the aliasing and multiscale
       blur baked into treating pixels as rays — by rendering anti-aliased
       frustums, importing 40 years of graphics mipmapping wisdom.
-    i18n:
-      ja:
-        note: "NeRF の点サンプリングの誤り — ピクセルを光線として扱うことに埋め込まれたエイリアシングとマルチスケールのぼやけ — を直します。アンチエイリアスされた錐台をレンダリングし、グラフィックスの40年分の mipmap の知恵を輸入して。"
 status: seed
-i18n:
-  ja:
-    problem: "NeRF は無限に細い光線に沿って無限小の点をサンプルするため、ピクセルの footprint が無視されます。ズームアウトすればエイリアス、ズームインすればぼやける。学習時と違うスケールでのレンダリングは、ことごとく壊れるのです。"
-    solution: "光線が錐になります。各サンプルは円錐台で、integrated positional encoding (錐台のガウス上での Fourier 特徴の期待値) で符号化されます。スケールを弁えた一つの MLP が、NeRF の別々の coarse / fine MLP を置き換える — radiance field のために再発見された mipmapping です。"
-    limitations: "依然として有界で内向きのシーンとシーンごとの学習を前提とし、数式は遅い positional-encoding MLP を仮定しています。そのためこのアイデアは二度導き直されることになりました — 非有界シーン向け (Mip-NeRF 360) と、ハッシュグリッド向け (Zip-NeRF) に。"

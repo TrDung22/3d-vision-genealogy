@@ -46,12 +46,4 @@ relations:
       static stage, time planes switched on for the video stage. The motion
       comes from the video model; swapping in D-NeRF barely matters (81.9 vs
       83.7 R-Precision), MAV3D being "not sensitive to the dynamic backbone".
-    i18n:
-      ja:
-        note: "4Dシーンは HexPlane です。HexPlane の公開から三日後、その共著者 Justin Johnson を著者に含むこの論文が採用しました。「そこで、動的シーンのために最近提案された表現である HexPlane (Cao & Johnson, 2023) を採用する」。平面の空間/時空間への分割が、そのまま学習のカリキュラムになります — 静的な段階では空間平面だけ、動画の段階で時間平面を加える。動きを生むのは動画モデルの方で、D-NeRF に差し替えてもほとんど変わらず (R-Precision 81.9 対 83.7)、MAV3D は「動的バックボーンに敏感ではない」のです。"
 status: seed
-i18n:
-  ja:
-    problem: "テキストはすでに画像にも、動画にも、静的な3D物体 (DreamFusion) にもなれました。しかし「これら二種類の生成モデルは、これまで切り離して研究されてきた」。動く3Dシーンをテキストから作ろうにも、学ぶべきものがありません。「テキスト注釈の有無を問わず、手軽に使える4Dモデルの集まりは存在しない」のです。"
-    solution: "テキストから動画を作るモデルを「『統計的な』マルチカメラ構成」として使います。動的 NeRF — HexPlane — を動く仮想カメラからレンダリングし、そのクリップを Meta の Make-A-Video に時間方向の score distillation (SDS-T) で採点させるのです。段階を踏む必要があります。まず三枚の空間平面だけを使い、text-to-image モデルで静的なシーンを当てはめ、次に三枚の時間平面を加えて動画モデルへ、最後に超解像のファインチューニング。3D や 4D のデータは一切使いません。初の text-to-4D の結果で、CLIP R-Precision は 83.7% — Make-A-Video のクリップをフレームごと、あるいは D-NeRF で再構成した場合の 6〜11% を大きく上回りました。"
-    limitations: "論文自身によれば、性能は Make-A-Video の性能に「縛られ」、視点依存のプロンプトも multi-face 問題を和らげるにとどまり、リアルタイム用途には「互いに独立したメッシュの列」への変換が必要です — 頂点の軌跡を直接予測すれば済むところを、非効率に。プロンプト一つに A100 GPU 8枚で約6.5時間かかり、動画の教師モデルは非公開でした (4D-fy の指摘)。のちに 4D-fy は「MAV3D は明らかに細部を欠く」と評しましたが、その評価者たちは MAV3D の動きの質を 4D-fy とほぼ互角と判断しています。"

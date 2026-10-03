@@ -28,12 +28,4 @@ relations:
       account, automatic methods existed only for multiple images or video,
       and "no one has yet attempted automatic single-view modeling" — so it
       did, with statistical learning instead of reflectance physics.
-    i18n:
-      ja:
-        note: "Horn が立てた単一画像の問題を呼び覚ましました。Pop-up 自身によれば、自動的な手法は複数画像や動画向けにしかなく、「自動的な単一視点モデリングは、まだ誰も試みていない」状況でした — だからそれを、反射の物理ではなく統計的学習の手でやってのけたのです。"
 status: seed
-i18n:
-  ja:
-    problem: "一枚の屋外写真から「歩き回れる」3Dモデルを作る — 照明の物理モデルも精密な幾何も使わずに。"
-    solution: "prior の種類そのものを入れ替えます。画像の領域を「地面 / 垂直 / 空」に分類する統計的分類器を学習し、子ども向けの飛び出す絵本のようにシーンを起こします。データから学んだ統計的 prior が物理 prior に取って代わった、単一画像3Dにおける最初期の例の一つです。"
-    limitations: "幾何クラスは粗い三つだけ。扱えるのは、地面の平面に垂直な物体が立つ屋外シーンのみです。連続的な深度はなく、本人たちも認めるとおり、混み合ったシーンや丘、階段には歯が立ちません — 正確なモデルになったのは屋外写真の約30%でした。"

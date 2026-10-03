@@ -26,12 +26,4 @@ relations:
     note: >
       Repairs exactly the in-domain ceiling Eigen left behind — with
       multi-source data rather than a new architecture.
-    i18n:
-      ja:
-        note: "Eigen が残したドメイン内の天井を直しました — 新しいアーキテクチャではなく、多源データの力で。"
 status: seed
-i18n:
-  ja:
-    problem: "Eigen が残した5年越しの借金 — 一つのデータセットで学習した深度モデルは、そこを一歩出た途端に失敗しがちです。どうすれば「どんな画像でも」動くのか?"
-    solution: "性質のまるで違うデータセット (3D映画、ウェブのステレオ写真、SfM による再構成、RGB-D...) を、スケールとシフトに不変なロスで混ぜ合わせます。相対深度しか予測しないことを受け入れ、その引き換えに本物のゼロショット汎化を手に入れました。"
-    limitations: "混ぜることの代償 — 絶対スケールが消えました (「何メートルか」が言えない)。相対深度は写真のエフェクトには十分でも、ロボティクスには足りません。この metric の借金は 2023年以降の世代まで持ち越されます。"

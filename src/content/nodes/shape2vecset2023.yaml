@@ -51,12 +51,4 @@ relations:
       binary cross-entropy loss) but swaps the single vector for a set of 512
       latents read out by cross-attention; on ShapeNet autoencoding, mean IoU
       rises from 0.825 for Occupancy Networks to 0.965.
-    i18n:
-      ja:
-        note: "Occupancy Networks の設計に見出した弱点を直します。一つの大域 latent で駆動するニューラル場には「形状の細部を符号化する能力に大きな限界がある」。Occupancy Networks の occupancy の定式化 (Occupancy Networks と同じ形状の前処理、同じ binary cross-entropy 損失) はそのままに、単一のベクトルを、cross-attention で読み出す512個の latent の集合に置き換えました。ShapeNet の autoencoding では、平均 IoU が Occupancy Networks の 0.825 から 0.965 へ上がります。"
 status: seed
-i18n:
-  ja:
-    problem: "拡散モデルは画像を制しましたが、「2D領域での成功は、3D領域ではまだ再現されていない」。欠けていたのは、diffusion をかける土台となる形状表現でした。ニューラル場は連続で完全な表面を与えてくれますが、その latent は生成器と相性がよくありません。一つの大域ベクトル (Occupancy Networks、DeepSDF) は「高品質な形状の再構成に総じて苦戦し」、規則的な latent グリッドは大きすぎて、8×8×8 のようなごく低い解像度でしか生成に使えないのです。"
-    solution: "座標を捨てます。数多くの変種を試した末、著者らは「既存の不規則グリッドを改善できなかった」(自らの 3DILG を含めて)。そこでグリッドの補間の構造は残しつつ、位置の符号化はネットワークに任せました。表面の点群を cross-attention で、3D位置を持たない固定サイズの「集合」— 512個の latent ベクトル — に圧縮し、任意のクエリ点での occupancy は、その集合への cross-attention で読み出します。KL ボトルネックで集合をさらに圧縮して第二段へ。attention ベースの拡散モデルがこの latent 空間で、無条件に、あるいはカテゴリ・テキスト・部分点群・画像を条件に形状を生成します。ShapeNet の autoencoding では平均 IoU 0.965 (Occupancy Networks は 0.825)。そしてこの vector set は、2024〜25年の大規模3D生成器のいくつかが採用する latent になりました (→ CLAY、Hunyuan3D 2、TripoSG)。"
-    limitations: "論文自身が認めるとおり、学習に時間がかかります。「二段階の学習戦略」が必要で、その第一段は「ウェーブレットのような手設計の特徴に頼るより時間がかかり」、「対象とする形状データが変われば再学習が必要になりうる」うえ、拡散の第二段の学習時間も長めです。その世界は ShapeNet の人工物55カテゴリで、それを2,048点の入力点群越しに見ています — この点群の小ささこそ、CLAY が vector set をスケールさせたときに名指しした隙間です。「3DShape2VecSet では点群が総じて小さく、細かな幾何ディテールを捉えるには不十分」(→ CLAY)。"

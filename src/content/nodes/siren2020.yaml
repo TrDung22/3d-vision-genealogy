@@ -32,12 +32,4 @@ relations:
       SRN and its peers as lacking "the capacity to represent fine details",
       and their derivatives, and repairs that by changing the activation
       itself, sine for ReLU.
-    i18n:
-      ja:
-        note: "同じ研究室から一年後 — SRN とその同類を支える ReLU 座標 MLP には「細かなディテールを表現する能力」が欠け、導関数も表せないと診断し、活性化関数そのものを ReLU から正弦に替えて直しました。"
 status: seed
-i18n:
-  ja:
-    problem: "ReLU を使う座標 MLP — SRN と DeepSDF の主役 — は体系的にぼやけます。細かいディテールを表現できず、NeRF の positional encoding を加えても、物理ロス (eikonal、波動方程式) が要求する導関数は捉えられないのです。"
-    solution: "ReLU を正弦活性化と原理的な初期化に置き換えます。SIREN は画像・映像・音声・SDF を ReLU の MLP よりはるかに高い忠実度で fit し、その導関数もまた SIREN — なので勾配やラプラシアンの上で直接教師信号を与えられます。"
-    limitations: "初期化と周波数スケーリングに敏感で、ほぼ信号ごとの fitting です。汎化のデモ (ハイパーネットワークによる prior) は 32x32 の CelebA にとどまります。速度の王座はのちにグリッドベースの符号化 (Instant-NGP) が奪いました。正弦が生き残るのは、導関数がものを言う場所です。"

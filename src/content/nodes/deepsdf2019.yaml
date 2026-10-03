@@ -27,12 +27,4 @@ relations:
       Simultaneous and independent, same CVPR 2019, touching the same idea:
       continuous implicit representations as MLPs (IM-Net was the third sibling
       that year). When an idea is ripe, it falls everywhere at once.
-    i18n:
-      ja:
-        note: "同じ CVPR 2019 で、同時にしかも独立に、同じアイデア — MLP による連続的な陰関数表現 — へたどり着きました (その年の三人目の兄弟が IM-Net)。熟したアイデアは、あちこちで同時に実を落とすのです。"
 status: seed
-i18n:
-  ja:
-    problem: "Occupancy Networks と同じ問題 — 解像度にもトポロジーにも縛られない、連続的な形状表現を。"
-    solution: "MLP で連続的な符号付き距離関数 (SDF) を学習し、auto-decoder が形状ごとに潜在コードを最適化します。SDF なら表面の法線も表面までの距離もおまけで手に入ります。"
-    limitations: "推論のたびに潜在コードの最適化が要ります — 本人いわく、auto-decoding は「推論時にかなり多くの時間を要する」。形状が正準的な pose に置かれていることも前提です。そして物体再構成の路線の例に漏れず、ShapeNet の箱の中に閉じ込められたままです。"

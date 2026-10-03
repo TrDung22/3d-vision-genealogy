@@ -30,9 +30,6 @@ relations:
       outputs a smooth SMPL body, PIFu reconstructs the clothed SURFACE —
       hair, garments, unseen back — that the parametric line had defined
       out of the problem.
-    i18n:
-      ja:
-        note: "パラメトリック回帰の「裸のマネキン」という天井を直します。HMR が出すのは滑らかな SMPL ボディ、PIFu が再構成するのは服を着た表面 — 髪、衣服、見えない背中 — パラメトリック路線が問題の定義から外していたものです。"
   - node: occnet2019
     type: fixes
     note: >
@@ -41,12 +38,4 @@ relations:
       the global context of the image to infer the overall shape, which may
       not align with the input image accurately". PIFu's fix is pixel-ALIGNED
       features — aimed at a target the others never took on: people in clothes.
-    i18n:
-      ja:
-        note: "2019年の陰関数の波に遅れて加わり、そこに見出した弱点を直します。陰関数ベースの手法 (Occupancy Networks、DeepSDF、IM-Net) は「全体形状の推定を画像のグローバルな文脈に頼るため、入力画像と正確には揃わないことがある」。PIFu の処方はピクセル整列の特徴 — そしてそれを、他の誰も手がけなかった標的、服を着た人間に向けました。"
 status: seed
-i18n:
-  ja:
-    problem: "服を着た人間を — 髪も、衣服も、隠れた背中も — 一枚の写真からデジタル化する。パラメトリック人体モデル (SMPL) が差し出せるのは裸のマネキンだけ、という状況で。"
-    solution: "ピクセル整列の陰関数です。グローバルな潜在コード一つではなく、各3D点をその2D投影位置の画像特徴と照らし合わせる — 陰関数のアイデアを空間的に整列した画像の証拠と結びつけ、見えない領域まで含めて表面とテクスチャの両方を再構成します。"
-    limitations: "入力解像度に縛られ (512×512、細部が失われる)、体の prior が無いので見慣れない pose では解剖が崩れます — PIFuHD と体の prior を使う路線 (ICON、ECON) が、この順に診断し引き受けた二つの借金です。ただしピクセル整列の技そのものは、人間というニッチを完全に飛び出しました。"

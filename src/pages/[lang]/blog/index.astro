@@ -14,7 +14,7 @@ const root = `${base}/${lang}`;
 const posts = (await getCollection('posts')).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
 );
-const dateLocale = { en: 'en-US', ja: 'ja-JP' }[lang];
+const dateLocale = 'en-US';
 const fmtDate = (d: Date) =>
   d.toLocaleDateString(dateLocale, { year: 'numeric', month: 'long', day: 'numeric' });
 ---

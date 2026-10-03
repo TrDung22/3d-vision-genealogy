@@ -42,9 +42,6 @@ relations:
       each query requires a full pass through the network", so it reads
       features off planes through a one-hidden-layer decoder (7.8x faster
       than Mip-NeRF at 0.06x the memory, in its GAN setting).
-    i18n:
-      ja:
-        note: "NeRF のレンダラー — 密度と特徴を、NeRF の二段階の重点サンプリングで volume rendering する — を保ち、それを新しい方向、つまり一視点の写真からの教師なし3D生成へと運びます。変わったのは場のほうです。EG3D は NeRF 流の MLP を「クエリのたびにネットワーク全体を通るため、評価が遅い」と見て、平面から特徴を読み、隠れ層一つのデコーダに通しました (GAN の設定で Mip-NeRF の 7.8 倍速く、メモリは 0.06 倍)。"
   - node: neuralvolumes2019
     type: fixes
     note: >
@@ -54,12 +51,4 @@ relations:
       N³, so equal memory buys finer features; in EG3D's single-scene test
       the tri-plane beats a dense feature volume of equal capacity on PSNR
       and SSIM.
-    i18n:
-      ja:
-        note: "密なグリッドの3乗のメモリを直します。Neural Volumes 自身が限られた解像度を「最大の欠点」と呼び、EG3D もそれを引いて、そうしたグリッドは「重いメモリのオーバーヘッドを招く」としました。三枚の平面のコストは N³ ではなく N² なので、同じメモリでより細かい特徴が持てます。EG3D の単一シーンの実験では、tri-plane が同じ容量の密な特徴ボリュームを PSNR と SSIM で上回りました。"
 status: seed
-i18n:
-  ja:
-    problem: "3D-aware GAN は一視点の写真の集まりから顔や猫を学びますが、GAN は何千万枚もの画像をレンダリングしなければなりません。完全に陰的な生成器は高解像度には遅すぎ、近道である画像空間でのアップサンプリングは「視点の一貫性を犠牲にし、学習される3D形状の質を損なう」のです。"
-    solution: "答えは tri-plane です。StyleGAN2 の生成器が軸に沿った三枚の平面に特徴を描き、3D の点は三つの射影を足し合わせ、隠れ層一つの MLP が密度と特徴を読み出し、volume rendering がそれを画像へ射影します。平面のコストは N³ ではなく N² で、しかも2Dなので既製の 2D CNN で描ける。dual discrimination が、アップサンプリング後の出力を生のレンダリングに忠実に保ちます。FFHQ の 512² で FID 4.7、しかもリアルタイムです。"
-    limitations: "本人たちの言うとおり、tri-plane でもまだ高解像度でそのまま描くには遅く、EG3D は 128² で volume rendering してから画像空間でアップサンプリングします — dual discrimination はこの近似を抑えはしても、取り除きはしません。データセットのカメラ pose の分布も必要で、形状は「個々の歯のような細部を欠く」ままです。K-Planes はのちに、平面を足し合わせるだけでは「空間的に局在した信号」を作れないことを示しました。tri-plane は GAN より長生きしました — LRM は一枚の画像からそれを直接予測します。"

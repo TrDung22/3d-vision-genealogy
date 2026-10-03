@@ -28,12 +28,4 @@ relations:
       of classic shape-from-shading models" (citing Horn 1970) in which not
       only shape but reflectance and illumination are unknown — recovered
       together under statistical priors.
-    i18n:
-      ja:
-        note: "Horn の定式化の上にまっすぐ立ちます。SIRFS は自らを「古典的な shape-from-shading モデルの拡張」(Horn 1970 を引用) と呼び、形状だけでなく反射率と照明も未知としたうえで、統計的な prior のもとでそれらをまとめて復元します。"
 status: seed
-i18n:
-  ja:
-    problem: "intrinsic images 問題の完全版に挑む — 一枚の画像から形状・照明・反射特性を同時に復元する。shape-from-shading の夢の、最も完成された形です。"
-    solution: "成分ごとに別々に学習した統計的 prior (形状の滑らかさ、自然照明の統計、反射率のスパース性) を使った最適化 — 現代の道具で再武装した shape-from-shading です。"
-    limitations: "それでも切り出し済みの物体と単純な照明モデルが前提です。登場したのは end-to-end CNN の波が押し寄せたまさにその時で、単一画像3Dの主流はデータから学ぶ深度へと移り (→ Eigen 2014)、物理の路線はふたたび取り残されました。"

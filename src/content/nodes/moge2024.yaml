@@ -34,9 +34,6 @@ relations:
       obtain 3D points cloud results". MoGe predicts the point map itself,
       camera geometry built in, and trains it with an optimal alignment solver
       where earlier scale-and-shift alignment was outlier-prone or approximate.
-    i18n:
-      ja:
-        note: "深度レーン全体のゴールポストを動かしました。Depth Anything V2 が予測するのは深度マップで、MoGe の言葉を借りれば「3D点群の結果を得るには ground truth のカメラ焦点距離が必要」です。MoGe は点マップそのものをカメラ幾何ごと予測し、従来のスケール・シフト整列が外れ値に弱いか近似どまりだったところを、最適な整列ソルバーで学習します。"
   - node: depthpro2024
     type: fixes
     note: >
@@ -45,12 +42,4 @@ relations:
       synthetic data only. MoGe-2 keeps real data throughout — filtering out
       its false depth values — and recovers metric point maps with sharp
       detail as well.
-    i18n:
-      ja:
-        note: "MoGe-2 が弱点を名指しします。Depth Pro は深度マップを鮮明にした「が、幾何の精度ではなお及ばない」 — 第2段階を合成データだけで学習したためです。MoGe-2 は誤った深度値を除きながら実データを最後まで使い、鋭いディテールまで備えた metric な点マップを復元します。"
 status: seed
-i18n:
-  ja:
-    problem: "深度マップはまだ幾何ではありません。カメラを隠し、焦点距離と形状を絡ませ、誰もが使える点群にするには後付けの内部パラメータが要るのです。"
-    solution: "予測ターゲットそのものを替えます。アフィン不変の点マップを回帰する — 一回の forward で完全な3D幾何と復元可能な FOV が同時に手に入り、深度マップ路線に欠けていた最適なアフィン整列の教師信号で学習します。MoGe-2 (NeurIPS 2025) は metric 出力用に切り離したグローバルスケール分岐と、ノイズだらけの LiDAR/SfM ラベルを選別・補完するデータ精錬パイプラインを加え、相対幾何・metric スケール・微細ディテールの三つを初めて同時に取ったと主張します。"
-    limitations: "依然として単一画像かつ静的です。アフィン不変の技はスケール問題を先送りするだけで消しはせず (metric 分岐は別ヘッド)、「これまでどの手法も同時には達成していない」という自己申告の主張も benchmark 平均の話であって、曖昧性への新しい理論ではありません。"

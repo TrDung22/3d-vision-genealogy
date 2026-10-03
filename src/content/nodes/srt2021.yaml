@@ -39,9 +39,6 @@ relations:
       of tokens instead of one flat vector, "one of the main novelties of
       SRT"; collapsing it back to a flat latent costs 2.5 dB on
       MultiShapeNet.
-    i18n:
-      ja:
-        note: "SRT が GQN までさかのぼる路線 — 「潜在ベクトルでシーンを表し、そこから新規視点を合成できる」手法 — を受け継ぎます。視点を符号化し、学習されたデコーダで任意のクエリを描き、明示的な幾何は使わない。SRT が変えたのは潜在表現のほうです。一本の平坦なベクトルではなくトークンの集合 — 「SRT の主要な新規性の一つ」 — で、平坦な潜在表現に戻すと MultiShapeNet で 2.5 dB 落ちます。"
   - node: pixelnerf2020
     type: fixes
     note: >
@@ -51,12 +48,4 @@ relations:
       diagnoses in the whole line — "reliance on explicit camera projections
       requires precise camera poses". Under pose noise pixelNeRF "degrades
       sharply"; UpSRT runs on unposed images.
-    i18n:
-      ja:
-        note: "SRT が測った、pixelNeRF の再投影の二つのコストを直します。一つは速度で、pixelNeRF 自身が認めています (「NeRF と同じく、レンダリング時間は遅い」。1.3 fps に対して SRT は 121 fps)。もう一つは、SRT がこの路線全体に見た pose への依存 — 「明示的なカメラ射影に頼るには、正確なカメラ pose が要る」 — です。pose にノイズが乗ると pixelNeRF は「急激に劣化」しますが、UpSRT は pose のない画像でも動きます。"
 status: seed
-i18n:
-  ja:
-    problem: "見たことのないシーンを、数枚の画像から対話的な速度で描くこと。NeRF はシーンごとに学習が要り、pixelNeRF のような再投影の手法は正確な pose を必要としたうえ、ピクセルごとにネットワークを何百回も走らせます。そして潜在表現のモデル — たいていは幾何を使わない — は「複雑な実世界のデータセットへはおおむねスケールしない」のです。"
-    solution: "トランスフォーマーのエンコーダが、すべての入力画像 (pose 付きでも、なしでも) のパッチを潜在トークンの「集合」に変えます — それがシーン表現です。ライトフィールドのデコーダは、各ピクセルの光線をその集合へアテンションさせて描く。ボリュームも射影もなく、一度の feed-forward で終わります。レンダリングは 121 fps、pose を使わない変種 (UpSRT) もあり、実世界の Street View のシーンにまでスケールします。"
-    limitations: "ぼやけます。本人たちの言うとおり、複雑なシーンでは入力視点の近くでさえ描画がぼやけ、幾何を使わないモデルは「とても小さなデータセットではうまく働かない」。視点が近く pose が完璧なら、しばしば pixelNeRF のほうが勝ちます。そのライトフィールドには、一貫性の理論的な保証もありません。LVSM はのちに、こうした幾何を使わないレンダラーは「モデルの容量とスケーラビリティに欠ける」と見て、その原因を SRT の CNN トークナイザとクロスアテンションのデコーダに帰しました。"

@@ -31,18 +31,12 @@ relations:
       Repairs NeRF's per-scene, many-image requirement within months of its
       publication: conditioning turns a memorization machine into a
       generalizable one.
-    i18n:
-      ja:
-        note: "NeRF の「シーンごと・大量画像」という要件を、発表から数か月で直しました。条件付けが、暗記マシンを汎化できるマシンに変えたのです。"
   - node: pifu2019
     type: builds-on
     note: >
       The pixel-aligned feature trick escapes the human niche: PixelNeRF
       plugs PIFu-style aligned features into volume rendering — a human-lane
       idea becoming scene-lane infrastructure.
-    i18n:
-      ja:
-        note: "ピクセル整列特徴の技が、人間というニッチを飛び出します。PixelNeRF は PIFu 流の整列特徴をボリュームレンダリングに差し込みました — 人体レーンのアイデアが、シーンレーンのインフラになったのです。"
   - node: tatarchenko2019
     type: builds-on
     note: >
@@ -51,12 +45,4 @@ relations:
       choice that, citing Tatarchenko, "discourages the memorization of the
       training set" — and carries it from shape prediction over to
       image-conditioned radiance fields.
-    i18n:
-      ja:
-        note: "中心となる設計を Tatarchenko の処方の上に築きます。canonical な座標系ではなく、入力カメラの view space で予測する — Tatarchenko を引いて「学習セットの記憶を抑える」とされた選択です — そしてそれを、形状の予測から画像条件付きの radiance field へと持ち込みました。"
 status: seed
-i18n:
-  ja:
-    problem: "NeRF には何十枚ものポーズ付き画像とシーンごとの学習が必要です — 単一画像の設定には、作りからして役に立ちません。"
-    solution: "放射輝度場を画像で条件付けます。ピクセル整列の CNN 特徴を NeRF の MLP へ流し込み、シーンをまたいで学習した一つのネットワークが、たった一枚の入力から新規視点をフィードフォワードで描く — シーンごとの最適化はもう要りません。"
-    limitations: "一枚の画像からでは鮮明に描けません — 見えない部分を「想像」ではなく「推測」する回帰モデルだからです。ZeroNVS はのちに、これを「一枚の画像から、鮮明な自然画像に見えるレンダリングを生み出せない」手法の一つに数えました。隠れた領域を鮮明に描く問題は、拡散 prior (ZeroNVS、Zero-1-to-3 の時代) が生成問題として扱い直すのを待つことになります。本人たちの言うとおり、レンダリングも NeRF と同じく遅いままです。さらに SRT が指摘したとおり、この路線は「明示的なカメラ投影に頼るため、正確なカメラ pose を必要とする」のです。"

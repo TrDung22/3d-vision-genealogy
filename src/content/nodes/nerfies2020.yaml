@@ -31,9 +31,6 @@ relations:
       Repairs the static-scene assumption for REAL captures: where NeRF
       needs a frozen world, Nerfies budgets for the involuntary motion of a
       living subject and recovers the crisp static answer underneath.
-    i18n:
-      ja:
-        note: "実際の撮影に対して、静的シーンの仮定を直します。NeRF が凍った世界を要するところで、Nerfies は生きた被写体の無意識の動きに予算を割り当て、その下にある鮮明な静的解を取り戻します。"
   - node: nerfw2020
     type: builds-on
     note: >
@@ -44,12 +41,4 @@ relations:
       alongside the view direction, as in NeRF-W's NeRF-A variant. It pairs
       that code with a second per-frame latent of its own: a deformation
       code that warps each observation into the canonical template.
-    i18n:
-      ja:
-        note: "NeRF-W の画像ごとの appearance コードの上に立ちます。「NeRF-W と同様に」、Nerfies は各フレームに学習された appearance の潜在コードを与え、それが「色の出力を調整して、入力フレーム間の見た目のばらつき (たとえば露出やホワイトバランス) に対処する」。このコードは NeRF-W の NeRF-A と同じく、視線方向と並んで canonical NeRF に入力されます。Nerfies はそこに、独自の二つ目のフレームごとの潜在コード — 各観測を canonical なテンプレートへ warp する変形コード — を組み合わせました。"
 status: seed
-i18n:
-  ja:
-    problem: "気ままに振り回したスマホからの、フォトリアルで自由視点の「自撮り」。被写体は呼吸し、揺れ、まばたきする — 非剛体だらけで、NeRF の静的仮定は砕け散ります。"
-    solution: "観測ごとの変形場が各フレームを共有 canonical NeRF へ warp し、それを弾性正則化 (非剛体な局所変形にペナルティ)、背景 prior、変形の周波数の粗から密へのアニーリングで手なずける — 気軽に撮った人間を再構成します。"
-    limitations: "論文自身によれば、「トポロジーの変化、たとえば口の開閉に苦戦」します。唇の継ぎ目には「変形の鋭い不連続」が要り、それは「連続な MLP には予測しにくい」からです。さらに速い動きのあるフレームでは失敗することがあり、学習も遅い (フル HD のモデルで V100 8枚を使って1週間) のです。同じチームの HyperNeRF は、この診断を出発点にしました。"

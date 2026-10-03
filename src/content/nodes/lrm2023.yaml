@@ -30,17 +30,11 @@ relations:
       regularization", and per-shape NeRF optimization "is often slow and
       impractical". It drops per-object SDS optimization for a single
       ~1-second forward pass.
-    i18n:
-      ja:
-        note: "LRM が、Zero-1-to-3 の属する路線に見出したボトルネックを直します。拡散モデルに導かれる手法は「繊細なパラメータ調整と正則化を要し」、形状ごとの NeRF 最適化は「しばしば遅く実用的でない」。物体ごとの SDS 最適化を捨て、約1秒の forward 一回に置き換えました。"
   - node: nerf2020
     type: builds-on
     note: >
       The output is a triplane radiance field — NeRF infrastructure, but
       PREDICTED rather than optimized.
-    i18n:
-      ja:
-        note: "出力は triplane の放射輝度場 — NeRF のインフラです。ただし最適化するのではなく、予測するのです。"
   - node: eg3d2021
     type: builds-on
     note: >
@@ -48,9 +42,6 @@ relations:
       picks "the triplane spatial encoding function proposed by EG3D" for its
       O(N²) tokens rather than a voxel grid's O(N³) — the planes a GAN once
       painted, now regressed from a single image by a transformer.
-    i18n:
-      ja:
-        note: "その triplane は EG3D のものです。LRM は「triplane-NeRF の定式化」を採用し、ボクセルグリッドの O(N³) ではなく O(N²) のトークンで済むことから、「EG3D が提案した triplane の空間符号化関数」を選びました — かつて GAN が描いた平面を、今度はトランスフォーマーが一枚の画像から回帰するのです。"
   - node: objaverse2023
     type: builds-on
     note: >
@@ -58,12 +49,4 @@ relations:
       ~730K Objaverse assets plus ~220K MVImgNet videos, and credits the
       "combination of a high-capacity model and large-scale training data"
       for its generalization.
-    i18n:
-      ja:
-        note: "その賭けは、モデルと同じくらいデータに支えられています。LRM は約73万の Objaverse アセットと約22万本の MVImgNet 動画で end-to-end 学習し、汎化の源を「大容量のモデルと大規模な学習データの組み合わせ」に求めています。"
 status: seed
-i18n:
-  ja:
-    problem: "Zero-1-to-3 路線の物体ごとの最適化は、実アプリケーションには遅すぎます。必要なのは、一枚の画像 → forward 一回での3Dです。"
-    solution: "5億パラメータのトランスフォーマーが、画像から triplane-NeRF を直接予測します。Objaverse + MVImgNet で end-to-end 学習 — 論文自身が語るとおり GPT のレシピに倣い、最適化パイプラインを、大規模データで学習した一つの大きなモデルに置き換えました。"
-    limitations: "遮蔽された側のテクスチャはぼやけます (論文自身の説明では、確率的な問題を一つの決定的な予測に押し込んだ代償)。固定のカメラ仮定が外れると形状は歪み、コードも重みも公開されませんでした — コミュニティは自ら再実装するしかなかったのです (6週間後の OpenLRM)。"

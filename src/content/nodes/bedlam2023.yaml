@@ -39,12 +39,4 @@ relations:
       synthetic ground truth alone wins on real photos. The architecture is
       vindicated, not refuted: HMR, with its adversary removed and trained on
       BEDLAM, approaches the state of the art.
-    i18n:
-      ja:
-        note: "HMR のデータの前提 — 野外画像には3Dの ground truth がないから、2Dキーポイントと敵対的 prior で学ぶ — に挑戦します。正確な合成 ground truth だけで実写真に勝てることを示して。アーキテクチャは否定されるどころか、むしろ潔白が証明されました。discriminator を外し BEDLAM で学習した HMR は、最先端に迫るのです。"
 status: seed
-i18n:
-  ja:
-    problem: "HMR 以来、分野の作業仮説はこうでした — 実写真には3Dの ground truth がない。だから人体メッシュの回帰器は、2Dキーポイントや敵対的 prior、擬似 ground truth のフィッティングを通じて、実画像から学ぶしかない。実際の学習データは、本当に必要なのでしょうか?"
-    solution: "ground truth のほうをレンダリングしてしまいます。多様な体型を SMPL-X で表した合成動画データセットで、服は「動く体の上でリアルにシミュレート」され、動きは AMASS から取られる。合成データだけで学習した回帰器 (BEDLAM-HMR、BEDLAM-CLIFF) が「初めて」、実画像のベンチマーク (3DPW、RICH、SSP-3D、HBW) で最先端の3D人体姿勢・体型推定精度に届きました — 素朴な HMR でさえ当時最良の CLIFF に迫り、実データでの微調整が足すのはわずかな上積みだけです。"
-    limitations: "「合成データだけ」が指すのは回帰器であって、バックボーンではありません — 精度は、実画像で事前学習したバックボーンになお依存します。動きは AMASS からランダムに取られ、座る・寝転ぶ・複雑なスポーツの姿勢は少なく、髪の物理も長い髪型もなく、体型の分布も一様ではありません。"

@@ -1,6 +1,6 @@
 ---
 import '../styles/global.css';
-import { LOCALES, LOCALE_LABELS, t, type Lang } from '../lib/i18n';
+import { t, type Lang } from '../lib/i18n';
 
 interface Props {
   title: string;
@@ -20,11 +20,6 @@ const nav = [
   { href: `${root}/heresies/`, label: t(lang, 'nav.heresies') },
   { href: `${root}/blog/`, label: t(lang, 'nav.blog') },
 ];
-
-// swap only the language segment, keep the rest of the path
-const path = Astro.url.pathname;
-const rest = path.startsWith(`${root}`) ? path.slice(root.length) || '/' : '/';
-const alternates = LOCALES.map((l) => ({ l, href: `${base}/${l}${rest}` }));
 ---
 
 <!doctype html>
@@ -35,7 +30,6 @@ const alternates = LOCALES.map((l) => ({ l, href: `${base}/${l}${rest}` }));
     <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
     <title>{title} · 3D Vision Genealogy</title>
-    {alternates.map((a) => <link rel="alternate" hreflang={a.l} href={a.href} />)}
     <script is:inline>
       // set the theme before first paint to avoid a flash
       document.documentElement.dataset.theme =
@@ -51,15 +45,6 @@ const alternates = LOCALES.map((l) => ({ l, href: `${base}/${l}${rest}` }));
           <nav>
             {nav.map((item) => <a href={item.href}>{item.label}</a>)}
           </nav>
-          <div class="lang-switch">
-            {
-              alternates.map((a) => (
-                <a href={a.href} class:list={[{ active: a.l === lang }]} lang={a.l}>
-                  {LOCALE_LABELS[a.l]}
-                </a>
-              ))
-            }
-          </div>
           <button id="theme-toggle" type="button" aria-label={t(lang, 'theme.toggle')} title={t(lang, 'theme.toggle')}>
             <span class="icon-dark" aria-hidden="true">☾</span>
             <span class="icon-light" aria-hidden="true">☀</span>
@@ -144,31 +129,6 @@ const alternates = LOCALES.map((l) => ({ l, href: `${base}/${l}${rest}` }));
     text-decoration: none;
   }
 
-  .lang-switch {
-    display: flex;
-    gap: 0.15rem;
-    border: 1px solid var(--baseline);
-    border-radius: 8px;
-    padding: 0.12rem;
-  }
-
-  .lang-switch a {
-    color: var(--muted);
-    font-size: 0.78rem;
-    font-weight: 600;
-    padding: 0.12rem 0.5rem;
-    border-radius: 6px;
-  }
-
-  .lang-switch a:hover {
-    color: var(--ink);
-    text-decoration: none;
-  }
-
-  .lang-switch a.active {
-    background: var(--baseline);
-    color: var(--ink);
-  }
 
   #theme-toggle {
     appearance: none;

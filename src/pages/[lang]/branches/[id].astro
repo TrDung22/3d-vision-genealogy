@@ -1,7 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../../../layouts/Base.astro';
-import { nodeProse } from '../../../lib/graph';
 import { LOCALES, t, type Lang } from '../../../lib/i18n';
 
 export async function getStaticPaths() {
@@ -16,16 +15,13 @@ const lang = Astro.params.lang as Lang;
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const root = `${base}/${lang}`;
 
-const loc = branch.data.i18n?.[lang];
-const title = loc?.title ?? branch.data.title;
-const tagline = loc?.tagline ?? branch.data.tagline;
-const description = loc?.description ?? branch.data.description;
+const { title, tagline, description } = branch.data;
 
 const nodes = (await getCollection('nodes'))
   .filter((n) => n.data.branch.id === branch.id)
   .sort((a, b) => a.data.year - b.data.year);
 
-const laneTitle = new Map(branch.data.lanes.map((l) => [l.id, l.i18n?.[lang]?.title ?? l.title]));
+const laneTitle = new Map(branch.data.lanes.map((l) => [l.id, l.title]));
 const allNodes = await getCollection('nodes');
 const shortOf = new Map(allNodes.map((n) => [n.id, n.data.short]));
 ---
@@ -55,7 +51,7 @@ const shortOf = new Map(allNodes.map((n) => [n.id, n.data.short]));
               <a href={`${root}/nodes/${n.id}/`}>{n.data.short}</a>
               {laneTitle.has(n.data.lane) && <span class="badge">{laneTitle.get(n.data.lane)}</span>}
             </h3>
-            <p>{nodeProse(n.data, lang).problem}</p>
+            <p>{n.data.problem}</p>
             {n.data.relations.length > 0 && (
               <p class="muted rels">
                 {n.data.relations

@@ -8,36 +8,19 @@ description: >
   (voxels → points → meshes → implicit functions), to internet-scale priors
   borrowed from image generators (Zero-1-to-3, LRM). Each generation swaps the
   kind of prior and pays a different price.
-i18n:
-  ja:
-    title: "単一画像3D"
-    tagline: "一枚の画像からの3D復元 — マシンビジョン最古の不良設定問題"
-    description: "一枚の2D画像に合致する3Dシーンは無数にあります。解が一つに定まらない — だからこの枝の歴史は、まるごと「事前知識 (prior) の歴史」です。物理の prior (shape-from-shading) から、データに学ぶ統計の prior (Make3D、Eigen)、表現そのものに焼き込まれた幾何の prior (ボクセル → 点群 → メッシュ → 陰関数)、そして画像生成モデルから借りてきたインターネット規模の prior (Zero-1-to-3、LRM) へ。世代が替わるたびに prior の種類が替わり、支払う代償も替わってきました。"
 color: "#3987e5" # categorical slot 1 (dark)
 order: 1
 status: active
 lanes:
   - id: priors
     title: "Priors & shape-from-X"
-    i18n:
-      ja: { title: "事前知識と Shape-from-X" }
   - id: depth
     title: "Depth estimation"
-    i18n:
-      ja: { title: "深度推定" }
   - id: object
     title: "Object reconstruction"
-    i18n:
-      ja: { title: "物体再構成" }
   - id: generative
     title: "Generative 3D"
-    i18n:
-      ja: { title: "生成3D" }
   - id: human
     title: "Human & avatar"
-    i18n:
-      ja: { title: "人体とアバター" }
   - id: scene
     title: "Scenes from few images"
-    i18n:
-      ja: { title: "少数画像からのシーン" }

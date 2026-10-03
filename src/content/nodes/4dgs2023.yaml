@@ -32,9 +32,6 @@ relations:
       Extends splatting along the time axis within months: keeps the
       rasterization speed that made 3DGS a phenomenon and spends it on the
       dynamic setting where ray-marched methods were slowest.
-    i18n:
-      ja:
-        note: "スプラッティングを時間軸へと数か月で拡張します。3DGS を現象にしたラスタライズの速度を保ち、それをレイマーチング系が最も遅かった動的設定へ注ぎ込みました。"
   - node: dnerf2020
     type: fixes
     note: >
@@ -43,9 +40,6 @@ relations:
       frame and splatted, instead of every ray sample being warped and
       queried through MLPs — from 1.5 fps for the deformation-based TiNeuVox
       to 82 fps on the same synthetic benchmark.
-    i18n:
-      ja:
-        note: "変形ベースの動的 NeRF が抱えたレンダリング速度の崩壊を直します。同じ canonical + warp のアイデアながら、光線上のサンプルを一つずつ warp して MLP に問い合わせる代わりに、フレームごとにガウシアンを一度だけ変形させてスプラットする — 同じ合成ベンチマークで、変形ベースの TiNeuVox の 1.5 fps から 82 fps へ。"
   - node: hexplane2023
     type: builds-on
     note: >
@@ -56,9 +50,6 @@ relations:
       scale. HexPlane had itself proposed "using HexPlane to represent
       deformation fields"; without the planes, 4D-GS falls from 34.05 to
       27.05 dB on the synthetic scenes.
-    i18n:
-      ja:
-        note: "変形場のエンコーダーは、論文自身の言葉で「HexPlane に着想を得た」ものです。各ガウシアンの中心と時刻を多解像度の HexPlane — x, y, z, t にまたがる六枚の特徴平面 — で符号化し、小さな MLP がガウシアンの位置・回転・スケールの変化を復号します。「HexPlane で変形場を表現する」ことは HexPlane 自身が提案していたもので、平面を外すと、合成シーンでの 4D-GS は 34.05 dB から 27.05 dB に落ちます。"
   - node: kplanes2023
     type: builds-on
     note: >
@@ -66,9 +57,6 @@ relations:
       "a 4D K-Planes" module "to decompose the 4D neural voxel into 6
       planes", and reads a feature exactly as K-Planes does, multiplying the
       six plane samples and concatenating the products across scales.
-    i18n:
-      ja:
-        note: "HexPlane の名を冠したエンコーダーは、K-Planes でできています。4D-GS は「4D の K-Planes」モジュールを採用して「4D のニューラルボクセルを6枚の平面に分解」し、特徴の読み出し方も K-Planes と同じで、六枚の平面から取った値を掛け合わせ、その積をスケールをまたいで連結します。"
   - node: dynamic3dgs2023
     type: fixes
     note: >
@@ -78,12 +66,4 @@ relations:
       consumption increase, denoted as O(tN)". 4D-GS keeps one canonical set
       plus a deformation network, O(N + F), and unlike its multi-camera
       predecessor it also runs on monocular video.
-    i18n:
-      ja:
-        note: "最初の動的ガウシアンが抱えたメモリの増大を直します。4D-GS の診断はこうです。「各3Dガウシアンの情報をタイムスタンプごとに保存するために明示的なテーブルを用いており、O(tN) と表される線形のメモリ消費増加につながる」。4D-GS は一組の canonical なガウシアンと変形ネットワークだけを持って O(N + F) に抑え、しかもマルチカメラ前提だった先行研究と違い、単眼動画でも動きます。"
 status: seed
-i18n:
-  ja:
-    problem: "動的放射輝度場は NeRF のコストを相続しました。初期の手法は学習に数日 (D-NeRF は GPU 1枚で2日) を要し、学習を数分に縮めたグリッド系の後継でさえ、描画は毎秒1〜2.5フレーム程度 — どこからでも見られる動画、ただし実際にはリアルタイムでない、を除いて。2か月前の Dynamic 3D Gaussians は確かにリアルタイムで描画できましたが、すべてのガウシアンの位置と回転を時刻ごとに保存し直し、マルチカメラのリグを必要としました。"
-    solution: "一組の canonical な3Dガウシアンを、ガウシアンごとの動きと形状変化を予測するコンパクトな分解場 (HexPlane 風) が時間にわたって変形させます — 82fps・800x800 の動的シーンを数分で学習、canonical ガウシアンを時間で共有してストレージも控えめに。"
-    limitations: "論文自身によれば、大きな動き、背景点の欠如、不正確なカメラ pose が 4D ガウシアンの最適化を難しくし、単眼動画では学習ビューに過学習して新規視点で破綻することがあります。"

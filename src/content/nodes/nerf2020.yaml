@@ -28,9 +28,6 @@ relations:
       Inherits the continuous implicit-MLP representation from the
       DeepSDF/Occupancy Networks line and adds differentiable volume
       rendering — the bridge between two branches of this genealogy.
-    i18n:
-      ja:
-        note: "DeepSDF / Occupancy Networks 路線から連続的な陰関数 MLP 表現を受け継ぎ、そこへ微分可能ボリュームレンダリングを加えました — この系譜の二つの枝をつなぐ橋です。"
   - node: srn2019
     type: builds-on
     note: >
@@ -38,9 +35,6 @@ relations:
       differentiable ray marching — but replaces the LEARNED marcher, which
       commits to a single depth and color per ray, with fixed volume
       rendering and adds positional encoding, curing the blur.
-    i18n:
-      ja:
-        note: "SRN の核心となる賭け — シーンを座標 MLP とし、微分可能なレイマーチングで描く — を保ちつつ、光線ごとに一つの深度と色しか選ばない「学習された」marcher を固定の volume rendering に置き換え、positional encoding を加えて、ぼやけを治しました。"
   - node: neuralvolumes2019
     type: fixes
     note: >
@@ -50,18 +44,12 @@ relations:
       sampling". NeRF keeps the recipe — a volume optimized per scene and
       rendered by differentiable ray marching — but encodes it as a
       continuous MLP, so resolution no longer costs cubic memory.
-    i18n:
-      ja:
-        note: "NeRF が、Neural Volumes を含むボクセルベースの volume 手法に名指しした限界を直します。高解像度へのスケールは「離散的なサンプリングに起因する時間・空間計算量の悪さによって、根本的に制限される」。NeRF はシーンごとに最適化したボリュームを微分可能なレイマーチングで描くというやり方を保ちつつ、それを連続 MLP として符号化しました — 解像度がもう3乗のメモリを食わなくなったのです。"
   - node: llff2019
     type: builds-on
     note: >
       Same group, next year: LLFF's forward-facing captures and benchmark
       carry over, but the layered light-field machinery is replaced
       wholesale by one optimized radiance field.
-    i18n:
-      ja:
-        note: "同じグループの翌年です。LLFF の前向き撮影とベンチマークは引き継ぎつつ、層状ライトフィールドの機構はまるごと、最適化された一つの放射輝度場に置き換えられました。"
   - node: kajiya1984
     type: builds-on
     note: >
@@ -71,12 +59,4 @@ relations:
       their brightness integral, discretized with the quadrature from Max's
       1995 review; what NeRF extends is the field being rendered — an MLP's
       densities, fitted to photographs by gradient descent.
-    i18n:
-      ja:
-        note: "レンダラーは1984年のものです。NeRF は「古典的な volume rendering の原理を用いて」描画し、その出典として Kajiya と Von Herzen を挙げています (§4、文献 [16])。透過率 T(t) は二人の輝度積分にある指数関数的な減衰そのもので、Max の1995年のレビューにある求積法で離散化されています。NeRF が広げたのは、描かれる場のほうです — 写真に勾配降下で合わせ込んだ MLP の密度。"
 status: seed
-i18n:
-  ja:
-    problem: "新規視点合成 — ポーズ付きの画像の集合が与えられたとき、シーンを新しい視点から描く。単一画像の問題ではありませんが、その運命はあの枝と固く結びついています。"
-    solution: "(位置, 視線方向) → 色 + 密度 を写す MLP を、微分可能な volume rendering により、pose 付きの画像だけから学習します — 数 MB の重みに収まる、連続的でフォトリアルなシーン表現です。"
-    limitations: "正確な pose 付きの画像が何十枚も必要で、シーンごとの学習も長い。しかも密度は表面ではなく、そこから取り出した幾何は粗く不満足なものになります — UNISURF、NeuS、VolSDF がそれぞれ診断したとおりです。画像がたくさん要るという、まさにこの限界が、単一画像の生成路線への試験問題になりました — 視点が足りないなら、生成せよ、と。"

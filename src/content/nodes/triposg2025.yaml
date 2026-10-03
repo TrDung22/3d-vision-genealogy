@@ -28,17 +28,11 @@ relations:
       "regress the 3D model in a deterministic way" and "exhibit artifacts in
       occluded areas" — and chases fidelity by replacing the feed-forward
       regressor with a scaled rectified-flow generator.
-    i18n:
-      ja:
-        note: "TripoSR を共同開発した VAST のチームによる、次の賭けです。TripoSR の属する再構成路線の弱点 — 「3Dモデルを決定的に回帰し」、「遮蔽領域にアーティファクトを示す」モデル — を名指しし、フィードフォワードの回帰器をスケールさせた rectified-flow 生成器に置き換えて忠実度を追いました。"
   - node: hunyuan3d2-2025
     type: independent
     note: >
       Parallel entries in the 2025 industrial shape-generation race, both
       flow-based, developed independently.
-    i18n:
-      ja:
-        note: "2025年の産業向け形状生成レースに並走した二つのエントリー — どちらもフローベースで、互いに独立に開発されました。"
   - node: shape2vecset2023
     type: builds-on
     note: >
@@ -48,9 +42,6 @@ relations:
       of learnable embeddings. What it changes is the field: occupancy, it
       argues, "has limited geometric representation capabilities compared to
       SDF", so its VAE predicts a truncated SDF, with surface-normal guidance.
-    i18n:
-      ja:
-        note: "VAE は「3DShape2Vecset の設計」に従います — 「latent vector set を潜在表現として選び」、学習可能な埋め込みではなく間引いた表面点を latent の初期 query とする point query 版まで踏襲。変えたのは場のほうです。occupancy は「SDF に比べて幾何の表現能力が限られる」と論じ、VAE は表面法線のガイダンスつきで truncated SDF を予測します。"
   - node: clay2024
     type: fixes
     note: >
@@ -59,12 +50,4 @@ relations:
       "limits the ability to fully update model parameters based on image
       information", costing fine-grained consistency with the input. TripoSG
       conditions its rectified-flow transformer on the image itself.
-    i18n:
-      ja:
-        note: "TripoSG が CLAY の画像条件付けに見出した弱点を直します。テキスト条件の基盤モデルを凍結し、画像用に3.52億パラメータを追加で学習する方式は、「画像の情報にもとづいてモデルのパラメータを十分に更新する能力を制限する」ため、入力との細部の一貫性が損なわれる、と。TripoSG は rectified flow のトランスフォーマーを、画像そのもので条件付けます。"
 status: seed
-i18n:
-  ja:
-    problem: "高速フィードフォワード路線 (TripoSR 系) は忠実度の天井に当たりました。速度は解決済み — でも一枚の画像から鋭い幾何ディテールを出すことは、まだだったのです。"
-    solution: "生成側を本気でスケールさせます。高解像度 SDF 潜在の上で動く大規模 rectified-flow トランスフォーマーを、徹底的に選別したデータで学習 — TripoSR の forward 一回の速さを手放して多段のフローサンプリングを取る代わりに、幾何の忠実度をはっきり一段引き上げ、重みも公開しました。"
-    limitations: "まずは幾何から — 見た目やマテリアルには依然として下流の工程が要ります。そしてこの波の例に漏れず、その世界はキュレーション済み物体データセットであって、シーンではありません。"

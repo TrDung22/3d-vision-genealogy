@@ -31,9 +31,6 @@ relations:
       constrained by the variety of the used 3D data collection and show poor
       generalization capabilities". The fix swaps a ShapeNet prior of ~50,000
       CAD models in 13 categories for diffusion's internet-scale prior.
-    i18n:
-      ja:
-        note: "Zero-1-to-3 が自ら診断した、ShapeNet で学習する再構成路線 (Occupancy Networks を含む) の「閉じた世界」の借金を清算します。その路線のモデルは「使われた3Dデータコレクションの多様性に縛られ、汎化能力に乏しい」のです。修正は、13カテゴリ・約5万個の CAD モデルからなる ShapeNet prior を、拡散モデルのインターネット規模の prior に置き換えることでした。"
   - node: nerf2020
     type: builds-on
     note: >
@@ -41,21 +38,10 @@ relations:
       model supervises a voxel radiance field by score distillation — a
       cross-branch relation: neural rendering becomes single-image 3D's
       infrastructure.
-    i18n:
-      ja:
-        note: "3D への持ち上げは NeRF 流の radiance field を介します。視点条件付きモデルが、score distillation でボクセルの radiance field を教師するのです — 枝をまたぐ関係です。ニューラルレンダリングが、単一画像3Dのインフラになりました。"
   - node: objaverse2023
     type: builds-on
     note: >
       Its viewpoint control is learned from this data: Zero-1-to-3 fine-tunes
       Stable Diffusion on renders of Objaverse — "800K+ 3D models created by
       100K+ artists" — with 12 random views per object.
-    i18n:
-      ja:
-        note: "視点の制御は、このデータから学ばれます。Zero-1-to-3 は Objaverse — 「10万人以上のアーティストが作った80万以上の3Dモデル」 — のレンダリングで Stable Diffusion をファインチューニングします。物体ごとにランダムな12視点です。"
 status: seed
-i18n:
-  ja:
-    problem: "現実世界のどんな物体でも、単一画像から3Dへ — ShapeNet で育った物体再構成の路線が、ついに成し遂げられなかったことです。"
-    solution: "Stable Diffusion をカメラ条件付きの新規視点生成器へ微調整し、一枚の画像から残りの視点を「想像」します。3Dへの持ち上げは score distillation (Score Jacobian Chaining) で行います。ランダムにサンプルした視点をこの生成器に教師させながら、ボクセルの radiance field を最適化するのです。"
-    limitations: "視点は一枚ずつ独立に生成されるため、SyncDreamer が示したとおり、視点どうしは多視点で一貫しません。score distillation による3D化には物体一つあたり約30分かかり、さらに論文自身が認めるとおり、複雑な背景を持つシーンへの汎化は依然として課題です — その一歩を踏み出したのが ZeroNVS でした。"

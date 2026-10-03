@@ -32,12 +32,4 @@ relations:
       through a differentiable renderer — reached from opposite ends:
       SRN chose a continuous MLP with learned marching; Neural Volumes chose
       an explicit grid with classical marching. NeRF is their intersection.
-    i18n:
-      ja:
-        note: "同じ数か月、同じ賭け — 微分可能レンダラー越しに画像からシーン表現を学ぶ — に、正反対の端から到達しました。SRN は連続 MLP と学習された marcher を、Neural Volumes は明示的グリッドと古典的な marching を選んだ。NeRF は両者の交点です。"
 status: seed
-i18n:
-  ja:
-    problem: "多カメラ映像から、動く被写体 (顔、手) のフォトリアルにレンダリング可能なモデルを。メッシュトラッカーは髪や煙、トポロジー的に厄介なものを取りこぼします。"
-    solution: "画像から RGBA のボクセルグリッドを学習し、色と不透明度を手前から奥へ積み上げる微分可能レイマーチングでレンダリングします — 古典的な volume rendering を、勾配で逆向きに走らせたのです。柔らかい体積 occupancy が「再構成してからレンダリング」というパイプラインを、一つの end-to-end 最適化に変えました。"
-    limitations: "密なボクセルグリッドです。メモリは3乗で増え、解像度はすぐ頭打ちになり、シーンは撮影リグに収まらなければなりません。自明な直し方 — グリッドを連続関数に替える — は、NeRF という名で年内に到着しました。のちに EG3D は、ボリュームを、メモリが3乗ではなく2乗で増える tri-plane に分解しました。"

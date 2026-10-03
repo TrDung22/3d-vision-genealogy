@@ -35,18 +35,12 @@ relations:
       encoding". One Structured Latent (SLAT) carries geometry and appearance
       together and decodes to radiance fields, 3D Gaussians, or meshes from a
       single generation.
-    i18n:
-      ja:
-        note: "CLAY が属する geometry-first の路線に見出した弱点を直します。メッシュや陰関数の上に築いた生成器は「細かな見た目のモデリングでしばしばつまずき」、CLAY は「形状の符号化だけに注力している」。一つの Structured Latent (SLAT) が幾何と見た目をまとめて担い、一度の生成から radiance field・3D Gaussian・メッシュのいずれへもデコードします。"
   - node: objaverse2023
     type: builds-on
     note: >
       A large model standing on large 3D data: TRELLIS trains its
       2B-parameter model on ~500K curated objects, about 480K of them filtered
       from Objaverse-XL (the rest from ABO, 3D-FUTURE and HSSD).
-    i18n:
-      ja:
-        note: "大きな3Dデータの上に立つ大きなモデルです。TRELLIS は20億パラメータのモデルを、キュレーションした約50万物体で学習しますが、そのうち約48万は Objaverse-XL から選別したもの (残りは ABO、3D-FUTURE、HSSD) です。"
   - node: banani2024
     type: builds-on
     note: >
@@ -54,9 +48,6 @@ relations:
       by averaging DINOv2 features gathered from many rendered views, and
       picks DINOv2 "given its demonstrated strong 3D awareness" — citing this
       probe as the evidence.
-    i18n:
-      ja:
-        note: "手法ではなく知見の上に築きます。TRELLIS は多数のレンダリング視点から集めた DINOv2 特徴を平均して各3Dアセットを符号化しますが、DINOv2 を選んだのは「実証された強い3D認識能力 (3D awareness)」ゆえ — その証拠として引くのが、この probing 研究です。"
   - node: 3dgs2023
     type: builds-on
     note: >
@@ -69,12 +60,4 @@ relations:
       volume and opacity regularizers, since "original density control
       schemes are not applicable when Gaussians are predicted by neural
       networks".
-    i18n:
-      ja:
-        note: "構造化潜在 (SLAT) は Gaussian splatting を通して学習されます。SLAT の有効な各ボクセルは32個の 3D Gaussian (オフセット・色・スケール・不透明度・回転) にデコードされ、そのレンダリングが ground truth の視点画像と比べられます。TRELLIS は「高い忠実度と効率ゆえに、Gaussian を用いてエンコーダとデコーダを end-to-end で学習する」とし、radiance field とメッシュのデコーダは、凍結したエンコーダの上で後から学習します。3DGS の密度制御は体積と不透明度の正則化に取って代わられました — 「ネットワークが Gaussian を予測する場合、元の密度制御の仕組みは適用できない」からです。"
 status: seed
-i18n:
-  ja:
-    problem: "それまでの生成器の多くは一つの出力フォーマットに縛られていました — こちらは NeRF、あちらは Gaussian、そちらはメッシュ。分野は分断され、品質はそのフォーマットが許す範囲で頭打ちになります。"
-    solution: "統一された構造化潜在表現 (SLAT) です。幾何と見た目を融合した疎な3D潜在グリッドが、一度の生成から放射輝度場にも 3D Gaussian にもメッシュにもデコードできます。rectified-flow トランスフォーマーを、選び抜いた50万物体の上で20億パラメータまでスケールし、従来モデルにはなかった局所的な3D編集も可能に。普及ぶりが何よりの証拠 — 一年で GitHub スター約1.1万、Hugging Face ダウンロード100万超、SLAT 後継の一族まで生みました。"
-    limitations: "学習したのはキュレーション済みの物体中心アセット — 背景の綺麗な単一物体であって、散らかった実世界ではありません。また論文自身が認めるとおり、image-to-3D では参照画像の照明がアセットに焼き込まれ (PBR マテリアルは出力しません)、2段階のパイプラインは end-to-end の生成より効率で劣ることがあります。"

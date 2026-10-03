@@ -36,12 +36,4 @@ relations:
       on edges and corners and decodes an SDF instead of occupancy; at the
       same 1,024-token length, its own reconstruction table puts its volume
       IoU at 93.6% against 87.88% for 3DShape2VecSet.
-    i18n:
-      ja:
-        note: "形状の潜在は vector set です。Hunyuan3D-ShapeVAE は「3DShape2VecSet が提案した、3D形状のコンパクトなニューラル表現である vector set」を用い、3DShape2VecSet の point query で表面点を符号化し、その上に Michelangelo の VAE 設計を重ねます。エッジや角に点を多めに取り、occupancy ではなく SDF をデコード。同じ1,024トークン長で比べた自身の再構成表では、体積 IoU が 3DShape2VecSet の 87.88% に対して 93.6% です。"
 status: seed
-i18n:
-  ja:
-    problem: "プロダクションのアセットパイプラインに必要なのは幾何だけではありません。ゲームで使える3Dとは、トポロジーに優しい綺麗な形状と高解像度のマテリアルを、産業レベルの信頼性で備えたものです。"
-    solution: "スタジオの流儀どおりに問題を分割します。大規模なフローベース形状生成器 (vecset 潜在の拡散) が幾何を作り、独立した多視点テクスチャ合成モデルがそれを塗る — 各段を別々にスケールし最適化するのです。バージョン2.1 (2025年6月) では、公開リリースのままテクスチャ段を物理ベースレンダリング (PBR) マテリアルへ拡張しました。"
-    limitations: "二段構えということは、テクスチャでは形状の誤りを直せないということ。クローズドなツールに対する勝利も、名前を伏せた商用モデルとの比較で測られたものです。そしてマーケティングの枠組みには注意 — 2.1 のレポートはバージョン2.1を「PBR テクスチャ付き3Dアセット生成のための、初の完全オープンソースのソリューション」と謳いますが、同じレポートの比較対象にはオープンソースの 3DTopia-XL が含まれ、それも PBR マテリアルマップを出力すると自ら書いています。"

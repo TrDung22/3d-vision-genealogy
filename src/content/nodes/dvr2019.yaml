@@ -48,9 +48,6 @@ relations:
       the ShapeNet splits and the Chamfer-L1 metric are Occupancy Networks'.
       What changes is the supervision: 2D images, cameras and masks, through
       an analytic depth gradient, instead of ground-truth 3D shapes.
-    i18n:
-      ja:
-        note: "同じグループです (Niemeyer、Mescheder、Oechsle、Geiger は両方の論文に名を連ねています)。形状は Occupancy Network そのもので、表面はその 0.5 の等値面、ShapeNet の分割と Chamfer-L1 の評価指標も Occupancy Networks のものです。変わったのは教師信号です — ground truth の3D形状ではなく、解析的な深度勾配を通した2D画像、カメラ、マスクです。"
   - node: srn2019
     type: fixes
     note: >
@@ -60,12 +57,4 @@ relations:
       level set that meshes directly, and implicit differentiation gives
       the depth gradient in closed form, so "no intermediate results need
       to be saved for the backward pass".
-    i18n:
-      ja:
-        note: "SRN の LSTM ベースのレンダラーに DVR が見いだした二つの代償を直します —「幾何を直接取り出すことができず、勾配の計算のために途中の結果を保存しておかなければならない」。DVR の表面は占有率の等値面なので、そのままメッシュにできます。しかも陰関数微分で深度の勾配が閉じた形で得られるため、「逆伝播のために途中の結果を保存する必要はない」のです。"
 status: seed
-i18n:
-  ja:
-    problem: "Occupancy Networks や DeepSDF のような陰関数ネットワークは、3D の ground truth から形状を学んでいました。しかし実世界のデータでは、それを得るのは高くつくか、そもそも不可能です。DVR の言葉では「画像データだけから陰関数表現をどう学ぶかは、まだはっきりしていない」のでした。画像から学べる微分可能レンダラーはありましたが、対象はボクセルとメッシュで、離散化と解像度の限界を抱えていました。SRN は LSTM のレイマーチャーを通して画像から陰関数のシーンを学びましたが、DVR の指摘どおり、その幾何は「直接取り出すことができない」のです。"
-    solution: "占有ネットワークを表面としてレンダリングします。各光線に沿って進み、占有率が初めて 0.5 を越える点を見つけて割線法で詰め、同じネットワークから読み出すテクスチャ場で色を付けます。鍵は勾配にあります。等値面の条件を陰関数として微分すると、深度の微分が閉じた形で得られるので、光線上の途中結果を何も保存する必要がなく、メモリはサンプリングの精度とともに増えません。画像、カメラ、物体マスクで学習した単一視点の ShapeNet モデルは、3D で教師付けしたモデルに迫り (Chamfer-L1 で 0.239 対 Occupancy Networks の 0.215)、DTU の三つのスキャンに物体ごとに当てはめると、水密なメッシュが得られます。"
-    limitations: "本人たちの言うとおり、物体マスクとカメラ情報はまだ必要で、復元するのは材質ではなくテクスチャです。どちらも論文自身が今後の課題に挙げています。NeRF は、表面の各点に「拡散反射の色」が一つ与えられるだけだと指摘し、DVR と SRN を「幾何的な複雑さの低い単純な形状に限られる」と評しました。IDR は、視線方向を見ないレンダラーでは鏡面反射をモデル化できないと論じ、DVR が「鏡面反射のあるシーンで形状のアーティファクトをしばしば生む」ことを示して、DTU の15スキャンでの DVR の平均 Chamfer 距離を 3.20 と測りました (IDR 自身は 0.90)。UNISURF はマスクが必要になる原因を表面レンダリングそのものに求めました。表面レンダリングは「表面と光線が交わるところで、局所的にしか勾配の情報を与えない」からです。"

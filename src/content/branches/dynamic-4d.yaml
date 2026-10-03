@@ -10,40 +10,21 @@ description: >
   the field's answer was priors: point tracks, monocular depth and
   DUSt3R-style pointmaps, fused into 4D reconstructions of a single casual
   video. Generation followed the same path, distilling video models into 4D.
-i18n:
-  ja:
-    title: "動的シーンと4D"
-    tagline: "時間を加える — 変形場から、一本の気軽な動画からの4D再構成まで"
-    description: "ほかの枝では、すべてが静止しています。この枝は時間を加えます。動くシーンを、同じ瞬間を二度と見ないカメラで捉えるのです。最初の答え (2020) は、NeRF を正準空間のまわりに学習した変形で曲げるか、シーンフロー場で時間の中を流れさせるものでした。続いて、因数分解した時空間の平面と動的ガウシアンが4Dを速くします。DyCheck の監査は、初期のデモが瞬間移動するような楽なカメラにどれほど頼っていたかを示しました — 分野の答えは prior でした。点の追跡、単眼深度、DUSt3R 流の pointmap を融合して、一本の気軽な動画から4Dを再構成するのです。生成も同じ道をたどり、動画モデルを4Dへ蒸留しました。"
 color: "#008300" # categorical slot 4 (dark)
 order: 4
 status: active
 lanes:
   - id: deformation
     title: "Canonical space + deformation"
-    i18n:
-      ja: { title: "正準空間と変形" }
   - id: flow
     title: "Scene flow"
-    i18n:
-      ja: { title: "シーンフロー" }
   - id: spacetime
     title: "Factorized spacetime"
-    i18n:
-      ja: { title: "時空間の因数分解" }
   - id: gaussians
     title: "Dynamic Gaussians"
-    i18n:
-      ja: { title: "動的ガウシアン" }
   - id: monocular
     title: "Monocular 4D reconstruction"
-    i18n:
-      ja: { title: "単眼4D再構成" }
   - id: tracking
     title: "Point tracking"
-    i18n:
-      ja: { title: "点の追跡" }
   - id: generation
     title: "4D generation"
-    i18n:
-      ja: { title: "4D生成" }

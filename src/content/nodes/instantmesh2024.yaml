@@ -28,9 +28,6 @@ relations:
       weights; following Instant3D, it feeds the model sparse imagined views
       instead of one image, and its own step is mesh-native training
       (FlexiCubes) instead of NeRF output.
-    i18n:
-      ja:
-        note: "LRM のアーキテクチャの上に立ち、オープンソースの OpenLRM の重みから初期化します。Instant3D に倣って一枚の画像の代わりに疎な想像視点を入力し、独自の一歩は、NeRF 出力の代わりにメッシュ本位で学習すること (FlexiCubes) でした。"
   - node: triposr2024
     type: fixes
     note: >
@@ -39,21 +36,10 @@ relations:
       geometry and textures on the back" when the input is free-style.
       Imagining the unseen views with multiview diffusion first, then
       reconstructing from them, is the repair.
-    i18n:
-      ja:
-        note: "5週間後、TripoSR をベースラインに据えてその弱点を名指しします。一枚の画像からでは、入力が自由なスタイルだと「想像力を欠き、背面の幾何とテクスチャが劣化しがち」。見えない視点をまず多視点拡散で想像し、そこから再構成する — それが修正でした。"
   - node: objaverse2023
     type: builds-on
     note: >
       Both halves train on this data: its sparse-view reconstructor on ~270K
       high-quality instances filtered from Objaverse's 800K, and its Zero123++
       fine-tune on renders of Objaverse's LVIS subset.
-    i18n:
-      ja:
-        note: "二つの部品はどちらもこのデータで学習します。疎視点の再構成モデルは Objaverse の80万から選んだ約27万の高品質な物体で、Zero123++ のファインチューニングは Objaverse の LVIS サブセットのレンダリングで。"
 status: seed
-i18n:
-  ja:
-    problem: "LRM はフィードフォワード3Dを証明しつつも非公開のままで、出力は NeRF でした。実務家に必要だったのは、綺麗なメッシュで終わるオープンなパイプラインです。"
-    solution: "二本のオープンな糸を編み合わせます。多視点拡散のフロントエンド (微調整した Zero123++) が疎な視点を想像し、LRM 流トランスフォーマーがそこから再構成、微分可能な等値面抽出 (FlexiCubes) がモデルにメッシュを直接出力させる — 重みは公開、アセット一つ約10秒です。"
-    limitations: "品質は多視点フロントエンドの一貫性に頭を抑えられます。幾何は滑らかさに偏りがちで、Objaverse 育ちのモデルの例に漏れず、背景の綺麗な物体中心の画像世界の住人です。"

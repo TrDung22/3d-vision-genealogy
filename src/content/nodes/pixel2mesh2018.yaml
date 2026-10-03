@@ -25,12 +25,4 @@ relations:
     note: >
       Repairs the point cloud's missing surface by generating a mesh directly —
       at the price of locked topology.
-    i18n:
-      ja:
-        note: "メッシュを直接生成することで、点群に欠けていた「表面」を直しました — その代償はトポロジーの固定です。"
 status: seed
-i18n:
-  ja:
-    problem: "バラバラの点の集まりではなく、使える表面 — トポロジーを持つメッシュ — を出力すること。"
-    solution: "グラフ CNN が楕円体のテンプレートを画像特徴に導かれて粗から密へと徐々に変形します。出力はそのままレンダリングも3Dプリントもできる三角形メッシュです。"
-    limitations: "トポロジーはテンプレートに固定されます。どの物体も「変形された球」(genus-0) なので、取っ手つきのマグカップは原理的に不可能。先にデータ構造を決めれば必ず代償を払う — ボクセルは解像度で、メッシュはトポロジーで。"

@@ -28,12 +28,4 @@ relations:
       Repairs exactly the debt MiDaS chose to take on: absolute scale — by
       appending a metric-bins module to the relative-depth backbone instead of
       retraining from scratch.
-    i18n:
-      ja:
-        note: "MiDaS が承知の上で背負った借金 — 絶対スケール — を直します。ゼロから学習し直すのではなく、相対深度バックボーンに metric-bins モジュールを継ぎ足して。"
 status: seed
-i18n:
-  ja:
-    problem: "MiDaS 路線の metric の借金 — 相対深度は汎化しても「何メートルか」は言えず、SLAM、AR、ロボティクスの手前で立ち往生します。"
-    solution: "相対から metric への、広く使われた橋です — 本人たちによれば、両者を組み合わせた最初の手法でもあります。MiDaS 流の相対バックボーンをデータセット混合で事前学習し、その上に軽量な metric-bins ヘッドを載せて metric データで微調整 — 汎化を保ったまま絶対スケールを取り戻しました。"
-    limitations: "metric ヘッドは依然ドメインに縛られ (屋内用と屋外用のヘッド + ルーター)、スケールは解かれたのではなく、ドメインごとに学習されたにすぎません。そして後に UniDepth が示したとおり、「一般的なゼロショットの状況では限界を見せる」のです。"

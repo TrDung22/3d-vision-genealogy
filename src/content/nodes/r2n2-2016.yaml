@@ -30,9 +30,6 @@ relations:
       single-view 3D reconstruction using Convolutional Neural Networks" that
       inspired it — but changes the target from the visible surface (2.5D) to
       the full shape.
-    i18n:
-      ja:
-        note: "3Dの prior はデータから深層ネットワークで学べる、という信念を受け継ぎます — R2N2 は着想源として、Eigen らを「畳み込みニューラルネットワークによる単一視点3D再構成の最近の進歩」の一つに挙げています。ただし目標は、見えている表面 (2.5D) から形状の全体へと切り替えました。"
   - node: shapenet2015
     type: builds-on
     note: >
@@ -40,12 +37,4 @@ relations:
       labeled shapes, and ShapeNet was it: R2N2 trained on a 50,000-model,
       13-category subset — the split Pixel2Mesh and Occupancy Networks later
       inherited.
-    i18n:
-      ja:
-        note: "3Dの教師信号で完全な3D形状の prior を学ぶには、ラベル付き形状の倉庫が要ります。それが ShapeNet でした。R2N2 は13カテゴリ・5万モデルのサブセットで学習し、その分割は後に Pixel2Mesh や Occupancy Networks が受け継ぐ標準になります。"
 status: seed
-i18n:
-  ja:
-    problem: "深度マップはあくまで2.5D — 見えている表面にすぎません。ここでの問題は、一枚 (または数枚) の画像から、遮蔽された部分も含む物体の完全な3D形状を復元することです。"
-    solution: "画像をボクセル占有グリッドへ写す再帰型ネットワーク (3D-LSTM) を、ShapeNet の CAD モデルで教師あり学習します。CAD リポジトリから形状の prior を学ぶこと自体は古いアイデアでした。R2N2 が初の試みと主張するのは、画像から形状への写像全体を深層ネットワークで end-to-end に学んだ点です — その後の深層物体再構成の路線が、こぞって比較の基準にしたベースラインになりました。"
-    limitations: "ボクセルはメモリを O(n³) で食うため 32³ で頭打ち — レゴブロックのようなモデルしか出せません。しかも知識のほぼすべては ShapeNet 由来。13カテゴリ・約5万個の CAD モデルという閉じた世界です。"

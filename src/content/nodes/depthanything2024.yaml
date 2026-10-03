@@ -27,12 +27,4 @@ relations:
     note: >
       Keeps the DPT-line architecture and scales the remaining axis: data —
       from millions of labeled images to tens of millions of unlabeled ones.
-    i18n:
-      ja:
-        note: "DPT 路線のアーキテクチャを保ったまま、残る軸 — データ — をスケールさせます。数百万枚のラベル付きから、数千万枚のラベルなしへ。"
 status: seed
-i18n:
-  ja:
-    problem: "MiDaS/DPT 路線に立ちはだかるラベル付きデータの天井 — 本物のラベルが永遠に足りない中で、深度の「基盤モデル」をどう作るか。"
-    solution: "6,200万枚のラベルなし画像で天井を破ります。teacher が擬似ラベルを付け、student は強い augmentation と意味特徴の制約の下で学び直す — 基盤モデル規模で回す半教師あり学習のレシピです。"
-    limitations: "核はやはり相対深度 (metric 版は微調整が必要)。そして後に V2 が示したとおり、微細なディテール (バスケットゴールのネットのような細い構造) や、透明・反射する表面は弱いまま — まさに生成 prior 路線が得意な場所であり、二つの哲学が並走し続ける理由です。"

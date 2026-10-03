@@ -29,12 +29,4 @@ relations:
       detail. The synthetic-first move is one V2 credits to Stable
       Diffusion-based models such as Marigold, which train only on synthetic
       depth — their clean-label insight carried over to a discriminative model.
-    i18n:
-      ja:
-        note: "V1 自身のボトルネック — ノイズの多い実ラベルが微細ディテールの上限を決めていた — を直します。この synthetic-first の一手は、合成データだけで学習する Marigold などの Stable Diffusion 系モデルに着想を得たと V2 自身が述べるもので、その綺麗なラベルという洞察を識別モデルへ持ち込みました。"
 status: seed
-i18n:
-  ja:
-    problem: "V1 はラベルなしデータをスケールさせつつ、ノイズの多い実ラベルを残しました — そして実の深度ラベル (ガラスを捉えられないセンサー、ステレオの不一致、粗い境界) こそが、微細なディテールを壊す張本人なのです。"
-    solution: "意表を突く逆転の一手 — ラベル付きの実画像をすべて捨てる。teacher は完璧なラベルを持つ59.5万枚の合成画像だけで学習し、それを大きくスケールさせ、6,200万枚の擬似ラベル付き実画像を介して student へ受け渡します。合成の精密さと実世界の多様性を、双方のノイズ抜きで。"
-    limitations: "核は依然として相対深度で、metric 版は微調整頼み。そしてレシピ全体が今度は合成データパイプラインのリアルさに寄りかかります — 分野が新たに相続した依存関係です。"

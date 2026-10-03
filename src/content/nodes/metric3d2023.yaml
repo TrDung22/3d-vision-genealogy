@@ -30,12 +30,4 @@ relations:
       LeReS, HDN): "by design, these methods are unable to recover the metric
       information". The canonical camera transform turns that metric ambiguity
       into a solvable problem.
-    i18n:
-      ja:
-        note: "Metric3D がアフィン不変路線 (MiDaS、LeReS、HDN) に名指しした弱点 — 「設計上、これらの手法は metric の情報を復元できない」 — を直します。canonical camera 変換が、その metric の曖昧性を解ける問題に変えました。"
 status: seed
-i18n:
-  ja:
-    problem: "なぜゼロショットの深度は metric になれないのか? 同じシーンでも焦点距離が違えば写る大きさが変わる — metric スケールはカメラの内部パラメータと絡み合っているからです。"
-    solution: "曖昧性の根っこを叩きます。学習前にすべての画像を標準カメラへ写す canonical camera 空間変換により、何万台ものカメラをまたいで metric 深度が学習可能になりました。V2 (TPAMI 2024) は1,600万枚へスケールし、深度と法線の同時最適化により、深度しかないデータからゼロショットの表面法線まで獲得します。"
-    limitations: "推論時にはやはり内部パラメータ (またはその推定値) が必要で、精度はドメインごとの crop サイズ選びに依存します — のちに Depth Pro が「ゼロショットの前提に反する」と名指しした、まさにその弱点です。"

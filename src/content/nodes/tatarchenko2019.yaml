@@ -36,18 +36,12 @@ relations:
       masquerade as reconstruction, and a typical test shape has a near-twin in
       the training set: "the train/test split is contaminated". IoU and Chamfer
       distance get the same scrutiny, with F-score proposed instead.
-    i18n:
-      ja:
-        note: "ベンチマークそのものに切り込みます。ShapeNet の構成 — 代表的な種類の単一物体が、canonical な座標系にそろえて置かれている — は、認識が再構成になりすますことを許し、典型的なテスト形状には学習セットにほぼ瓜二つの相手がいる。「train/test の分割は汚染されている」のです。IoU と Chamfer 距離も同じく俎上に載せられ、代わりに F-score が提案されました。"
   - node: r2n2-2016
     type: challenges
     note: >
       Challenges the entire line opened by 3D-R2N2: IoU metrics on ShapeNet had
       been hiding the fact that the networks recognize and recall rather than
       reconstruct.
-    i18n:
-      ja:
-        note: "3D-R2N2 が開いた路線そのものへの挑戦です。ShapeNet 上の IoU という指標が、ネットワークは再構成ではなく認識して思い出しているだけという事実を覆い隠していました。"
   - node: psgn2017
     type: challenges
     note: >
@@ -56,12 +50,4 @@ relations:
       clouds directly. Octrees (OGN), shape layers (Matryoshka) and surface
       patches (AtlasNet) all fell alike: the problem was never the output data
       structure, but how the task was benchmarked.
-    i18n:
-      ja:
-        note: "PSGN 自体は再実行されていません — けれど検索ベースラインは AtlasNet に勝ち、その AtlasNet はかつて、点群を直接出力する唯一の手法だった PSGN を上回っていました。オクツリー (OGN) も、入れ子の形状レイヤー (Matryoshka) も、表面パッチ (AtlasNet) も同じように敗れた — 問題は出力のデータ構造ではなく、タスクのベンチマークの仕方そのものだったのです。"
 status: seed
-i18n:
-  ja:
-    problem: "枝全体が避けてきた居心地の悪い問い — 単一画像3Dのネットワークは本当に何かを「再構成」しているのか、それとも見たことのある形状を思い出しているだけなのか?"
-    solution: "設計上、再構成のしようがない二つのベースラインによる統制実験です。学習形状のクラスタリングと、学習した画像→形状の埋め込みを介して最も近い学習形状を引く検索。ShapeNet の object-centered な設定では、これらが AtlasNet・OGN・Matryoshka Networks に並ぶか上回り、両者は「統計的に区別できない」ことが分かりました。結論 — 変装した認識であって、再構成ではありません。viewer-centered な座標系と F-score に切り替えると差は縮まり、検索ベースラインは「もはや明確な勝者ではない」のです。"
-    limitations: "その処方は、本人たちの言うとおり部分的です。viewer-centered な座標系と F-score を推奨しつつも、「もう一つの重大な問題であるデータセットの構成は、指摘したものの手つかずのまま」。viewer-centered という助言は設計の核として採り入れられ (pixelNeRF がその上に立ちます)、データセットの問いは開いたまま残りました。"

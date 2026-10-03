@@ -31,18 +31,12 @@ relations:
       artifacts, traces them to the sampling-theory violation in the splat
       pipeline, and swaps the ad-hoc dilation for filters with a Nyquist
       argument.
-    i18n:
-      ja:
-        note: "スケールへの脆さを数か月で直します。erosion/dilation のアーティファクトを名指しし、それをスプラットパイプラインのサンプリング理論違反に突き止め、場当たり的な dilation を Nyquist の論拠を持つフィルタに置き換えました。"
   - node: mipnerf2021
     type: builds-on
     note: >
       The mip idea crosses paradigms: what integrated positional encoding
       did for ray-marched radiance fields, band-limiting filters do for
       rasterized Gaussians — same anti-aliasing debt, new currency.
-    i18n:
-      ja:
-        note: "mip のアイデアがパラダイムをまたぎます。integrated positional encoding がレイマーチングの放射輝度場にしたことを、帯域制限フィルタがラスタライズされたガウシアンにする — 同じアンチエイリアスの借金を、新しい通貨で。"
   - node: ewa2001
     type: fixes
     note: >
@@ -53,12 +47,4 @@ relations:
       approximation of one pixel's box filter, and beats 3DGS + EWA — the
       baseline that replaces 3DGS's dilation with the EWA filter — most
       clearly at lower resolutions.
-    i18n:
-      ja:
-        note: "EWA のスクリーン空間フィルタを直します。Mip-Splatting によれば、そのサイズは「経験的に選ばれた」ものです。EWA は単位共分散 —「画面上で実質的に3×3ピクセルの領域を占める」— を勧めますが、これは「ズームアウト時に過度に滑らかな結果を招く」。2D Mip フィルタはそれを1ピクセル分のボックスフィルタの近似に置き換え、3DGS の dilation を EWA フィルタに差し替えたベースライン 3DGS + EWA を、とりわけ低解像度で上回りました。"
 status: seed
-i18n:
-  ja:
-    problem: "テスト時にカメラ距離や焦点距離を変えると 3DGS は崩れます。ズームインすると、縮退して細すぎるガウシアンが痩せ (erosion) と高周波のアーティファクトを見せ、ズームアウトすると、固定のスクリーン空間 dilation が細い構造を太らせ、明るくする — 学習ビューが決して見せないアーティファクトです。"
-    solution: "原理的な二つのフィルタです。各ガウシアンの周波数を学習中に見た最大サンプリングレートで抑える3D平滑化フィルタと、dilation のハックを置き換える2D mip フィルタ — ピクセルの物理的なボックス footprint を近似します。どのスケールでもエイリアスのないスプラッティングを。"
-    limitations: "直すのはサンプリングであって構造ではありません。幾何は依然として視点不一致のblob、メモリも変わらず、学習のサンプリング帯域を超えた分布外のズームは今も劣化します。"

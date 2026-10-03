@@ -38,12 +38,4 @@ relations:
       visual diversity of instances within a category" — 800K+ models with
       captions, tags and animations, gathered from the web rather than from CAD
       catalogs.
-    i18n:
-      ja:
-        note: "ShapeNet が自ら認めた偏り — 「剛体の人工物のカテゴリに強く偏っている」 — を直します。Objaverse は「規模、カテゴリ数、そしてカテゴリ内の見た目の多様性において、現在の3Dリポジトリを上回る」もので、キャプション・タグ・アニメーション付きの80万を超えるモデルを、CAD カタログではなくウェブから集めました。"
 status: seed
-i18n:
-  ja:
-    problem: "2Dにおける大規模モデル×大規模データの成功は、どれもウェブ規模のデータセットに乗っていました — しかし3Dには自前の ImageNet がありませんでした。2022〜23年の feed-forward や generative 3D のアイデアは、Objaverse-XL が「データ不足 (data scarcity)」と呼ぶもの、つまり3D学習データの飢餓によって頭打ちだったのです。"
-    solution: "ウェブ規模の3Dコーパスです。Objaverse (約80万物体) と、その後継 Objaverse-XL (インターネット全体から自動収集した1,000万超の物体) — ShapeNet の2桁上の規模です。これはエンジンではなく燃料です。同じデータが、feed-forward の reconstruction 系 (LRM とその後継) も、native な generative 系 (後に TRELLIS のようなモデルの学習プールへとキュレーションされる) も養い、大きなモデル + 大きなデータを3Dでついに現実的にしました。"
-    limitations: "自動収集は、品質のばらつき、ノイズや欠損したラベル、そして背景の綺麗な単一物体への強い偏りを意味します — その object-centric な偏りを、そこで学習したあらゆるモデルが静かに受け継ぎ、散らかった実世界がなお露呈させるのです。"

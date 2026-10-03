@@ -31,9 +31,6 @@ relations:
       from inside: under-constrained regions get their artifacts erased by
       an internet-scale 2D prior — the generative-prior playbook of the
       single-image branch arriving in the reconstruction branch.
-    i18n:
-      ja:
-        note: "シーンごとの最適化が内側からは直せない外挿の失敗を直します。制約の足りない領域は、インターネット規模の2D prior にアーティファクトを消してもらう — 単一画像の枝の「生成 prior」戦法が、再構成の枝に到着したのです。"
   - node: nerfbusters2023
     type: fixes
     note: >
@@ -41,12 +38,4 @@ relations:
       only delete density, Difix3D+ repairs the rendered appearance itself with
       a single-step 2D diffusion model — evaluated on Nerfbusters' own captures
       and protocol, and beating Nerfbusters there.
-    i18n:
-      ja:
-        note: "Nerfbusters の著者たちが指し示した道をそのまま進みます。その3D prior が密度を消すことしかできなかったところで、Difix3D+ は単一ステップの2D拡散モデルでレンダリングの見た目そのものを直す — しかも Nerfbusters 自身の撮影データとプロトコルで評価し、そこで Nerfbusters を上回りました。"
 status: seed
-i18n:
-  ja:
-    problem: "学習の軌道から一歩外れると、どの放射輝度場 — NeRF でも 3DGS でも — も裏切ります。観測の乏しい領域の floater、にじみ、幻視された幾何。シーンごとの最適化は、見たものを補間できるだけです。"
-    solution: "画像 prior に掃除させます。単一ステップの拡散モデル (微調整した SD-Turbo) がレンダリングのアーティファクトを「直す」ことを学び、その修正は一貫性のために3D表現へ蒸留し戻され、さらにリアルタイムのレンダー後仕上げとして再び走る — 新規視点の FID が2倍良くなり、NeRF か 3DGS かを問いません。"
-    limitations: "prior は、想像できるものしか直せません。修正は忠実である保証はなくもっともらしいだけで、大きく未観測な幾何は幻視のまま — 一貫して見えても、真実とは限らないのです。"

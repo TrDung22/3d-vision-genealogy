@@ -14,9 +14,8 @@ const root = `${base}/${lang}`;
 const branches = (await getCollection('branches')).sort((a, b) => a.data.order - b.data.order);
 const nodes = await getCollection('nodes');
 const countOf = (branchId: string) => nodes.filter((n) => n.data.branch.id === branchId).length;
-const taglineOf = (b: (typeof branches)[number]) =>
-  b.data.i18n?.[lang]?.tagline ?? b.data.tagline;
-const titleOf = (b: (typeof branches)[number]) => b.data.i18n?.[lang]?.title ?? b.data.title;
+const taglineOf = (b: (typeof branches)[number]) => b.data.tagline;
+const titleOf = (b: (typeof branches)[number]) => b.data.title;
 ---
 
 <Base title={t(lang, 'nav.branches')} lang={lang}>

@@ -29,9 +29,6 @@ relations:
       interpolation as the rendering engine but attacks its fatal weakness —
       capture density — with local geometry layers and a sampling-theory
       budget for how many photos you actually owe.
-    i18n:
-      ja:
-        note: "1996年の光線リサンプリング枠組みの直系です。ライトフィールド補間をレンダリングエンジンに残したまま、その致命的な弱点 — 撮影密度 — を局所幾何の層とサンプリング理論による「写真を何枚借りているか」の予算で攻めました。"
   - node: lumigraph1996
     type: builds-on
     note: >
@@ -41,12 +38,4 @@ relations:
       into a budget: extending plenoptic sampling theory (Chai et al. 2000),
       it shows that local layered geometry with D depth planes cuts the views
       needed by a factor of D² against Nyquist.
-    i18n:
-      ja:
-        note: "Lumigraph の知見の上に立っています。LLFF ははっきりとその功績を認めています — Lumigraph は「近似的なシーン幾何を使えば、サンプリング不足や不規則なサンプリングによるアーティファクトを和らげられることを示した」。LLFF はそのダイヤルを予算に変えました。plenoptic サンプリング理論 (Chai et al. 2000) を拡張し、D 枚の深度平面を持つ局所的な層状幾何なら、必要な視点数が Nyquist に比べて D² 分の1になることを示したのです。"
 status: seed
-i18n:
-  ja:
-    problem: "ライトフィールドは幾何を不要にしましたが、その代わりに何百、何千枚もの写真を要求しました。手持ち撮影の写真が何枚あれば視点合成は成立するのか — そして、何枚で十分かを言える人はいるのか?"
-    solution: "各入力視点を局所的な層状表現 (multiplane images) へ展開し、近くの局所ライトフィールドをブレンドして新しい視点を作ります。肝心なのは、plenoptic サンプリング解析が処方箋となる下限を与えたこと — Nyquist 流の光線サンプリングより最大4000分の1の枚数で済むのです。"
-    limitations: "MPI はメモリを食い、視点もそれなりに密で前向きでなければなりません。一年のうちに同じグループが層状の機構まるごとを一つの MLP に置き換え — LLFF のデータセットは NeRF のベンチマークとして相続されました。"

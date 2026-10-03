@@ -29,9 +29,6 @@ relations:
       Hong Kong/MPI and Weizmann/Facebook independently rederived an
       SDF-induced density with different math — the 2019 implicit wave's
       sequel, played out in volume rendering.
-    i18n:
-      ja:
-        note: "arXiv 投稿は二日差 (2021年6月20日と22日)、ともに NeurIPS 2021 — 香港/MPI と Weizmann/Facebook が、SDF から誘導される密度を、異なる数式で独立に導き直しました。2019年の陰関数の波の続編が、volume rendering の舞台で演じられたのです。"
   - node: unisurf2021
     type: independent
     note: >
@@ -41,9 +38,6 @@ relations:
       "implicit surface representation incorporated into volume rendering".
       Same discovery, different bridge: occupancy as the local transparency
       there, a Laplace CDF of the SDF here.
-    i18n:
-      ja:
-        note: "arXiv 投稿は二か月差 (2021年4月20日と6月22日)。Tübingen と Weizmann/Facebook が、陰関数の表面を volume rendering の中に組み込みました。VolSDF 自身、UNISURF は「この研究と並行して」、「volume rendering に組み込んだ陰関数の表面表現」を使ったと書いています。発見は同じで、橋が違う — あちらは局所的な透明度としての占有率、こちらは SDF の Laplace CDF です。"
   - node: nerf2020
     type: fixes
     note: >
@@ -53,9 +47,6 @@ relations:
       from satisfactory". Making density a function of an SDF guarantees a
       well-defined surface behind it, while keeping NeRF's mask-free volume
       rendering.
-    i18n:
-      ja:
-        note: "NeRF が密度の中に暗黙のまま残した幾何を直します。VolSDF の診断はこうです —「予測された密度から表面を取り出すための適切なしきい値を見つけるのは容易ではなく、復元された幾何は満足にはほど遠い」。密度を SDF の関数にすることで、その背後に明確な表面があることが保証され、しかも NeRF のマスク不要の volume rendering はそのまま残ります。"
   - node: idr2020
     type: fixes
     note: >
@@ -68,12 +59,4 @@ relations:
       SDF-derived density answers both while keeping IDR's normal-aware
       radiance field; on DTU, without masks, VolSDF is "on par with IDR"
       (mean Chamfer 0.86 against 0.90).
-    i18n:
-      ja:
-        note: "第一著者自身の表面レンダラーを直したものです (Yariv、Kasten、Lipman は両方の論文に名を連ねています)。VolSDF は IDR の「二つの欠点」を挙げます。一つは「学習に物体マスクを必要とし、それは強い教師信号である」こと。もう一つは、各ピクセルの色を「対応する視線の、ただ一つの交点」から決めるために局所解に陥りやすく、それがときに余計な表面の断片として現れることです。SDF から導いた密度を volume rendering することで両方に応え、しかも IDR の法線を考慮した radiance field は保ちました。DTU では、マスクを使わない VolSDF が「IDR と同等」です (平均 Chamfer 距離 0.86 対 0.90)。"
 status: seed
-i18n:
-  ja:
-    problem: "NeuS が同じ月に診断したのと同じ病です。NeRF の密度はレンダリングの装置であって幾何ではありません。そして表面レンダリング (IDR) は物体マスクを必要とし、余計な表面の断片を生やしがちです。"
-    solution: "密度を、変換された符号付き距離関数 (SDF の Laplace CDF) としてモデル化します。学習される幾何に有用な帰納バイアスを与え、誤差有界のサンプリングアルゴリズムも添える — volume rendering から綺麗な表面を、幾何と見た目を切り分けた形で得るのです。"
-    limitations: "NeuS と同じシーンごとのコストと滑らかさの天井。二本の論文の密度の作り方は十分に異なるため、後続の研究は両者を並べて benchmark し続けました。"

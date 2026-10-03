@@ -27,12 +27,4 @@ relations:
     note: >
       Same first author, direct repair: the resolution ceiling — multi-level
       inference finally spends the input's native pixels on the surface detail.
-    i18n:
-      ja:
-        note: "筆頭著者みずからの直しです。解像度の天井 — 多層の推論により、ようやく入力本来のピクセルが表面のディテールに使われるようになりました。"
 status: seed
-i18n:
-  ja:
-    problem: "PIFu は入力をダウンサンプルしていました — 服のしわや指が写っている、まさにそのピクセルを捨てて。"
-    solution: "二層のアーキテクチャです。粗い層が 512px に縮小した画像で全体を推論し、細かい層が 1024px の画像をそのまま読み込んで (学習はその切り抜きで) ディテールを拾う。前面・背面の法線マップ予測が見えない側を補い — 一枚の写真から 1k 解像度まるごとの人体デジタル化を実現しました。"
-    limitations: "体の prior は依然ありません — 自らの今後の課題にも、pose のような人体特有の prior を挙げています。見慣れない pose や服に対しては、ECON の言葉どおり、こうしたピクセル整列の陰関数は「ちぎれた手足や崩れた形状を生み出す」 — 人体モデルと組み合わせたハイブリッド (ICON、ECON) がその修理のために生まれた、まさにその壊れ方です。"

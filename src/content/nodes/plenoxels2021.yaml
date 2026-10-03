@@ -29,12 +29,4 @@ relations:
       is DIFFERENTIABLE VOLUME RENDERING, not the neural network — the MLP
       was just a (very slow) function container. A two-orders-of-magnitude
       speedup as the proof.
-    i18n:
-      ja:
-        note: "分野の NeRF 解釈に真っ向から挑みます。本質的な材料は微分可能ボリュームレンダリングであって、ニューラルネットワークではない — MLP は (とても遅い) 関数の容れ物にすぎなかった。証拠は、二桁の高速化です。"
 status: seed
-i18n:
-  ja:
-    problem: "NeRF はシーンごとに丸一日学習を要し、その品質を買っている魔法の材料は MLP だと誰もが思い込んでいました。本当にそうだったのか?"
-    solution: "ネットワークを消します。密度 + 球面調和関数を持つ疎なボクセルグリッドを、同じ微分可能ボリュームレンダラー越しに直接最適化する。NeRF の品質に並びながら、学習は二桁速い (一日ではなく数分)。"
-    limitations: "やや密なグリッドはメモリを食い、解像度を頭打ちにします。非有界シーンでの品質は mip 路線に及びません。この異端には、より良いデータ構造が必要でした — 数週間のうちに Instant-NGP のハッシュとして到着し、のちに「まっとうに作られた疎ボクセル」(SVRaster) として戻ってきます。"

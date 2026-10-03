@@ -37,9 +37,6 @@ relations:
       one camera path, so whatever breaks off that path never reaches the
       scores. Training on one trajectory and testing on another makes the
       ghosts visible.
-    i18n:
-      ja:
-        note: "NeRF が LLFF から引き継いだ評価プロトコルを問い直します。同じ撮影から8フレームごとにテスト視点を抜くと、学習とテストが一本のカメラ経路を共有し、その経路の外で壊れるものはスコアに届きません。一方の軌道で学習し、もう一方でテストすると、幽霊が見えるようになるのです。"
   - node: dycheck2022
     type: builds-on
     note: >
@@ -47,12 +44,4 @@ relations:
       cites Gao et al.'s re-examination of dynamic-NeRF evaluation and adopts
       its visibility masking (computed its own way, with depth) for a
       second-trajectory protocol.
-    i18n:
-      ja:
-        note: "DyCheck の「現実チェック」を、動的シーンから静的シーンへ持ち込みます。動的 NeRF の評価を見直した Gao らを引用し、その可視性マスク (深度も使って独自に計算) を、2本目の軌道で評価するプロトコルに取り入れました。"
 status: seed
-i18n:
-  ja:
-    problem: "気軽に撮った NeRF は、ベンチマーク上では見事なのに、撮影経路から数歩外れただけで崩れます — floater、幽霊のような幾何。なぜ数値には一度も表れなかったのでしょうか?"
-    solution: "打ち手は二つ。まず評価の修正です。標準的なプロトコルは「学習用撮影の8フレームごと」しか評価しないため、テスト視点は学習の軌道を共有してしまう。Nerfbusters はシーンごとに2本の軌道を撮り (12シーン)、一方で学習して他方で評価し、可視性でマスクした指標に coverage スコアを添えます。次に手法です。密度に対する局所的な3D拡散 prior を、密度版のスコア蒸留ロスで適用し、手作りの正則化 (スパース性、TV、RegNeRF) が残してしまう floater を取り除きます。"
-    limitations: "prior が働くのは密度だけです。floater は消せても — 誤って透明な物体まで消してしまい — テクスチャを幻視することも、どの学習視点にも映らなかった領域を補完 (inpaint) することもできません。著者たちは、その先の道として2Dの拡散 prior を指し示しています。きれいになったシーンは、ベースラインより低い coverage と引き換えでもあります。"

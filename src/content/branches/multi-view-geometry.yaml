@@ -11,32 +11,17 @@ description: >
   image pair with no cameras at all, and VGGT (2025) predicts cameras and
   geometry for hundreds of views in one forward pass. The other branches lean
   on it quietly — NeRF and 3DGS take their camera poses from COLMAP.
-i18n:
-  ja:
-    title: "多視点幾何"
-    tagline: "多くの写真からカメラと3Dを — 基本行列からフィードフォワードの pointmap まで"
-    description: "3Dビジョンで最も古い仕組みです。重なり合う画像から、カメラとシーンを取り戻す。40年にわたり、それは手作りの段階を連ねたパイプラインでした — 二視点幾何 (1981)、不変な特徴 (SIFT)、逐次的な Structure from Motion (Photo Tourism → COLMAP)、密な多視点ステレオ。各段階は自分の誤差を次へ手渡していきます。学習はまず一段ずつ入り込み (学習した特徴と対応付け、学習したステレオ、学習した SLAM)、やがてパイプラインを丸ごと飲み込みました。DUSt3R (2023) はカメラなしで画像ペアから3Dの pointmap を回帰し、VGGT (2025) は数百枚の視点のカメラと幾何を一度の順伝播で予測します。ほかの枝も、ひっそりとこの枝に寄りかかっています — NeRF も 3DGS も、カメラ pose を COLMAP から得ているのです。"
 color: "#c98500" # categorical slot 3 (dark)
 order: 3
 status: active
 lanes:
   - id: two-view
     title: "Two-view geometry"
-    i18n:
-      ja: { title: "二視点幾何" }
   - id: features
     title: "Features & matching"
-    i18n:
-      ja: { title: "特徴と対応付け" }
   - id: sfm
     title: "Structure from motion & SLAM"
-    i18n:
-      ja: { title: "Structure from Motion と SLAM" }
   - id: mvs
     title: "Multi-view stereo"
-    i18n:
-      ja: { title: "多視点ステレオ" }
   - id: feedforward
     title: "Feed-forward reconstruction"
-    i18n:
-      ja: { title: "フィードフォワード再構成" }

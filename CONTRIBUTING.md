@@ -12,7 +12,7 @@ src/content/
 └── posts/              # MDX blog posts, optionally attached to nodes
 
 src/lib/graph.ts        # folds content into the graph payload + the relation vocabulary
-src/lib/i18n.ts         # UI-chrome strings (en / ja)
+src/lib/i18n.ts         # UI-chrome strings
 src/lib/graph3d.js      # 3D force-graph view (loaded as a separate chunk)
 src/components/         # GenealogyGraph (D3 timeline DAG + 3D view below it)
 src/pages/              # home, nodes, branches, heresies, blog, graph.json
@@ -142,16 +142,13 @@ Create `src/content/posts/<slug>.mdx` with frontmatter `title`, `description`,
 via its `post:` field so the node flips from hollow (seed) to filled (written)
 on the graph.
 
-## Languages & theme
+## Language & theme
 
-The site is bilingual — English at `/en/` (root `/` redirects there) and
-Japanese at `/ja/` — with a light/dark theme toggle (persisted in
-`localStorage`, defaults to the system preference).
+The site is English-only, at `/en/` (root `/` redirects there), with a
+light/dark theme toggle (persisted in `localStorage`, defaults to the system
+preference).
 
-- UI chrome strings live in `src/lib/i18n.ts`; per-branch prose is localized via
-  the optional `i18n:` block in each branch YAML.
-- Node prose (`problem` / `solution` / `limitations` / relation notes) is
-  localized via the optional `i18n: { ja: ... }` block in each node YAML; any
-  missing field falls back to English.
+- UI chrome strings live in `src/lib/i18n.ts`; all content prose lives in the
+  YAML itself.
 - Both graphs read their colors from CSS custom properties at render time, so
   they re-theme live (the timeline re-renders, the 3D view swaps materials).

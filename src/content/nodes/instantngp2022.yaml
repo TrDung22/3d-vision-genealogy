@@ -29,9 +29,6 @@ relations:
       NeRF-competitive quality in ~15 seconds on a single GPU, collapsing
       NeRF's iteration loop from an overnight experiment to an interactive
       tool.
-    i18n:
-      ja:
-        note: "学習コストの大惨事を正面から直します。単一 GPU で1〜2日かかっていたものが、約15秒で NeRF に並ぶ品質へ — NeRF の反復ループを、一晩がかりの実験から対話的なツールへと畳み込みました。"
   - node: plenoxels2021
     type: independent
     note: >
@@ -40,12 +37,4 @@ relations:
       it from a learned multiresolution hash table. Neither needed the big
       MLP — the field's bitter lesson about where NeRF's capacity actually
       lived.
-    i18n:
-      ja:
-        note: "グリッドの反乱は、同じ冬に二方向から来ました。Berkeley はネットワークを完全に消し、NVIDIA は小さなものを残して、学習される多重解像度ハッシュテーブルからそれに特徴を供給した。どちらも大きな MLP を必要としなかった — NeRF の容量が実際どこに宿っていたか、という分野の苦い教訓です。"
 status: seed
-i18n:
-  ja:
-    problem: "座標ネットワークのコストはクエリごとに、画像一枚あたり何百万回も支払われます。NeRF の丸一日の学習は、MLP と同じくらい符号化のせいなのです。"
-    solution: "学習可能な特徴ベクトルの多重解像度ハッシュテーブルを、極小の MLP の前に置きます。衝突は勾配に任せて解かせ、全体が融合 CUDA カーネルの中で動く — そして NeRF が数秒で学習できる。一つの符号化が、ギガピクセル画像も SDF も放射輝度場も同じように扱います。"
-    limitations: "点サンプルの特徴はスケール変化でエイリアスし (Zip-NeRF の入口)、ハッシュ衝突が細部の天井を作り、レンダリングは相変わらず光線を行進させます — 学習は速くとも、大きなシーンのリアルタイム表示はまだです。"

@@ -34,21 +34,10 @@ relations:
       prior, it swaps the NeRF canvas for 3D Gaussian Splatting (the
       neural-rendering branch's 2023 breakthrough) and lands at ~2 minutes —
       an explicit cross-branch import.
-    i18n:
-      ja:
-        note: "Zero-1-to-3 について自ら指摘した弱点 — SDS と組み合わせると「依然として最適化に長い時間がかかる」 (DreamGaussian 自身の比較で物体一つ約20分) — を直します。2D prior には Zero-1-to-3 (XL) を残したまま、NeRF のキャンバスを 3D Gaussian Splatting (ニューラルレンダリング枝の2023年のブレイクスルー) に替え、約2分に収めました — 明示的な枝またぎの輸入です。"
   - node: 3dgs2023
     type: builds-on
     note: >
       The imported canvas itself: 3DGS's fast differentiable rasterizer and
       progressive densification are what turn hours of NeRF-based score
       distillation into minutes.
-    i18n:
-      ja:
-        note: "輸入されたキャンバスそのものです。3DGS の高速な微分可能ラスタライザと段階的な densification こそが、NeRF ベースの score distillation の数時間を数分に変えました。"
 status: seed
-i18n:
-  ja:
-    problem: "Zero-1-to-3 時代の SDS 最適化ループは、物体一つに数十分から数時間かかりました — 蒸留先が NeRF で、そのコストの高いレンダリングは、SDS のもとでは通常の枝刈りによる高速化も効かなかったからです。"
-    solution: "キャンバスを替えます。score distillation の受け皿を NeRF から 3D Gaussian へ。段階的な densification により生成の収束は劇的に速くなり、メッシュ抽出 + UV テクスチャ精錬の段を経て、約2分で使えるテクスチャ付きメッシュが出てきます — およそ10倍の高速化です。"
-    limitations: "SDS 路線おなじみのアーティファクト (Janus 顔、色の飽和したテクスチャ、焼き込まれた照明 — 著者ら自身が先行研究と共通の問題だと認めています) は相続したまま。画像からの3Dでは背面がぼやけることがある、とも著者らは記しています。Gaussian は最適化を速くする一方、著者ら自身の比較でもメッシュ品質は遅い最適化ベースのパイプラインにわずかに及ばず — 品質の天井は、今もそちらの側にあります。"

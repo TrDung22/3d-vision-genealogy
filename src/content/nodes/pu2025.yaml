@@ -45,21 +45,10 @@ relations:
       fares worse: training-set FD, a common score for 3D generators, cannot
       tell generation from copying — "exactly reproducing the training data
       can drive training FD to zero".
-    i18n:
-      ja:
-        note: "TRELLIS を証言台に立たせ — そしておおむね無罪とします。どのサイズも Z_U < 0 (small から xlarge へ −0.67、−1.57、−2.19)、つまり論文自身の基準では記憶の証拠です。ただしサンプルは学習プロンプトから取っており (Z_U を下振れさせうると著者たちは注記)、著者たちは「妥当な汎化」をすでに示していると判断しました。分が悪いのは物差しのほうです。3D生成モデルによく使われる学習セット上の FD は、生成とコピーを区別できない — 「学習データを正確に再現すれば、学習 FD はゼロにできる」のです。"
   - node: objaverse2023
     type: builds-on
     note: >
       Its controlled experiments train on a ~140K-object Objaverse-XL subset:
       the data trunk on which it measures how semantic diversity and data
       budget drive 3D memorization.
-    i18n:
-      ja:
-        note: "統制実験は、約14万物体の Objaverse-XL サブセットで学習します。意味的な多様性とデータ量が3Dの記憶をどう左右するかを測る、データの幹です。"
 status: seed
-i18n:
-  ja:
-    problem: "Tatarchenko が ShapeNet 時代のネットワークに突きつけた問いを、ウェブ規模で問い直します。数十万のアセットで学習した3D生成モデルが形状を出すとき、それは生成なのか — それとも学習した形状の再現なのか。著者たちによれば、3D生成モデルの記憶 (memorization) は「まだ体系的に研究されていない」のです。"
-    solution: "評価の枠組みを作ります。生成した形状ごとに、Light Field Distance で最も近い学習形状を対応づける — 人間がほぼ同一と判定した形状との一致が最も高かった指標です (top-1 で 78.4%、Chamfer 距離は 46.8%)。そしてモデルごとに、生成形状と held-out 形状を比べる Mann–Whitney 統計量 Z_U でスコアをつけます (Z_U < 0 なら記憶の証拠)。結論は「初期のモデルは強く記憶し、最近のモデルは効果的に汎化している」。統制実験では、データ量を固定すると「意味的な多様性が高いほど3D拡散モデルはより多く記憶する」ことも示されました。"
-    limitations: "本人たちの言うとおり — 判定は LFD の不正確さをそのまま受け継ぎ、テキスト条件のモデルを学習プロンプトからサンプリングすると「汎化しているモデルでも ZU を下振れさせうる」。統制実験のモデルも「比較的小さく」、最先端のモデルとは完全には比べられません。画像条件の再構成手法 (LRM とその後継) は引用されるだけで、監査はされていません。"

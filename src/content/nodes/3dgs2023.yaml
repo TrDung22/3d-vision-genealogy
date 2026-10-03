@@ -34,9 +34,6 @@ relations:
       Gaussians, screen-space projection, sorted alpha blending — but now the
       Gaussians are OPTIMIZED from photographs through the differentiable
       version of that very renderer.
-    i18n:
-      ja:
-        note: "点ベースグラフィックスの傍流で二十年を過ごした EWA スプラッティングを、表舞台に呼び戻しました。数式はほぼそのまま — 異方性ガウシアン、スクリーン空間への射影、ソート済みアルファブレンド — ただし今度は、そのレンダラーの微分可能版を通して、ガウシアンが写真から最適化されるのです。"
   - node: instantngp2022
     type: fixes
     note: >
@@ -44,9 +41,6 @@ relations:
       speed. Replacing ray marching with rasterization — the operation GPUs
       were born for — takes radiance fields from fast-to-train to
       real-time-to-display.
-    i18n:
-      ja:
-        note: "ハッシュグリッドが残した最後のボトルネック — レンダリング速度 — を直します。レイマーチングを、GPU が生まれ持った仕事であるラスタライズに置き換え、放射輝度場を「学習が速い」から「表示がリアルタイム」へと運びました。"
   - node: plenoxels2021
     type: builds-on
     note: >
@@ -54,9 +48,6 @@ relations:
       explicit primitives + differentiable rendering, no MLP anywhere — but
       swaps the fixed voxel lattice for primitives that move, stretch, and
       multiply where the scene needs them.
-    i18n:
-      ja:
-        note: "「ニューラルネット不要」という異端を、大規模で立証しました。3DGS もまた純粋な明示的プリミティブ + 微分可能レンダリングで、どこにも MLP はありません — ただし固定のボクセル格子を、シーンが必要とする場所で動き・伸び・増えるプリミティブに置き換えたのです。"
   - node: colmap2016
     type: builds-on
     note: >
@@ -68,12 +59,4 @@ relations:
       3DGS avoids complete failure but "degrades mainly in the background" —
       over its three ablation scenes, average PSNR at 30K iterations falls
       from 26.05 to 20.42.
-    i18n:
-      ja:
-        note: "COLMAP の出力から出発します。入力は「静的なシーンの画像の集合と、疎な点群を生み出す SfM [Schönberger and Frahm 2016] で校正された、対応するカメラ」であり、「これらの点から3Dガウシアンの集合を作る」のです。その依存は測られています。代わりに立方体の中で一様にサンプリングした点から初期化すると、3DGS は完全な破綻こそ免れるものの「主に背景で劣化」し、三つのアブレーション用シーンの平均 PSNR は 30K 反復時点で 26.05 から 20.42 に落ちます。"
 status: seed
-i18n:
-  ja:
-    problem: "放射輝度場のレンダラーは、依然として光線を行進させていました — Instant-NGP でさえも。実シーンのリアルタイム (30fps 以上) 1080p 新規視点合成は手つかずのまま。光線に沿ったサンプリングは、ラスタライズのために生まれた GPU には不向きだからです。"
-    solution: "シーンを数百万個の異方性3Dガウシアンで表します — SfM 点群から初期化し、勾配で最適化し、適応的に densify・prune する — そしてタイルベースの微分可能ラスタライザによるソート済みスプラッティングで描く。100fps 超で最高水準の品質、学習は35〜45分です。"
-    limitations: "数百万の構造なきblob — メモリを食い、ズームでエイリアスしやすく (Mip-Splatting の入口)、表面としては視点不一致で (2DGS の入口)、ソート近似の下でポッピングし、ピンホールのラスタライズ専用です (3DGRT の入口)。ブレイクスルーは、たちまち皆のお気に入りの「直したいもの」になりました。"

@@ -26,12 +26,4 @@ relations:
     note: >
       Repairs exactly the O(n³) voxel ceiling by changing the output data
       structure to a point set.
-    i18n:
-      ja:
-        note: "出力のデータ構造を点集合に替えることで、ボクセルの O(n³) という天井をまさにその一点で直しました。"
 status: seed
-i18n:
-  ja:
-    problem: "ボクセルの解像度の天井を破る — ディテールを増やしてもコストが3乗で爆発しない3D形状表現を。"
-    solution: "画像から点群を直接生成します。いちばん息の長い貢献は、点集合の順序のなさを扱う Chamfer / EMD というロスの組 — のちに点群コミュニティ全体の標準装備になりました。"
-    limitations: "離散的な点は表面のトポロジーを持ちません。直接レンダリングも3Dプリントもできず、法線もない — Pixel2Mesh の言葉を借りれば、生成された点群は「たいてい表面に近くなく、そこから3Dメッシュを直接復元することはできない」。物体というより3Dの塵です。"

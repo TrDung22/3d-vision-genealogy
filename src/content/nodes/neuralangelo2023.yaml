@@ -33,21 +33,10 @@ relations:
       a hash grid supplies the capacity, and numerical gradients fix what
       breaks when you swap it in — analytic hash-grid gradients reach only
       the local cell, leaving the surfaces noisy.
-    i18n:
-      ja:
-        note: "SDF ボリュームレンダリングの忠実度の天井を直します。Neuralangelo はその原因を MLP の容量に帰しています (「MLP の容量に応じてうまくスケールしない」)。容量はハッシュグリッドが補い、それを差し込んだときに壊れるもの — 解析的なハッシュグリッド勾配は局所のセルにしか届かず、表面がノイズだらけになる — を数値的勾配が直すのです。"
   - node: instantngp2022
     type: builds-on
     note: >
       Same NVIDIA lineage: the hash encoding built for speed is
       re-disciplined for accuracy — capacity borrowed from the efficiency
       line to serve geometry.
-    i18n:
-      ja:
-        note: "同じ NVIDIA の血統です。速度のために作られたハッシュ符号化を、精度のために鍛え直しました — 効率化の路線から借りた容量を、幾何のために使うのです。"
 status: seed
-i18n:
-  ja:
-    problem: "SDF ボリュームレンダリング (NeuS/VolSDF) は水密だが滑らかな表面を作ります — 装飾、レンガ、レリーフはすべて削り落とされる。ハッシュグリッドにはその細部を表す容量がありますが、その勾配は局所的すぎて安定した SDF 最適化には向きません。"
-    solution: "ハッシュグリッドを行儀よくさせます。学習信号を隣接するハッシュセルへ広げる数値的 (有限差分) 勾配と、勾配のステップを縮めながら細かいハッシュレベルを順に有効にしていく粗から密への最適化 — 深度もセグメンテーションも使わず、RGB 映像だけから大規模で細密な表面を再構成します。"
-    limitations: "依然としてシーンごとに数時間の最適化 (50万イテレーション) と密な撮影が必要です。強い反射のある表面では NeuS にさえ細部で劣り — 論文はこれをハッシュ符号化に由来する欠点としています — 単純なテクスチャの物体ではほとんど改善しません。"

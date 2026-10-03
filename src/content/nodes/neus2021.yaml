@@ -31,18 +31,12 @@ relations:
       lacks sufficient surface constraints; routing volume rendering through
       an SDF makes geometry a first-class citizen without losing the
       mask-free training.
-    i18n:
-      ja:
-        note: "NeRF が約束したことのない幾何を直します。密度場から取り出した表面がノイズだらけなのは、NeuS の言葉を借りれば、表現の中に表面を縛る制約が十分にないから。volume rendering を SDF 経由にすることで、マスク不要の学習を失わずに、幾何を一級市民に昇格させました。"
   - node: deepsdf2019
     type: builds-on
     note: >
       A cross-branch marriage: the SDF representation from the object
       reconstruction line, now supervised by images alone through volume
       rendering instead of by ground-truth 3D shapes.
-    i18n:
-      ja:
-        note: "枝をまたぐ結婚です。物体再構成の路線から来た SDF 表現が、ground truth の3D形状ではなく、volume rendering 越しに画像だけで教師付けされるようになりました。"
   - node: unisurf2021
     type: independent
     note: >
@@ -51,9 +45,6 @@ relations:
       NeuS names UNISURF as concurrent work that "also learns an implicit
       surface via volume rendering". The bridges differ — occupancy and a
       shrinking sampling interval there, an unbiased SDF-derived weight here.
-    i18n:
-      ja:
-        note: "arXiv 投稿は二か月差 (2021年4月20日と6月20日)。Tübingen と香港/MPI が、ともに陰関数の表面を volume rendering 越しに学習しました。NeuS は UNISURF を、同じく「volume rendering によって陰関数の表面を学習する」並行研究として挙げています。橋の架け方は違います — あちらは占有率としだいに狭まるサンプリング区間、こちらは SDF から導いた偏りのない重みです。"
   - node: idr2020
     type: fixes
     note: >
@@ -66,12 +57,4 @@ relations:
       gradient signals for back propagation". NeuS keeps an IDR-like network
       and initialization, and on DTU it beats masked IDR (mean Chamfer 0.90)
       with masks (0.77) and without them (0.84).
-    i18n:
-      ja:
-        note: "NeuS が IDR に下した診断を直します。IDR は「急な深度変化を生む複雑な構造の物体の再構成に失敗する」。その表面レンダリングが「光線ごとに表面との交点を一つしか考えない」ため、勾配が局所的すぎ、「妥当な表面に収束するには物体マスクによる教師が必要」になるからです。volume rendering なら、光線上のすべてのサンプルが「逆伝播のための勾配信号を生む」のです。NeuS は IDR に似たネットワークと初期化を受け継ぎ、DTU ではマスク付きの IDR (平均 Chamfer 距離 0.90) を、マスクありでも (0.77) なしでも (0.84) 上回りました。"
 status: seed
-i18n:
-  ja:
-    problem: "NeRF は美しく描きますが、その密度場は表面ではありません。しきい値で切れば紙やすりが出てくる。表面手法 (IDR) は綺麗に再構成する代わりにマスクを要し、急な深度変化で破綻します。"
-    solution: "幾何を符号付き距離関数で表し、SDF を volume rendering の密度へ変換する、偏りのない・遮蔽を弁えた重み関数を導きます — volume rendering の頑健さと、表面表現の鋭さ。重みが表面上でちょうど最大になることが (SDF の一次近似のもとで) 証明されています。"
-    limitations: "シーンごとの最適化に数時間、そして SDF を担う滑らかな MLP が細部を削り落とします — Neuralangelo による診断であり、のちに Neuralangelo 自身がハッシュグリッドで埋めた隙間です。"

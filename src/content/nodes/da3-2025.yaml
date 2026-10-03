@@ -30,9 +30,6 @@ relations:
       Third generation of the line: keeps V2's teacher-student recipe and
       detail quality, but generalizes the task from one image to any number of
       views.
-    i18n:
-      ja:
-        note: "路線の第三世代です。V2 の teacher-student レシピとディテール品質を保ちながら、タスクを一枚の画像から任意本数の視点へ一般化しました。"
   - node: vggt2025
     type: fixes
     note: >
@@ -41,12 +38,4 @@ relations:
       extra depth heads. One plain transformer with a single depth-ray target
       beats it by an average of 35.7% on pose and 23.6% on geometry. The depth
       lane and the scene lane formally merge here.
-    i18n:
-      ja:
-        note: "DA3 が VGGT に名指しした弱点を直します — 「多段のアーキテクチャと設計上の冗長性」で買った精度、つまり point map に深度ヘッドを重ねる構成です。素のトランスフォーマーと単一の depth-ray ターゲットが、姿勢で平均 35.7%、幾何で平均 23.6% 上回りました。深度レーンとシーンレーンは、ここで正式に合流します。"
 status: seed
-i18n:
-  ja:
-    problem: "二つのレーンは、いつの間にか同じ問題になっていました。単一画像の深度モデルと多視点幾何トランスフォーマー (VGGT) が、視覚空間の復元という同じタスクに、高度に特化したモデルとタスク別のヘッドで取り組んでいたのです。"
-    solution: "徹底したミニマリズムです。素のトランスフォーマー一つ (vanilla な DINO エンコーダ、アーキテクチャの特殊化なし) と予測ターゲット一つ (depth-ray) で、ポーズの有無を問わず 1〜N 視点を扱います。teacher-student 学習で DA2 級のディテールを保ち、新しい視覚幾何ベンチマークでは VGGT をカメラ姿勢で平均 35.7%、幾何精度で平均 23.6% 上回りました。"
-    limitations: "本人たちの言うとおり「汎用的な3D基盤モデルへの一歩」にすぎません。動的なシーンへの推論の拡張、言語やインタラクションの手がかりの統合、より大規模な事前学習は、いずれも今後の課題として残されています。"

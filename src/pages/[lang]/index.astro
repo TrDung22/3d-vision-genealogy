@@ -32,7 +32,7 @@ const posts = (await getCollection('posts'))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, 3);
 
-const dateLocale = { en: 'en-US', ja: 'ja-JP' }[lang];
+const dateLocale = 'en-US';
 const fmtDate = (d: Date) =>
   d.toLocaleDateString(dateLocale, { year: 'numeric', month: 'long', day: 'numeric' });
 ---
@@ -40,23 +40,12 @@ const fmtDate = (d: Date) =>
 <Base title={t(lang, 'home.title')} lang={lang}>
   <section class="hero">
     <h1>{t(lang, 'hero.title')}</h1>
-    {
-      lang === 'ja' ? (
-        <p>
-          これは、よくある論文リストではありません。<strong>系譜</strong>の物語です。
-          どの研究が、どの研究の弱点から生まれたのか。主流は何を<em>見落とした</em>のか。
-          互いを知らない枝が、どこで静かに同じ問題を解いていたのか。出発点は、
-          最も古典的な不良設定問題 — 一枚の画像からの3D復元です。
-        </p>
-      ) : (
-        <p>
-          This is not a list of papers. It is the story of <strong>lineage</strong>: which work
-          was born from the weakness of which, what the mainstream <em>overlooked</em>, and
-          which independent branches quietly solved the same problem. Starting from the most
-          classically ill-posed branch of all — reconstructing 3D from a single image.
-        </p>
-      )
-    }
+<p>
+      This is not a list of papers. It is the story of <strong>lineage</strong>: which work
+      was born from the weakness of which, what the mainstream <em>overlooked</em>, and
+      which independent branches quietly solved the same problem. Starting from the most
+      classically ill-posed branch of all — reconstructing 3D from a single image.
+    </p>
   </section>
 
   <section class="howto">

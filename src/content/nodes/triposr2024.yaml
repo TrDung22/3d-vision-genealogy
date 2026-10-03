@@ -28,21 +28,10 @@ relations:
       offers a stronger open model than the OpenLRM reimplementation it
       benchmarks against — opening the way for the community to climb onto
       this line's shoulders.
-    i18n:
-      ja:
-        note: "LRM のアーキテクチャを受け継ぎ、MIT ライセンスで公開することで、比較対象とした再実装 OpenLRM よりも強いオープンなモデルを提供しました — コミュニティがこの路線の肩に乗れる道を開いたのです。"
   - node: objaverse2023
     type: builds-on
     note: >
       Trained exclusively on Objaverse: its data improvements are "a
       carefully curated subset of the Objaverse dataset" and renderings closer
       to real-world images.
-    i18n:
-      ja:
-        note: "学習データは Objaverse だけです。データ面の改良は「Objaverse データセットから丁寧に選び抜いたサブセット」と、実写の画像分布に近づけたレンダリングでした。"
 status: seed
-i18n:
-  ja:
-    problem: "LRM はフィードフォワード3Dが成り立つことを証明しましたが、クローズドソースのまま — コミュニティに必要だったのは、普通のハードウェアで動く、開かれた高速版です。"
-    solution: "LRM のレシピを再現し、磨き上げます。Objaverse データのキュレーションと学習・レンダリングの細部を改善し、重みとコードを公開。物体の再構成は0.5秒を切ります。"
-    limitations: "後に InstantMesh と TripoSG が診断したとおり、決定的な単一画像の回帰器は見えない側を想像できません。自由なスタイルの入力では背面の幾何とテクスチャが劣化し、遮蔽領域にはアーティファクトが出ます。それでも歴史的な役割は、フィードフォワード路線の民主化にあります。"

@@ -68,35 +68,6 @@ export const NODE_KINDS = {
 export type NodeKind = keyof typeof NODE_KINDS;
 
 /**
- * Localized prose of a node entry — each field falls back to the English
- * original, so untranslated nodes degrade gracefully instead of breaking.
- */
-export function nodeProse(
-  data: {
-    problem: string;
-    solution: string;
-    limitations?: string;
-    i18n?: Record<string, { problem?: string; solution?: string; limitations?: string }>;
-  },
-  lang: Lang,
-) {
-  const loc = data.i18n?.[lang];
-  return {
-    problem: loc?.problem ?? data.problem,
-    solution: loc?.solution ?? data.solution,
-    limitations: loc?.limitations ?? data.limitations,
-  };
-}
-
-/** Localized note of one relation — falls back to the English note. */
-export function relNote(
-  rel: { note?: string; i18n?: Record<string, { note?: string }> },
-  lang: Lang,
-): string {
-  return rel.i18n?.[lang]?.note ?? rel.note ?? '';
-}
-
-/**
  * Light-theme variants of the branch color slots (reference palette, light
  * column). Branch YAML stores the dark slot as canonical; the light twin is
  * derived here so the data files stay single-source.
@@ -169,7 +140,7 @@ async function buildGraphUncached(lang: Lang): Promise<GraphData> {
 
   const branches = branchEntries.map((b) => ({
     id: b.id,
-    title: b.data.i18n?.[lang]?.title ?? b.data.title,
+    title: b.data.title,
     color: b.data.color,
     colorLight: LIGHT_VARIANT[b.data.color.toLowerCase()] ?? b.data.color,
     order: b.data.order,
@@ -180,7 +151,7 @@ async function buildGraphUncached(lang: Lang): Promise<GraphData> {
   const lanes: GraphData['lanes'] = [];
   for (const b of branchEntries) {
     for (const l of b.data.lanes) {
-      lanes.push({ id: `${b.id}/${l.id}`, branch: b.id, title: l.i18n?.[lang]?.title ?? l.title });
+      lanes.push({ id: `${b.id}/${l.id}`, branch: b.id, title: l.title });
     }
     for (const n of nodeEntries) {
       if (n.data.branch.id !== b.id) continue;
@@ -201,7 +172,7 @@ async function buildGraphUncached(lang: Lang): Promise<GraphData> {
     status: n.data.status,
     hasPost: Boolean(n.data.post),
     award: AWARD_RE.test(n.data.venue ?? ''),
-    problem: nodeProse(n.data, lang).problem,
+    problem: n.data.problem,
   }));
 
   // Relations are declared on the NEWER node, pointing to the OLDER one
@@ -211,7 +182,7 @@ async function buildGraphUncached(lang: Lang): Promise<GraphData> {
       source: r.node.id,
       target: n.id,
       type: r.type,
-      note: relNote(r, lang),
+      note: r.note ?? '',
     })),
   );
 

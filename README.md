@@ -8,7 +8,7 @@ the same problem in parallel.
 
 **[Explore the live site →](https://trdung22.github.io/3d-vision-genealogy/)**
 
-English · 日本語 — dark & light
+English — dark & light
 
 </div>
 
@@ -111,5 +111,4 @@ in [CONTRIBUTING.md](CONTRIBUTING.md).
 - [x] Open the multi-view geometry branch (two-view geometry → SIFT → Photo Tourism → COLMAP → learned matching → DUSt3R → VGGT)
 - [x] Open the dynamic scenes & 4D branch (D-NeRF / Nerfies → HyperNeRF, NSFF → DynIBaR, HexPlane / K-Planes → 4D-GS, TAPIR → Shape of Motion, MonST3R → MegaSaM, MAV3D)
 - [ ] Guided tours through the graph (story mode)
-- [x] Localize node content for `/ja/`
 - [ ] RSS feed + Open Graph images

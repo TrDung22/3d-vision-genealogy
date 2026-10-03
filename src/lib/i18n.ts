@@ -1,12 +1,9 @@
 /**
- * UI-chrome translations. Node/branch content (problem/solution/limitations,
- * relation notes, lane titles) is localized in the content YAML itself via
- * per-entry `i18n` blocks — see src/content.config.ts.
+ * UI-chrome strings. The site is English-only; routes keep their /en/ prefix
+ * (LOCALES) so existing links stay valid.
  */
-export const LOCALES = ['en', 'ja'] as const;
+export const LOCALES = ['en'] as const;
 export type Lang = (typeof LOCALES)[number];
-
-export const LOCALE_LABELS: Record<Lang, string> = { en: 'EN', ja: '日本語' };
 
 const dict: Record<Lang, Record<string, string>> = {
   en: {
@@ -122,118 +119,6 @@ const dict: Record<Lang, Record<string, string>> = {
     'heresies.teaser': 'Meet the heresies, the parallel discoveries & the revivals',
   },
 
-  ja: {
-    'meta.description':
-      '3Dコンピュータビジョンの系譜 — 誰が誰の弱点を直し、主流は何を見落とし、どの枝が知らぬ間に並走していたのか。',
-    'nav.about': 'はじめに',
-    'nav.genealogy': '系譜',
-    'nav.branches': '系統',
-    'nav.heresies': '異端',
-    'nav.blog': 'ブログ',
-    'footer.tagline':
-      'ノードを一つずつ足しながら育っていく系譜。ノードはどれも一つの研究、エッジはどれも「誰が誰に何を負っているか」の記録です。Astro + D3 製。',
-    'theme.toggle': 'ライト/ダークテーマ切り替え',
-    'home.title': '系譜',
-    'hero.title': '3Dコンピュータビジョンの系譜',
-    'howto.title': 'グラフの読み方',
-    'howto.arrows':
-      '矢印はつねに時間の流れに沿って、古い研究からそれを踏まえた新しい研究へ向かいます。塗りつぶされたノードには解説記事があり、白抜きのノードは執筆待ちの種。金色のリングは受賞・Oral・Spotlight・Highlight の印です。マークの形は研究の種類を表します — ● 手法、◆ 分析、■ データセット。',
-    'edge.fixes': '修正',
-    'edge.builds-on': '継承',
-    'edge.independent': '独立',
-    'edge.challenges': '挑戦',
-    'edge.revives': '復活',
-    'glossary.fixes': '後から現れ、先行研究の特定の弱点をまっすぐ直す',
-    'glossary.builds-on': '先行研究の土台の上に立ち、新しい方向へ広げる',
-    'glossary.independent':
-      '互いを知らないまま、同じ時期に同じ核心のアイデアへたどり着く — タスクも、枝さえも、違っていて構わない',
-    'glossary.challenges': '先行研究の前提・ベンチマーク・結論そのものを疑う',
-    'glossary.revives': '主流が置き去りにした方向を、もう一度呼び覚ます',
-    'table.title': '表で一望 — グラフがなくても系譜のすべてを',
-    'table.year': '年',
-    'table.work': '研究',
-    'table.lane': 'レーン',
-    'table.relations': '関係',
-    'table.nodes': 'ノード',
-    'posts.title': '最新記事',
-    'posts.none': 'まだ記事はありません — 系譜はようやく芽吹きはじめたところです。',
-    'posts.all': 'すべての記事 →',
-    'graph.hint2d':
-      'ドラッグで移動 · スクロールでズーム · ノードをクリックで個別ページへ · ホバーすると直接の関係が浮かび上がります。枝をまたぐ関係は薄く描かれ、ノードにホバーするとはっきり現れます。',
-    'graph.filterHint': 'クリックで枝の表示を切り替え · Alt+クリックでこの枝だけ表示',
-    'graph.hint3d':
-      '同じ系譜を3Dで。ノードはレーンごとに寄り集まります(淡い球)。ドラッグで回転 · スクロールでズーム · クリックで詳細へ。流れる粒子は「修正」、赤は「挑戦」。',
-    'graph.noscript': 'グラフの表示には JavaScript が必要です — ページ下部に完全な表があります。',
-    'graph.hasArticle': '記事あり',
-    'graph.seed': '種 — 執筆待ち',
-    'graph.award': '受賞 / Oral / Spotlight / Highlight',
-    'graph.kindHint': 'クリックでこの種類の研究を薄く表示 / 元に戻す · Alt+クリックでこの種類だけを強調',
-    'kind.method': '手法',
-    'kind.analysis': '分析',
-    'kind.dataset': 'データセット',
-    'graph.tipOpen': 'クリックでページを開く →',
-    'graph.loading3d': '3Dビューを読み込み中…',
-    'graph.error3d': '3Dビューを読み込めませんでした。',
-    'graph.play': '年代を再生',
-    'graph.pause': '一時停止',
-    'graph.standsOn': '土台となる研究',
-    'graph.followedBy': '後に続く研究',
-    'graph.openPage': 'ページを開く →',
-    'graph.close': '閉じる',
-    'graph.ariaTimeline': '3Dビジョン研究の系譜を時系列で示すグラフ',
-    'status.seed': '種',
-    'status.draft': '下書き',
-    'status.written': '執筆済み',
-    'node.linkPaper': '論文',
-    'node.linkProject': 'プロジェクトページ',
-    'node.linkCode': 'コード',
-    'node.linkJournal': 'ジャーナル版',
-    'node.problem': '問題',
-    'node.coreIdea': '中核のアイデア',
-    'node.question': '問い',
-    'node.finding': '知見',
-    'node.limitations': '残された限界',
-    'node.place': '系譜の中の位置',
-    'node.standsOn': '誰の肩の上に立っているか',
-    'node.standsOnIt': '誰がこの肩の上に立ったか',
-    'node.thisWork': 'この研究',
-    'node.root': 'ルートノード — 記録された関係はまだありません。',
-    'node.readAnalysis': '詳しい分析を読む:',
-    'node.seedNotice': 'このノードはまだ {status} の段階 — 詳しい解説はこれから書かれます。',
-    'node.back': '← 系譜へ戻る',
-    'branches.title': '系譜の系統一覧',
-    'branches.intro':
-      '3Dビジョンの全体をいきなり網羅することはできません。だからこの系譜は、一枝ずつ育てています。どの枝にもそれぞれの物語がありますが、枝どうしは思いのほかよく交差します。',
-    'branches.growing': '成長中',
-    'branches.planned': '計画中',
-    'branch.label': '系統',
-    'branch.timeline': 'タイムライン',
-    'branch.all': '← すべての系統',
-    'blog.title': 'ブログ',
-    'blog.intro':
-      'それぞれの記事で、系譜のノード一つ、あるいは転換点一つを掘り下げます。なぜ生まれたのか、実際には何を直したのか、そして次の世代にどんな宿題を残したのか。',
-    'blog.none': 'まだ記事はありません。',
-    'blog.related': '関連ノード:',
-    'blog.all': '← すべての記事',
-    'about.title': 'なぜ「論文リスト」ではなく「系譜」なのか',
-    'heresies.title': '異端・同時発見・復活',
-    'heresies.meta':
-      '3Dビジョンの異端と同時発見と復活 — 誰が主流に異を唱え、どのアイデアが各地で同時に実り、何が忘却から蘇ったのか。',
-    'heresies.intro':
-      '「修正」と「継承」の物語なら、どのサーベイも語ってくれます。このページに集めたのは残りの三種類のエッジ — 一本道の解説からこぼれ落ちてしまう部分です。以下は一行たりとも手書きではありません。すべて系譜そのものから生成され、系譜とともに育ちます。',
-    'heresies.challenges.title': '異端者たち',
-    'heresies.challenges.intro':
-      '何かを積み上げたからではなく、ある枝がまるごと思い込みの上に立っていたと示したからこそ偉大な論文たち。前提を、ベンチマークを、結論そのものを疑った研究です。',
-    'heresies.independent.title': 'アイデアが熟すとき',
-    'heresies.independent.intro':
-      '面識のないグループどうしが、同じ時期に同じアイデアへ手を伸ばす。熟したアイデアは、あちこちで同時に実を落とします。面白いのは「何がそれを熟させたのか」という問いのほうです。',
-    'heresies.revives.title': '死からの帰還',
-    'heresies.revives.intro':
-      '主流に見捨てられた方向 — ときには何十年も — を、誰かがふと思い出す。孤児になった枝は、誰も予想していないときに帰ってくるものです。',
-    'heresies.gap': '{n} 年後',
-    'heresies.crossBranch': '系統を越えて',
-    'heresies.teaser': '異端・同時発見・復活の物語を読む',
-  },
 };
 
 export function t(lang: Lang, key: string): string {

@@ -32,12 +32,4 @@ relations:
       prior instead: fine-tuned on only 74K synthetic samples, it beats DPT
       (1.2M real + 188K synthetic training images) on four of five zero-shot
       benchmarks.
-    i18n:
-      ja:
-        note: "Marigold が MiDaS/DPT 路線に名指しした弱点 — モデルがどれほど大きくなっても、その「視覚世界についての知識は学習時に見たデータに制限される」こと — を直します。処方は、Stable Diffusion が持つインターネット規模の事前知識を借りること。わずか7.4万件の合成サンプルで微調整しただけで、DPT (実画像120万枚 + 合成18.8万枚で学習) を五つのゼロショット benchmark のうち四つで上回りました。"
 status: seed
-i18n:
-  ja:
-    problem: "何百万枚もの深度ラベル付き画像を溜め込まずに汎化を達成する — ラベル集めの競争には、ゴールがないからです。"
-    solution: "Stable Diffusion の中にすでにある視覚的な「理解」を借ります。画像生成器を小さな合成データセットだけで軽く微調整し、深度生成器に仕立てる — 事前知識は深度ラベルからではなく、何十億枚ものインターネット画像を見てきた経験から来るのです。"
-    limitations: "遅い (論文の設定では、深度マップ一枚につき50ステップのデノイズを10回分アンサンブル) うえ、依然としてアフィン不変 (相対) の深度です。推論の効率、似た入力への一貫した出力、遠景の扱いは、本人たちも未解決の課題として挙げています。"

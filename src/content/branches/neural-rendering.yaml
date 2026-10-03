@@ -10,40 +10,21 @@ description: >
   3D structure vs pure transformers that render with no 3D machinery at all
   (LVSM). Each swing trades the same three currencies: quality, speed, and how
   much human geometry you must smuggle into the model.
-i18n:
-  ja:
-    title: "ニューラルレンダリング"
-    tagline: "ニューラルネットによるシーン表現 + 微分可能レンダリング — 一世代まるごとのインフラ"
-    description: "この枝は、ひとつの方程式が逆向きに走ることを覚えた物語です。1984年のボリュームレンダリング積分が微分可能レンダラーとして蘇り、シーンそのものが学習できるパラメータになりました。その歴史は振り子の往復です。幾何いらずのライトフィールド (1996) 対 幾何プロキシ。ニューラル表現 (SRN、NeRF) 対「ネットワーク不要」という異端 (Plenoxels)。レイマーチング 対 掘り起こされた2001年のスプラッティング (3DGS)。そして今は、明示的な3D構造 対 3Dの仕掛けを一切持たない純粋トランスフォーマー (LVSM)。振り子がどちらへ振れても、天秤に載るのはいつも同じ三つ — 品質、速度、そして人間の幾何知識をどれだけモデルに忍び込ませるか。"
 color: "#199e70" # categorical slot 2 (dark)
 order: 2
 status: active
 lanes:
   - id: roots
     title: "Volume & light-field roots"
-    i18n:
-      ja: { title: "ボリュームとライトフィールドの源流" }
   - id: scene-reps
     title: "Neural scene representations"
-    i18n:
-      ja: { title: "ニューラルシーン表現" }
   - id: radiance-fields
     title: "Radiance fields"
-    i18n:
-      ja: { title: "放射輝度場" }
   - id: efficiency
     title: "Real-time & efficiency"
-    i18n:
-      ja: { title: "リアルタイムと効率化" }
   - id: gaussians
     title: "Gaussian splatting & primitives"
-    i18n:
-      ja: { title: "ガウシアンスプラッティング" }
   - id: surfaces
     title: "Surfaces & geometry"
-    i18n:
-      ja: { title: "表面と幾何" }
   - id: feedforward
     title: "Feed-forward view synthesis"
-    i18n:
-      ja: { title: "フィードフォワード視点合成" }

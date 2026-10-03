@@ -36,12 +36,4 @@ relations:
       severe occlusion, and uncommon viewpoints — with a data engine and
       promptable interface instead of a new loss, and swaps SMPL for the
       skeleton/shape-decoupled MHR rig.
-    i18n:
-      ja:
-        note: "HMR が興した回帰血統にこの論文が見出した積年の弱点 — 難しい pose、深刻な遮蔽、珍しい視点での野外の脆さ — を直します。新しいロスではなくデータエンジンとプロンプト可能なインターフェースで。さらに SMPL を、骨格と体型を切り離した MHR リグに置き換えました。"
 status: seed
-i18n:
-  ja:
-    problem: "HMR の血統はベンチマークでは正確になりましたが、写真が実際に生きている場所 — 難しい pose、深刻な遮蔽、珍しい視点 — では脆いままでした。しかも回帰する SMPL 時代のリグは骨格と軟部組織の形状が絡み合っていて、この論文によれば、それが解釈性と制御性を損ないます。"
-    solution: "人体メッシュ復元を、プロンプト可能な基盤モデルとして作り直します。マスクと2Dキーポイントのプロンプトを受け付ける encoder-decoder (SAM 流の対話レシピ) を Meta 規模のデータエンジンで学習し、骨格構造と表面形状を切り離した新しいパラメトリックリグ — Momentum Human Rig (MHR) — を回帰します。野外の全身ベンチマークで最高水準の頑健さ。モデルもリグもオープンソースです。"
-    limitations: "それでもパラメトリックなマネキンです。服、髪、表面のディテール — 2019年に PIFu が名指しした借金 — は表現の外のまま。単一フレームで時間的一貫性はなく、その人体計測学的な忠実さを問う追跡検証もすでに始まっています。"

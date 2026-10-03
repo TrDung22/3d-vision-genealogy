@@ -1,7 +1,6 @@
 ---
 import { getCollection, getEntry } from 'astro:content';
 import Base from '../../../layouts/Base.astro';
-import { nodeProse, relNote } from '../../../lib/graph';
 import { LOCALES, t, type Lang } from '../../../lib/i18n';
 
 export async function getStaticPaths() {
@@ -20,8 +19,8 @@ const branch = await getEntry(entry.data.branch);
 const all = await getCollection('nodes');
 const byId = new Map(all.map((n) => [n.id, n]));
 
-const prose = nodeProse(entry.data, lang);
-const branchTitle = branch?.data.i18n?.[lang]?.title ?? branch?.data.title;
+const prose = entry.data;
+const branchTitle = branch?.data.title;
 const statusWord = t(lang, `status.${entry.data.status}`);
 // an analysis answers a question with a finding; methods and datasets keep
 // the problem → core-idea framing
@@ -30,14 +29,14 @@ const isAnalysis = kind === 'analysis';
 
 // outgoing: what this node says about older nodes
 const outgoing = entry.data.relations
-  .map((r) => ({ type: r.type, note: relNote(r, lang), other: byId.get(r.node.id) }))
+  .map((r) => ({ type: r.type, note: r.note ?? '', other: byId.get(r.node.id) }))
   .filter((r) => r.other);
 
 // incoming: what newer nodes say about this one
 const incoming = all.flatMap((n) =>
   n.data.relations
     .filter((r) => r.node.id === entry.id)
-    .map((r) => ({ type: r.type, note: relNote(r, lang), other: n })),
+    .map((r) => ({ type: r.type, note: r.note ?? '', other: n })),
 );
 
 const post = entry.data.post ? await getEntry(entry.data.post) : null;

@@ -39,9 +39,6 @@ relations:
       the 3D geometry in the presence of ambiguities". Predicting occupancy
       instead of density keeps NeRF's mask-free volume rendering and gives
       the optimization a surface to converge to.
-    i18n:
-      ja:
-        note: "NeRF の密度の下にある幾何を直します。UNISURF の診断ははっきりしています。密度の等値面は「たいてい滑らかさを欠き、アーティファクトを含む」— radiance field の表現が柔軟すぎて、「曖昧さがあるとき3D幾何を十分に拘束しない」からです。密度の代わりに占有率を予測することで、NeRF のマスク不要の volume rendering を保ったまま、最適化に収束すべき表面を与えました。"
   - node: occnet2019
     type: builds-on
     note: >
@@ -51,9 +48,6 @@ relations:
       changes is the supervision — images through volume rendering instead
       of ground-truth 3D shapes (the group's DVR had already used images,
       through surface rendering and with masks).
-    i18n:
-      ja:
-        note: "同じグループです (Oechsle と Geiger は両方の論文に名を連ねています)。幾何は Occupancy Network そのもので、表面はその 0.5 の決定境界、メッシュはあの論文の多重解像度抽出 (MISE) で取り出します。変わったのは教師信号です — ground truth の3D形状ではなく、volume rendering 越しの画像 (同じグループの DVR がすでに画像を使っていましたが、それは表面レンダリング越しで、マスク付きでした)。"
   - node: dvr2019
     type: fixes
     note: >
@@ -65,9 +59,6 @@ relations:
       iterations where the surface is not well defined". UNISURF keeps DVR's
       occupancy field and root-finding, now to center a shrinking
       volume-rendering interval on the surface.
-    i18n:
-      ja:
-        note: "同じグループの表面レンダラーが抱えていたマスク依存を直します。DVR は「物体マスクの必要性」を回避することを今後の課題に挙げていましたが、UNISURF はその原因を名指しします。DVR と IDR の「鍵となる仮説」、つまり「表面との最初の交点の領域だけがレンダリング方程式に寄与する」という仮定は、「表面がまだはっきり定まらない学習の初期には成り立たない」のです。UNISURF は DVR の占有場と root-finding を受け継ぎ、それを、しだいに狭まる volume rendering の区間を表面に合わせるために使います。"
   - node: idr2020
     type: fixes
     note: >
@@ -78,12 +69,4 @@ relations:
       against 0.90); on BlendedMVS and SceneNet scenes, which by its account
       have no object masks, it reports of its IDR attempts that "none of the
       scenes converged".
-    i18n:
-      ja:
-        note: "IDR のマスクへの依存を直します。UNISURF はそれを直接示しました。IDR のような手法は「正確な幾何を捉えるために、物体マスクと慎重な初期化を必要とする」のです。UNISURF も球の形から学習を始める点は変わりませんが、マスクなしで DTU のマスク付き IDR に迫ります (平均 Chamfer 距離 1.02 対 0.90)。また、BlendedMVS と SceneNet のシーンには物体マスクがないとしたうえで、IDR を試したものの「どのシーンも収束しなかった」と報告しています。"
 status: seed
-i18n:
-  ja:
-    problem: "画像から表面を学ぶ方法は二つあり、どちらも半分が欠けていました。表面レンダリング (DVR、IDR) は正確な幾何を与えますが、勾配が光線と表面の交点にしか生じないため、ピクセル単位の物体マスクを必要とします。NeRF はマスクを要しませんが、その密度は表面ではありません。等値面を取り出すと、滑らかさを欠き、アーティファクトだらけになります。"
-    solution: "NeRF のアルファを占有率として読み替えます。不透明な物体なら、アルファ合成は光線上で最初に占有されたサンプルの色を取ることに帰着します。そこで UNISURF は密度の代わりに占有場を予測し、二通りの方法でレンダリングできるようにしました。学習の序盤はサンプルを空間全体に散らして、マスクなしで大まかな構造を固め、その後は root-finding で見つけた表面のまわりの、しだいに狭まる区間へサンプルを絞り込みます — 極限では表面レンダリングになる volume rendering です。"
-    limitations: "設計上、扱えるのは不透明な固体の表面だけです。論文自身の説明によれば、露出オーバーの領域、テクスチャのない領域、ほとんど写らない領域は、明示的な平滑化の項を加えてもなお不正確で粗いまま残ります。DTU で比較した NeuS は、自らの SDF のゼロ等値面が「UNISURF より高い再構成精度」をもたらすとし、その差は深度が急に変わる物体で表れると述べています。"

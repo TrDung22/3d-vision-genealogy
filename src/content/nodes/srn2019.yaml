@@ -35,9 +35,6 @@ relations:
       coordinate function and the learned black-box decoder with a ray
       marcher that walks camera rays through it, so multi-view consistency
       comes from geometry, not hope.
-    i18n:
-      ja:
-        note: "GQN の構造なき潜在表現を直します。平坦なベクトルを座標の関数に、学習されたブラックボックスのデコーダを、カメラの光線に沿ってその中を進むレイマーチャーに置き換え — 多視点一貫性は希望からではなく、幾何から来るようにしたのです。"
   - node: deepsdf2019
     type: independent
     note: >
@@ -45,12 +42,4 @@ relations:
       Networks hit continuous coordinate-MLPs for SHAPE; SRN hit the same
       representation for appearance + rendering, simultaneously and
       independently — from supervision by posed images instead of 3D data.
-    i18n:
-      ja:
-        note: "2019年の陰関数の波、その第三戦線です。DeepSDF と Occupancy Networks は形状のために連続座標 MLP へ到達し、SRN は同じ表現に見た目とレンダリングの側から、同時かつ独立にたどり着きました — 教師信号は3Dデータではなく、pose 付きの画像です。"
 status: seed
-i18n:
-  ja:
-    problem: "GQN は画像だけからシーンを学べることを示しました。しかしその平坦な潜在ベクトルには空間の概念がありません — 同じ壁が二つの視点から同じに見える保証は、どこにもないのです。"
-    solution: "表現を3D座標の連続関数にします。MLP が (x, y, z) を特徴へ写し、学習された微分可能レイマーチャーがそれを描く — 3D構造と多視点一貫性がアーキテクチャに焼き込まれ、学習は pose 付きの2D画像だけから行われます。"
-    limitations: "学習された LSTM レイマーチャーは脆く — 本人たちの言うとおり、表面の穴や遮蔽物すれすれの光線で「立ち往生」することがあります — 結果はぼやけます。NeRF は SRN を「細部をまったく再現できない」と評しました。これは ReLU 座標 MLP の弱点で、のちに SIREN と Fourier features が取り組みます。光線ごとに不透明な表面点を一つ描くだけで、論文自身が述べるとおり、視点や照明に依存する効果はモデル化せず、形状と見た目も絡み合ったまま再構成します。一年後、NeRF は座標 MLP を残し、学習された marcher を固定の volume rendering に置き換えました。"
