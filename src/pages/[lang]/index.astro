@@ -1,8 +1,12 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
-import GenealogyGraph from '../../components/GenealogyGraph.astro';
-import { buildGraph } from '../../lib/graph';
+import Atlas from '../../components/Atlas.astro';
+import Floors from '../../components/Floors.astro';
+import EdgeGlyph from '../../components/EdgeGlyph.astro';
+import Icon from '../../components/Icon.astro';
+import Sparkline from '../../components/Sparkline.astro';
+import { buildGraph, independentWaves, type EdgeType } from '../../lib/graph';
 import { LOCALES, t, type Lang } from '../../lib/i18n';
 
 export function getStaticPaths() {
@@ -13,127 +17,215 @@ const lang = Astro.params.lang as Lang;
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const root = `${base}/${lang}`;
 const graph = await buildGraph(lang);
+const nodeById = new Map(graph.nodes.map((n) => [n.id, n]));
+const branchEntries = (await getCollection('branches')).sort((a, b) => a.data.order - b.data.order);
 
-const shortOf = new Map(graph.nodes.map((n) => [n.id, n.short]));
-// the table's echo of the graph's mark shapes (methods stay unmarked)
-const KIND_GLYPH: Record<string, string> = { analysis: '◆', dataset: '■' };
-const laneTitle = new Map(graph.lanes.map((l) => [l.id, l.title]));
-const rows = [...graph.nodes].sort((a, b) => a.year - b.year || a.short.localeCompare(b.short));
+const years = graph.nodes.map((n) => n.year);
+const minYear = Math.min(...years);
+const maxYear = Math.max(...years);
+const stats = [
+  { value: graph.nodes.length, label: t(lang, 'home.statWorks') },
+  { value: graph.edges.length, label: t(lang, 'home.statDebts') },
+  { value: graph.branches.length, label: t(lang, 'home.statBranches') },
+  { value: maxYear - minYear, label: t(lang, 'home.statYears') },
+];
 
-// outgoing relations (this node → the older nodes it references), grouped per node
-const relationsOf = new Map<string, string[]>();
-for (const e of graph.edges) {
-  const list = relationsOf.get(e.target) ?? [];
-  list.push(`${graph.edgeTypes[e.type].label} ${shortOf.get(e.source) ?? e.source}`);
-  relationsOf.set(e.target, list);
-}
+// one real relation per type, so the vocabulary is concrete from the start
+// (falls back to the first edge of that type if a pick ever disappears)
+const EXAMPLES: Record<EdgeType, [string, string]> = {
+  fixes: ['mipnerf2021', 'nerf2020'],
+  'builds-on': ['nerf2020', 'kajiya1984'],
+  independent: ['deepsdf2019', 'occnet2019'],
+  challenges: ['tatarchenko2019', 'r2n2-2016'],
+  revives: ['3dgs2023', 'ewa2001'],
+};
+const vocab = (Object.keys(graph.edgeTypes) as EdgeType[]).map((type) => {
+  const [newer, older] = EXAMPLES[type];
+  const e =
+    graph.edges.find((x) => x.type === type && x.target === newer && x.source === older) ??
+    graph.edges.find((x) => x.type === type);
+  return {
+    type,
+    label: graph.edgeTypes[type].label,
+    description: graph.edgeTypes[type].description,
+    example: e ? { newer: nodeById.get(e.target)!, older: nodeById.get(e.source)!, note: e.note } : null,
+  };
+});
+
+// ways in: branch cards share one sparkline scale
+const perBranchYear = new Map<string, number[]>();
+for (const n of graph.nodes) perBranchYear.set(n.branch, [...(perBranchYear.get(n.branch) ?? []), n.year]);
+const sparkMax = Math.max(
+  1,
+  ...[...perBranchYear.values()].flatMap((ys) => {
+    const c = new Map<number, number>();
+    ys.forEach((y) => c.set(y, (c.get(y) ?? 0) + 1));
+    return [...c.values()];
+  }),
+);
+const branchCards = branchEntries.map((b) => {
+  const ys = perBranchYear.get(b.id) ?? [];
+  return {
+    id: b.id,
+    title: b.data.title,
+    tagline: b.data.tagline,
+    color: b.data.color,
+    count: ys.length,
+    lanes: b.data.lanes.length,
+    span: ys.length ? `${Math.min(...ys)}–${Math.max(...ys)}` : '',
+    years: ys,
+  };
+});
+
+const challengeCount = graph.edges.filter((e) => e.type === 'challenges').length;
+const waveCount = independentWaves(graph).length;
+const reviveCount = graph.edges.filter((e) => e.type === 'revives').length;
 
 const posts = (await getCollection('posts'))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, 3);
-
-const dateLocale = 'en-US';
-const fmtDate = (d: Date) =>
-  d.toLocaleDateString(dateLocale, { year: 'numeric', month: 'long', day: 'numeric' });
+const fmtDate = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
 ---
 
-<Base title={t(lang, 'home.title')} lang={lang}>
+<Base title={t(lang, 'home.title')} lang={lang} container={false}>
   <section class="hero">
-    <h1>{t(lang, 'hero.title')}</h1>
-<p>
-      This is not a list of papers. It is the story of <strong>lineage</strong>: which work
-      was born from the weakness of which, what the mainstream <em>overlooked</em>, and
-      which independent branches quietly solved the same problem. Starting from the most
-      classically ill-posed branch of all — reconstructing 3D from a single image.
-    </p>
+    <div class="container-wide hero-grid">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="eyebrow-dot"></span>{t(lang, 'home.eyebrow')}</p>
+        <h1>A <em>genealogy</em> of <br />3D&nbsp;computer vision</h1>
+        <p class="lede">
+          Not a list of papers — a family tree. Which work was born from the weakness of which,
+          what the mainstream overlooked, and which groups that never met touched the same idea
+          in the same year. Four branches so far, from a single photograph to scenes that move.
+        </p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="#atlas">{t(lang, 'home.explore')} <Icon name="arrow-down" size={16} /></a>
+          <button type="button" class="btn" data-open-palette>
+            <Icon name="search" size={16} />{t(lang, 'home.search')}<span class="hero-kbd"><kbd class="kbd-mod">⌘</kbd><kbd>K</kbd></span>
+          </button>
+        </div>
+      </div>
+      <dl class="hero-stats">
+        {
+          stats.map((s) => (
+            <div>
+              <dd>{s.value}</dd>
+              <dt>{s.label}</dt>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
   </section>
 
-  <section class="howto">
-    <h2>{t(lang, 'howto.title')}</h2>
-    <ul class="edge-glossary">
+  <Atlas lang={lang} />
+
+  <section class="howto container-wide" id="how-to-read">
+    <div class="section-head">
+      <p class="eyebrow">{t(lang, 'home.howtoKicker')}</p>
+      <h2 set:html={t(lang, 'home.howtoTitle')} />
+      <p>{t(lang, 'home.howtoIntro')}</p>
+    </div>
+    <ol class="vocab">
       {
-        Object.entries(graph.edgeTypes).map(([key, meta]) => (
-          <li>
-            <svg class="edge-sample" width="46" height="10" aria-hidden="true">
-              <line
-                x1="1"
-                y1="5"
-                x2="45"
-                y2="5"
-                stroke={`var(${meta.stroke})`}
-                stroke-width={meta.width}
-                stroke-dasharray={meta.dash}
-              />
-            </svg>
-            <span>
-              <strong>{meta.label}</strong> — {t(lang, `glossary.${key}`)}
-            </span>
+        vocab.map((v, i) => (
+          <li class={`vocab-card card vocab-${v.type}`}>
+            <span class="vocab-n mono">0{i + 1}</span>
+            <div class="vocab-diagram" aria-hidden="true">
+              <span class="vocab-pill">{t(lang, 'home.older')}</span>
+              <EdgeGlyph type={v.type} width={64} arrow={v.type !== 'independent'} />
+              <span class="vocab-pill">{t(lang, 'home.newer')}</span>
+            </div>
+            <h3>{v.label}</h3>
+            <p class="vocab-def">{v.description}</p>
+            {v.example && (
+              <a class="vocab-example" href={`${root}/nodes/${v.example.newer.id}/`} data-focus={v.example.newer.id}>
+                <span class="vocab-eg mono">e.g.</span>
+                <span>
+                  <strong>{v.example.newer.short}</strong> <em>{v.label}</em> <strong>{v.example.older.short}</strong>
+                </span>
+              </a>
+            )}
           </li>
         ))
       }
-    </ul>
-    <p class="muted howto-arrows">{t(lang, 'howto.arrows')}</p>
-    <p>
-      <a href={`${root}/heresies/`}>{t(lang, 'heresies.teaser')} →</a>
-    </p>
+    </ol>
+    <div class="marks card">
+      <h3 class="marks-title">{t(lang, 'home.marksTitle')}</h3>
+      <div class="mark-item">
+        <svg width="58" height="22" viewBox="0 0 58 22" aria-hidden="true">
+          <circle cx="7" cy="11" r="5" class="m-ink" />
+          <path d="M29,5L35,11L29,17L23,11Z" class="m-ink" />
+          <rect x="46" y="6" width="10" height="10" class="m-ink" />
+        </svg>
+        <span>{t(lang, 'home.markShape')} — method, analysis, dataset</span>
+      </div>
+      <div class="mark-item">
+        <svg width="22" height="22" viewBox="0 0 22 22" aria-hidden="true">
+          <circle cx="11" cy="11" r="5" style="fill: var(--accent)" />
+          <circle cx="11" cy="11" r="8.5" fill="none" style="stroke: var(--award)" stroke-width="1.6" />
+        </svg>
+        <span>{t(lang, 'home.markRing')}</span>
+      </div>
+      <div class="mark-item">
+        <svg width="62" height="22" viewBox="0 0 62 22" aria-hidden="true">
+          {graph.branches.map((b, i) => <circle cx={7 + i * 16} cy="11" r="5" fill={b.color} />)}
+        </svg>
+        <span>{t(lang, 'home.markColor')}</span>
+      </div>
+    </div>
   </section>
 
-  <GenealogyGraph lang={lang} />
+  <Floors lang={lang} />
 
-  <section class="table-view">
-    <h2>{t(lang, 'table.title')}</h2>
-    {
-      graph.branches.map((b) => {
-        const branchRows = rows.filter((n) => n.branch === b.id);
-        if (branchRows.length === 0) return null;
-        return (
-          <details class="panel branch-table" data-branch={b.id} open>
-            <summary>
-              <span class="chip">
-                <span class="dot" style={`background:${b.color}`} />
-                <strong>{b.title}</strong>
-              </span>
-              <span class="muted count">{branchRows.length} {t(lang, 'table.nodes')}</span>
-            </summary>
-            <table>
-              <thead>
-                <tr>
-                  <th>{t(lang, 'table.year')}</th>
-                  <th>{t(lang, 'table.work')}</th>
-                  <th>{t(lang, 'table.lane')}</th>
-                  <th>{t(lang, 'table.relations')}</th>
-                </tr>
-              </thead>
-              <tbody>
-                {branchRows.map((n) => (
-                  <tr>
-                    <td>{n.year}</td>
-                    <td>
-                      {KIND_GLYPH[n.kind] && (
-                        <span class="kind-glyph" title={t(lang, `kind.${n.kind}`)} aria-label={t(lang, `kind.${n.kind}`)}>
-                          {KIND_GLYPH[n.kind]}
-                        </span>
-                      )}
-                      <a href={`${root}/nodes/${n.id}/`}>{n.short}</a>
-                    </td>
-                    <td class="muted">{laneTitle.get(n.lane) ?? ''}</td>
-                    <td class="muted">{(relationsOf.get(n.id) ?? ['—']).join(' · ')}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </details>
-        );
-      })
-    }
+  <section class="ways container-wide">
+    <div class="section-head">
+      <p class="eyebrow">{t(lang, 'home.waysKicker')}</p>
+      <h2 set:html={t(lang, 'home.waysTitle')} />
+    </div>
+    <div class="ways-grid">
+      {
+        branchCards.map((b) => (
+          <a class="card branch-card" href={`${root}/branches/${b.id}/`} style={`--bc: ${b.color}`}>
+            <p class="eyebrow">
+              <span class="dot" style={`background:${b.color}`} />
+              {t(lang, 'home.waysBranch')}
+            </p>
+            <h3>{b.title}</h3>
+            <p class="branch-tag">{b.tagline}</p>
+            <Sparkline years={b.years} from={minYear} to={maxYear} max={sparkMax} color={b.color} />
+            <p class="branch-meta mono">
+              {b.count} {t(lang, 'table.nodes')} · {b.lanes} {t(lang, 'branches.lanes')} · {b.span}
+            </p>
+          </a>
+        ))
+      }
+      <a class="card ways-card ways-heresies" href={`${root}/heresies/`}>
+        <p class="eyebrow">{t(lang, 'nav.heresies')}</p>
+        <h3>{t(lang, 'home.waysHeresies')}</h3>
+        <p>{t(lang, 'home.waysHeresiesBody')}</p>
+        <dl class="ways-counts">
+          <div><dd>{challengeCount}</dd><dt>{t(lang, 'home.challenges')}</dt></div>
+          <div><dd>{waveCount}</dd><dt>{t(lang, 'home.waves')}</dt></div>
+          <div><dd>{reviveCount}</dd><dt>{t(lang, 'home.revivals')}</dt></div>
+        </dl>
+        <span class="arrow-link">{t(lang, 'nav.heresies')}</span>
+      </a>
+      <a class="card ways-card" href={`${root}/works/`}>
+        <p class="eyebrow">{t(lang, 'nav.works')}</p>
+        <h3>{t(lang, 'home.waysIndex')}</h3>
+        <p>{t(lang, 'home.waysIndexBody')}</p>
+        <span class="arrow-link">{graph.nodes.length} {t(lang, 'table.nodes')}</span>
+      </a>
+    </div>
   </section>
 
-  <section>
-    <h2>{t(lang, 'posts.title')}</h2>
-    {
-      posts.length === 0 ? (
-        <p class="muted">{t(lang, 'posts.none')}</p>
-      ) : (
+  {
+    posts.length > 0 && (
+      <section class="container-wide posts">
+        <div class="section-head">
+          <h2>{t(lang, 'posts.title')}</h2>
+        </div>
         <ul class="post-list">
           {posts.map((p) => (
             <li>
@@ -143,91 +235,341 @@ const fmtDate = (d: Date) =>
             </li>
           ))}
         </ul>
-      )
-    }
-    <p>
-      <a href={`${root}/blog/`}>{t(lang, 'posts.all')}</a>
-    </p>
-  </section>
+        <p>
+          <a href={`${root}/blog/`}>{t(lang, 'posts.all')}</a>
+        </p>
+      </section>
+    )
+  }
 </Base>
+
+<script>
+  // vocabulary examples open in the atlas (they stay plain links without JS)
+  document.querySelectorAll<HTMLAnchorElement>('[data-focus]').forEach((a) => {
+    a.addEventListener('click', (ev) => {
+      if (ev.metaKey || ev.ctrlKey || ev.shiftKey || ev.button !== 0) return;
+      ev.preventDefault();
+      window.dispatchEvent(new CustomEvent('atlas:focus', { detail: { id: a.dataset.focus } }));
+    });
+  });
+</script>
 
 <style>
   .hero {
-    max-width: 780px;
-    margin-bottom: 0.5rem;
+    position: relative;
+    padding: 3.4rem 0 2.6rem;
+    overflow: hidden;
+    background:
+      radial-gradient(700px 360px at 8% -10%, var(--glow-1), transparent 70%),
+      radial-gradient(620px 320px at 52% -20%, var(--glow-2), transparent 70%),
+      radial-gradient(560px 300px at 96% 0%, var(--glow-3), transparent 70%);
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: end;
+    gap: 3rem;
+  }
+
+  .hero-copy {
+    max-width: 820px;
+  }
+
+  .eyebrow-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--award);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--award) 22%, transparent);
   }
 
   .hero h1 {
-    margin-top: 1rem;
+    margin: 0.9rem 0 1rem;
+    font-size: clamp(2.7rem, 5.6vw, 4.7rem);
+    line-height: 0.98;
+    letter-spacing: -0.02em;
   }
 
-  .howto {
+  /* light theme: darker stops so the display word keeps its contrast */
+  :global(html[data-theme='light']) .hero h1 em {
+    background-image: linear-gradient(100deg, #2a78d6 5%, #13845d 42%, #9a6500 78%);
+  }
+
+  .hero h1 em {
+    background: linear-gradient(100deg, #3987e5 5%, #199e70 40%, #c98500 75%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    padding-right: 0.06em;
+  }
+
+  .hero .lede {
+    font-size: 1.08rem;
+    max-width: 64ch;
+  }
+
+  .hero-cta {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
     margin-top: 1.5rem;
   }
 
-  .howto h2 {
-    margin-bottom: 0.75rem;
+  .hero-kbd {
+    display: inline-flex;
+    gap: 0.2rem;
+    margin-left: 0.2rem;
   }
 
-  /* compact two-column glossary so the "how to read" primer doesn't push
-     the graph below the fold */
-  .edge-glossary {
-    list-style: none;
-    padding: 0;
-    margin: 0 0 0.75rem;
+  .hero-stats {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-    gap: 0.45rem 2.25rem;
+    grid-template-columns: repeat(2, minmax(7.5rem, auto));
+    gap: 1.4rem 2.6rem;
+    margin: 0 0 0.4rem;
   }
 
-  .edge-glossary li {
-    display: flex;
-    align-items: flex-start;
-    gap: 0.6rem;
+  .hero-stats div {
+    border-left: 1px solid var(--ring-strong);
+    padding-left: 1rem;
+  }
+
+  .hero-stats dd {
     margin: 0;
+    font-family: var(--font-serif);
+    font-size: 2.8rem;
+    line-height: 1;
+    color: var(--ink);
+  }
+
+  .hero-stats dt {
+    margin-top: 0.35rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* ---- how to read ---- */
+  .howto {
+    padding-top: 6rem;
+    padding-bottom: 6rem;
+  }
+
+  .vocab {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 0.9rem;
+  }
+
+  .vocab-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 1.2rem 1.2rem 1rem;
+  }
+
+  .vocab-n {
+    position: absolute;
+    top: 1rem;
+    right: 1.1rem;
+    font-size: 0.7rem;
+    color: var(--muted);
+  }
+
+  .vocab-diagram {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    margin: 0.2rem 0 1.1rem;
+  }
+
+  .vocab-pill {
+    font-family: var(--font-mono);
+    font-size: 0.62rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: 0.2rem 0.5rem;
+    border: 1px solid var(--ring-strong);
+    border-radius: 999px;
+  }
+
+  .vocab-card h3 {
+    margin: 0 0 0.4rem;
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: 1.85rem;
+    line-height: 1.05;
+  }
+
+  .vocab-challenges h3 {
+    color: var(--danger);
+  }
+
+  .vocab-def {
+    margin: 0 0 1rem;
+    font-size: 0.88rem;
+    line-height: 1.55;
+  }
+
+  .vocab-example {
+    margin-top: auto;
+    display: flex;
+    gap: 0.55rem;
+    padding: 0.65rem 0.75rem;
+    border-radius: 10px;
+    background: var(--page);
+    border: 1px solid var(--ring);
+    color: var(--ink-2);
+    font-size: 0.8rem;
+    line-height: 1.45;
+    transition: border-color 0.2s;
+  }
+
+  .vocab-example:hover {
+    text-decoration: none;
+    border-color: var(--ring-strong);
+  }
+
+  .vocab-example em {
+    color: var(--muted);
+  }
+
+  .vocab-eg {
+    color: var(--muted);
+    font-size: 0.7rem;
+    padding-top: 0.1rem;
+  }
+
+  .marks {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem 2.5rem;
+    margin-top: 0.9rem;
+    padding: 1rem 1.3rem;
+  }
+
+  .marks-title {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .mark-item {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-size: 0.86rem;
+  }
+
+  .m-ink {
+    fill: var(--ink-2);
+  }
+
+  /* ---- ways in ---- */
+  .ways {
+    padding-top: 6rem;
+    padding-bottom: 3rem;
+  }
+
+  .ways-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.9rem;
+  }
+
+  .branch-card,
+  .ways-card {
+    display: flex;
+    flex-direction: column;
+    padding: 1.4rem 1.5rem 1.3rem;
+  }
+
+  .branch-card {
+    border-top: 2px solid var(--bc);
+  }
+
+  .branch-card .eyebrow .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+  }
+
+  .branch-card h3,
+  .ways-card h3 {
+    margin: 0.7rem 0 0.4rem;
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: 2rem;
+    line-height: 1.05;
+  }
+
+  .branch-tag {
+    margin: 0 0 1.3rem;
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .branch-card :global(.sparkline) {
+    margin-top: auto;
+  }
+
+  .branch-meta {
+    margin: 0.7rem 0 0;
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+
+  .ways-card p {
+    margin: 0 0 1rem;
     font-size: 0.92rem;
   }
 
-  .edge-glossary .edge-sample {
-    flex: none;
-    margin-top: 0.45em;
+  .ways-card .arrow-link {
+    margin-top: auto;
+    color: var(--accent);
   }
 
-  .howto-arrows {
-    font-size: 0.85rem;
-    max-width: 900px;
+  .ways-heresies {
+    background:
+      radial-gradient(420px 220px at 100% 0%, color-mix(in srgb, var(--danger) 14%, transparent), transparent 70%),
+      var(--surface);
   }
 
-  .table-view {
-    margin: 2rem 0;
+  .ways-counts {
+    display: flex;
+    gap: 1.6rem;
+    margin: 0 0 1.2rem;
   }
 
-  .branch-table {
-    margin: 1rem 0;
-  }
-
-  .branch-table summary {
-    cursor: pointer;
-  }
-
-  .branch-table summary .chip {
+  .ways-counts dd {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-size: 2.2rem;
+    line-height: 1;
     color: var(--ink);
-    font-size: 1rem;
   }
 
-  .branch-table summary .count {
-    margin-left: 0.75rem;
-    font-size: 0.85rem;
-  }
-
-  .branch-table table {
-    margin-top: 1rem;
-  }
-
-  .kind-glyph {
+  .ways-counts dt {
+    font-family: var(--font-mono);
+    font-size: 0.64rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
     color: var(--muted);
-    font-size: 0.8em;
-    margin-right: 0.4em;
+  }
+
+  .posts {
+    padding-bottom: 3rem;
   }
 
   .post-list {
@@ -239,8 +581,58 @@ const fmtDate = (d: Date) =>
     margin: 0.9rem 0;
   }
 
-  .post-list p {
-    margin: 0.15rem 0 0;
-    font-size: 0.9rem;
+  @media (max-width: 1200px) {
+    .vocab {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 1000px) {
+    .hero-grid {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    .hero-stats {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1rem;
+    }
+
+    .hero-stats dd {
+      font-size: 2.3rem;
+    }
+
+    .ways-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 680px) {
+    .hero {
+      padding: 2.75rem 0 2rem;
+    }
+
+    .hero .lede {
+      font-size: 1.05rem;
+    }
+
+    .hero-kbd {
+      display: none;
+    }
+
+    .hero-stats {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .vocab,
+    .ways-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .howto,
+    .ways {
+      padding-top: 4rem;
+      padding-bottom: 4rem;
+    }
   }
 </style>

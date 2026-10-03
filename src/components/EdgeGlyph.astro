@@ -1,0 +1,28 @@
+---
+/** A relation type drawn as a short stroke in its own style (from EDGE_TYPES). */
+import { EDGE_TYPES, type EdgeType } from '../lib/graph';
+
+interface Props {
+  type: EdgeType;
+  width?: number;
+  arrow?: boolean;
+  class?: string;
+}
+const { type, width = 30, arrow = false, class: cls } = Astro.props;
+const m = EDGE_TYPES[type];
+const end = arrow ? width - 7 : width - 1;
+---
+
+<svg class:list={['edge-glyph', cls]} width={width} height="10" viewBox={`0 0 ${width} 10`} aria-hidden="true">
+  <line
+    x1="1"
+    y1="5"
+    x2={end}
+    y2="5"
+    style={`stroke: var(${m.stroke})`}
+    stroke-width={m.width}
+    stroke-dasharray={m.dash ?? undefined}
+    stroke-linecap="round"
+  />
+  {arrow && <path d={`M${width - 8},1.2 L${width},5 L${width - 8},8.8Z`} style={`fill: var(${m.stroke})`} />}
+</svg>

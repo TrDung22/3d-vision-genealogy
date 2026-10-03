@@ -1,0 +1,1075 @@
+---
+/**
+ * The atlas — the genealogy as a timeline map (logic in src/lib/atlas.js).
+ * It reads /<lang>/graph.json, generated from src/content/, so adding
+ * branches or nodes needs no change here. UI strings arrive through a data
+ * attribute.
+ */
+import Icon from './Icon.astro';
+import { graphStrings, t, type Lang } from '../lib/i18n';
+
+interface Props {
+  lang?: Lang;
+}
+
+const { lang = 'en' } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const root = `${base}/${lang}`;
+---
+
+<section class="atlas" id="atlas" aria-label={t(lang, 'atlas.aria')} data-root={root} data-i18n={JSON.stringify(graphStrings(lang))}>
+  <div class="at-head">
+    <div class="at-pad at-toolbar">
+      <div class="at-filters">
+        <div class="at-group">
+          <span class="at-group-label">{t(lang, 'atlas.branches')}</span>
+          <div class="at-chips at-branches" role="group" aria-label={t(lang, 'atlas.branches')}></div>
+        </div>
+        <div class="at-group">
+          <span class="at-group-label">{t(lang, 'atlas.kinds')}</span>
+          <div class="at-chips at-kinds" role="group" aria-label={t(lang, 'atlas.kinds')}></div>
+        </div>
+      </div>
+      <div class="at-zoom-ctl" role="group" aria-label={t(lang, 'atlas.zoom')}>
+        <button type="button" class="icon-btn at-zoom-out" aria-label={t(lang, 'atlas.zoomOut')} title={t(lang, 'atlas.zoomOut')}><Icon name="minus" size={16} /></button>
+        <button type="button" class="icon-btn at-zoom-fit" aria-label={t(lang, 'atlas.zoomFit')} title={t(lang, 'atlas.zoomFit')}><Icon name="fit" size={16} /></button>
+        <button type="button" class="icon-btn at-zoom-in" aria-label={t(lang, 'atlas.zoomIn')} title={t(lang, 'atlas.zoomIn')}><Icon name="plus" size={16} /></button>
+      </div>
+    </div>
+    <div class="at-pad at-axis" aria-hidden="true"><svg></svg></div>
+  </div>
+
+  <div class="at-pad">
+    <div class="at-scroller">
+      <div class="at-stage">
+        <div class="at-captions"></div>
+        <svg class="at-svg" role="group" aria-label={t(lang, 'graph.ariaTimeline')}></svg>
+      </div>
+    </div>
+    <noscript>
+      <p class="at-noscript">
+        {t(lang, 'graph.noscript')} <a href={`${root}/works/`}>{t(lang, 'nav.works')} →</a>
+      </p>
+    </noscript>
+  </div>
+
+  <div class="at-timebar">
+    <div class="at-pad at-timebar-row">
+      <button type="button" class="at-play" aria-label={t(lang, 'graph.play')} title={t(lang, 'graph.play')}>
+        <Icon name="play" size={16} class="i-play" />
+        <Icon name="pause" size={16} class="i-pause" />
+      </button>
+      <div class="at-histo-wrap">
+        <svg class="at-histo" aria-hidden="true"></svg>
+        <input class="at-range" type="range" min="0" step="1" aria-label={t(lang, 'atlas.year')} />
+      </div>
+      <output class="at-readout" aria-live="off"></output>
+      <div class="at-types-wrap">
+        <span class="at-group-label">{t(lang, 'atlas.relations')}</span>
+        <div class="at-chips at-types" role="group" aria-label={t(lang, 'atlas.relations')}></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="at-tooltip" role="tooltip" hidden></div>
+</section>
+
+<aside class="inspector" id="inspector" aria-label={t(lang, 'inspector.aria')} hidden></aside>
+
+<script>
+  import { mountAtlas } from '../lib/atlas.js';
+
+  const el = document.getElementById('atlas')!;
+  const root = el.dataset.root!;
+  const strings = JSON.parse(el.dataset.i18n!);
+
+  (async () => {
+    // capsule widths are measured with the real face, and every later scroll
+    // target assumes the page above has stopped reflowing — so wait for the
+    // faces in use (briefly; a slow font must not hold the atlas hostage)
+    await Promise.race([
+      document.fonts?.load('520 12px "Inter Variable"').then(() => document.fonts.ready),
+      new Promise((r) => setTimeout(r, 2000)),
+    ]).catch(() => {});
+    const data = await (await fetch(`${root}/graph.json`)).json();
+    mountAtlas({ el, data, root, strings });
+  })().catch((err) => console.error('atlas:', err));
+</script>
+
+<style is:global>
+  .atlas {
+    position: relative;
+    --at-pad: 1.5rem;
+    /* land flush under the site header, not under html's scroll padding */
+    scroll-margin-top: -16px;
+  }
+
+  .at-pad {
+    max-width: 1680px;
+    margin: 0 auto;
+    padding-left: var(--at-pad);
+    padding-right: var(--at-pad);
+  }
+
+  /* ---- sticky head: filters + the year axis ---- */
+  .at-head {
+    position: sticky;
+    top: var(--header-h);
+    z-index: 31;
+    background: var(--glass);
+    backdrop-filter: saturate(150%) blur(14px);
+    -webkit-backdrop-filter: saturate(150%) blur(14px);
+    border-top: 1px solid var(--ring);
+    border-bottom: 1px solid var(--ring);
+  }
+
+  .at-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding-top: 0.7rem;
+    padding-bottom: 0.35rem;
+  }
+
+  .at-filters {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem 1.75rem;
+    flex-wrap: wrap;
+  }
+
+  .at-group,
+  .at-types-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    min-width: 0;
+  }
+
+  .at-group-label {
+    font-family: var(--font-mono);
+    font-size: 0.64rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .at-chips {
+    display: flex;
+    gap: 0.35rem;
+    flex-wrap: wrap;
+  }
+
+  .at-chip {
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    height: 1.95rem;
+    padding: 0 0.7rem;
+    border-radius: 999px;
+    border: 1px solid var(--ring-strong);
+    background: var(--surface);
+    color: var(--ink);
+    font-size: 0.8rem;
+    font-weight: 550;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity 0.2s, background-color 0.2s, border-color 0.2s;
+  }
+
+  .at-chip:hover {
+    background: var(--surface-2);
+    border-color: var(--muted);
+  }
+
+  .at-chip.is-off {
+    background: transparent;
+    border-style: dashed;
+    color: var(--muted);
+  }
+
+  .at-chip.is-off .at-chip-dot {
+    background: transparent;
+    box-shadow: inset 0 0 0 1.5px var(--bc);
+  }
+
+  .at-chip.is-off svg {
+    opacity: 0.55;
+  }
+
+  .at-chip-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--bc);
+  }
+
+  .at-chip svg path {
+    fill: currentColor;
+  }
+
+  .at-chip-n {
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: var(--muted);
+  }
+
+  .at-zoom-ctl {
+    flex: none;
+    margin-left: auto;
+    display: flex;
+    gap: 0.3rem;
+  }
+
+  .at-zoom-ctl .icon-btn {
+    width: 1.95rem;
+    height: 1.95rem;
+  }
+
+  .at-axis svg {
+    display: block;
+    width: 100%;
+    height: 28px;
+  }
+
+  .at-year {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    font-weight: 500;
+    fill: var(--muted);
+    transition: opacity 0.2s;
+  }
+
+  .at-year.is-hidden {
+    display: none;
+  }
+
+  .at-year.is-future {
+    opacity: 0.32;
+  }
+
+  .at-year.is-now {
+    fill: var(--ink);
+    font-weight: 700;
+  }
+
+  /* ---- the chart ---- */
+  .at-scroller {
+    position: relative;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scrollbar-width: thin;
+    margin-top: 0.9rem;
+    padding-bottom: 0.6rem;
+  }
+
+  .at-scroller.can-pan {
+    cursor: grab;
+  }
+
+  .at-scroller.is-dragging {
+    cursor: grabbing;
+  }
+
+  .at-stage {
+    position: relative;
+    display: flex;
+  }
+
+  .at-svg {
+    display: block;
+    flex: none;
+    overflow: visible;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .at-band {
+    fill: color-mix(in srgb, var(--bc) 4.5%, transparent);
+    stroke: color-mix(in srgb, var(--bc) 13%, transparent);
+    stroke-width: 1;
+  }
+
+  .at-lane-rule {
+    stroke: var(--grid);
+    stroke-dasharray: 2 6;
+  }
+
+  .at-grid line {
+    stroke: var(--grid);
+    stroke-width: 1;
+    opacity: 0.45;
+  }
+
+  .at-now {
+    stroke: var(--ink);
+    stroke-width: 1.5;
+    stroke-dasharray: 4 4;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .at-now.is-on {
+    opacity: 0.55;
+  }
+
+  .at-edge {
+    fill: none;
+    stroke-width: var(--sw);
+    stroke-linecap: round;
+    opacity: 0.5;
+    transition: opacity 0.25s, stroke-width 0.2s;
+  }
+
+  /* cross-branch relations whisper until a work they touch is in focus */
+  .at-edge.x-branch {
+    opacity: 0.08;
+  }
+
+  .at-edge.is-kind-off {
+    opacity: 0.05;
+  }
+
+  .is-focusing .at-edge[data-role='dim'] {
+    opacity: 0.04;
+  }
+
+  .is-focusing .at-edge[data-role='lit'] {
+    opacity: 0.72;
+  }
+
+  .is-focusing .at-edge[data-role='direct'] {
+    opacity: 1;
+    stroke-width: calc(var(--sw) * 1.5);
+  }
+
+  .at-edge-hit {
+    fill: none;
+    stroke: transparent;
+    stroke-width: 12;
+    pointer-events: stroke;
+  }
+
+  .at-edge.is-type-off,
+  .at-edge-hit.is-type-off {
+    display: none;
+  }
+
+  .at-pulse {
+    fill: none;
+    stroke-width: 2.6;
+    stroke-linecap: round;
+    stroke-dasharray: 3 22;
+    pointer-events: none;
+    animation: at-flow 1.4s linear infinite;
+  }
+
+  @keyframes at-flow {
+    to {
+      stroke-dashoffset: -25;
+    }
+  }
+
+  .atlas.is-scrolling .at-pulse {
+    animation-play-state: paused;
+  }
+
+  .at-node {
+    cursor: pointer;
+    outline: none;
+    transition: opacity 0.25s;
+    -webkit-user-drag: none;
+  }
+
+  .at-cap {
+    fill: var(--surface);
+    stroke: var(--ring-strong);
+    stroke-width: 1;
+    transition: stroke 0.2s, fill 0.2s;
+  }
+
+  .at-mark {
+    fill: var(--bc);
+  }
+
+  .at-ring {
+    fill: none;
+    stroke: var(--award);
+    stroke-width: 1.5;
+  }
+
+  .at-label {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 520;
+    fill: var(--ink-2);
+    transition: fill 0.2s;
+  }
+
+  .at-article {
+    fill: var(--ink);
+  }
+
+  .at-node:hover .at-cap,
+  .at-node:focus-visible .at-cap,
+  .at-node[data-role='hover'] .at-cap {
+    stroke: var(--bc);
+    stroke-width: 1.6;
+  }
+
+  .at-node:hover .at-label,
+  .at-node:focus-visible .at-label {
+    fill: var(--ink);
+  }
+
+  .at-node.is-kind-off {
+    opacity: 0.16;
+  }
+
+  .is-focusing .at-node[data-role='dim'] {
+    opacity: 0.13;
+  }
+
+  /* the focus wins over the kind fade */
+  .is-focusing .at-node:not([data-role='dim']) {
+    opacity: 1;
+  }
+
+  .at-node[data-role='sel'] .at-cap {
+    stroke: var(--bc);
+    stroke-width: 2.2;
+    fill: color-mix(in srgb, var(--bc) 22%, var(--surface));
+    filter: drop-shadow(0 0 7px color-mix(in srgb, var(--bc) 65%, transparent));
+  }
+
+  .at-node[data-role='sel'] .at-label {
+    fill: var(--ink);
+    font-weight: 680;
+  }
+
+  .at-node[data-role='anc'] .at-cap,
+  .at-node[data-role='desc'] .at-cap,
+  .at-node[data-role='near'] .at-cap {
+    stroke: color-mix(in srgb, var(--bc) 70%, transparent);
+  }
+
+  .at-node[data-role='anc'] .at-label,
+  .at-node[data-role='desc'] .at-label,
+  .at-node[data-role='near'] .at-label {
+    fill: var(--ink);
+  }
+
+  .at-node[data-role='peer'] .at-cap {
+    stroke: var(--muted);
+    stroke-dasharray: 3 3;
+  }
+
+  /* time machine: the future stays hidden, even under focus */
+  .at-node.is-future,
+  .at-edge.is-future,
+  .at-edge-hit.is-future {
+    opacity: 0 !important;
+    pointer-events: none;
+  }
+
+  /* zoomed far out: names give way to tinted bars */
+  .at-overview .at-label,
+  .at-overview .at-article {
+    display: none;
+  }
+
+  .at-overview .at-cap {
+    fill: color-mix(in srgb, var(--bc) 32%, var(--surface));
+    stroke: color-mix(in srgb, var(--bc) 60%, transparent);
+  }
+
+  /* first paint: the field grows in, year by year */
+  .at-intro .at-node {
+    animation: at-pop 0.55s var(--ease) both;
+    animation-delay: var(--d);
+  }
+
+  .at-intro .at-edge {
+    animation: at-fade 0.6s ease both;
+    animation-delay: var(--d);
+  }
+
+  @keyframes at-pop {
+    from {
+      opacity: 0;
+      translate: -10px 0;
+    }
+  }
+
+  @keyframes at-fade {
+    from {
+      opacity: 0;
+    }
+  }
+
+  /* ---- captions: branch titles + lane names, stuck to the left edge ---- */
+  .at-captions {
+    position: sticky;
+    left: 0;
+    width: 0;
+    flex: none;
+    z-index: 4;
+    pointer-events: none;
+  }
+
+  .at-cap-branch,
+  .at-cap-lane {
+    position: absolute;
+    top: 0;
+    left: 0;
+    white-space: nowrap;
+  }
+
+  .at-cap-branch {
+    left: 14px;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.55rem;
+    padding: 0 0.55rem 0.1rem 0.4rem;
+    border-radius: 8px;
+    color: var(--ink);
+    pointer-events: auto;
+    background: color-mix(in srgb, var(--page) 72%, transparent);
+  }
+
+  .at-cap-branch:hover {
+    text-decoration: none;
+  }
+
+  .at-cap-branch:hover .at-cap-title {
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.15em;
+  }
+
+  .at-cap-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--bc);
+    align-self: center;
+    flex: none;
+  }
+
+  /* caption type follows the zoom (within limits) so it keeps to its room */
+  .at-cap-title {
+    font-family: var(--font-serif);
+    font-size: clamp(0.95rem, calc(1.7rem * var(--k, 0.7)), 1.5rem);
+    line-height: 1.15;
+  }
+
+  .at-cap-count {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--muted);
+  }
+
+  .at-cap-lane {
+    left: 20px;
+    padding: 0 0.35rem;
+    border-radius: 4px;
+    font-size: clamp(8.5px, calc(16px * var(--k, 0.7)), 10.5px);
+    font-weight: 620;
+    letter-spacing: 0.07em;
+    line-height: 1.25;
+    text-transform: uppercase;
+    color: var(--muted);
+    background: color-mix(in srgb, var(--page) 60%, transparent);
+  }
+
+  .at-overview .at-cap-lane {
+    display: none;
+  }
+
+  .at-noscript {
+    padding: 2rem 0;
+    color: var(--muted);
+  }
+
+  /* ---- time bar ---- */
+  .at-timebar {
+    position: sticky;
+    bottom: 0;
+    z-index: 30;
+    margin-top: 0.4rem;
+    background: var(--glass);
+    backdrop-filter: saturate(150%) blur(14px);
+    -webkit-backdrop-filter: saturate(150%) blur(14px);
+    border-top: 1px solid var(--ring);
+    border-bottom: 1px solid var(--ring);
+  }
+
+  .at-timebar-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem 1.25rem;
+    padding-top: 0.55rem;
+    padding-bottom: 0.55rem;
+  }
+
+  .at-play {
+    appearance: none;
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 2.35rem;
+    height: 2.35rem;
+    border-radius: 50%;
+    border: none;
+    background: var(--ink);
+    color: var(--page);
+    cursor: pointer;
+    transition: transform 0.2s var(--ease), background-color 0.2s;
+  }
+
+  .at-play:hover {
+    transform: scale(1.06);
+  }
+
+  .at-play .i-pause,
+  .at-play.is-playing .i-play {
+    display: none;
+  }
+
+  .at-play.is-playing .i-pause {
+    display: block;
+  }
+
+  .at-histo-wrap {
+    position: relative;
+    flex: 1 1 240px;
+    min-width: 150px;
+    max-width: 560px;
+    height: 34px;
+    border-radius: 6px;
+  }
+
+  .at-histo-wrap:focus-within {
+    outline: 2px solid var(--accent);
+    outline-offset: 3px;
+  }
+
+  .at-histo {
+    display: block;
+  }
+
+  .at-histo-col {
+    transition: opacity 0.25s;
+  }
+
+  .at-histo-col.is-future {
+    opacity: 0.2;
+  }
+
+  .at-histo-cursor line {
+    stroke: var(--ink);
+    stroke-width: 1.5;
+  }
+
+  .at-range {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: ew-resize;
+  }
+
+  .at-readout {
+    display: flex;
+    flex-direction: column;
+    min-width: 4.6rem;
+    font-family: var(--font-mono);
+    line-height: 1.15;
+  }
+
+  .at-readout b {
+    color: var(--ink);
+    font-size: 1rem;
+    font-weight: 600;
+  }
+
+  .at-readout span {
+    color: var(--muted);
+    font-size: 0.7rem;
+  }
+
+  .at-types-wrap {
+    flex: 0 1 auto;
+    margin-left: auto;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+
+  .at-types-wrap::-webkit-scrollbar {
+    display: none;
+  }
+
+  .at-types {
+    flex-wrap: nowrap;
+  }
+
+  /* below a wide desk: one row of filters that scrolls, labels dropped */
+  @media (max-width: 1359px) {
+    .at-filters {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      scrollbar-width: none;
+      gap: 1rem;
+    }
+
+    .at-filters::-webkit-scrollbar {
+      display: none;
+    }
+
+    .at-filters .at-chips {
+      flex-wrap: nowrap;
+    }
+
+    .at-group,
+    .at-zoom-ctl {
+      flex: none;
+    }
+
+    .at-group-label {
+      display: none;
+    }
+  }
+
+  .at-types .edge-glyph {
+    width: 22px;
+  }
+
+  /* ---- tooltip ---- */
+  .at-tooltip {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 70;
+    max-width: 320px;
+    padding: 0.7rem 0.85rem;
+    border-radius: 12px;
+    background: var(--tooltip-bg);
+    box-shadow: var(--shadow-lg);
+    font-size: 0.82rem;
+    line-height: 1.45;
+    color: var(--ink-2);
+    pointer-events: none;
+  }
+
+  .at-tooltip p {
+    margin: 0.4rem 0 0.35rem;
+  }
+
+  .tip-kicker {
+    display: flex;
+    align-items: center;
+    gap: 0.45em;
+    font-size: 0.68rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .tip-kicker::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--bc);
+  }
+
+  .tip-title {
+    display: block;
+    margin-top: 0.2rem;
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: 1.35rem;
+    line-height: 1.15;
+    color: var(--ink);
+  }
+
+  .tip-meta {
+    display: block;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    color: var(--muted);
+  }
+
+  .tip-rel em {
+    color: var(--muted);
+  }
+
+  .tip-hint {
+    font-size: 0.7rem;
+    color: var(--muted);
+  }
+
+  /* ---- inspector ---- */
+  .inspector {
+    position: fixed;
+    z-index: 45;
+    /* placed live between the atlas head and the time bar (atlas.js) */
+    top: calc(var(--header-h) + 94px);
+    right: 12px;
+    bottom: 66px;
+    width: min(400px, calc(100vw - 24px));
+    display: flex;
+    flex-direction: column;
+    background: var(--surface);
+    border-radius: 18px;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(18px);
+    transition: transform 0.35s var(--ease), opacity 0.25s;
+  }
+
+  .inspector::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto;
+    height: 3px;
+    background: var(--bc);
+  }
+
+  .inspector.is-open {
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
+  }
+
+  .inspector.is-away {
+    opacity: 0;
+    transform: translateX(18px);
+    pointer-events: none;
+  }
+
+  .insp-scroll {
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 1.1rem 1.3rem 1.6rem;
+  }
+
+  .insp-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  .insp-top .chip {
+    font-size: 0.74rem;
+    min-width: 0;
+  }
+
+  .insp-close {
+    width: 2rem;
+    height: 2rem;
+    flex: none;
+  }
+
+  .insp-title {
+    font-size: 2.2rem;
+    line-height: 1.05;
+    margin: 0.55rem 0 0.3rem;
+  }
+
+  .insp-full {
+    margin: 0 0 0.5rem;
+    color: var(--ink-2);
+    font-size: 0.9rem;
+    line-height: 1.45;
+  }
+
+  .insp-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 0.74rem;
+    color: var(--muted);
+  }
+
+  .insp-authors {
+    margin: 0.3rem 0 0;
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  .insp-actions {
+    display: flex;
+    gap: 0.45rem;
+    flex-wrap: wrap;
+    margin: 1rem 0 1.1rem;
+  }
+
+  .insp-lineage {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 0.4rem;
+    padding: 0.75rem 0.85rem;
+    border-radius: 12px;
+    background: var(--page);
+    border: 1px solid var(--ring);
+  }
+
+  .insp-lineage div {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .insp-lineage b {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: 1.7rem;
+    line-height: 1.1;
+    color: var(--ink);
+  }
+
+  .insp-lineage span {
+    font-size: 0.62rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .insp-h {
+    margin: 1.4rem 0 0.5rem;
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .insp-problem {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  .insp-rels {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+  }
+
+  .insp-rel {
+    appearance: none;
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    width: 100%;
+    padding: 0.45rem 0.6rem;
+    border-radius: 9px;
+    border: 1px solid var(--ring);
+    background: transparent;
+    color: var(--ink-2);
+    font-size: 0.86rem;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+  }
+
+  .insp-rel:hover {
+    background: var(--surface-2);
+    border-color: var(--bc);
+  }
+
+  .insp-rel-type {
+    flex: none;
+    font-size: 0.78rem;
+    font-style: italic;
+    color: var(--muted);
+  }
+
+  .insp-rel-name {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: var(--ink);
+    font-weight: 560;
+  }
+
+  .insp-note {
+    margin: 0.3rem 0.3rem 0.5rem 2.45rem;
+    font-size: 0.78rem;
+    line-height: 1.5;
+    color: var(--muted);
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  @media (max-width: 900px) {
+    .atlas {
+      --at-pad: 1rem;
+    }
+
+    .at-toolbar {
+      gap: 0.6rem;
+    }
+
+    /* the strip runs on past the edge: say so */
+    .at-filters {
+      -webkit-mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+      mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+      padding-right: 20px;
+    }
+
+    .at-timebar-row {
+      gap: 0.75rem;
+    }
+
+    .at-histo-wrap {
+      flex: 1 1 auto;
+      min-width: 0;
+    }
+
+    .at-readout {
+      min-width: 3.4rem;
+    }
+
+    /* the relation filter is a desk-size tool; the reading guide below
+       still explains every stroke */
+    .at-types-wrap {
+      display: none;
+    }
+
+    .inspector {
+      top: auto;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: auto;
+      max-height: 58vh;
+      border-radius: 20px 20px 0 0;
+      transform: translateY(24px);
+    }
+
+    .inspector.is-away {
+      transform: translateY(24px);
+    }
+  }
+</style>

@@ -1,0 +1,462 @@
+---
+/**
+ * ⌘K / Ctrl-K / "/" — jump to any work, branch or page from anywhere.
+ * The index (search.json) loads the first time the palette opens. On the
+ * home page a work opens in the atlas (selected, lineage lit); everywhere
+ * else — or with ⌘/Ctrl-Enter — it opens the work's own page.
+ */
+import Icon from './Icon.astro';
+import { t, type Lang } from '../lib/i18n';
+
+interface Props {
+  lang: Lang;
+  pages: { title: string; url: string; hint: string }[];
+}
+const { lang, pages } = Astro.props;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const strings = {
+  works: t(lang, 'search.works'),
+  branches: t(lang, 'search.branches'),
+  pages: t(lang, 'search.pages'),
+  empty: t(lang, 'search.empty'),
+  inAtlas: t(lang, 'search.inAtlas'),
+};
+---
+
+<dialog
+  class="palette"
+  id="palette"
+  aria-label={t(lang, 'search.label')}
+  data-root={`${base}/${lang}`}
+  data-pages={JSON.stringify(pages)}
+  data-strings={JSON.stringify(strings)}
+>
+  <div class="palette-box">
+    <div class="palette-field">
+      <Icon name="search" size={18} />
+      <input
+        id="palette-input"
+        type="text"
+        placeholder={t(lang, 'search.placeholder')}
+        autocomplete="off"
+        autocapitalize="off"
+        spellcheck="false"
+        role="combobox"
+        aria-expanded="true"
+        aria-controls="palette-list"
+        aria-autocomplete="list"
+      />
+      <kbd>esc</kbd>
+    </div>
+    <ul class="palette-list" id="palette-list" role="listbox" aria-label={t(lang, 'search.label')}></ul>
+    <div class="palette-foot">
+      <span><kbd>↑</kbd><kbd>↓</kbd> {t(lang, 'search.move')}</span>
+      <span><kbd>↵</kbd> <span id="palette-enter-hint">{t(lang, 'search.open')}</span></span>
+      <span class="palette-foot-atlas" hidden><kbd class="kbd-mod">⌘</kbd><kbd>↵</kbd> {t(lang, 'search.openPage')}</span>
+    </div>
+  </div>
+</dialog>
+
+<script>
+  type Work = {
+    id: string; short: string; title: string; authors: string; venue: string;
+    year: number; branch: string; lane: string; kind: string; award: boolean; _hay?: string;
+  };
+  type Branch = { id: string; title: string; tagline: string; color: string; colorLight: string };
+  type Item =
+    | { type: 'work'; work: Work }
+    | { type: 'branch'; branch: Branch }
+    | { type: 'page'; title: string; url: string; hint: string };
+
+  const dlg = document.getElementById('palette') as HTMLDialogElement;
+  const input = document.getElementById('palette-input') as HTMLInputElement;
+  const list = document.getElementById('palette-list') as HTMLUListElement;
+  const root = dlg.dataset.root!;
+  const PAGES = JSON.parse(dlg.dataset.pages!) as { title: string; url: string; hint: string }[];
+  const STR = JSON.parse(dlg.dataset.strings!) as Record<string, string>;
+  const atlasHere = () => Boolean(document.getElementById('atlas'));
+
+  let index: { works: Work[]; branches: Branch[] } | null = null;
+  let loading: Promise<void> | null = null;
+  let items: Item[] = [];
+  let active = 0;
+
+  const esc = (s: unknown) =>
+    String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]!);
+  const norm = (s: unknown) =>
+    String(s ?? '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  const isLight = () => document.documentElement.dataset.theme === 'light';
+  const branchOf = (id: string) => index?.branches.find((b) => b.id === id);
+  const colorOf = (id: string) => {
+    const b = branchOf(id);
+    return b ? (isLight() ? b.colorLight : b.color) : 'var(--muted)';
+  };
+
+  function load() {
+    loading ??= fetch(`${root}/search.json`)
+      .then((r) => r.json())
+      .then((d) => {
+        index = d;
+        for (const w of index!.works) {
+          w._hay = norm([w.short, w.title, w.authors, w.venue, w.year, w.lane].join(' '));
+        }
+      })
+      .catch((err) => console.error('search index:', err));
+    return loading;
+  }
+
+  function search(q: string): Item[] {
+    const qn = norm(q).trim();
+    const pages = PAGES.filter((p) => !qn || norm(`${p.title} ${p.hint}`).includes(qn));
+    if (!index) return pages.map((p) => ({ type: 'page', ...p }));
+    const branches = index.branches.filter((b) => !qn || norm(`${b.title} ${b.tagline}`).includes(qn));
+    if (!qn) {
+      return [
+        ...pages.map((p) => ({ type: 'page' as const, ...p })),
+        ...branches.map((b) => ({ type: 'branch' as const, branch: b })),
+      ];
+    }
+    const toks = qn.split(/\s+/);
+    const scored = index.works
+      .filter((w) => toks.every((tk) => w._hay!.includes(tk)))
+      .map((w) => {
+        const s = norm(w.short);
+        let score = 0;
+        if (s.startsWith(qn)) score += 100;
+        else if (s.includes(qn)) score += 60;
+        if (norm(w.title).includes(qn)) score += 20;
+        if (String(w.year) === qn) score += 30;
+        if (norm(w.authors).includes(qn)) score += 12;
+        return { w, score: score - s.length * 0.1 };
+      })
+      // ties go to the older work: the original before its follow-ups
+      .sort((a, b) => b.score - a.score || a.w.year - b.w.year)
+      .slice(0, 40);
+    return [
+      ...scored.map(({ w }) => ({ type: 'work' as const, work: w })),
+      ...branches.map((b) => ({ type: 'branch' as const, branch: b })),
+      ...pages.map((p) => ({ type: 'page' as const, ...p })),
+    ];
+  }
+
+  function itemHtml(it: Item, i: number) {
+    const sel = i === active ? ' aria-selected="true"' : ' aria-selected="false"';
+    if (it.type === 'work') {
+      const w = it.work;
+      const meta = [w.venue || w.year, w.lane].filter(Boolean).map(esc).join(' · ');
+      return `<li role="option" id="pal-${i}" class="pal-item" data-i="${i}"${sel}>
+        <span class="pal-dot" style="background:${colorOf(w.branch)}"></span>
+        <span class="pal-main"><span class="pal-title">${esc(w.short)}${w.award ? ' <span class="award-star" aria-hidden="true">★</span>' : ''}</span><span class="pal-meta">${meta}</span></span>
+        <span class="pal-year">${w.year}</span></li>`;
+    }
+    if (it.type === 'branch') {
+      const b = it.branch;
+      return `<li role="option" id="pal-${i}" class="pal-item" data-i="${i}"${sel}>
+        <span class="pal-dot pal-dot-lg" style="background:${isLight() ? b.colorLight : b.color}"></span>
+        <span class="pal-main"><span class="pal-title">${esc(b.title)}</span><span class="pal-meta">${esc(b.tagline)}</span></span>
+        <span class="pal-year">→</span></li>`;
+    }
+    return `<li role="option" id="pal-${i}" class="pal-item" data-i="${i}"${sel}>
+      <span class="pal-dot pal-dot-page"></span>
+      <span class="pal-main"><span class="pal-title">${esc(it.title)}</span><span class="pal-meta">${esc(it.hint)}</span></span>
+      <span class="pal-year">→</span></li>`;
+  }
+
+  function render() {
+    items = search(input.value);
+    active = Math.min(active, Math.max(0, items.length - 1));
+    if (!items.length) {
+      list.innerHTML = `<li class="pal-empty">${esc(STR.empty)}</li>`;
+      input.removeAttribute('aria-activedescendant');
+      return;
+    }
+    let html = '';
+    let group = '';
+    items.forEach((it, i) => {
+      const g = it.type === 'work' ? STR.works : it.type === 'branch' ? STR.branches : STR.pages;
+      if (g !== group) {
+        html += `<li class="pal-group" role="presentation">${esc(g)}</li>`;
+        group = g;
+      }
+      html += itemHtml(it, i);
+    });
+    list.innerHTML = html;
+    input.setAttribute('aria-activedescendant', `pal-${active}`);
+  }
+
+  function setActive(i: number, scroll = true) {
+    if (!items.length) return;
+    active = (i + items.length) % items.length;
+    list.querySelectorAll('.pal-item').forEach((el) => {
+      el.setAttribute('aria-selected', String(Number((el as HTMLElement).dataset.i) === active));
+    });
+    input.setAttribute('aria-activedescendant', `pal-${active}`);
+    if (scroll) document.getElementById(`pal-${active}`)?.scrollIntoView({ block: 'nearest' });
+  }
+
+  function go(url: string, newTab: boolean) {
+    if (newTab) window.open(url, '_blank', 'noopener');
+    else window.location.href = url;
+  }
+
+  function activate(it: Item | undefined, newTab = false) {
+    if (!it) return;
+    if (it.type === 'work') {
+      if (atlasHere() && !newTab) {
+        close();
+        window.dispatchEvent(new CustomEvent('atlas:focus', { detail: { id: it.work.id } }));
+        return;
+      }
+      return go(`${root}/nodes/${it.work.id}/`, newTab);
+    }
+    if (it.type === 'branch') return go(`${root}/branches/${it.branch.id}/`, newTab);
+    return go(it.url, newTab);
+  }
+
+  function open() {
+    if (dlg.open) return;
+    const here = atlasHere();
+    hint.textContent = here ? STR.inAtlas : hint.dataset.open!;
+    (dlg.querySelector('.palette-foot-atlas') as HTMLElement).hidden = !here;
+    dlg.showModal();
+    document.documentElement.classList.add('palette-open');
+    input.value = '';
+    active = 0;
+    render();
+    input.focus();
+    load().then(render);
+  }
+
+  function close() {
+    if (dlg.open) dlg.close();
+  }
+
+  // remember the default hint so it can be restored on pages without an atlas
+  const hint = document.getElementById('palette-enter-hint')!;
+  hint.dataset.open = hint.textContent ?? '';
+
+  dlg.addEventListener('close', () => document.documentElement.classList.remove('palette-open'));
+  // a click on the backdrop lands on the <dialog> itself
+  dlg.addEventListener('click', (ev) => {
+    if (ev.target === dlg) close();
+  });
+  input.addEventListener('input', () => {
+    active = 0;
+    render();
+  });
+  input.addEventListener('keydown', (ev) => {
+    if (ev.key === 'ArrowDown') {
+      ev.preventDefault();
+      setActive(active + 1);
+    } else if (ev.key === 'ArrowUp') {
+      ev.preventDefault();
+      setActive(active - 1);
+    } else if (ev.key === 'Enter') {
+      ev.preventDefault();
+      activate(items[active], ev.metaKey || ev.ctrlKey);
+    }
+  });
+  list.addEventListener('mousemove', (ev) => {
+    const li = (ev.target as HTMLElement).closest('.pal-item') as HTMLElement | null;
+    if (li && Number(li.dataset.i) !== active) setActive(Number(li.dataset.i), false);
+  });
+  list.addEventListener('click', (ev) => {
+    const li = (ev.target as HTMLElement).closest('.pal-item') as HTMLElement | null;
+    if (li) activate(items[Number(li.dataset.i)], ev.metaKey || ev.ctrlKey);
+  });
+
+  // (event targets can be the document itself for synthetic events — guard)
+  const elOf = (t: EventTarget | null) => (t instanceof Element ? t : null);
+  document.addEventListener('click', (ev) => {
+    if (elOf(ev.target)?.closest('[data-open-palette]')) {
+      ev.preventDefault();
+      open();
+    }
+  });
+  document.addEventListener('keydown', (ev) => {
+    const typing = elOf(ev.target)?.closest('input, textarea, select, [contenteditable="true"]');
+    if ((ev.metaKey || ev.ctrlKey) && ev.key.toLowerCase() === 'k') {
+      ev.preventDefault();
+      dlg.open ? close() : open();
+    } else if (ev.key === '/' && !typing && !dlg.open) {
+      ev.preventDefault();
+      open();
+    }
+  });
+</script>
+
+<style is:global>
+  .palette {
+    padding: 0;
+    border: none;
+    background: transparent;
+    width: min(640px, calc(100vw - 2rem));
+    max-height: min(70vh, 620px);
+    margin: 12vh auto auto;
+    overflow: visible;
+    color: inherit;
+  }
+
+  .palette::backdrop {
+    background: var(--veil);
+    backdrop-filter: blur(3px);
+  }
+
+  .palette[open] .palette-box {
+    animation: palette-in 0.22s var(--ease);
+  }
+
+  @keyframes palette-in {
+    from {
+      opacity: 0;
+      transform: translateY(-8px) scale(0.985);
+    }
+  }
+
+  html.palette-open {
+    overflow: hidden;
+  }
+
+  .palette-box {
+    display: flex;
+    flex-direction: column;
+    max-height: min(70vh, 620px);
+    background: var(--surface);
+    border-radius: 16px;
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+  }
+
+  .palette-field {
+    display: flex;
+    align-items: center;
+    gap: 0.7rem;
+    padding: 0 1rem;
+    border-bottom: 1px solid var(--ring);
+    color: var(--muted);
+  }
+
+  .palette-field input {
+    flex: 1;
+    min-width: 0;
+    height: 3.4rem;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--ink);
+    font: inherit;
+    font-size: 1.05rem;
+  }
+
+  .palette-field input::placeholder {
+    color: var(--muted);
+  }
+
+  .palette-list {
+    list-style: none;
+    margin: 0;
+    padding: 0.4rem;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .pal-group {
+    padding: 0.7rem 0.7rem 0.3rem;
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .pal-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.55rem 0.7rem;
+    border-radius: 10px;
+    cursor: pointer;
+  }
+
+  .pal-item[aria-selected='true'] {
+    background: var(--surface-2);
+    box-shadow: inset 0 0 0 1px var(--ring);
+  }
+
+  .pal-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex: none;
+  }
+
+  .pal-dot-lg {
+    width: 10px;
+    height: 10px;
+  }
+
+  .pal-dot-page {
+    background: transparent;
+    box-shadow: inset 0 0 0 1.5px var(--muted);
+  }
+
+  .pal-main {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 1;
+  }
+
+  .pal-title {
+    color: var(--ink);
+    font-weight: 560;
+    font-size: 0.95rem;
+    line-height: 1.3;
+  }
+
+  .pal-meta {
+    color: var(--muted);
+    font-size: 0.8rem;
+    line-height: 1.35;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .pal-year {
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    color: var(--muted);
+    flex: none;
+  }
+
+  .pal-empty {
+    padding: 2rem 1rem;
+    text-align: center;
+    color: var(--muted);
+  }
+
+  .palette-foot {
+    display: flex;
+    gap: 1.2rem;
+    flex-wrap: wrap;
+    padding: 0.6rem 1rem;
+    border-top: 1px solid var(--ring);
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+
+  .palette-foot kbd {
+    margin-right: 0.15rem;
+  }
+
+  @media (max-width: 640px) {
+    .palette {
+      margin-top: 1rem;
+    }
+
+    .palette-foot {
+      display: none;
+    }
+  }
+</style>

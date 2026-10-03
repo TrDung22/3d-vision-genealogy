@@ -1,0 +1,446 @@
+---
+/**
+ * The index — every work in one list, no graph required. Server-rendered
+ * (so it is the no-JS view of the genealogy); a small script adds the
+ * filter box, the branch chips and the sort.
+ */
+import Base from '../../layouts/Base.astro';
+import Icon from '../../components/Icon.astro';
+import { buildGraph } from '../../lib/graph';
+import { LOCALES, t, type Lang } from '../../lib/i18n';
+
+export function getStaticPaths() {
+  return LOCALES.map((lang) => ({ params: { lang } }));
+}
+
+const lang = Astro.params.lang as Lang;
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const root = `${base}/${lang}`;
+const graph = await buildGraph(lang);
+
+const nodeById = new Map(graph.nodes.map((n) => [n.id, n]));
+const branchById = new Map(graph.branches.map((b) => [b.id, b]));
+const laneTitle = new Map(graph.lanes.map((l) => [l.id, l.title]));
+const KIND_GLYPH: Record<string, string> = { analysis: '◆', dataset: '■' };
+
+// what each work answers to: its relations to older works
+const answersTo = new Map<string, { type: string; label: string; other: (typeof graph.nodes)[number] }[]>();
+for (const e of graph.edges) {
+  const list = answersTo.get(e.target) ?? [];
+  list.push({ type: e.type, label: graph.edgeTypes[e.type].label, other: nodeById.get(e.source)! });
+  answersTo.set(e.target, list);
+}
+
+const rows = [...graph.nodes].sort((a, b) => a.year - b.year || a.short.localeCompare(b.short));
+const norm = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+const counts = new Map<string, number>();
+for (const n of graph.nodes) counts.set(n.branch, (counts.get(n.branch) ?? 0) + 1);
+---
+
+<Base title={t(lang, 'works.title')} lang={lang} description={t(lang, 'works.intro')}>
+  <header class="page-head">
+    <p class="eyebrow">{t(lang, 'works.kicker')}</p>
+    <h1>{t(lang, 'works.title')}</h1>
+    <p class="lede">{t(lang, 'works.intro')}</p>
+  </header>
+
+  <div class="w-controls" id="w-controls">
+    <label class="w-search">
+      <Icon name="search" size={17} />
+      <input id="w-filter" type="search" placeholder={t(lang, 'works.filter')} autocomplete="off" spellcheck="false" aria-label={t(lang, 'works.filter')} />
+    </label>
+    <div class="w-chips" role="group" aria-label={t(lang, 'atlas.branches')}>
+      {
+        graph.branches.map((b) => (
+          <button type="button" class="w-chip" data-branch={b.id} aria-pressed="true" style={`--bc: ${b.color}`}>
+            <span class="w-chip-dot" />
+            {b.title}
+            <span class="mono w-chip-n">{counts.get(b.id) ?? 0}</span>
+          </button>
+        ))
+      }
+    </div>
+    <div class="w-sort" role="group" aria-label="Sort">
+      <button type="button" class="w-sort-btn" data-sort="year" aria-pressed="true">{t(lang, 'works.sortYear')}</button>
+      <button type="button" class="w-sort-btn" data-sort="name" aria-pressed="false">{t(lang, 'works.sortName')}</button>
+    </div>
+  </div>
+  <p class="w-count mono" id="w-count" aria-live="polite" data-showing={t(lang, 'works.showing')} data-of={t(lang, 'works.of')}>
+    {t(lang, 'works.showing')} {rows.length} {t(lang, 'works.of')} {rows.length}
+  </p>
+
+  <ol class="w-list" id="w-list">
+    {
+      rows.map((n) => {
+        const b = branchById.get(n.branch)!;
+        const rels = answersTo.get(n.id) ?? [];
+        const hay = norm([n.short, n.title, n.authors ?? '', n.venue ?? '', n.year, laneTitle.get(n.lane) ?? '', b.title].join(' '));
+        return (
+          <li class="w-row" data-branch={n.branch} data-year={n.year} data-name={norm(n.short)} data-hay={hay} style={`--bc: ${b.color}`}>
+            <span class="w-year mono">{n.year}</span>
+            <div class="w-work">
+              <a class="w-name" href={`${root}/nodes/${n.id}/`}>
+                {KIND_GLYPH[n.kind] && <span class="w-kind" title={t(lang, `kind.${n.kind}`)}>{KIND_GLYPH[n.kind]}</span>}
+                {n.short}
+              </a>
+              {n.award && <span class="award-star" title={n.venue}>★</span>}
+              <span class="w-title">{n.title}</span>
+              {n.venue && <span class="w-venue mono">{n.venue}</span>}
+            </div>
+            <div class="w-place">
+              <span class="w-dot" />
+              <span>
+                {b.title}
+                <span class="w-lane">{laneTitle.get(n.lane)}</span>
+              </span>
+            </div>
+            <div class="w-rels">
+              {rels.length === 0 ? (
+                <span class="muted">{t(lang, 'works.root')}</span>
+              ) : (
+                rels.map((r, i) => (
+                  <span class="w-rel">
+                    <em class={`w-rel-${r.type}`}>{r.label}</em> <a href={`${root}/nodes/${r.other.id}/`}>{r.other.short}</a>
+                    {i < rels.length - 1 && <span class="w-sep">·</span>}
+                  </span>
+                ))
+              )}
+            </div>
+          </li>
+        );
+      })
+    }
+  </ol>
+  <p class="w-none muted" id="w-none" hidden>{t(lang, 'works.none')}</p>
+</Base>
+
+<script>
+  const list = document.getElementById('w-list')!;
+  const rows = [...list.querySelectorAll<HTMLLIElement>('.w-row')];
+  const input = document.getElementById('w-filter') as HTMLInputElement;
+  const count = document.getElementById('w-count')!;
+  const none = document.getElementById('w-none')!;
+  const chips = [...document.querySelectorAll<HTMLButtonElement>('.w-chip')];
+  const sorts = [...document.querySelectorAll<HTMLButtonElement>('.w-sort-btn')];
+  const wShowing = count.dataset.showing;
+  const wOf = count.dataset.of;
+  const norm = (s: string) => s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+
+  const params = new URLSearchParams(location.search);
+  let active = new Set(chips.map((c) => c.dataset.branch!));
+  const picked = (params.get('branches') ?? '').split(',').filter((id) => active.has(id));
+  if (picked.length) active = new Set(picked);
+  input.value = params.get('q') ?? '';
+  let sort = params.get('sort') === 'name' ? 'name' : 'year';
+
+  function apply() {
+    const toks = norm(input.value).trim().split(/\s+/).filter(Boolean);
+    let shown = 0;
+    for (const r of rows) {
+      const ok = active.has(r.dataset.branch!) && toks.every((tk) => r.dataset.hay!.includes(tk));
+      r.hidden = !ok;
+      if (ok) shown++;
+    }
+    count.textContent = `${wShowing} ${shown} ${wOf} ${rows.length}`;
+    none.hidden = shown > 0;
+    chips.forEach((c) => c.setAttribute('aria-pressed', String(active.has(c.dataset.branch!))));
+    sorts.forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.sort === sort)));
+    const sorted = [...rows].sort((a, b) =>
+      sort === 'name'
+        ? a.dataset.name!.localeCompare(b.dataset.name!)
+        : Number(a.dataset.year) - Number(b.dataset.year) || a.dataset.name!.localeCompare(b.dataset.name!),
+    );
+    list.append(...sorted);
+    const p = new URLSearchParams();
+    if (input.value.trim()) p.set('q', input.value.trim());
+    if (active.size !== chips.length) p.set('branches', [...active].join(','));
+    if (sort === 'name') p.set('sort', 'name');
+    const qs = p.toString();
+    history.replaceState(null, '', `${location.pathname}${qs ? `?${qs}` : ''}`);
+  }
+
+  input.addEventListener('input', apply);
+  chips.forEach((c) =>
+    c.addEventListener('click', (ev) => {
+      const id = c.dataset.branch!;
+      if (ev.altKey) active = active.size === 1 && active.has(id) ? new Set(chips.map((x) => x.dataset.branch!)) : new Set([id]);
+      else if (active.has(id)) active.delete(id);
+      else active.add(id);
+      if (!active.size) active = new Set(chips.map((x) => x.dataset.branch!));
+      apply();
+    }),
+  );
+  sorts.forEach((b) =>
+    b.addEventListener('click', () => {
+      sort = b.dataset.sort!;
+      apply();
+    }),
+  );
+  apply();
+</script>
+
+<style>
+  .page-head {
+    margin-bottom: 2.2rem;
+  }
+
+  .page-head h1 {
+    margin: 0.6rem 0 0.8rem;
+  }
+
+  .w-controls {
+    position: sticky;
+    top: var(--header-h);
+    z-index: 10;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.7rem 1rem;
+    padding: 0.8rem 0;
+    background: var(--glass);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--ring);
+  }
+
+  .w-search {
+    flex: 1 1 280px;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    height: 2.5rem;
+    padding: 0 0.9rem;
+    border-radius: 999px;
+    border: 1px solid var(--ring-strong);
+    background: var(--surface);
+    color: var(--muted);
+  }
+
+  .w-search:focus-within {
+    border-color: var(--accent);
+  }
+
+  .w-search input {
+    flex: 1;
+    min-width: 0;
+    border: none;
+    outline: none;
+    background: transparent;
+    color: var(--ink);
+    font: inherit;
+    font-size: 0.95rem;
+  }
+
+  .w-chips,
+  .w-sort {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+  }
+
+  .w-chip,
+  .w-sort-btn {
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    height: 2.1rem;
+    padding: 0 0.75rem;
+    border-radius: 999px;
+    border: 1px solid var(--ring-strong);
+    background: var(--surface);
+    color: var(--ink);
+    font-size: 0.8rem;
+    font-weight: 550;
+    cursor: pointer;
+  }
+
+  .w-chip[aria-pressed='false'] {
+    background: transparent;
+    border-style: dashed;
+    color: var(--muted);
+  }
+
+  .w-chip-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--bc);
+  }
+
+  .w-chip[aria-pressed='false'] .w-chip-dot {
+    background: transparent;
+    box-shadow: inset 0 0 0 1.5px var(--bc);
+  }
+
+  .w-chip-n {
+    font-size: 0.68rem;
+    color: var(--muted);
+  }
+
+  .w-sort {
+    margin-left: auto;
+    padding: 0.2rem;
+    border-radius: 999px;
+    border: 1px solid var(--ring);
+  }
+
+  .w-sort-btn {
+    height: 1.8rem;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+  }
+
+  .w-sort-btn[aria-pressed='true'] {
+    background: var(--surface-2);
+    color: var(--ink);
+  }
+
+  .w-count {
+    margin: 1rem 0 0.4rem;
+    font-size: 0.74rem;
+    color: var(--muted);
+  }
+
+  .w-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .w-row {
+    display: grid;
+    grid-template-columns: 3.4rem minmax(0, 2.3fr) minmax(0, 1.25fr) minmax(0, 2.2fr);
+    gap: 0.4rem 1.5rem;
+    padding: 1rem 0.2rem;
+    border-bottom: 1px solid var(--grid);
+    align-items: start;
+  }
+
+  .w-row:hover {
+    background: linear-gradient(90deg, color-mix(in srgb, var(--bc) 6%, transparent), transparent 60%);
+  }
+
+  .w-year {
+    color: var(--muted);
+    font-size: 0.82rem;
+    padding-top: 0.15rem;
+  }
+
+  .w-work {
+    min-width: 0;
+  }
+
+  .w-name {
+    color: var(--ink);
+    font-weight: 620;
+    font-size: 1rem;
+  }
+
+  .w-kind {
+    color: var(--muted);
+    font-size: 0.75em;
+    margin-right: 0.35em;
+  }
+
+  .w-work .award-star {
+    margin-left: 0.3rem;
+    font-size: 0.85rem;
+  }
+
+  .w-title {
+    display: block;
+    font-size: 0.82rem;
+    line-height: 1.45;
+    color: var(--muted);
+    margin-top: 0.15rem;
+  }
+
+  .w-venue {
+    display: block;
+    margin-top: 0.2rem;
+    font-size: 0.7rem;
+    color: var(--muted);
+  }
+
+  .w-place {
+    display: flex;
+    gap: 0.55rem;
+    font-size: 0.85rem;
+    color: var(--ink-2);
+    line-height: 1.4;
+  }
+
+  .w-dot {
+    flex: none;
+    width: 8px;
+    height: 8px;
+    margin-top: 0.4rem;
+    border-radius: 50%;
+    background: var(--bc);
+  }
+
+  .w-lane {
+    display: block;
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+
+  .w-rels {
+    font-size: 0.84rem;
+    line-height: 1.6;
+    color: var(--ink-2);
+  }
+
+  .w-rel em {
+    color: var(--muted);
+  }
+
+  .w-rel .w-rel-challenges {
+    color: var(--danger);
+  }
+
+  .w-rel a {
+    color: var(--ink-2);
+    text-decoration: underline;
+    text-decoration-color: var(--ring-strong);
+    text-underline-offset: 0.2em;
+  }
+
+  .w-rel a:hover {
+    color: var(--ink);
+    text-decoration-color: currentColor;
+  }
+
+  .w-sep {
+    margin: 0 0.4rem;
+    color: var(--baseline);
+  }
+
+  .w-none {
+    padding: 3rem 0;
+    text-align: center;
+  }
+
+  @media (max-width: 860px) {
+    .w-row {
+      grid-template-columns: 3rem minmax(0, 1fr);
+    }
+
+    .w-place,
+    .w-rels {
+      grid-column: 2;
+    }
+
+    .w-sort {
+      margin-left: 0;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .w-controls {
+      position: static;
+    }
+  }
+</style>

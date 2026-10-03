@@ -1,25 +1,53 @@
 ---
 import '../styles/global.css';
+import Icon from '../components/Icon.astro';
+import Logo from '../components/Logo.astro';
+import SearchPalette from '../components/SearchPalette.astro';
+import { buildGraph } from '../lib/graph';
 import { t, type Lang } from '../lib/i18n';
 
 interface Props {
   title: string;
   lang?: Lang;
   description?: string;
+  /** wrap the page in the reading container (pages that lay out full-bleed opt out) */
+  container?: boolean;
 }
 
-const { title, lang = 'en' } = Astro.props;
+const { title, lang = 'en', container = true } = Astro.props;
 const description = Astro.props.description ?? t(lang, 'meta.description');
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const root = `${base}/${lang}`;
+const path = Astro.url.pathname;
+
+const graph = await buildGraph(lang);
+// (a glob, not getCollection: an empty collection warns once per page)
+const hasPosts = Object.keys(import.meta.glob('../content/posts/**/*.mdx')).length > 0;
 
 const nav = [
-  { href: `${root}/about/`, label: t(lang, 'nav.about') },
-  { href: `${root}/`, label: t(lang, 'nav.genealogy') },
+  { href: `${root}/`, label: t(lang, 'nav.atlas'), exact: true },
+  { href: `${root}/works/`, label: t(lang, 'nav.works') },
   { href: `${root}/branches/`, label: t(lang, 'nav.branches') },
   { href: `${root}/heresies/`, label: t(lang, 'nav.heresies') },
-  { href: `${root}/blog/`, label: t(lang, 'nav.blog') },
+  ...(hasPosts ? [{ href: `${root}/blog/`, label: t(lang, 'nav.blog') }] : []),
+  { href: `${root}/about/`, label: t(lang, 'nav.about') },
 ];
+const isCurrent = (item: { href: string; exact?: boolean }) =>
+  item.exact ? path === item.href || path === item.href.replace(/\/$/, '') : path.startsWith(item.href);
+
+// what the search palette offers before anything is typed
+const pages = [
+  { title: t(lang, 'nav.atlas'), url: `${root}/`, hint: t(lang, 'search.hintAtlas') },
+  { title: t(lang, 'nav.works'), url: `${root}/works/`, hint: t(lang, 'search.hintWorks') },
+  { title: t(lang, 'nav.branches'), url: `${root}/branches/`, hint: t(lang, 'search.hintBranches') },
+  { title: t(lang, 'nav.heresies'), url: `${root}/heresies/`, hint: t(lang, 'search.hintHeresies') },
+  { title: t(lang, 'nav.about'), url: `${root}/about/`, hint: t(lang, 'search.hintAbout') },
+];
+
+const REPO = 'https://github.com/TrDung22/3d-vision-genealogy';
+const years = graph.nodes.map((n) => n.year);
+const span = `${Math.min(...years)}–${Math.max(...years)}`;
+const canonical = new URL(path, Astro.site).href;
 ---
 
 <!doctype html>
@@ -29,140 +57,431 @@ const nav = [
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
+    <meta name="color-scheme" content="dark light" />
+    <link rel="icon" type="image/svg+xml" href={`${base}/favicon.svg`} />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="3D Vision Genealogy" />
+    <meta property="og:title" content={`${title} · 3D Vision Genealogy`} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={new URL(`${base}/og.png`, Astro.site).href} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
     <title>{title} · 3D Vision Genealogy</title>
     <script is:inline>
+      // shortcut hints speak the platform's language: ⌘ on Apple, Ctrl elsewhere
+      document.documentElement.classList.toggle(
+        'is-apple',
+        /Mac|iPhone|iPad|iPod/.test(navigator.platform || navigator.userAgent),
+      );
       // set the theme before first paint to avoid a flash
-      document.documentElement.dataset.theme =
-        localStorage.getItem('theme') ||
-        (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+      try {
+        document.documentElement.dataset.theme =
+          localStorage.getItem('theme') ||
+          (matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark');
+      } catch {
+        document.documentElement.dataset.theme = 'dark';
+      }
     </script>
   </head>
   <body>
-    <header>
-      <div class="container header-row">
-        <a class="brand" href={`${root}/`}>3D Vision <span>Genealogy</span></a>
-        <div class="header-right">
-          <nav>
-            {nav.map((item) => <a href={item.href}>{item.label}</a>)}
-          </nav>
-          <button id="theme-toggle" type="button" aria-label={t(lang, 'theme.toggle')} title={t(lang, 'theme.toggle')}>
-            <span class="icon-dark" aria-hidden="true">☾</span>
-            <span class="icon-light" aria-hidden="true">☀</span>
+    <a class="skip-link" href="#main">{t(lang, 'a11y.skip')}</a>
+    <header class="site-header">
+      <div class="container-wide header-row">
+        <a class="brand" href={`${root}/`} aria-label="3D Vision Genealogy — home">
+          <Logo size={28} class="brand-mark" />
+          <span class="brand-word">3D Vision <em>Genealogy</em></span>
+        </a>
+        <nav class="primary-nav" aria-label={t(lang, 'a11y.nav')}>
+          {nav.map((item) => (
+            <a href={item.href} aria-current={isCurrent(item) ? 'page' : undefined}>
+              {item.label}
+            </a>
+          ))}
+        </nav>
+        <div class="header-tools">
+          <button class="search-trigger" type="button" data-open-palette aria-label={t(lang, 'search.label')}>
+            <Icon name="search" size={16} />
+            <span class="search-label">{t(lang, 'search.trigger')}</span>
+            <span class="search-keys"><kbd class="kbd-mod">⌘</kbd><kbd>K</kbd></span>
+          </button>
+          <button
+            id="theme-toggle"
+            class="icon-btn"
+            type="button"
+            aria-label={t(lang, 'theme.toggle')}
+            title={t(lang, 'theme.toggle')}
+            data-to-light={t(lang, 'theme.toLight')}
+            data-to-dark={t(lang, 'theme.toDark')}
+          >
+            <Icon name="moon" size={17} class="icon-dark" />
+            <Icon name="sun" size={17} class="icon-light" />
+          </button>
+          <button class="icon-btn menu-btn" type="button" aria-expanded="false" aria-controls="mobile-nav" aria-label={t(lang, 'a11y.menu')}>
+            <Icon name="menu" size={18} />
           </button>
         </div>
       </div>
+      <nav class="mobile-nav" id="mobile-nav" aria-label={t(lang, 'a11y.nav')} hidden>
+        {nav.map((item) => (
+          <a href={item.href} aria-current={isCurrent(item) ? 'page' : undefined}>
+            {item.label}
+          </a>
+        ))}
+      </nav>
     </header>
-    <main class="container">
+
+    <main id="main" class={container ? 'container page' : 'page page-bleed'}>
       <slot />
     </main>
-    <footer>
-      <div class="container">
-        <p class="muted">{t(lang, 'footer.tagline')}</p>
+
+    <footer class="site-footer">
+      <div class="container-wide footer-grid">
+        <div class="footer-about">
+          <a class="brand" href={`${root}/`}>
+            <Logo size={26} class="brand-mark" />
+            <span class="brand-word">3D Vision <em>Genealogy</em></span>
+          </a>
+          <p>{t(lang, 'footer.tagline')}</p>
+          <p class="footer-stats mono">
+            {graph.nodes.length} {t(lang, 'footer.works')} · {graph.edges.length} {t(lang, 'footer.debts')} · {span}
+          </p>
+        </div>
+        <div class="footer-col">
+          <p class="eyebrow">{t(lang, 'footer.explore')}</p>
+          {nav.map((item) => <a href={item.href}>{item.label}</a>)}
+        </div>
+        <div class="footer-col">
+          <p class="eyebrow">{t(lang, 'footer.project')}</p>
+          <a href={REPO} target="_blank" rel="noopener">GitHub ↗</a>
+          <a href={`${REPO}/blob/main/CONTRIBUTING.md`} target="_blank" rel="noopener">{t(lang, 'footer.contribute')} ↗</a>
+          <a href={`${REPO}/issues`} target="_blank" rel="noopener">{t(lang, 'footer.issue')} ↗</a>
+          <span class="muted footer-built">{t(lang, 'footer.built')}</span>
+        </div>
       </div>
     </footer>
 
+    <SearchPalette lang={lang} pages={pages} />
+
     <script>
-      document.getElementById('theme-toggle')?.addEventListener('click', () => {
+      const toggle = document.getElementById('theme-toggle') as HTMLButtonElement | null;
+      // the button names what it will do, so screen readers hear the state too
+      const labelTheme = () => {
+        if (!toggle) return;
+        const label = document.documentElement.dataset.theme === 'light' ? toggle.dataset.toDark! : toggle.dataset.toLight!;
+        toggle.setAttribute('aria-label', label);
+        toggle.title = label;
+      };
+      labelTheme();
+      toggle?.addEventListener('click', () => {
         const next = document.documentElement.dataset.theme === 'light' ? 'dark' : 'light';
         document.documentElement.dataset.theme = next;
-        localStorage.setItem('theme', next);
+        try {
+          localStorage.setItem('theme', next);
+        } catch {
+          /* private mode: the choice just won't persist */
+        }
+        labelTheme();
         window.dispatchEvent(new CustomEvent('themechange'));
       });
+
+      const menuBtn = document.querySelector('.menu-btn') as HTMLButtonElement | null;
+      const mobileNav = document.getElementById('mobile-nav');
+      const setMenu = (open: boolean) => {
+        menuBtn?.setAttribute('aria-expanded', String(open));
+        if (mobileNav) mobileNav.hidden = !open;
+      };
+      menuBtn?.addEventListener('click', () => setMenu(menuBtn.getAttribute('aria-expanded') !== 'true'));
+      // the menu folds away on Esc, on a tap elsewhere, and once the page moves on
+      document.addEventListener('keydown', (ev) => {
+        if (ev.key === 'Escape' && mobileNav && !mobileNav.hidden) {
+          setMenu(false);
+          menuBtn?.focus();
+        }
+      });
+      document.addEventListener('click', (ev) => {
+        const target = ev.target instanceof Element ? ev.target : null;
+        if (mobileNav && !mobileNav.hidden && !target?.closest('.site-header')) setMenu(false);
+      });
+      window.addEventListener('scroll', () => mobileNav && !mobileNav.hidden && setMenu(false), { passive: true });
     </script>
   </body>
 </html>
 
 <style>
-  header {
-    border-bottom: 1px solid var(--grid);
-    background: var(--page);
+  .skip-link {
+    position: absolute;
+    left: 1rem;
+    top: -3rem;
+    z-index: 100;
+    padding: 0.5rem 0.9rem;
+    border-radius: 8px;
+    background: var(--ink);
+    color: var(--page);
+    font-weight: 600;
+  }
+
+  .skip-link:focus {
+    top: 0.6rem;
+  }
+
+  .site-header {
     position: sticky;
     top: 0;
-    z-index: 20;
+    z-index: 50;
+    background: var(--glass);
+    backdrop-filter: saturate(150%) blur(14px);
+    -webkit-backdrop-filter: saturate(150%) blur(14px);
+    border-bottom: 1px solid var(--ring);
   }
 
   .header-row {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: 1rem;
-    padding-top: 0.8rem;
-    padding-bottom: 0.8rem;
-    flex-wrap: wrap;
+    gap: 1.75rem;
+    height: var(--header-h);
   }
 
   .brand {
-    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
     color: var(--ink);
-    font-size: 1.05rem;
-    letter-spacing: 0.01em;
-  }
-
-  .brand span {
-    color: var(--accent);
+    font-weight: 600;
+    font-size: 0.98rem;
+    letter-spacing: -0.01em;
+    white-space: nowrap;
   }
 
   .brand:hover {
     text-decoration: none;
   }
 
-  .header-right {
-    display: flex;
-    align-items: center;
-    gap: 1.25rem;
-    flex-wrap: wrap;
+  .brand :global(.brand-mark) {
+    color: var(--ink);
+    flex: none;
+    transition: transform 0.6s var(--ease);
   }
 
-  nav {
-    display: flex;
-    gap: 1.1rem;
-    flex-wrap: wrap;
+  .brand:hover :global(.brand-mark) {
+    transform: rotate(60deg);
   }
 
-  nav a {
+  .brand-word em {
+    font-family: var(--font-serif);
+    font-weight: 400;
+    font-size: 1.28em;
+    letter-spacing: 0;
+  }
+
+  .primary-nav {
+    display: flex;
+    gap: 0.15rem;
+  }
+
+  .primary-nav a,
+  .mobile-nav a {
     color: var(--ink-2);
-    font-size: 0.92rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    padding: 0.42rem 0.8rem;
+    border-radius: 999px;
+    transition: color 0.2s, background-color 0.2s;
   }
 
-  nav a:hover {
+  .primary-nav a:hover,
+  .mobile-nav a:hover {
     color: var(--ink);
     text-decoration: none;
+    background: var(--surface-2);
   }
 
-
-  #theme-toggle {
-    appearance: none;
-    background: transparent;
-    border: 1px solid var(--baseline);
-    border-radius: 8px;
-    color: var(--ink-2);
-    font-size: 0.95rem;
-    line-height: 1;
-    padding: 0.3rem 0.55rem;
-    cursor: pointer;
-  }
-
-  #theme-toggle:hover {
+  .primary-nav a[aria-current='page'],
+  .mobile-nav a[aria-current='page'] {
     color: var(--ink);
-    border-color: var(--muted);
+    background: var(--surface-2);
+    box-shadow: inset 0 0 0 1px var(--ring);
   }
 
-  /* show the icon of the theme you would switch TO */
-  #theme-toggle .icon-dark { display: none; }
-  #theme-toggle .icon-light { display: inline; }
+  .header-tools {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
 
-  :global(html[data-theme='light']) #theme-toggle .icon-dark { display: inline; }
-  :global(html[data-theme='light']) #theme-toggle .icon-light { display: none; }
+  .search-trigger {
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    height: 2.25rem;
+    min-width: 230px;
+    padding: 0 0.45rem 0 0.85rem;
+    border-radius: 999px;
+    border: 1px solid var(--ring);
+    background: var(--surface);
+    color: var(--muted);
+    font-size: 0.86rem;
+    cursor: pointer;
+    transition: border-color 0.2s, color 0.2s;
+  }
 
-  main {
+  .search-trigger:hover {
+    border-color: var(--ring-strong);
+    color: var(--ink-2);
+  }
+
+  .search-label {
+    flex: 1;
+    text-align: left;
+  }
+
+  .search-keys {
+    display: inline-flex;
+    gap: 0.2rem;
+  }
+
+  #theme-toggle :global(.icon-dark) {
+    display: none;
+  }
+
+  :global(html[data-theme='light']) #theme-toggle :global(.icon-dark) {
+    display: block;
+  }
+
+  :global(html[data-theme='light']) #theme-toggle :global(.icon-light) {
+    display: none;
+  }
+
+  .menu-btn {
+    display: none;
+  }
+
+  .mobile-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0.5rem 1rem 1rem;
+    border-top: 1px solid var(--ring);
+  }
+
+  .mobile-nav[hidden] {
+    display: none;
+  }
+
+  .mobile-nav a {
+    padding: 0.65rem 0.9rem;
+    font-size: 1rem;
+  }
+
+  @media (max-width: 1080px) {
+    .search-trigger {
+      min-width: 0;
+    }
+
+    .search-label {
+      display: none;
+    }
+  }
+
+  @media (max-width: 900px) {
+    .primary-nav {
+      display: none;
+    }
+
+    .menu-btn {
+      display: inline-grid;
+    }
+
+    .search-keys {
+      display: none;
+    }
+
+    .search-trigger {
+      width: 2.25rem;
+      padding: 0;
+      justify-content: center;
+    }
+  }
+
+  @media (min-width: 901px) {
+    .mobile-nav {
+      display: none !important;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .brand-word {
+      font-size: 0.9rem;
+    }
+  }
+
+  .page {
     min-height: 70vh;
-    padding-top: 1.5rem;
-    padding-bottom: 3rem;
+    padding-top: 3rem;
+    padding-bottom: 5rem;
   }
 
-  footer {
-    border-top: 1px solid var(--grid);
-    padding: 1rem 0 2rem;
-    font-size: 0.85rem;
+  .page-bleed {
+    padding-top: 0;
+  }
+
+  .site-footer {
+    border-top: 1px solid var(--ring);
+    padding: 3rem 0 3.5rem;
+    font-size: 0.9rem;
+  }
+
+  .footer-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr);
+    gap: 2.5rem;
+  }
+
+  .footer-about p {
+    max-width: 46ch;
+    margin: 0.9rem 0 0;
+  }
+
+  .footer-stats {
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+
+  .footer-col {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+    align-items: flex-start;
+  }
+
+  .footer-col .eyebrow {
+    margin: 0 0 0.35rem;
+  }
+
+  .footer-col a {
+    color: var(--ink-2);
+  }
+
+  .footer-col a:hover {
+    color: var(--ink);
+  }
+
+  .footer-built {
+    font-size: 0.8rem;
+    margin-top: 0.5rem;
+  }
+
+  @media (max-width: 760px) {
+    .footer-grid {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .footer-about {
+      grid-column: 1 / -1;
+    }
   }
 </style>

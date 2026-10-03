@@ -1,0 +1,46 @@
+---
+/**
+ * Not found — GitHub Pages serves this for any missing path under the site,
+ * including the retired /vi/ and /ja/ routes.
+ */
+import Base from '../layouts/Base.astro';
+import Icon from '../components/Icon.astro';
+
+const base = import.meta.env.BASE_URL.replace(/\/$/, '');
+const root = `${base}/en`;
+---
+
+<Base title="Not found" lang="en" description="This page is not part of the genealogy.">
+  <section class="nf">
+    <p class="eyebrow">404 · a branch that never grew</p>
+    <h1>No work <em>descends</em> from here.</h1>
+    <p class="lede">
+      The page you were looking for isn't part of the genealogy — it may have moved, or it
+      belonged to a language edition that has since been retired. The site is English-only now.
+    </p>
+    <div class="nf-actions">
+      <a class="btn btn-primary" href={`${root}/`}>Back to the atlas <Icon name="arrow-right" size={16} /></a>
+      <button type="button" class="btn" data-open-palette><Icon name="search" size={16} />Search the works</button>
+      <a class="btn" href={`${root}/works/`}>Browse the index</a>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .nf {
+    max-width: 760px;
+    padding: 4rem 0 2rem;
+  }
+
+  .nf h1 {
+    margin: 0.8rem 0 1rem;
+    font-size: clamp(2.8rem, 6vw, 4.4rem);
+  }
+
+  .nf-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-top: 2rem;
+  }
+</style>

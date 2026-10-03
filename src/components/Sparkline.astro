@@ -1,0 +1,45 @@
+---
+/**
+ * Works per year as a row of thin bars on a LINEAR year axis — so the long
+ * quiet decades and the recent explosion both read at their true scale.
+ */
+interface Props {
+  years: number[]; // one entry per work
+  from: number;
+  to: number;
+  max: number; // shared ceiling, so sparklines side by side compare
+  color: string;
+  height?: number;
+}
+const { years, from, to, max, color, height = 34 } = Astro.props;
+const span = to - from + 1;
+const per = new Map<number, number>();
+for (const y of years) per.set(y, (per.get(y) ?? 0) + 1);
+const STEP = 4;
+const W = span * STEP;
+---
+
+<svg class="sparkline" viewBox={`0 0 ${W} ${height}`} preserveAspectRatio="none" aria-hidden="true">
+  <line x1="0" x2={W} y1={height - 0.5} y2={height - 0.5} class="sparkline-base" />
+  {
+    [...per.entries()].map(([y, c]) => {
+      const h = Math.max(2, (c / max) * (height - 3));
+      return <rect x={(y - from) * STEP + 0.6} y={height - 1 - h} width={STEP - 1.2} height={h} rx="0.8" fill={color} />;
+    })
+  }
+</svg>
+
+<style>
+  .sparkline {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .sparkline-base {
+    stroke: var(--baseline);
+    stroke-width: 1;
+    vector-effect: non-scaling-stroke;
+  }
+</style>

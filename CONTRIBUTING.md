@@ -1,8 +1,9 @@
 # Contributing
 
 The entire genealogy lives in `src/content/` as YAML/MDX. **No code changes are
-needed** to add a paper, a relation, or a whole new branch — both graphs, the
-node pages, the branch pages, the table view, and the [heresies page](https://trdung22.github.io/3d-vision-genealogy/en/heresies/)
+needed** to add a paper, a relation, or a whole new branch — the atlas and the
+3D floors, the node pages, the branch pages, the index, the search,
+and the [heresies page](https://trdung22.github.io/3d-vision-genealogy/en/heresies/)
 are all generated at build time.
 
 ```
@@ -13,9 +14,11 @@ src/content/
 
 src/lib/graph.ts        # folds content into the graph payload + the relation vocabulary
 src/lib/i18n.ts         # UI-chrome strings
-src/lib/graph3d.js      # 3D force-graph view (loaded as a separate chunk)
-src/components/         # GenealogyGraph (D3 timeline DAG + 3D view below it)
-src/pages/              # home, nodes, branches, heresies, blog, graph.json
+src/lib/atlas.js        # the atlas: layout, lineage, filters, time machine, inspector
+src/lib/floors3d.js     # the 3D floors (three.js, a separate chunk loaded near the viewport)
+src/components/         # Atlas, Floors, LineageGraph, SearchPalette, …
+src/pages/              # home, works (index), nodes, branches, heresies, blog,
+                        # graph.json + search.json (the client payloads)
 ```
 
 ## Adding a work (node)
@@ -110,14 +113,14 @@ description: >
 color: "#c98500"        # take the NEXT unused color slot (table below)
 order: 3                # display order on the graph, top to bottom
 status: active          # or planned
-lanes:                  # the branch's horizontal lanes on the timeline
+lanes:                  # the branch's lanes in the atlas, top to bottom
   - id: sfm
     title: "Structure from Motion"
   - id: mvs
     title: "Multi-view stereo"
 ```
 
-Then add nodes with `branch: <id>` — both the 2D and 3D graphs grow the new
+Then add nodes with `branch: <id>` — the atlas and the 3D floors both grow the new
 branch on their own, including cross-branch edges (existing example:
 DeepSDF → NeRF → Zero-1-to-3).
 
@@ -139,8 +142,8 @@ avoid `#e66767` for branches since red is reserved for *challenges* edges.)
 
 Create `src/content/posts/<slug>.mdx` with frontmatter `title`, `description`,
 `date`, `nodes: [id1, id2]` (related nodes). Attach the post back onto a node
-via its `post:` field so the node flips from hollow (seed) to filled (written)
-on the graph.
+via its `post:` field so the node gains its "has article" dot in the atlas
+and a link to the post on its page.
 
 ## Language & theme
 
@@ -150,5 +153,6 @@ preference).
 
 - UI chrome strings live in `src/lib/i18n.ts`; all content prose lives in the
   YAML itself.
-- Both graphs read their colors from CSS custom properties at render time, so
-  they re-theme live (the timeline re-renders, the 3D view swaps materials).
+- Both graphs read their colors from CSS custom properties, so they re-theme
+  live (the atlas just swaps its branch-color variables, the 3D view swaps
+  materials).

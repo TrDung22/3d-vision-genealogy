@@ -1,6 +1,10 @@
 ---
 import { getCollection, getEntry } from 'astro:content';
 import Base from '../../../layouts/Base.astro';
+import EdgeGlyph from '../../../components/EdgeGlyph.astro';
+import Icon from '../../../components/Icon.astro';
+import LineageGraph from '../../../components/LineageGraph.astro';
+import { buildGraph, NODE_KINDS } from '../../../lib/graph';
 import { LOCALES, t, type Lang } from '../../../lib/i18n';
 
 export async function getStaticPaths() {
@@ -15,29 +19,55 @@ const lang = Astro.params.lang as Lang;
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const root = `${base}/${lang}`;
 
-const branch = await getEntry(entry.data.branch);
-const all = await getCollection('nodes');
-const byId = new Map(all.map((n) => [n.id, n]));
+const graph = await buildGraph(lang);
+const node = graph.nodes.find((n) => n.id === entry.id)!;
+const nodeById = new Map(graph.nodes.map((n) => [n.id, n]));
+const branch = graph.branches.find((b) => b.id === node.branch)!;
+const colorOf = (branchId: string) => graph.branches.find((b) => b.id === branchId)?.color ?? 'var(--muted)';
+const laneTitle = graph.lanes.find((l) => l.id === node.lane)?.title ?? '';
 
 const prose = entry.data;
-const branchTitle = branch?.data.title;
 const statusWord = t(lang, `status.${entry.data.status}`);
 // an analysis answers a question with a finding; methods and datasets keep
 // the problem → core-idea framing
 const kind = entry.data.kind;
 const isAnalysis = kind === 'analysis';
+// a name without its year (the page says when) but with any author kept:
+// "NeRF (2020)" → "NeRF", "Shape from Shading (Horn 1970)" → "… (Horn)"
+const shortLabel = (s: string) =>
+  s
+    .replace(/\s*\((19|20)\d{2}\)\s*$/, '')
+    .replace(/\s+(19|20)\d{2}\)$/, ')')
+    .replace(/\s+(19|20)\d{2}$/, '');
 
-// outgoing: what this node says about older nodes
-const outgoing = entry.data.relations
-  .map((r) => ({ type: r.type, note: r.note ?? '', other: byId.get(r.node.id) }))
-  .filter((r) => r.other);
+// outgoing: what this node says about older nodes; incoming: what newer
+// nodes say about this one
+const outgoing = graph.edges
+  .filter((e) => e.target === node.id)
+  .map((e) => ({ type: e.type, note: e.note, other: nodeById.get(e.source)! }))
+  .sort((a, b) => b.other.year - a.other.year || a.other.short.localeCompare(b.other.short));
+const incoming = graph.edges
+  .filter((e) => e.source === node.id)
+  .map((e) => ({ type: e.type, note: e.note, other: nodeById.get(e.target)! }))
+  .sort((a, b) => a.other.year - b.other.year || a.other.short.localeCompare(b.other.short));
 
-// incoming: what newer nodes say about this one
-const incoming = all.flatMap((n) =>
-  n.data.relations
-    .filter((r) => r.node.id === entry.id)
-    .map((r) => ({ type: r.type, note: r.note ?? '', other: n })),
-);
+const rel = (r: (typeof outgoing)[number]) => ({
+  type: r.type,
+  id: r.other.id,
+  label: shortLabel(r.other.short),
+  year: r.other.year,
+  color: colorOf(r.other.branch),
+  shape: NODE_KINDS[r.other.kind].shape,
+  award: r.other.award,
+});
+
+// neighbours in time within the branch
+const sameBranch = graph.nodes
+  .filter((n) => n.branch === node.branch)
+  .sort((a, b) => a.year - b.year || a.short.localeCompare(b.short));
+const at = sameBranch.findIndex((n) => n.id === node.id);
+const prev = at > 0 ? sameBranch[at - 1] : null;
+const next = at < sameBranch.length - 1 ? sameBranch[at + 1] : null;
 
 const post = entry.data.post ? await getEntry(entry.data.post) : null;
 
@@ -51,158 +81,452 @@ const LINK_LABELS: Record<string, string> = {
   mhr: 'MHR',
   'moge-2': 'MoGe-2',
 };
+
+const story = [
+  { n: '01', title: t(lang, isAnalysis ? 'node.question' : 'node.problem'), text: prose.problem },
+  { n: '02', title: t(lang, isAnalysis ? 'node.finding' : 'node.coreIdea'), text: prose.solution },
+  ...(prose.limitations ? [{ n: '03', title: t(lang, 'node.limitations'), text: prose.limitations }] : []),
+];
 ---
 
 <Base title={entry.data.short} lang={lang} description={prose.problem}>
-  <article>
-    <header class="node-header">
-      <p>
+  <article class="work" style={`--bc: ${branch.color}`}>
+    <nav class="crumbs" aria-label="Breadcrumb">
+      <a href={`${root}/`}>{t(lang, 'nav.atlas')}</a>
+      <span aria-hidden="true">/</span>
+      <a href={`${root}/branches/${branch.id}/`}>{branch.title}</a>
+      <span aria-hidden="true">/</span>
+      <span>{laneTitle}</span>
+    </nav>
+
+    <header class="work-head">
+      <h1>{shortLabel(entry.data.short)}</h1>
+      <p class="work-title">{entry.data.title}</p>
+      {entry.data.authors && <p class="work-authors">{entry.data.authors}</p>}
+      <div class="work-meta">
+        <span class="work-year">{entry.data.year}</span>
+        {entry.data.venue && (
+          <span class:list={['badge', { 'badge-award': node.award }]}>
+            {node.award && <span aria-hidden="true">★</span>}
+            {entry.data.venue}
+          </span>
+        )}
         <span class="chip">
-          <span class="dot" style={`background:${branch?.data.color}`}></span>
-          <a href={`${root}/branches/${branch?.id}/`}>{branchTitle}</a>
+          <span class="dot" style={`background:${branch.color}`} />
+          {branch.title}
         </span>
-        <span class="badge">{statusWord}</span>
         {kind !== 'method' && <span class="badge">{t(lang, `kind.${kind}`)}</span>}
-      </p>
-      <h1>{entry.data.short}</h1>
-      <p class="full-title">{entry.data.title}</p>
-      <p class="muted">
-        {entry.data.authors && <span>{entry.data.authors} · </span>}
-        {entry.data.venue ? `${entry.data.venue}` : entry.data.year}
-      </p>
-      {
-        Object.keys(entry.data.links).length > 0 && (
-          <p class="links">
-            {Object.entries(entry.data.links).map(([key, url]) => (
-              <a href={url} target="_blank" rel="noopener">
-                {LINK_LABELS[key] ?? key} ↗
-              </a>
-            ))}
-          </p>
-        )
-      }
+        <span class="badge">{statusWord}</span>
+      </div>
+      <div class="work-actions">
+        {
+          Object.entries(entry.data.links).map(([key, url]) => (
+            <a class="btn btn-sm" href={url} target="_blank" rel="noopener">
+              {LINK_LABELS[key] ?? key} <Icon name="external" size={14} />
+            </a>
+          ))
+        }
+        <a class="btn btn-sm btn-primary" href={`${root}/?focus=${entry.id}#atlas`}>
+          {t(lang, 'node.inAtlas')} <Icon name="arrow-right" size={14} />
+        </a>
+      </div>
     </header>
 
-    <section class="panel node-summary">
-      <h2>{t(lang, isAnalysis ? 'node.question' : 'node.problem')}</h2>
-      <p>{prose.problem}</p>
-      <h2>{t(lang, isAnalysis ? 'node.finding' : 'node.coreIdea')}</h2>
-      <p>{prose.solution}</p>
+    {
+      (outgoing.length > 0 || incoming.length > 0) && (
+        <section class="work-lineage card" aria-labelledby="lineage-h">
+          <div class="work-lineage-head">
+            <h2 id="lineage-h" class="work-h2">{t(lang, 'node.lineage')}</h2>
+            <p>{t(lang, 'node.lineageIntro')}</p>
+          </div>
+          <div class="work-lineage-graph">
+            <LineageGraph
+              self={{ label: shortLabel(entry.data.short), year: entry.data.year, color: branch.color }}
+              parents={outgoing.map(rel)}
+              children={incoming.map(rel)}
+              root={root}
+            />
+          </div>
+        </section>
+      )
+    }
+
+    <section class="story">
       {
-        prose.limitations && (
-          <>
-            <h2>{t(lang, 'node.limitations')}</h2>
-            <p>{prose.limitations}</p>
-          </>
-        )
+        story.map((s) => (
+          <div class="story-row">
+            <div class="story-key">
+              <span class="story-n">{s.n}</span>
+              <h2 class="story-title">{s.title}</h2>
+            </div>
+            <p class="story-text">{s.text}</p>
+          </div>
+        ))
       }
     </section>
 
-    <section>
-      <h2>{t(lang, 'node.place')}</h2>
+    <section class="debts" aria-label={t(lang, 'node.place')}>
       {
         outgoing.length > 0 && (
-          <>
-            <h3>{t(lang, 'node.standsOn')}</h3>
-            <ul class="relation-list">
+          <div class="debt-col">
+            <h2 class="work-h2">
+              {t(lang, 'node.standsOn')} <span class="debt-n">{outgoing.length}</span>
+            </h2>
+            <ul class="debt-list">
               {outgoing.map((r) => (
                 <li>
-                  <span class="rel-type">{t(lang, `edge.${r.type}`)}</span>
-                  <a href={`${root}/nodes/${r.other!.id}/`}>{r.other!.data.short}</a>
-                  {r.note && <p class="muted">{r.note}</p>}
+                  <a class="debt card" href={`${root}/nodes/${r.other.id}/`} style={`--oc: ${colorOf(r.other.branch)}`}>
+                    <span class="debt-kicker">
+                      <EdgeGlyph type={r.type} width={28} />
+                      <em class={`debt-type t-${r.type}`}>{graph.edgeTypes[r.type].label}</em>
+                    </span>
+                    <span class="debt-name">
+                      <span class="debt-dot" />
+                      {shortLabel(r.other.short)} <span class="debt-year">{r.other.year}</span>
+                    </span>
+                    {r.note && <span class="debt-note">{r.note}</span>}
+                  </a>
                 </li>
               ))}
             </ul>
-          </>
+          </div>
         )
       }
       {
         incoming.length > 0 && (
-          <>
-            <h3>{t(lang, 'node.standsOnIt')}</h3>
-            <ul class="relation-list">
+          <div class="debt-col">
+            <h2 class="work-h2">
+              {t(lang, 'node.standsOnIt')} <span class="debt-n">{incoming.length}</span>
+            </h2>
+            <ul class="debt-list">
               {incoming.map((r) => (
                 <li>
-                  <a href={`${root}/nodes/${r.other.id}/`}>{r.other.data.short}</a>
-                  <span class="rel-type">{t(lang, `edge.${r.type}`)}</span> {t(lang, 'node.thisWork')}
-                  {r.note && <p class="muted">{r.note}</p>}
+                  <a class="debt card" href={`${root}/nodes/${r.other.id}/`} style={`--oc: ${colorOf(r.other.branch)}`}>
+                    <span class="debt-kicker">
+                      <EdgeGlyph type={r.type} width={28} />
+                      <em class={`debt-type t-${r.type}`}>
+                        {graph.edgeTypes[r.type].label} {t(lang, 'node.thisWork')}
+                      </em>
+                    </span>
+                    <span class="debt-name">
+                      <span class="debt-dot" />
+                      {shortLabel(r.other.short)} <span class="debt-year">{r.other.year}</span>
+                    </span>
+                    {r.note && <span class="debt-note">{r.note}</span>}
+                  </a>
                 </li>
               ))}
             </ul>
-          </>
+          </div>
         )
       }
-      {outgoing.length === 0 && incoming.length === 0 && (
-        <p class="muted">{t(lang, 'node.root')}</p>
-      )}
+      {outgoing.length === 0 && incoming.length === 0 && <p class="muted">{t(lang, 'node.root')}</p>}
     </section>
 
-    <section>
+    {
+      post ? (
+        <p class="work-post card">
+          <span class="eyebrow">{t(lang, 'node.readAnalysis')}</span>
+          <a href={`${root}/blog/${post.id}/`}>{post.data.title}</a>
+        </p>
+      ) : (
+        <p class="work-seed">{t(lang, 'node.seedNotice').replace('{status}', statusWord)}</p>
+      )
+    }
+
+    <nav class="prevnext" aria-label="Neighbouring works">
       {
-        post ? (
-          <p>
-            📖 {t(lang, 'node.readAnalysis')} <a href={`${root}/blog/${post.id}/`}>{post.data.title}</a>
-          </p>
+        prev ? (
+          <a class="card pn pn-prev" href={`${root}/nodes/${prev.id}/`}>
+            <span class="eyebrow">← {t(lang, 'node.prev')} {branch.title}</span>
+            <span class="pn-name">{shortLabel(prev.short)}</span>
+            <span class="pn-year">{prev.year}</span>
+          </a>
         ) : (
-          <p class="muted">{t(lang, 'node.seedNotice').replace('{status}', statusWord)}</p>
+          <span />
         )
       }
-    </section>
-
-    <p><a href={`${root}/`}>{t(lang, 'node.back')}</a></p>
+      {
+        next && (
+          <a class="card pn pn-next" href={`${root}/nodes/${next.id}/`}>
+            <span class="eyebrow">{t(lang, 'node.next')} {branch.title} →</span>
+            <span class="pn-name">{shortLabel(next.short)}</span>
+            <span class="pn-year">{next.year}</span>
+          </a>
+        )
+      }
+    </nav>
   </article>
 </Base>
 
 <style>
-  .node-header h1 {
-    margin: 0.4rem 0 0.2rem;
+  .work {
+    max-width: 1040px;
   }
 
-  .full-title {
-    color: var(--ink-2);
-    font-size: 1.05rem;
-    margin: 0.2rem 0;
-  }
-
-  .links a {
-    margin-right: 1rem;
-  }
-
-  .node-summary {
-    margin: 1.5rem 0;
-  }
-
-  .node-summary h2 {
-    font-size: 0.8rem;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
+  .crumbs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    font-size: 0.82rem;
     color: var(--muted);
-    margin: 1.1rem 0 0.3rem;
   }
 
-  .node-summary h2:first-child {
-    margin-top: 0;
+  .crumbs a {
+    color: var(--ink-2);
   }
 
-  .relation-list {
+  .work-head h1 {
+    margin: 1.4rem 0 0.6rem;
+    font-size: clamp(3rem, 7vw, 5rem);
+    line-height: 0.98;
+  }
+
+  .work-title {
+    margin: 0 0 0.7rem;
+    font-size: 1.2rem;
+    line-height: 1.45;
+    color: var(--ink);
+    max-width: 52ch;
+  }
+
+  .work-authors {
+    margin: 0 0 1.1rem;
+    font-size: 0.92rem;
+    color: var(--muted);
+    max-width: 75ch;
+  }
+
+  .work-meta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.9rem;
+  }
+
+  .work-year {
+    font-family: var(--font-mono);
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--ink);
+  }
+
+  .work-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+  }
+
+  .work-h2 {
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .work-lineage {
+    margin: 3rem 0 0;
+    padding: 1.4rem 1.6rem 1.6rem;
+    border-top: 2px solid var(--bc);
+  }
+
+  .work-lineage-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.3rem 1.2rem;
+    margin-bottom: 1.2rem;
+  }
+
+  .work-lineage-head p {
+    margin: 0;
+    font-size: 0.86rem;
+    color: var(--muted);
+  }
+
+  .work-lineage-graph {
+    overflow-x: auto;
+  }
+
+  .work-lineage-graph :global(.lineage) {
+    min-width: 640px;
+  }
+
+  .story {
+    margin: 3.5rem 0 0;
+  }
+
+  .story-row {
+    display: grid;
+    grid-template-columns: 220px minmax(0, 1fr);
+    gap: 1.5rem;
+    padding: 1.6rem 0;
+    border-top: 1px solid var(--ring);
+  }
+
+  .story-row:last-child {
+    border-bottom: 1px solid var(--ring);
+  }
+
+  .story-n {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+
+  .story-title {
+    margin: 0.3rem 0 0;
+    font-size: 1.75rem;
+    line-height: 1.1;
+  }
+
+  .story-text {
+    margin: 0;
+    font-size: 1.04rem;
+    line-height: 1.75;
+    color: var(--ink-2);
+    max-width: 68ch;
+  }
+
+  .debts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+    margin: 3.5rem 0 0;
+    align-items: start;
+  }
+
+  .debt-n {
+    margin-left: 0.4rem;
+    color: var(--ink-2);
+  }
+
+  .debt-list {
     list-style: none;
+    margin: 1rem 0 0;
     padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
   }
 
-  .relation-list li {
-    margin: 0.7rem 0;
-    padding-left: 1rem;
-    border-left: 2px solid var(--baseline);
+  .debt {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 0.95rem 1.1rem;
   }
 
-  .relation-list p {
-    margin: 0.2rem 0 0;
-    font-size: 0.9rem;
+  a.debt:hover {
+    border-color: color-mix(in srgb, var(--oc) 55%, transparent);
   }
 
-  .rel-type {
-    color: var(--accent);
-    font-style: italic;
-    margin-right: 0.35em;
+  .debt-kicker {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .debt-type {
+    font-size: 0.8rem;
+    color: var(--muted);
+  }
+
+  .debt-type.t-challenges {
+    color: var(--danger);
+  }
+
+  .debt-name {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    font-family: var(--font-serif);
+    font-size: 1.45rem;
+    line-height: 1.15;
+    color: var(--ink);
+  }
+
+  .debt-dot {
+    flex: none;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--oc);
+    align-self: center;
+  }
+
+  .debt-year {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+
+  .debt-note {
+    font-size: 0.88rem;
+    line-height: 1.6;
+    color: var(--ink-2);
+  }
+
+  .work-seed {
+    margin: 3rem 0 0;
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  .work-post {
+    margin: 3rem 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+  }
+
+  .prevnext {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.9rem;
+    margin-top: 2.5rem;
+  }
+
+  .pn {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .pn-next {
+    text-align: right;
+    align-items: flex-end;
+  }
+
+  .pn-name {
+    font-family: var(--font-serif);
+    font-size: 1.6rem;
+    line-height: 1.1;
+    color: var(--ink);
+  }
+
+  .pn-year {
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+
+  @media (max-width: 720px) {
+    .story-row {
+      grid-template-columns: 1fr;
+      gap: 0.6rem;
+    }
+
+    .prevnext {
+      grid-template-columns: 1fr;
+    }
+
+    .work-lineage {
+      padding: 1.1rem 1rem 1.2rem;
+    }
   }
 </style>

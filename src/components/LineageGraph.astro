@@ -1,0 +1,231 @@
+---
+/**
+ * A work's immediate family as a small static diagram: what it stands on
+ * (left) → the work → what stands on it (right). Built at compile time —
+ * no script — with every relation drawn in its own stroke style and every
+ * relative a link to its page.
+ */
+import { EDGE_TYPES, type EdgeType } from '../lib/graph';
+
+interface Rel {
+  type: EdgeType;
+  id: string;
+  label: string;
+  year: number;
+  color: string;
+  shape: 'circle' | 'diamond' | 'square';
+  award: boolean;
+}
+interface Props {
+  self: { label: string; year: number; color: string; venue?: string };
+  parents: Rel[];
+  children: Rel[];
+  root: string;
+}
+
+const { self, parents, children, root } = Astro.props;
+
+const W = 1000;
+const PITCH = 36;
+const CAP_H = 26;
+const COL_L = 270; // left column: capsules end here
+const MID_L = 410; // the work's box
+const MID_R = 590;
+const COL_R = 730; // right column: capsules start here
+const PAD = 18;
+const rows = Math.max(parents.length, children.length, 1);
+const H = rows * PITCH + PAD * 2;
+const midY = H / 2;
+const rowY = (i: number, n: number) => midY + (i - (n - 1) / 2) * PITCH;
+
+// No measuring at build time, so names are sized from rough Inter metrics
+// (em per character class, 12.5px) — erring wide, since a capsule a little
+// too long reads fine and a name spilling over its year does not.
+const EM = 12.5;
+const charW = (c: string) => {
+  if (/[iljI.,:;|!'’]/.test(c)) return 0.3;
+  if (/[frt()[\]{}\/-]/.test(c)) return 0.42;
+  if (c === ' ') return 0.3;
+  if (/[MW]/.test(c)) return 0.92;
+  if (/[mw]/.test(c)) return 0.86;
+  if (/[A-Z&]/.test(c)) return 0.72;
+  if (/[0-9]/.test(c)) return 0.64;
+  return 0.58;
+};
+const textW = (s: string) => [...s].reduce((sum, c) => sum + charW(c) * EM, 0);
+const CAP_PAD = 26 + 10 + 30 + 10; // mark, gap, year, end padding
+const fit = (label: string, max: number) => {
+  let text = label;
+  while (text.length > 4 && textW(text) + CAP_PAD > max) text = text.slice(0, -1);
+  if (text !== label) text = `${text.trimEnd()}…`;
+  return { text, w: Math.min(max, Math.ceil(textW(text) + CAP_PAD)) };
+};
+const shapeD = (shape: Rel['shape'], r: number) => {
+  if (shape === 'diamond') return `M0,${-r * 1.2}L${r * 1.2},0L0,${r * 1.2}L${-r * 1.2},0Z`;
+  if (shape === 'square') return `M${-r * 0.86},${-r * 0.86}H${r * 0.86}V${r * 0.86}H${-r * 0.86}Z`;
+  return `M${r},0A${r},${r} 0 1,1 ${-r},0A${r},${r} 0 1,1 ${r},0Z`;
+};
+const curve = (x0: number, y0: number, x1: number, y1: number) => {
+  const dx = (x1 - x0) * 0.55;
+  return `M${x0},${y0} C${x0 + dx},${y0} ${x1 - dx},${y1} ${x1},${y1}`;
+};
+
+const left = parents.map((r, i) => {
+  const { text, w } = fit(r.label, COL_L - 4);
+  return { ...r, w, x: COL_L - w, y: rowY(i, parents.length), text };
+});
+const right = children.map((r, i) => {
+  const { text, w } = fit(r.label, W - COL_R - 4);
+  return { ...r, w, x: COL_R, y: rowY(i, children.length), text };
+});
+// relation names ride along their arrows only while a side stays uncrowded;
+// past that the stroke styles (and the cards below) carry the type
+const LABEL_MAX = 9;
+const types = [...new Set([...parents, ...children].map((r) => r.type))];
+// the work's own name shrinks to stay inside its box
+const selfFont = Math.min(22, 164 / (self.label.length * 0.46));
+---
+
+<svg class="lineage" viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`${self.label}: ${parents.length} relations to older works, ${children.length} from newer ones`}>
+  <defs>
+    {
+      types.map((type) => (
+        <marker id={`lg-arrow-${type}`} viewBox="0 -5 10 10" refX="9" refY="0" markerUnits="userSpaceOnUse" markerWidth="8" markerHeight="8" orient="auto">
+          <path d="M0,-4.2L10,0L0,4.2Z" style={`fill: var(${EDGE_TYPES[type].stroke})`} />
+        </marker>
+      ))
+    }
+  </defs>
+
+  {
+    left.map((r) => (
+      <path
+        class="lg-edge"
+        d={curve(COL_L, r.y, MID_L - 3, midY)}
+        style={`stroke: var(${EDGE_TYPES[r.type].stroke})`}
+        stroke-width={EDGE_TYPES[r.type].width}
+        stroke-dasharray={EDGE_TYPES[r.type].dash ?? undefined}
+        marker-end={`url(#lg-arrow-${r.type})`}
+      />
+    ))
+  }
+  {
+    right.map((r) => (
+      <path
+        class="lg-edge"
+        d={curve(MID_R, midY, COL_R - 3, r.y)}
+        style={`stroke: var(${EDGE_TYPES[r.type].stroke})`}
+        stroke-width={EDGE_TYPES[r.type].width}
+        stroke-dasharray={EDGE_TYPES[r.type].dash ?? undefined}
+        marker-end={`url(#lg-arrow-${r.type})`}
+      />
+    ))
+  }
+
+  {
+    left.map((r) => (
+      <a href={`${root}/nodes/${r.id}/`} class="lg-node">
+        <rect x={r.x} y={r.y - CAP_H / 2} width={r.w} height={CAP_H} rx={CAP_H / 2} class="lg-cap" />
+        {r.award && <path d={shapeD(r.shape, 8)} transform={`translate(${r.x + 14},${r.y})`} class="lg-ring" />}
+        <path d={shapeD(r.shape, 4.6)} transform={`translate(${r.x + 14},${r.y})`} fill={r.color} />
+        <text x={r.x + 26} y={r.y + 4.3} class="lg-label">{r.text}</text>
+        <text x={r.x + r.w - 12} y={r.y + 4} class="lg-year" text-anchor="end">{r.year}</text>
+        {parents.length <= LABEL_MAX && <text x={COL_L + 10} y={r.y - 6} class="lg-type">{EDGE_TYPES[r.type].label}</text>}
+      </a>
+    ))
+  }
+
+  <g class="lg-self">
+    <rect x={MID_L} y={midY - 26} width={MID_R - MID_L} height="52" rx="14" style={`--c: ${self.color}`} />
+    <text x={(MID_L + MID_R) / 2} y={midY + 1} text-anchor="middle" class="lg-self-label" font-size={selfFont.toFixed(1)}>{self.label}</text>
+    <text x={(MID_L + MID_R) / 2} y={midY + 17} text-anchor="middle" class="lg-self-year">{self.year}</text>
+  </g>
+
+  {
+    right.map((r) => (
+      <a href={`${root}/nodes/${r.id}/`} class="lg-node">
+        <rect x={r.x} y={r.y - CAP_H / 2} width={r.w} height={CAP_H} rx={CAP_H / 2} class="lg-cap" />
+        {r.award && <path d={shapeD(r.shape, 8)} transform={`translate(${r.x + 14},${r.y})`} class="lg-ring" />}
+        <path d={shapeD(r.shape, 4.6)} transform={`translate(${r.x + 14},${r.y})`} fill={r.color} />
+        <text x={r.x + 26} y={r.y + 4.3} class="lg-label">{r.text}</text>
+        <text x={r.x + r.w - 12} y={r.y + 4} class="lg-year" text-anchor="end">{r.year}</text>
+        {children.length <= LABEL_MAX && <text x={COL_R - 10} y={r.y - 6} class="lg-type" text-anchor="end">{EDGE_TYPES[r.type].label}</text>}
+      </a>
+    ))
+  }
+</svg>
+
+<style>
+  .lineage {
+    display: block;
+    width: 100%;
+    height: auto;
+    overflow: visible;
+  }
+
+  .lg-edge {
+    fill: none;
+    stroke-linecap: round;
+    opacity: 0.75;
+  }
+
+  .lg-cap {
+    fill: var(--surface);
+    stroke: var(--ring-strong);
+    stroke-width: 1;
+    transition: stroke 0.2s, fill 0.2s;
+  }
+
+  .lg-node:hover .lg-cap,
+  .lg-node:focus-visible .lg-cap {
+    stroke: var(--ink-2);
+    fill: var(--surface-2);
+  }
+
+  .lg-node:hover .lg-label {
+    fill: var(--ink);
+  }
+
+  .lg-ring {
+    fill: none;
+    stroke: var(--award);
+    stroke-width: 1.5;
+  }
+
+  .lg-label {
+    font-family: var(--font-sans);
+    font-size: 12.5px;
+    font-weight: 540;
+    fill: var(--ink-2);
+  }
+
+  .lg-year {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    fill: var(--muted);
+  }
+
+  .lg-type {
+    font-family: var(--font-sans);
+    font-size: 10.5px;
+    font-style: italic;
+    fill: var(--muted);
+  }
+
+  .lg-self rect {
+    fill: color-mix(in srgb, var(--c) 20%, var(--surface));
+    stroke: var(--c);
+    stroke-width: 1.6;
+  }
+
+  .lg-self-label {
+    font-family: var(--font-serif);
+    fill: var(--ink);
+  }
+
+  .lg-self-year {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    fill: var(--muted);
+  }
+</style>

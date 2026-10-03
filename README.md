@@ -12,7 +12,7 @@ English — dark & light
 
 </div>
 
-[![The genealogy timeline replaying the field year by year — lanes per research thread, arrows flowing with time](docs/timeline.gif)](https://trdung22.github.io/3d-vision-genealogy/)
+[![The atlas with 3D Gaussian Splatting selected: everything it stands on and everything that descends from it lit up across branches, its card open in the inspector](docs/atlas.png)](https://trdung22.github.io/3d-vision-genealogy/)
 
 ## The idea
 
@@ -36,10 +36,21 @@ write-ups drop on the floor.
 
 ## What's inside
 
-- **An interactive timeline DAG** — hover a node to trace its direct relations,
-  and drag the **time-machine slider** (or hit ▶) to replay the field year by
-  year. Snapshots are shareable: [`?year=2005`](https://trdung22.github.io/3d-vision-genealogy/en/?year=2005).
-- **The same genealogy in 3D** — a force graph with nodes clustered by research lane.
+- **The atlas** — the genealogy as a timeline map: every work a capsule on a
+  compressed time axis, one lane per research thread, every relation flowing
+  left to right. **Click a work to light up its whole lineage** — everything
+  it stands on and everything that descends from it — with its card in the
+  inspector; hover to trace direct relations; filter branches, kinds of work
+  and kinds of relation; hit ▶ to replay the field year by year. Every view
+  is a shareable URL: [`?focus=nerf2020`](https://trdung22.github.io/3d-vision-genealogy/en/?focus=nerf2020),
+  [`?year=2005`](https://trdung22.github.io/3d-vision-genealogy/en/?year=2005).
+- **⌘K search** — jump to any work, author, venue or branch from any page.
+- **A page per work** — its immediate family drawn as a small tree, the
+  problem → idea → what-it-left-open story, and every debt in both directions.
+- **Where the branches meet** — the atlas, unfolded in 3D: each branch rises
+  onto its own glass floor (time and lanes keep their places), and every debt
+  that crosses between branches becomes a bridge between floors.
+- **[An index](https://trdung22.github.io/3d-vision-genealogy/en/works/)** — every work as one searchable, sortable list.
 - **[Heresies, rivalries & revivals](https://trdung22.github.io/3d-vision-genealogy/en/heresies/)** —
   a page generated *entirely* from the graph's edges: who proved an entire
   branch was fooling itself, which ideas landed everywhere at once
@@ -57,19 +68,19 @@ write-ups drop on the floor.
 <table>
   <tr>
     <td width="52%"><img src="docs/heresies.png" alt="The heresies page — challenges, parallel discoveries and revivals, generated from the graph" /></td>
-    <td><img src="docs/graph3d.gif" alt="The 3D force-graph view orbiting and zooming — nodes clustered by lane inside faint bubbles" /></td>
+    <td><img src="docs/floors.png" alt="The 3D view: four glass floors, one per branch, with bridges of light between them for the debts that cross branches" /></td>
   </tr>
   <tr>
     <td align="center"><sub>The heresies page — generated from the edges, never written by hand</sub></td>
-    <td align="center"><sub>The same genealogy in 3D</sub></td>
+    <td align="center"><sub>Where the branches meet — the atlas unfolded into floors</sub></td>
   </tr>
 </table>
 
 ## How it works
 
-An [Astro 5](https://astro.build) static site (D3 timeline + three.js force
-graph). The whole genealogy is **data, not code**: one YAML file per work, one
-per branch. Every page and both graphs are generated from it at build time —
+An [Astro 5](https://astro.build) static site (a D3-drawn atlas + a three.js
+3D view). The whole genealogy is **data, not code**: one YAML file per work, one
+per branch. Every page, the atlas and the 3D floors are generated from it at build time —
 adding a paper, or grafting an entire new branch, is just adding files:
 
 ```yaml
@@ -110,5 +121,6 @@ in [CONTRIBUTING.md](CONTRIBUTING.md).
 - [x] Open the full neural-rendering branch (80s volume rendering → light fields → SRN → NeRF → 3DGS → LVSM)
 - [x] Open the multi-view geometry branch (two-view geometry → SIFT → Photo Tourism → COLMAP → learned matching → DUSt3R → VGGT)
 - [x] Open the dynamic scenes & 4D branch (D-NeRF / Nerfies → HyperNeRF, NSFF → DynIBaR, HexPlane / K-Planes → 4D-GS, PIPs → TAPIR / CoTracker → Shape of Motion / MoSca, MonST3R → MegaSaM, MAV3D → CAT4D)
+- [x] The atlas redesign: lineage tracing, ⌘K search, a family tree on every work's page, an index, a social card
 - [ ] Guided tours through the graph (story mode)
-- [ ] RSS feed + Open Graph images
+- [ ] RSS feed + per-page Open Graph cards

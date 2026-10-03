@@ -98,6 +98,7 @@ export interface GraphData {
     id: string;
     short: string;
     title: string;
+    authors?: string;
     year: number;
     venue?: string;
     branch: string;
@@ -107,6 +108,7 @@ export interface GraphData {
     hasPost: boolean;
     award: boolean;
     problem: string;
+    links: Record<string, string>;
   }[];
   edges: { source: string; target: string; type: EdgeType; note: string }[];
   edgeTypes: Record<
@@ -164,6 +166,7 @@ async function buildGraphUncached(lang: Lang): Promise<GraphData> {
     id: n.id,
     short: n.data.short,
     title: n.data.title,
+    authors: n.data.authors,
     year: n.data.year,
     venue: n.data.venue,
     branch: n.data.branch.id,
@@ -173,6 +176,7 @@ async function buildGraphUncached(lang: Lang): Promise<GraphData> {
     hasPost: Boolean(n.data.post),
     award: AWARD_RE.test(n.data.venue ?? ''),
     problem: n.data.problem,
+    links: n.data.links,
   }));
 
   // Relations are declared on the NEWER node, pointing to the OLDER one
@@ -202,4 +206,41 @@ async function buildGraphUncached(lang: Lang): Promise<GraphData> {
   ) as GraphData['nodeKinds'];
 
   return { branches, lanes, nodes, edges, edgeTypes, nodeKinds };
+}
+
+/**
+ * Independent edges folded into "waves": connected components of the
+ * independent relation (union-find), each with its member works sorted by
+ * year. Shared by the home page and the heresies page.
+ */
+export function independentWaves(graph: GraphData) {
+  type Edge = GraphData['edges'][number];
+  const nodeById = new Map(graph.nodes.map((n) => [n.id, n]));
+  const parent = new Map<string, string>();
+  const find = (x: string): string => {
+    const p = parent.get(x);
+    if (p === undefined || p === x) return x;
+    const r = find(p);
+    parent.set(x, r);
+    return r;
+  };
+  const indep = graph.edges.filter((e) => e.type === 'independent');
+  for (const e of indep) parent.set(find(e.source), find(e.target));
+  const comps = new Map<string, { ids: Set<string>; edges: Edge[] }>();
+  for (const e of indep) {
+    const r = find(e.source);
+    const c = comps.get(r) ?? { ids: new Set<string>(), edges: [] };
+    c.ids.add(e.source);
+    c.ids.add(e.target);
+    c.edges.push(e);
+    comps.set(r, c);
+  }
+  return [...comps.values()]
+    .map((c) => {
+      const members = [...c.ids]
+        .map((id) => nodeById.get(id)!)
+        .sort((a, b) => a.year - b.year || a.short.localeCompare(b.short));
+      return { members, edges: c.edges, from: members[0].year, to: members[members.length - 1].year };
+    })
+    .sort((a, b) => a.from - b.from || a.to - b.to);
 }

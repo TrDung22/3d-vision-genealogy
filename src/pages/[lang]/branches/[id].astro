@@ -1,6 +1,9 @@
 ---
 import { getCollection } from 'astro:content';
 import Base from '../../../layouts/Base.astro';
+import EdgeGlyph from '../../../components/EdgeGlyph.astro';
+import Icon from '../../../components/Icon.astro';
+import { buildGraph } from '../../../lib/graph';
 import { LOCALES, t, type Lang } from '../../../lib/i18n';
 
 export async function getStaticPaths() {
@@ -16,112 +19,361 @@ const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const root = `${base}/${lang}`;
 
 const { title, tagline, description } = branch.data;
+const graph = await buildGraph(lang);
+const nodeById = new Map(graph.nodes.map((n) => [n.id, n]));
+const colorOf = (id: string) => graph.branches.find((b) => b.id === nodeById.get(id)?.branch)?.color ?? 'var(--muted)';
 
-const nodes = (await getCollection('nodes'))
-  .filter((n) => n.data.branch.id === branch.id)
-  .sort((a, b) => a.data.year - b.data.year);
+const nodes = graph.nodes
+  .filter((n) => n.branch === branch.id)
+  .sort((a, b) => a.year - b.year || a.short.localeCompare(b.short));
+const laneTitle = new Map(branch.data.lanes.map((l) => [`${branch.id}/${l.id}`, l.title]));
+const laneCount = new Map<string, number>();
+for (const n of nodes) laneCount.set(n.lane, (laneCount.get(n.lane) ?? 0) + 1);
 
-const laneTitle = new Map(branch.data.lanes.map((l) => [l.id, l.title]));
-const allNodes = await getCollection('nodes');
-const shortOf = new Map(allNodes.map((n) => [n.id, n.data.short]));
+// works grouped by year, each with what it answers to
+const byYear = new Map<number, typeof nodes>();
+for (const n of nodes) byYear.set(n.year, [...(byYear.get(n.year) ?? []), n]);
+const relationsOf = (id: string) =>
+  graph.edges
+    .filter((e) => e.target === id)
+    .map((e) => ({ type: e.type, label: graph.edgeTypes[e.type].label, other: nodeById.get(e.source)! }));
+
+const nameOf = (s: string) =>
+  s
+    .replace(/\s*\((19|20)\d{2}\)\s*$/, '')
+    .replace(/\s+(19|20)\d{2}\)$/, ')')
+    .replace(/\s+(19|20)\d{2}$/, '');
+const years = nodes.map((n) => n.year);
+const awards = nodes.filter((n) => n.award).length;
 ---
 
 <Base title={title} lang={lang} description={tagline}>
-  <header>
-    <p>
-      <span class="chip">
-        <span class="dot" style={`background:${branch.data.color}`}></span>
-        {t(lang, 'branch.label')} ·{' '}
-        {branch.data.status === 'active' ? t(lang, 'branches.growing') : t(lang, 'branches.planned')}
-      </span>
+  <header class="branch-head" style={`--bc: ${branch.data.color}`}>
+    <p class="eyebrow">
+      <span class="branch-dot" />
+      {t(lang, 'branch.label')} · {branch.data.status === 'active' ? t(lang, 'branches.growing') : t(lang, 'branches.planned')}
     </p>
     <h1>{title}</h1>
-    <p class="tagline">{tagline}</p>
-    <p style="max-width: 760px;">{description}</p>
+    <p class="branch-tagline">{tagline}</p>
+    <p class="branch-desc">{description}</p>
+    <div class="branch-actions">
+      <a class="btn btn-primary" href={`${root}/?branches=${branch.id}#atlas`}>
+        {t(lang, 'branch.inAtlas')} <Icon name="arrow-right" size={16} />
+      </a>
+      <a class="btn" href={`${root}/branches/`}>{t(lang, 'branch.all')}</a>
+    </div>
+    <dl class="branch-stats">
+      <div><dd>{nodes.length}</dd><dt>{t(lang, 'table.nodes')}</dt></div>
+      <div><dd>{branch.data.lanes.length}</dd><dt>{t(lang, 'branches.lanes')}</dt></div>
+      <div><dd>{years.length ? `${Math.min(...years)}–${Math.max(...years)}` : '—'}</dd><dt>{t(lang, 'branches.span')}</dt></div>
+      <div><dd>{awards}</dd><dt>★ {t(lang, 'branch.awards')}</dt></div>
+    </dl>
   </header>
 
-  <h2>{t(lang, 'branch.timeline')} ({nodes.length} {t(lang, 'table.nodes')})</h2>
-  <ol class="timeline">
+  <section class="lanes" style={`--bc: ${branch.data.color}`}>
+    <h2 class="small-h">{t(lang, 'branch.lanes')}</h2>
+    <ul>
+      {
+        branch.data.lanes.map((l) => (
+          <li>
+            <span>{l.title}</span>
+            <span class="mono">{laneCount.get(`${branch.id}/${l.id}`) ?? 0}</span>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section class="chrono" style={`--bc: ${branch.data.color}`}>
+    <h2 class="small-h">{t(lang, 'branch.timeline')}</h2>
     {
-      nodes.map((n) => (
-        <li>
-          <div class="year">{n.data.year}</div>
-          <div class="body">
-            <h3>
-              <a href={`${root}/nodes/${n.id}/`}>{n.data.short}</a>
-              {laneTitle.has(n.data.lane) && <span class="badge">{laneTitle.get(n.data.lane)}</span>}
-            </h3>
-            <p>{n.data.problem}</p>
-            {n.data.relations.length > 0 && (
-              <p class="muted rels">
-                {n.data.relations
-                  .map((r) => `${t(lang, `edge.${r.type}`)} ${shortOf.get(r.node.id) ?? r.node.id}`)
-                  .join(' · ')}
-              </p>
-            )}
-          </div>
-        </li>
+      [...byYear.entries()].map(([year, items]) => (
+        <div class="chrono-year">
+          <p class="chrono-label">{year}</p>
+          <ul class="chrono-items">
+            {items.map((n) => {
+              const rels = relationsOf(n.id);
+              return (
+                <li class="card chrono-card">
+                  <div class="chrono-top">
+                    <a class="chrono-name" href={`${root}/nodes/${n.id}/`}>
+                      {nameOf(n.short)}
+                    </a>
+                    {n.award && <span class="award-star" title={n.venue}>★</span>}
+                    <span class="chrono-lane">{laneTitle.get(n.lane)}</span>
+                  </div>
+                  {n.venue && <p class="chrono-venue mono">{n.venue}</p>}
+                  <p class="chrono-problem">{n.problem}</p>
+                  {rels.length > 0 && (
+                    <p class="chrono-rels">
+                      {rels.map((r) => (
+                        <a class="chrono-rel" href={`${root}/nodes/${r.other.id}/`}>
+                          <EdgeGlyph type={r.type} width={18} />
+                          <em>{r.label}</em>
+                          <span class="chrono-rel-dot" style={`background:${colorOf(r.other.id)}`} />
+                          {nameOf(r.other.short)}
+                        </a>
+                      ))}
+                    </p>
+                  )}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       ))
     }
-  </ol>
-
-  <p><a href={`${root}/branches/`}>{t(lang, 'branch.all')}</a></p>
+  </section>
 </Base>
 
 <style>
-  .tagline {
-    color: var(--ink-2);
-    font-size: 1.05rem;
+  .branch-head {
+    max-width: 900px;
   }
 
-  .timeline {
-    list-style: none;
-    padding: 0;
-    margin: 1.5rem 0;
-    border-left: 2px solid var(--baseline);
+  .branch-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: var(--bc);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--bc) 25%, transparent);
   }
 
-  .timeline li {
+  .branch-head h1 {
+    margin: 0.8rem 0 0.6rem;
+    font-size: clamp(3rem, 7vw, 5rem);
+    line-height: 0.98;
+  }
+
+  .branch-tagline {
+    margin: 0 0 1.4rem;
+    font-family: var(--font-serif);
+    font-style: italic;
+    font-size: 1.55rem;
+    line-height: 1.3;
+    color: var(--ink);
+  }
+
+  .branch-desc {
+    font-size: 1.04rem;
+    line-height: 1.75;
+    max-width: 70ch;
+  }
+
+  .branch-actions {
     display: flex;
-    gap: 1.25rem;
-    padding: 0.9rem 0 0.9rem 1.25rem;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin: 1.8rem 0 0;
+  }
+
+  .branch-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.2rem 2.6rem;
+    margin: 2.4rem 0 0;
+  }
+
+  .branch-stats div {
+    border-left: 1px solid var(--ring-strong);
+    padding-left: 0.9rem;
+  }
+
+  .branch-stats dd {
+    margin: 0;
+    font-family: var(--font-serif);
+    font-size: 2.2rem;
+    line-height: 1;
+    color: var(--ink);
+  }
+
+  .branch-stats dt {
+    margin-top: 0.3rem;
+    font-family: var(--font-mono);
+    font-size: 0.64rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .small-h {
+    margin: 0 0 1rem;
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .lanes {
+    margin: 3.5rem 0 0;
+  }
+
+  .lanes ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+  }
+
+  .lanes li {
+    display: inline-flex;
+    gap: 0.5rem;
+    align-items: center;
+    padding: 0.4rem 0.85rem;
+    border-radius: 999px;
+    border: 1px solid var(--ring-strong);
+    background: var(--surface);
+    font-size: 0.86rem;
+    color: var(--ink);
+  }
+
+  .lanes .mono {
+    font-size: 0.72rem;
+    color: var(--muted);
+  }
+
+  .chrono {
+    margin: 3.5rem 0 0;
+  }
+
+  .chrono-year {
+    display: grid;
+    grid-template-columns: 7rem minmax(0, 1fr);
+    gap: 1.5rem;
     position: relative;
   }
 
-  .timeline li::before {
+  .chrono-year + .chrono-year {
+    margin-top: 0.4rem;
+  }
+
+  .chrono-label {
+    position: sticky;
+    top: calc(var(--header-h) + 1rem);
+    align-self: start;
+    margin: 0.7rem 0 0;
+    font-family: var(--font-serif);
+    font-size: 2.4rem;
+    line-height: 1;
+    color: var(--ink);
+  }
+
+  .chrono-items {
+    list-style: none;
+    margin: 0;
+    padding: 0 0 0 1.5rem;
+    border-left: 1px solid var(--ring-strong);
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    padding-bottom: 0.7rem;
+  }
+
+  .chrono-card {
+    position: relative;
+    padding: 1.1rem 1.3rem;
+  }
+
+  .chrono-card::before {
     content: '';
     position: absolute;
-    left: -6px;
-    top: 1.5rem;
-    width: 10px;
-    height: 10px;
+    left: calc(-1.5rem - 5px);
+    top: 1.45rem;
+    width: 9px;
+    height: 9px;
     border-radius: 50%;
-    background: var(--surface);
-    border: 2px solid var(--muted);
+    background: var(--bc);
+    box-shadow: 0 0 0 4px var(--page);
   }
 
-  .timeline .year {
-    flex: none;
-    width: 3.2rem;
+  .chrono-top {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.3rem 0.7rem;
+  }
+
+  .chrono-name {
+    font-family: var(--font-serif);
+    font-size: 1.6rem;
+    line-height: 1.1;
+    color: var(--ink);
+  }
+
+  .chrono-lane {
+    margin-left: auto;
+    font-size: 0.74rem;
     color: var(--muted);
-    font-variant-numeric: tabular-nums;
-    padding-top: 0.15rem;
+    padding: 0.1rem 0.6rem;
+    border-radius: 999px;
+    border: 1px solid var(--ring);
   }
 
-  .timeline h3 {
-    margin: 0 0 0.25rem;
+  .chrono-venue {
+    margin: 0.3rem 0 0;
+    font-size: 0.72rem;
+    color: var(--muted);
   }
 
-  .timeline .badge {
-    margin-left: 0.6em;
+  .chrono-problem {
+    margin: 0.6rem 0 0;
+    font-size: 0.93rem;
+    line-height: 1.65;
+    color: var(--ink-2);
   }
 
-  .timeline p {
-    margin: 0.25rem 0;
-    font-size: 0.95rem;
+  .chrono-rels {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    margin: 0.9rem 0 0;
   }
 
-  .timeline .rels {
-    font-size: 0.85rem;
+  .chrono-rel {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.25rem 0.65rem;
+    border-radius: 999px;
+    border: 1px solid var(--ring);
+    background: var(--page);
+    color: var(--ink-2);
+    font-size: 0.78rem;
+  }
+
+  .chrono-rel:hover {
+    text-decoration: none;
+    border-color: var(--ring-strong);
+    color: var(--ink);
+  }
+
+  .chrono-rel em {
+    color: var(--muted);
+  }
+
+  .chrono-rel-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
+
+  @media (max-width: 720px) {
+    .chrono-year {
+      grid-template-columns: 1fr;
+      gap: 0.4rem;
+    }
+
+    .chrono-label {
+      position: static;
+      font-size: 1.8rem;
+    }
+
+    .chrono-lane {
+      margin-left: 0;
+    }
   }
 </style>
