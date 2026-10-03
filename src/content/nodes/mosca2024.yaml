@@ -1,0 +1,120 @@
+title: "MoSca: Dynamic Gaussian Fusion from Casual Videos via 4D Motion Scaffolds"
+short: "MoSca (2024)"
+authors: "Jiahui Lei, Yijia Weng, Adam W. Harley, Leonidas Guibas, Kostas Daniilidis (University of Pennsylvania, Stanford University, Archimedes/Athena RC)"
+venue: "CVPR 2025 (Highlight)"
+year: 2024
+branch: dynamic-4d
+lane: monocular
+links:
+  arxiv: "https://arxiv.org/abs/2405.17421"
+  paper: "https://openaccess.thecvf.com/content/CVPR2025/html/Lei_MoSca_Dynamic_Gaussian_Fusion_from_Casual_Videos_via_4D_Motion_CVPR_2025_paper.html"
+  code: "https://github.com/JiahuiLei/MoSca"
+problem: >
+  One casual video in, a renderable 4D scene out, with the camera's poses
+  and focal length unknown. The task is "highly challenging and inherently
+  ill-posed": casual footage holds little multi-view stereo signal, and,
+  as DyCheck had pointed out, most methods "struggle with realistic
+  single-view videos". The few built for casual monocular video fused
+  information across frames, "but only from a small temporal window";
+  Gaussian methods like 4D-GS failed because "they depend on strong
+  multi-view stereo cues". Foundation models could now track points and
+  estimate depth, but their outputs were "noisy, local, and partial", and
+  blind to the occluded parts of the scene.
+solution: >
+  Lift the priors into a scaffold. Off-the-shelf models supply per-frame
+  depth, long-term 2D tracks and, from RAFT flow, epipolar-error maps that
+  tell moving from static. The static tracks feed a tracklet-based bundle
+  adjustment that solves the cameras and focal length, no COLMAP needed.
+  The moving ones, lifted to 3D with depth, become the Motion Scaffold: a
+  sparse graph whose nodes are 6-DoF trajectories, on the bet that "the
+  underlying deformation that drives these geometries is usually compact
+  and smooth". As-rigid-as-possible and smoothness losses carry the nodes
+  through occlusions, and dual-quaternion blending of nearby nodes turns
+  the graph into a dense SE(3) deformation field. Gaussians spawned from
+  every frame's depth are deformed to any query time and fused, so a patch
+  hidden now is filled from whenever it was seen; Gaussian splatting then
+  fits the whole against color, depth and tracks. Given the iPhone's LiDAR
+  depth, for parity with earlier methods that use it, it reaches 19.32
+  masked PSNR on DyCheck, against 17.32 for Shape of Motion and 13.64 for
+  4D-GS (18.84 when it must find the cameras itself), in about an hour per
+  video, rendering at about 38 fps.
+limitations: >
+  By its own account it "relies on accurate 2D long-term tracks and depth
+  estimation"; it "only reconstructs areas that are visible at some point
+  in the video", and suggests "large-scale 2D/video diffusion priors to
+  hallucinate areas that are never visible"; and shadows, reflections,
+  liquids and exposure changes "cannot be explained by deformation alone".
+  Its DyCheck lead leans on the iPhone's LiDAR: with UniDepth's depth
+  instead, and the same tracks, masked PSNR falls from 19.32 to 17.12.
+  CAT4D (CVPR 2025) built such a diffusion prior, counting MoSca among the
+  methods that "cannot reconstruct regions that are never observed in any
+  input frames".
+relations:
+  - node: tapir2023
+    type: builds-on
+    note: >
+      On DyCheck its tracks come from TAPIR's line: alongside the iPhone's
+      LiDAR depth, MoSca chose to "employ BootsTAPIR for tracking", a TAPIR
+      model that BootsTAP bootstrapped on unlabeled real video "with minimal
+      architectural changes". Lifted with depth, the tracks seed the
+      scaffold's nodes and supervise the rendered track maps, and the fused
+      scene ends up a better tracker than its source: on DyCheck, PCK-T
+      rises from BootsTAPIR's 0.779 to 0.824.
+  - node: cotracker2023
+    type: builds-on
+    note: >
+      Its first public version took every track from CoTracker ("use
+      CoTracker-v2 online mode to densely infer the long-term 2D-pixel
+      tracks"), adding DINOv2 features to counter tracker failures on
+      fast-moving parts such as the arms "where CoTracker will fail". The
+      camera-ready makes the tracker a plug-in and keeps the family in it:
+      with the successor CoTracker3 and LiDAR depth, its prior ablation on
+      DyCheck posts its best score, 19.55 masked PSNR. Scored as a tracker
+      there, CoTracker itself reaches 0.803 PCK-T, against MoSca's 0.824.
+  - node: unidepth2024
+    type: builds-on
+    note: >
+      Stands on UniDepth for metric depth: "We use UniDepth to compute
+      metric depth estimation", says its first version, and UniDepth, with
+      SpatialTracker tracks, remains the setting behind the camera-ready's
+      camera results. Depth lifts the tracks into 3D to seed the scaffold,
+      gives the tracklet bundle adjustment its scale (corrected by a
+      per-frame factor and small per-pixel offsets) and places the
+      Gaussians. On TUM-dynamics, the cameras solved that way have 0.031
+      ATE, against MonST3R's 0.063; on DyCheck without LiDAR, UniDepth
+      gives 17.12 to 17.61 masked PSNR, depending on the tracker.
+  - node: 3dgs2023
+    type: builds-on
+    note: >
+      Its scene is 3DGS on a scaffold: each Gaussian carries "the center,
+      rotation, non-isotropic scales, opacity, and spherical harmonics of
+      3DGS" plus a reference time and a skinning correction, the static
+      background is "a standard 3DGS", and the fused scene is rendered and
+      optimized through Gaussian splatting, at about 38 fps on DyCheck.
+  - node: 4dgs2023
+    type: fixes
+    note: >
+      Repairs a failure on the record from both sides. 4D-GS admitted that
+      on monocular video "the strong overfitting effects of the proposed
+      model cause the failure of rendering novel views", shown on DyCheck's
+      iPhone captures, and that "more priors such as depth supervision or
+      optical flow may be needed". MoSca found that "Gaussian-based methods
+      like 4D-GS also fail because they depend on strong multi-view stereo
+      cues to reconstruct the scene", and supplies the priors: tracks,
+      depth and flow-derived motion masks. On DyCheck, masked PSNR rises
+      from 13.64 to 19.32 (13.11 to 18.84 with cameras unknown), and PCK-T
+      from 0.073 to 0.824.
+  - node: dynibar2022
+    type: fixes
+    note: >
+      Repairs the limit MoSca diagnoses in casual-video methods like
+      DynIBaR, which "fuse information across frames, but only from a small
+      temporal window". DynIBaR renders moving content from source frames
+      within three frames of the target, and had itself noted, after NSFF,
+      that "a small temporal window is insufficient to recover complete and
+      high-quality content for static scene regions", which it handed to a
+      second model. MoSca deforms Gaussians from every frame to the query
+      time, so a patch hidden now is filled from whenever it was seen; in
+      its ablation on DyCheck, fusing only 4 or 8 neighboring frames drops
+      masked PSNR from 19.32 to 16.96 and 17.26.
+status: seed

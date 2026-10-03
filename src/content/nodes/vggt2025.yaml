@@ -58,4 +58,11 @@ relations:
       SuperPoint and SuperGlue, in about 15 seconds, to 85.3 in about 0.2,
       with no bundle adjustment at all; run on VGGT's output, bundle
       adjustment still lifts it to 93.5.
+  - node: cotracker2023
+    type: builds-on
+    note: >
+      Its tracking head is CoTracker's design: "we use the CoTracker2
+      architecture", fed with VGGT's dense tracking features, and it follows
+      CoTracker2's visibility loss — so one forward pass that predicts
+      cameras and geometry also returns point tracks.
 status: seed

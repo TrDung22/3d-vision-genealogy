@@ -1,0 +1,88 @@
+title: "CAT4D: Create Anything in 4D with Multi-View Video Diffusion Models"
+short: "CAT4D (2024)"
+authors: "Rundi Wu, Ruiqi Gao, Ben Poole, Alex Trevithick, Changxi Zheng, Jonathan T. Barron, Aleksander Holynski (Google DeepMind, Columbia University, UC San Diego)"
+venue: "CVPR 2025 (Oral)"
+year: 2024
+branch: dynamic-4d
+lane: generation
+links:
+  arxiv: "https://arxiv.org/abs/2411.18613"
+  paper: "https://openaccess.thecvf.com/content/CVPR2025/html/Wu_CAT4D_Create_Anything_in_4D_with_Multi-View_Video_Diffusion_Models_CVPR_2025_paper.html"
+  project: "https://cat-4d.github.io/"
+problem: >
+  A moving 3D scene from a single video. Static 3D had learned to lean on
+  generative priors trained on multi-view images, but for 4D "the same
+  cannot be said": synchronized multi-view video is too scarce to learn a
+  4D prior from. Monocular reconstruction regularized itself instead, with
+  geometry, depth, flow or long-term tracks, and "even with all these
+  additional signals, the most effective methods still show noticeable
+  artifacts when viewed from novel viewpoints". The best of them, Shape of
+  Motion and MoSca, leaned on depth and tracks from large vision models
+  (Shape of Motion also on user-clicked masks), and could not reconstruct
+  what no frame had seen. 4D generation had begun by score distillation
+  from video models, and mostly made single objects.
+solution: >
+  Turn one video into many, then reconstruct. CAT4D starts from CAT3D's
+  multi-view latent diffusion model and adds time to its conditioning:
+  given a few views, each an image with a camera and a timestamp, it
+  generates frames at any requested cameras and times, with separate
+  guidance for camera and time. With no large multi-view video dataset to
+  learn from, the training mix covers each control on its own: multi-view
+  images of static scenes, fixed-viewpoint videos, synthetic 4D from
+  Kubric and Objaverse, and generated augmentations — CO3D scenes animated
+  by Lumiere with the camera held still, video frames re-viewed by CAT3D.
+  The model makes 16 frames at once, so an alternating sampler,
+  multi-view, then temporal, then multi-view again, stitches sliding
+  windows into a consistent grid of 13 cameras by every timestamp, then
+  128 more views per timestamp; a 4D-GS model is fitted to it with
+  photometric losses alone. Cameras for unposed videos come from MonST3R.
+  On DyCheck it reaches 17.39 masked PSNR, against 16.54 for 4D-GS on the
+  input video alone and 16.72 for Shape of Motion; fed text-to-video
+  output, the same pipeline creates 4D scenes from a prompt.
+limitations: >
+  By its own account the diffusion model "struggles with temporal
+  extrapolation beyond input frames" and "cannot fully disentangle camera
+  viewpoint from temporal progression", especially when dynamic objects
+  become occluded; its 4D scenes look plausible from new viewpoints, but
+  "the recovered 3D motion fields may not be physically accurate". Depth
+  or motion supervision could help, it notes, but would narrow it to dense
+  video captures. On DyCheck at half resolution it trails MoSca, 18.24
+  against 19.54 masked PSNR, on metrics that score only what the input
+  saw. And it is heavy: sampling takes about a minute per timestamp on 16
+  A100 GPUs, then fitting about 25 minutes on one.
+relations:
+  - node: 4dgs2023
+    type: builds-on
+    note: >
+      Its 4D scene is a 4D-GS model: "We build on 4DGS, which represents a
+      dynamic 3D scene as a set of canonical-space 3D Gaussians that are
+      moved by a deformation field parameterized with K-Planes". What CAT4D
+      changes is the data: fitted to the input video alone, 4D-GS scores
+      16.54 masked PSNR on DyCheck; fitted with CAT4D's generated
+      multi-view video as well, 17.39.
+  - node: shapeofmotion2024
+    type: fixes
+    note: >
+      Repairs what CAT4D diagnoses in Shape of Motion, which improved
+      quality "by utilizing extra supervision signals estimated from large
+      vision models" yet is "not fully automatic (e.g., requiring user
+      clicks for the object mask)"; Shape of Motion's own moving-object
+      masks come from "a few user clicks". CAT4D needs no masks, depth or
+      tracks, supervising "with only straightforward photometric losses"
+      against its generated multi-view video. On DyCheck's five evaluation
+      scenes it scores 17.39 masked PSNR and 0.341 LPIPS, against 16.72 and
+      0.450, though its SSIM is lower, 0.607 against 0.630.
+  - node: mosca2024
+    type: fixes
+    note: >
+      Does what MoSca suggested for its own blind spot. MoSca "only
+      reconstructs areas that are visible at some point in the video", and
+      pointed to "large-scale 2D/video diffusion priors to hallucinate
+      areas that are never visible". CAT4D, counting MoSca among the methods
+      that "cannot reconstruct regions that are never observed in any input
+      frames", trains such a prior, a multi-view video diffusion model, and
+      drops MoSca's depth and tracks altogether. The masked DyCheck metrics
+      score only what the input saw, and there MoSca stays ahead at half
+      resolution, 19.54 against 18.24 masked PSNR, though CAT4D's LPIPS is
+      lower, 0.227 against 0.244.
+status: seed

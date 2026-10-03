@@ -1,0 +1,73 @@
+title: "Particle Video Revisited: Tracking Through Occlusions Using Point Trajectories"
+short: "PIPs (2022)"
+authors: "Adam W. Harley, Zhaoyuan Fang, Katerina Fragkiadaki (Carnegie Mellon University)"
+venue: "ECCV 2022 (Oral)"
+year: 2022
+branch: dynamic-4d
+lane: tracking
+links:
+  arxiv: "https://arxiv.org/abs/2204.04153"
+  paper: "https://www.ecva.net/papers/eccv_2022/papers_ECCV/html/561_ECCV_2022_paper.php"
+  project: "https://particle-video-revisited.github.io/"
+  code: "https://github.com/aharley/pips"
+problem: >
+  Follow one pixel through a video, even while something passes in front
+  of it. "Tracking pixels in videos is typically studied as an optical flow
+  estimation problem", and flow had become accurate enough to chain from
+  frame to frame without much drift, "but as soon as the target is
+  occluded, it is no longer represented in the flow field, and tracking
+  fails". Feature matchers compare each new frame with a source frame
+  "without taking into account temporal context", and efforts to give flow
+  more frames "have yielded only small gains". In 2006 Sand and Teller had
+  proposed a middle ground, the "particle video" — points that persist
+  across many frames — but long-range trajectories at the pixel level had
+  seen little work since.
+solution: >
+  Rebuild the particle video from the parts of modern flow, and let each
+  particle think alone. Persistent Independent Particles (PIPs) takes an
+  8-frame clip and a pixel in the first frame, and returns the pixel's
+  position and visibility in every frame. The trajectory starts as the
+  query position copied across time; at each of six iterations, the
+  particle's per-frame features are correlated with each frame's feature
+  map in a multi-scale window around the current guess, and a 12-block
+  MLP-Mixer reads the whole sequence — displacements, features, scores — to
+  update positions and features in all frames at once. It makes "an
+  extreme trade-off between spatial awareness and temporal awareness": no
+  particle looks at its neighbours, and the parameters go into a learned
+  temporal prior that can carry a track through frames where the target is
+  hidden. The training data, FlyingThings++, is 8-frame amodal trajectories
+  mined from FlyingThings flow, with objects from other videos pasted on as
+  occluders; at test time a track is extended by restarting from a late
+  frame where the target is confidently visible. On FlyingThings++, error
+  on occluded trajectories falls from 46.73 for chained RAFT flow to 36.67,
+  and on BADJA's animal videos it propagates keypoints best on average:
+  62.3 PCK-T against 53.5 for the strongest baseline.
+limitations: >
+  By its own account it has "two main limitations". Each particle is
+  tracked alone, a trade that "discards information that could be shared
+  between trajectories"; estimating many trajectories jointly is left as "a
+  direct avenue for future work". And the MLP-Mixer is "not recurrent
+  across time", so the model "will lose the target if it stays occluded
+  beyond the model's temporal window" of eight frames. TAPIR (ICCV 2023)
+  found that running it over long videos chunk by chunk, each chunk started
+  from the last, "struggles with occlusion and is difficult to
+  parallelize": evaluating TAP-Vid-Kinetics took about a month on one GPU.
+  CoTracker (ECCV 2024) built its tracker against the fact that "PIPs and
+  TAP-Vid track points independently".
+relations:
+  - node: raft2020
+    type: fixes
+    note: >
+      Repairs the limit PIPs finds in chained flow: "as soon as the target
+      is occluded, it is no longer represented in the flow field, and
+      tracking fails". It does so on RAFT's own machinery, carried from two
+      frames to eight — "Inspired by RAFT", PIPs iteratively updates its
+      position estimates "using correlations as an input, but unlike RAFT we
+      additionally update features"; its four stages are "somewhat similar
+      to the RAFT optical flow method", its feature CNN is the
+      "BasicEncoder" from RAFT's official code, and its correlation pyramid
+      and loss weighting follow RAFT's. On FlyingThings++, RAFT's
+      trajectories "often drift off the targets and follow the occluders",
+      and retraining RAFT on that data did not improve it; on occluded
+      trajectories, error falls from 46.73 to 36.67.
+status: seed

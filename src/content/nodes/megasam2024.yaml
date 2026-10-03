@@ -62,9 +62,6 @@ relations:
       optimization and an uncertainty-aware global BA; in its Sintel
       ablation, camera error (ATE) falls from 0.030 for vanilla DROID-SLAM
       to 0.019.
-    i18n:
-      ja:
-        note: "MegaSaM が DROID-SLAM — その微分可能なバンドル調整の上に MegaSaM は築かれています — に診断した弱点を直します。深層 visual SLAM は「静的なシーンで十分なカメラの並進がある動画ではそれなりにうまく働くが、動的な内容の動画や視差の限られた動画では性能が落ちる」。DROID-SLAM は「焦点距離が既知であることを前提とし」、視差を定数で初期化するやり方は「カメラの基線が限られ、シーンの動きが複雑な動画では、正確なカメラ追跡ができない」。MegaSaM は動きマップ、単眼深度による初期化、焦点距離の最適化、不確かさを考慮した大域 BA を加えました。Sintel でのアブレーションでは、カメラ誤差 (ATE) が素の DROID-SLAM の 0.030 から 0.019 に下がります。"
   - node: depthanything2024
     type: builds-on
     note: >
@@ -75,9 +72,6 @@ relations:
       scale with UniDepth), and regularizes bundle adjustment where the
       camera motion leaves depth unobservable. Without that mono-depth
       initialization, Sintel camera error rises from 0.019 to 0.038.
-    i18n:
-      ja:
-        note: "深度の prior を Depth Anything に頼ります。選ばれた理由は「DepthAnything のほうが、より正確で一貫した深度を与える」からです。そのフレームごとの視差が、学習時 (スケールは ground truth の深度から借ります) にも推論時 (UniDepth で metric スケールに合わせます) にも各フレームの視差を初期化し、カメラの動きから深度が観測できないところではバンドル調整を正則化します。この単眼深度による初期化を外すと、Sintel のカメラ誤差は 0.019 から 0.038 に上がります。"
   - node: unidepth2024
     type: builds-on
     note: >
@@ -88,9 +82,6 @@ relations:
       give the initial focal length that bundle adjustment then refines
       wherever the video makes it observable — the intrinsics DROID-SLAM had
       to be given.
-    i18n:
-      ja:
-        note: "スケールとカメラを UniDepth に頼ります。「UniDepth はシーンのスケールとシフトの推定を与える」ので、その metric 深度が Depth Anything のアフィン不変な視差の大域的なスケールとシフトを決めます。フレームごとの焦点距離の予測を動画全体で中央値にとったものが焦点距離の初期値となり、動画から観測できる限り、バンドル調整がそれを磨きます — DROID-SLAM が外から与えられなければならなかった内部パラメータです。"
   - node: monst3r2024
     type: fixes
     note: >
@@ -102,12 +93,4 @@ relations:
       uncalibrated camera error (ATE) of 0.023 against 0.078 on Sintel,
       0.020 against 0.690 on DyCheck's iPhone videos and 0.004 against 0.073
       on in-the-wild footage, at the same speed or faster.
-    i18n:
-      ja:
-        note: "MegaSaM が MonST3R — MegaSaM はこれを並行研究と呼んでいます — に診断した失敗を直します。「カメラの動きが回転主体で視野の狭い」DAVIS の動画で、「MonST3R は回転するカメラの動きを誤って並進として扱う」。微分可能な SLAM と、動的なシーンについての中間予測とを結び付けることで、焦点距離が未知の設定でのカメラ誤差 (ATE) は、Sintel で 0.078 に対して 0.023、DyCheck の iPhone 動画で 0.690 に対して 0.020、実写の映像で 0.073 に対して 0.004 となり、速度は同じか、より速いのです。"
 status: seed
-i18n:
-  ja:
-    problem: "動的なシーンを気軽に撮った動画から、カメラと深度を。「従来の Structure from Motion や単眼 SLAM の手法のほとんどは、主に静的なシーンで大きな視差を持つ入力動画を前提とします」。手持ちの映像はその逆です — 「限られたカメラ運動の視差 (たとえば、ほとんど静止したカメラや回転するカメラ)」、幅広い焦点距離、そして動くもの。これまでの処方箋 — 動画ごとに深度ネットワークや radiance field を微調整するか、深度・フロー・長期の軌跡・動きのマスクを大域最適化で融合するか — は、計算が重いか、制約のないカメラ経路を持つ長い動画ではもろいかのどちらかでした。"
-    solution: "深層 visual SLAM に戻り、難しい場合を教え込みます。MegaSaM は DROID-SLAM の微分可能なバンドル調整を保ちます — 動的な動画でも「このような学習された層が、正確で効率的なカメラ pose 推定に欠かせない」からです。そこに、BA の内部で動くピクセルの重みを下げる物体の動きマップ (静的なデータでの事前学習の後、合成の動的な Kubric 動画で第2段階として学習)、BA の変数としての焦点距離、そして単眼深度の prior を加えます。UniDepth の metric 深度でスケールを合わせた Depth Anything の視差が各フレームを初期化し、UniDepth の焦点距離の推定がカメラを初期化します。不確かさを考慮した大域 BA は、ヘッセ行列から可観測性を読み取り、視差が乏しくカメラが観測できないときだけ深度の prior に頼り、焦点距離も観測できなければその最適化を止めます。一貫した動画深度は、どのネットワークも微調整しない短い最適化で得られます。焦点距離が未知の設定で、Sintel のカメラ誤差 (ATE) は 0.023 (MonST3R は 0.078、CasualSAM は 0.067) まで下がり、1フレームあたり約1秒 (CasualSAM は1.6分) で動きます — CVPR 2025 の Best Paper Honorable Mention です。"
-    limitations: "論文自身によれば、「動く物体が画像全体を占めるとき、あるいはシステムが確実に追跡できるものが何もないとき」にはなお失敗し、「動画の中で焦点距離が変わるものや、強い放射歪みを持つものは扱えません」。精度は借り物の prior に支えられています。単眼深度による初期化を外すと、Sintel のカメラ誤差は 0.019 から 0.038 へと倍になります。著者たちは、その先の道として「現在の視覚の基盤モデルからのより良い prior」を挙げています。"

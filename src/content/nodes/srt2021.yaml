@@ -48,4 +48,13 @@ relations:
       diagnoses in the whole line — "reliance on explicit camera projections
       requires precise camera poses". Under pose noise pixelNeRF "degrades
       sharply"; UpSRT runs on unposed images.
+  - node: ibrnet2021
+    type: fixes
+    note: >
+      Repairs the two costs SRT diagnoses in the re-projection line, IBRNet
+      named among them: "reliance on explicit camera projections requires
+      precise camera poses", and global information is processed "once or
+      hundreds of times per rendered pixel" instead of once per scene. SRT's
+      set-latent representation is computed once per scene, with no
+      projections, and its UpSRT variant works from unposed images.
 status: seed

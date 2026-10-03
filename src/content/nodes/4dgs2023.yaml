@@ -24,7 +24,8 @@ solution: >
 limitations: >
   By its own account, large motions, missing background points and imprecise
   poses make the 4D Gaussians hard to optimize, and on monocular video it can
-  overfit the training views and fail on novel ones.
+  overfit the training views and fail on novel ones — the failure MoSca
+  later pinned on its dependence on "strong multi-view stereo cues".
 relations:
   - node: 3dgs2023
     type: builds-on

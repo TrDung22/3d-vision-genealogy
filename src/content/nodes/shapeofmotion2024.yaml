@@ -41,7 +41,8 @@ limitations: >
   tracks, its 3D tracking error rises from 0.082 to 0.141. MonST3R (ICLR
   2025) counted it among the optimization-based pipelines over
   intermediate estimates that are "usually slow, brittle, and prone to
-  error at each step".
+  error at each step". CAT4D (2024) added that such methods "cannot
+  reconstruct regions that are never observed in any input frames".
 relations:
   - node: tapir2023
     type: builds-on
@@ -55,9 +56,6 @@ relations:
       0.082 against 0.114 for TAPIR tracks lifted directly with Depth
       Anything, and 2D Average Jaccard 34.4 against 27.8; with no 2D tracks
       at all, the error rises to 0.141.
-    i18n:
-      ja:
-        note: "TAPIR の軌跡の上に立ちます。「最先端の点追跡手法 TAPIR から」得た「長距離の2D軌跡」です。単眼深度で3Dに持ち上げた軌跡が SE(3) モーション基底を初期化し、そのフィッティングには TAPIR 自身の不確かさと可視性のスコアが重みとして使われ、さらに各レンダリングで投影した軌跡を教師付けします。統合した結果は、入力そのものを上回ります。DyCheck の iPhone 動画で、3D追跡の誤差は 0.082 (Depth Anything でそのまま持ち上げた TAPIR の軌跡は 0.114)、2D の Average Jaccard は 34.4 (同じく 27.8) です。2D軌跡をまったく使わないと、誤差は 0.141 に上がります。"
   - node: depthanything2024
     type: builds-on
     note: >
@@ -70,9 +68,6 @@ relations:
       directly, the same pair — TAPIR tracks lifted by Depth Anything — is
       the strongest tracking baseline, at 0.114 3D error on the iPhone
       videos; fused by Shape of Motion, 0.082.
-    i18n:
-      ja:
-        note: "幾何は Depth Anything に立脚します。単眼深度マップは「Depth Anything のような最先端の相対深度推定手法で計算」され、フレームごとのスケールとシフトで metric 深度に合わせられます — 「相対深度マップのほうが細部を多く含む傾向があると分かった」からです。この深度が各フレームのレンダリング深度を教師付けし、TAPIR の2D軌跡を、モーション基底の種になるノイズの多い3D軌跡へと逆投影します。同じ組み合わせ — Depth Anything で持ち上げた TAPIR の軌跡 — をそのまま使うと、iPhone 動画での3D誤差は 0.114 で、これが最も強い追跡のベースラインです。Shape of Motion で融合すると 0.082 になります。"
   - node: hypernerf2021
     type: fixes
     note: >
@@ -86,9 +81,6 @@ relations:
       3D tracking error falls from 0.182 to 0.082 and masked PSNR rises from
       15.99 to 16.72; on two fast-moving scenes, HyperNeRF and Deformable
       3DGS "fail to capture the significant scene motion".
-    i18n:
-      ja:
-        note: "Shape of Motion が HyperNeRF のような変形場の手法に診断した欠落を埋めます。その変形場は「canonical 空間と視点空間の間を写す」だけで、「動画全体にわたって持続する3Dの運動軌跡を捉えられない」。また、DyCheck が指摘したように「準静的なシーン」に焦点を当てた手法の一つとしても HyperNeRF を挙げています。3D追跡で採点するためだけに、HyperNeRF の軌跡は、学習された逆方向の warp と、求根法で解いた順方向の写像を合成して作らなければなりませんでした。DyCheck の iPhone 動画で、3D追跡の誤差は 0.182 から 0.082 に下がり、masked PSNR は 15.99 から 16.72 に上がりました。動きの速い二つのシーンでは、HyperNeRF と Deformable 3DGS は「シーンの大きな動きを捉えられません」でした。"
   - node: dynibar2022
     type: fixes
     note: >
@@ -99,9 +91,6 @@ relations:
       chained into long-range tracks for the comparison. On DyCheck's iPhone
       videos, 3D tracking error falls from 0.252 to 0.082, 2D Average
       Jaccard rises from 5.4 to 34.4, and masked PSNR from 13.41 to 16.72.
-    i18n:
-      ja:
-        note: "Shape of Motion が DynIBaR のようなシーンフローの手法に診断した欠落を埋めます。それらは動きを「連続する時刻の間の短距離のシーンフローとして」モデル化し、「動画全体にわたって持続する3Dの運動軌跡を捉えられない」。比較のために、DynIBaR の視点間のフローは、つなぎ合わせて長距離の軌跡にしなければなりませんでした。DyCheck の iPhone 動画で、3D追跡の誤差は 0.252 から 0.082 に下がり、2D の Average Jaccard は 5.4 から 34.4 に、masked PSNR は 13.41 から 16.72 に上がりました。"
   - node: 3dgs2023
     type: builds-on
     note: >
@@ -109,12 +98,19 @@ relations:
       geometry of a dynamic scene with a global set of 3D Gaussians", each
       moved through time by a weighted blend of shared SE(3) motion bases and
       rendered with 3DGS's differentiable rasterizer.
-    i18n:
-      ja:
-        note: "シーンは、3DGS を動かしたものです。「動的なシーンの見た目と幾何を、大域的な3Dガウシアンの集合で表す」 — 各ガウシアンは共有の SE(3) モーション基底の重み付き和で時間方向に動かされ、3DGS の微分可能なラスタライザで描画されます。"
+  - node: mosca2024
+    type: independent
+    note: >
+      Seven weeks apart (May 27 and July 18, 2024), two groups, Penn and
+      Stanford on one side, Berkeley and Google DeepMind on the other,
+      placed the same two bets on a casual video: its motion is
+      low-dimensional, and noisy tracks and depth from foundation models,
+      lifted to 3D, agree once fused into one set of Gaussians. Shape of
+      Motion blends ten global SE(3) bases per Gaussian; MoSca skins its
+      Gaussians to thousands of local 6-DoF node trajectories, held
+      together by as-rigid-as-possible losses. Shape of Motion's preprint
+      says MoSca was posted "since we wrote this paper", among concurrent
+      works it leaves "to future work to compare"; MoSca's camera-ready
+      calls Shape of Motion concurrent work, and borrows its rendered-track
+      loss.
 status: seed
-i18n:
-  ja:
-    problem: "一本の気軽な動画を入れると、4Dのシーンが出てくる — 動くものすべての幾何と、すべての点の完全な3D軌跡を、世界座標で。この課題は「きわめて ill-posed」です。動くものは、どの瞬間にもただ一つの視点からしか見えないからです。当時の単眼手法は、動きを「連続する時刻の間の短距離のシーンフローとして」、あるいは canonical 空間への変形場としてモデル化し、「動画全体にわたって持続する3Dの運動軌跡を捉えられません」でした。それ以外の手法は、テンプレート、同期した多視点リグ、あるいは深度センサーを必要としました。DyCheck もまた、多くの手法が瞬間移動するカメラや準静的なシーンに頼っていたことを示していました。"
-    solution: "二つの賭けです。一つ目、動きは低次元である。シーンは持続する3Dガウシアンの集合で、それぞれの軌跡は、共有された少数の SE(3) モーション基底 (どの実験でも10個) を混ぜ合わせたものです — シーンを剛体的に動く部分へと柔らかく分ける分解です。二つ目、ノイズの多い prior も融合すれば一致する。既知のカメラから描いたシーンの色・深度・マスク・軌跡を、それぞれ動画そのもの、Depth Anything の深度、数回のクリックで得る動く物体のマスク、TAPIR の長距離2D軌跡に合わせ込み、3Dに持ち上げた軌跡がモーション基底を初期化します。動画ごとに最適化し (A100 で300フレームに約2時間、描画は約 140 fps)、三つの仕事を一度にこなします。DyCheck の iPhone 動画では、3D追跡の誤差が 0.082 (Depth Anything で持ち上げた TAPIR の軌跡は 0.114) で、2D追跡 (AJ 34.4) と novel view synthesis (masked PSNR 16.72) でもすべてのベースラインを上回りました。"
-    limitations: "論文自身によれば、「依然としてシーンごとのテスト時最適化を必要とし、ストリーミング的な応用を妨げて」おり、既製のカメラ・深度・軌跡に頼りますが、それらは「テクスチャのない領域や大きな動きのもとでは劣化しうる」うえ、動く物体のマスクにはユーザーの手が要ります。2D軌跡を外すと、3D追跡の誤差は 0.082 から 0.141 に上がります。MonST3R (ICLR 2025) は、この手法を、中間推定の上で最適化するパイプライン — 「たいてい遅く、もろく、各段で誤りを生みやすい」もの — の一つに数えました。"

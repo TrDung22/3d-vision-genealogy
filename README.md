@@ -44,7 +44,7 @@ write-ups drop on the floor.
   a page generated *entirely* from the graph's edges: who proved an entire
   branch was fooling itself, which ideas landed everywhere at once
   (the 2019 implicit wave!), and what came back from the dead decades later.
-- **116 works, 1970 → 2025**, across four full branches: **single-image 3D
+- **121 works, 1970 → 2025**, across four full branches: **single-image 3D
   reconstruction** (the most classically ill-posed problem of all),
   **neural rendering** (1984 volume rendering → light fields → NeRF → 3DGS →
   the post-3D-bias era), **multi-view geometry** (the 1981 essential matrix →
@@ -109,6 +109,6 @@ in [CONTRIBUTING.md](CONTRIBUTING.md).
 - [ ] First deep-dive posts (candidates: Eigen 2014, or the Tatarchenko 2019 "challenges" moment)
 - [x] Open the full neural-rendering branch (80s volume rendering → light fields → SRN → NeRF → 3DGS → LVSM)
 - [x] Open the multi-view geometry branch (two-view geometry → SIFT → Photo Tourism → COLMAP → learned matching → DUSt3R → VGGT)
-- [x] Open the dynamic scenes & 4D branch (D-NeRF / Nerfies → HyperNeRF, NSFF → DynIBaR, HexPlane / K-Planes → 4D-GS, TAPIR → Shape of Motion, MonST3R → MegaSaM, MAV3D)
+- [x] Open the dynamic scenes & 4D branch (D-NeRF / Nerfies → HyperNeRF, NSFF → DynIBaR, HexPlane / K-Planes → 4D-GS, PIPs → TAPIR / CoTracker → Shape of Motion / MoSca, MonST3R → MegaSaM, MAV3D → CAT4D)
 - [ ] Guided tours through the graph (story mode)
 - [ ] RSS feed + Open Graph images

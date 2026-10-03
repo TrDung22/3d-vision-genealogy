@@ -1,0 +1,69 @@
+title: "IBRNet: Learning Multi-View Image-Based Rendering"
+short: "IBRNet (2021)"
+authors: "Qianqian Wang, Zhicheng Wang, Kyle Genova, Pratul P. Srinivasan, Howard Zhou, Jonathan T. Barron, Ricardo Martin-Brualla, Noah Snavely, Thomas Funkhouser"
+venue: "CVPR 2021"
+year: 2021
+branch: neural-rendering
+lane: feedforward
+links:
+  arxiv: "https://arxiv.org/abs/2102.13090"
+  paper: "https://openaccess.thecvf.com/content/CVPR2021/html/Wang_IBRNet_Learning_Multi-View_Image-Based_Rendering_CVPR_2021_paper.html"
+  project: "https://ibrnet.github.io/"
+  code: "https://github.com/googleinterns/IBRNet"
+problem: >
+  View synthesis had two good tools, and each charged a toll. Classic
+  image-based rendering blends the input photos themselves, but needs
+  "either very dense input views or explicit proxy geometry"; NeRF renders
+  photo-realistically, but only after "a lengthy optimization process for
+  each new scene". The learned MPI and voxel methods that did carry over to
+  new scenes, LLFF among them, store discretized volumes, and their memory
+  overhead limits the resolution they can render at.
+solution: >
+  Learn to interpolate views instead of memorizing a scene. For each sample
+  on a target ray, IBRNet projects the point into about ten nearby source
+  views and fetches their colors and CNN features; an MLP checks how
+  consistent the views look there, a ray transformer lets every sample on
+  the ray attend to the others before their densities are set (without it,
+  PSNR falls from 25.13 to 21.31), and color is a learned blend of the
+  source pixels. Classic volume rendering composites the result. One
+  network, trained once across many scenes, beats LLFF on all three
+  benchmarks with no per-scene optimization; fine-tuned per scene, it is
+  competitive with NeRF at under 20% of NeRF's FLOPs per pixel.
+limitations: >
+  Local by design: by its own account it trails NeRF in PSNR and SSIM on
+  the Realistic Synthetic 360° scenes, whose views are "very sparse" for
+  their geometry, because "the information contained in the limited set of
+  local source views may be insufficient". It also needs posed inputs and
+  still renders volumetrically: SRT later grouped it with pixelNeRF and GRF
+  as methods whose "reliance on explicit camera projections requires
+  precise camera poses", and which process global information "once or
+  hundreds of times per rendered pixel". DynIBaR, extending it to video,
+  noted that moving objects break the epipolar constraints its feature
+  gathering relies on; LVSM counted such "projective epipolar lines" among
+  the 3D inductive biases that "inherently limit model flexibility".
+relations:
+  - node: nerf2020
+    type: fixes
+    note: >
+      Repairs the cost IBRNet names in NeRF: it "must be optimized for each
+      new scene, taking hours or days to converge". IBRNet keeps NeRF's
+      machinery — color and density at continuous 5D locations, classic
+      volume rendering, coarse-and-fine hierarchical sampling, even its
+      evaluation suite — but computes the field on the fly from nearby
+      source views, so one trained network serves every scene; fine-tuned
+      per scene it is competitive with NeRF at under 20% of the FLOPs per
+      pixel.
+  - node: llff2019
+    type: fixes
+    note: >
+      Repairs the discretization LLFF itself owned up to: layered approaches
+      "are limited by complexities that scale cubically with the image width
+      in pixels". IBRNet diagnoses the same in the learned MPI and voxel
+      line, which must "explicitly process and store large numbers of
+      samples resulting in extensive memory overhead, limiting the
+      resolution of their outputs", and swaps the stored layers for a
+      continuous field queried on the fly. LLFF is its one baseline that
+      also generalizes to new scenes; IBRNet beats it on all three
+      benchmarks (Real Forward-Facing PSNR 25.13 vs 24.13), and its Figure 3
+      faults LLFF for "ghosting artifacts" and missed thin structures.
+status: seed

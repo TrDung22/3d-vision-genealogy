@@ -38,7 +38,9 @@ limitations: >
   on eight A100s. Shape of Motion (2024) later grouped it with NSFF as
   modeling motion as short-range scene flow, "failing to capture 3D motion
   trajectories persistent over a video", and on DyCheck's iPhone captures
-  measured it at 13.41 dB masked PSNR, below HyperNeRF's 15.99.
+  measured it at 13.41 dB masked PSNR, below HyperNeRF's 15.99. MoSca
+  (2024) faulted it for fusing information "only from a small temporal
+  window".
 relations:
   - node: nsff2020
     type: fixes
@@ -53,9 +55,6 @@ relations:
       times, the evaluation protocol) but stops storing the scene in MLP
       weights. On the Nvidia benchmark, dynamic-region LPIPS fell from
       NSFF's 0.159 to 0.062.
-    i18n:
-      ja:
-        note: "NSFF が認めていた限界 — 品質は「デフォルトのモデルパラメータ数のまま系列の長さを増やすと劣化する」し、動きが極端なときにも劣化する — を直します。NSFF の筆頭著者自身による DynIBaR は、それをはっきり名指ししました。NSFF のようなシーンフロー型の手法は「制約のないカメラの動きで撮られた、より長い入力動画へのスケールに苦しむ」。DynIBaR は NSFF の骨格 (静的・動的モデルの分離、動きによる disocclusion の重み、新しい時刻のためのフローに沿ったスプラッティング、評価プロトコル) を保ちながら、シーンを MLP の重みに蓄えるのをやめました。Nvidia の benchmark では、動的領域の LPIPS が NSFF の 0.159 から 0.062 に下がりました。"
   - node: hypernerf2021
     type: fixes
     note: >
@@ -68,12 +67,16 @@ relations:
       uncontrolled camera trajectories and fast, complex motion. On the
       Nvidia benchmark, full-scene PSNR rose from HyperNeRF's 20.90 to
       30.91.
-    i18n:
-      ja:
-        note: "DynIBaR の診断の後半に答えます。「HyperNeRF のように canonical モデルを構築する手法は、物体中心のシーンと制御されたカメラ経路にほぼ限られ、複雑な物体の動きのあるシーンでは失敗しうる」。DynIBaR は canonical テンプレートを一切持たず、各瞬間をその周りのフレームからレンダリングします。長い動画、境界のないシーン、制御されないカメラ軌道、速く複雑な動きにもスケールする、と論文が打ち出す方式です。Nvidia の benchmark では、シーン全体の PSNR が HyperNeRF の 20.90 から 30.91 に上がりました。"
+  - node: ibrnet2021
+    type: builds-on
+    note: >
+      Stands on IBRNet outright: "The network architecture for two main
+      representations is a variant of that of IBRNet", the method DynIBaR
+      calls the most relevant of all those building on NeRF. It "extends
+      this kind of volumetric IBR framework designed for static scenes" to
+      dynamic video, gathering features along motion-adjusted curves because
+      "moving scene elements violate epipolar constraints", and it trades
+      IBRNet's cross-scene generalization for a model fit to each video. In
+      its ablation on the Nvidia benchmark, IBRNet with an added time
+      embedding reaches 25.33 dB PSNR; the full system, 30.77.
 status: seed
-i18n:
-  ja:
-    problem: "動的 NeRF が制したのは、短くおとなしいクリップでした。「長い動画で、物体の動きが複雑でカメラの軌道が制御されていない場合、これらの手法はぼやけた、あるいは不正確なレンダリングを生みかねない」のです。NSFF のようなシーンフロー型の手法は1秒ほどの前向きの動画より先へは伸びず、HyperNeRF のような canonical テンプレート型の手法は、物体中心で、カメラ経路が制御されたシーンにとどまっていました。どちらも、動くシーン全体を MLP の重みに詰め込んでいたのです。"
-    solution: "シーンを暗記するのをやめ、入力フレームから借りてきます。DynIBaR は IBRNet 流の体積的な image-based rendering を動きへと拡張します。ターゲット光線上の各サンプルは近くのソース視点から特徴を集めます — ただし動きで補正した曲線に沿って。動く点は、静的な IBR が頼るエピポーラ拘束を破るからです。集めた特徴は ray transformer が色と密度に変えます。動きは学習した基底 (DCT で初期化) 上の軌跡場として表すので、MLP への一度の問い合わせで、近くのすべてのフレームでの点の位置が決まります。時刻をまたぐレンダリング (cross-time rendering) が時間的な一貫性を保ち、ベイズ的な動きのセグメンテーションが静的部分と動的部分を分けます。二つの動的シーンの benchmark で LPIPS は50%以上下がり、10〜30秒の実写クリップもレンダリングできるようになりました。"
-    limitations: "論文自身によれば、視点の変化は比較的小さく保たねばならず、初期の深度とフローが誤っていると小さく速く動く物体で失敗し、合成されたビューは「厳密には多視点一貫ではなく」、カメラと物体の動きがほぼ同一直線上にあると縮退し、10秒の動画に A100 8枚で約2日かかります。のちに Shape of Motion (2024) は、それを NSFF とともに、動きを短距離のシーンフローとしてモデル化する手法に分類し、「動画全体にわたって持続する3次元の運動軌跡を捉えられない」と指摘しました。同じ論文は DyCheck の iPhone 撮影データでその masked PSNR を 13.41 dB と測っており、HyperNeRF の 15.99 を下回ります。"

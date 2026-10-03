@@ -9,7 +9,8 @@ description: >
   showed how much the early demos leaned on easy, teleporting cameras — and
   the field's answer was priors: point tracks, monocular depth and
   DUSt3R-style pointmaps, fused into 4D reconstructions of a single casual
-  video. Generation followed the same path, distilling video models into 4D.
+  video. Generation followed, first distilling a text-to-video model into 4D
+  (MAV3D), then generating multi-view videos to reconstruct from (CAT4D).
 color: "#008300" # categorical slot 4 (dark)
 order: 4
 status: active

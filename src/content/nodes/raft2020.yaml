@@ -29,7 +29,9 @@ solution: >
   Sintel (final) end-point error by 30% to 2.855 px and KITTI F1-all by 16%
   to 5.10%, and was ECCV 2020's Best Paper.
 limitations: >
-  Two frames and 2D motion: it outputs flow, not cameras or depth. Its
+  Two frames and 2D motion: it outputs flow, not cameras or depth — and, as
+  PIPs showed, flow chained over a video loses a point "as soon as the
+  target is occluded". Its
   accuracy is bought with iterations — GMFlow (CVPR 2022) objected that
   "such a large number of sequential refinements introduce linearly
   increasing inference time", and matched pixels globally instead. Its

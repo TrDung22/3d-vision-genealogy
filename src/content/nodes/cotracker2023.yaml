@@ -1,0 +1,70 @@
+title: "CoTracker: It is Better to Track Together"
+short: "CoTracker (2023)"
+authors: "Nikita Karaev, Ignacio Rocco, Benjamin Graham, Natalia Neverova, Andrea Vedaldi, Christian Rupprecht (Meta AI, Oxford VGG)"
+venue: "ECCV 2024"
+year: 2023
+branch: dynamic-4d
+lane: tracking
+links:
+  arxiv: "https://arxiv.org/abs/2307.07635"
+  paper: "https://www.ecva.net/papers/eccv_2024/papers_ECCV/html/7890_ECCV_2024_paper.php"
+  project: "https://co-tracker.github.io/"
+  code: "https://github.com/facebookresearch/co-tracker"
+problem: >
+  Learned point trackers could now follow a point through occlusion, but
+  one point at a time: "For efficiency, trackers usually focus on a sparse
+  set of points and treat them as statistically independent" — even recent
+  ones such as TAPIR and PIPs++. Yet points "often have strong statistical
+  dependencies (e.g., because they belong to the same object)". Optical
+  flow does estimate all points jointly, but its motion is predicted only
+  "at an infinitesimal distance". And PIPs, which tracked through
+  occlusion by restarting its window from the last frame where the point
+  was seen, "cannot track a point beyond the duration of a window".
+solution: >
+  Track points together. CoTracker is a transformer over a grid of tokens,
+  one per track per frame, each holding the track's displacement,
+  visibility, appearance feature and RAFT-style correlations with the frame
+  around its current position. Its attention layers alternate between time
+  and tracks, so every track can read the others; to scale, tracks
+  cross-attend 64 learned proxy tokens instead of each other, which raises
+  the most an 80 GB GPU can hold from 9.4k tracks to 69.2k — a 263 × 263
+  grid — and makes inference about seven times faster. Like PIPs, it
+  refines positions and features by iterated updates within an 8-frame
+  window; windows overlap by half and are trained unrolled, like a
+  recurrent network, so tracks survive occlusions longer than a window and
+  points that leave the view. A lone query point is tracked amid local and
+  global grids of support points. Trained on synthetic Kubric alone, it
+  reaches 62.2 Average Jaccard on TAP-Vid-DAVIS (first), against 56.2 for
+  TAPIR and 42.2 for PIPs. Both bets pay: without joint tracking, accuracy
+  on occluded points in Dynamic Replica falls from 37.6 to 28.8; without
+  unrolled training, DAVIS Average Jaccard falls from 62.2 to 44.6.
+limitations: >
+  By its own account it "still occasionally makes tracking mistakes that a
+  human would not make": trained on purely synthetic data, it "sometimes
+  does not generalize well to complex visual scenes with reflections and
+  shadows", and "tends to track shadows together with the objects that
+  cast them". It runs online, on causal windows, which "puts online
+  trackers like ours at a disadvantage on long videos with slow motion";
+  it is slower than TAPIR, and on TAP-Vid-Kinetics, whose videos cut
+  between shots, it only matches it (48.8 Average Jaccard to 49.6). The
+  tracks are 2D: Shape of Motion (ICCV 2025), lifting them with Depth
+  Anything as a baseline, noted that such baselines "can only produce 3D
+  tracks for visible regions, as the depth values for occluded points are
+  unknown from such a 2.5D representation".
+relations:
+  - node: pips2022
+    type: fixes
+    note: >
+      Repairs the two limits PIPs admitted. PIPs' particles are independent,
+      a trade that "discards information that could be shared between
+      trajectories", and PIPs "will lose the target if it stays occluded
+      beyond the model's temporal window". CoTracker names both: "PIPs and
+      TAP-Vid track points independently (in parallel)", and "PIP cannot
+      track a point beyond the duration of a window". It keeps PIPs'
+      machinery — the same feature CNN, by its appendix, and iterated
+      updates of positions and track features from multi-scale correlations
+      — but lets every track attend to the others, and trains its sliding
+      windows unrolled. On TAP-Vid-DAVIS (first), Average Jaccard rises from
+      42.2 for PIPs to 62.2; on Dynamic Replica, accuracy on occluded points
+      rises from 21.0 to 37.6.
+status: seed
