@@ -1,22 +1,25 @@
 # Contributing
 
 The entire genealogy lives in `src/content/` as YAML/MDX. **No code changes are
-needed** to add a paper, a relation, or a whole new branch — the atlas and the
-3D floors, the node pages, the branch pages, the index, the search,
-and the [heresies page](https://trdung22.github.io/3d-vision-genealogy/en/heresies/)
+needed** to add a paper, a relation, a guided tour or a whole new branch — the
+atlas (flat and in 3D), the node pages, the branch pages, the index, the
+search, the tours and the [heresies page](https://trdung22.github.io/3d-vision-genealogy/en/heresies/)
 are all generated at build time.
 
 ```
 src/content/
 ├── branches/           # one YAML file per major branch (single-image-3d, neural-rendering, ...)
 ├── nodes/              # one YAML file per work (filename = node id)
+├── tours/              # one YAML file per guided tour (a path through recorded relations)
 └── posts/              # MDX blog posts, optionally attached to nodes
 
 src/lib/graph.ts        # folds content into the graph payload + the relation vocabulary
 src/lib/i18n.ts         # UI-chrome strings
-src/lib/atlas.js        # the atlas: layout, lineage, filters, time machine, inspector
-src/lib/floors3d.js     # the 3D floors (three.js, a separate chunk loaded near the viewport)
-src/components/         # Atlas, Floors, LineageGraph, SearchPalette, …
+src/lib/atlas.js        # the atlas: layout, lineage, filters, time machine, inspector,
+                        # the 2D/3D switch and the tours
+src/lib/atlas3d.js      # the same atlas lifted into 3D (three.js, a separate chunk
+                        # loaded the first time a reader asks for 3D)
+src/components/         # Atlas, LineageGraph, SearchPalette, …
 src/pages/              # home, works (index), nodes, branches, heresies, blog,
                         # graph.json + search.json (the client payloads)
 ```
@@ -120,9 +123,9 @@ lanes:                  # the branch's lanes in the atlas, top to bottom
     title: "Multi-view stereo"
 ```
 
-Then add nodes with `branch: <id>` — the atlas and the 3D floors both grow the new
-branch on their own, including cross-branch edges (existing example:
-DeepSDF → NeRF → Zero-1-to-3).
+Then add nodes with `branch: <id>` — the atlas grows the new branch on its own
+(a new band flat, a new floor in 3D), including cross-branch edges (existing
+example: DeepSDF → NeRF → Zero-1-to-3), which become bridges between floors.
 
 ### Branch color slots (validated CVD-safe on the dark surface, assigned in fixed order)
 
@@ -137,6 +140,29 @@ DeepSDF → NeRF → Zero-1-to-3).
 Don't reorder the slots and don't invent new colors — the slot order itself is
 the color-vision-safety mechanism. (Palette from a validated dataviz reference;
 avoid `#e66767` for branches since red is reserved for *challenges* edges.)
+
+## Adding a guided tour
+
+A tour is a walk through relations that are **already recorded** — one stop
+per relation (or a final stop on a single work). Create
+`src/content/tours/<id>.yaml`:
+
+```yaml
+title: Five roads into NeRF
+summary: The five works NeRF stands on in this genealogy, oldest first — then everything recorded as standing on NeRF.
+order: 1                 # position in the Tours menu
+steps:
+  - { from: kajiya1984, to: nerf2020 }   # a relation: older work → newer work
+  - { from: deepsdf2019, to: nerf2020 }
+  - { work: nerf2020 }                   # a work: its whole lineage lights up
+```
+
+The rule that keeps tours honest: **a tour adds no claims of its own.** Every
+word a reader sees on a stop comes from the works and the `note:` on the
+relation — so the title and the one-line summary describe the *path*, not the
+history. A step that names a relation nobody recorded fails the build. On each
+relation stop the time machine rewinds to the newer work's year (what came
+later is not there yet); the final work stop shows everything since.
 
 ## Writing a blog post
 
@@ -153,6 +179,6 @@ preference).
 
 - UI chrome strings live in `src/lib/i18n.ts`; all content prose lives in the
   YAML itself.
-- Both graphs read their colors from CSS custom properties, so they re-theme
-  live (the atlas just swaps its branch-color variables, the 3D view swaps
-  materials).
+- The atlas (flat and in 3D) reads its colors from CSS custom properties, so
+  it re-themes live (the flat chart just swaps its branch-color variables, the
+  3D view swaps materials).

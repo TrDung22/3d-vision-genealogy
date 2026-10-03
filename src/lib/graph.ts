@@ -116,6 +116,12 @@ export interface GraphData {
     { label: string; description: string; stroke: string; dash: string | null; width: number }
   >;
   nodeKinds: Record<NodeKind, { label: string; shape: (typeof NODE_KINDS)[NodeKind]['shape'] }>;
+  tours: {
+    id: string;
+    title: string;
+    summary: string;
+    steps: ({ from: string; to: string } | { work: string })[];
+  }[];
 }
 
 const graphCache = new Map<Lang, Promise<GraphData>>();
@@ -205,7 +211,26 @@ async function buildGraphUncached(lang: Lang): Promise<GraphData> {
     ]),
   ) as GraphData['nodeKinds'];
 
-  return { branches, lanes, nodes, edges, edgeTypes, nodeKinds };
+  // Guided tours walk relations that already exist — a step naming one that
+  // isn't recorded fails the build instead of shipping a broken tour
+  const tours = (await getCollection('tours'))
+    .sort((a, b) => a.data.order - b.data.order)
+    .map((tour) => ({
+      id: tour.id,
+      title: tour.data.title,
+      summary: tour.data.summary,
+      steps: tour.data.steps.map((step) => {
+        if ('work' in step) return { work: step.work.id };
+        const from = step.from.id;
+        const to = step.to.id;
+        if (!edges.some((e) => e.source === from && e.target === to)) {
+          throw new Error(`tour "${tour.id}": no relation is recorded from ${from} to ${to}`);
+        }
+        return { from, to };
+      }),
+    }));
+
+  return { branches, lanes, nodes, edges, edgeTypes, nodeKinds, tours };
 }
 
 /**

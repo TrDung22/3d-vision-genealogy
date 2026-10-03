@@ -77,4 +77,28 @@ const posts = defineCollection({
   }),
 });
 
-export const collections = { branches, nodes, posts };
+/**
+ * A TOUR = a guided walk through the genealogy, one relation at a time.
+ * Each step is a relation that already exists (`from` the older work `to`
+ * the newer one) or a single work; everything a reader sees on a step comes
+ * from those works and that relation's note, so a tour adds no claims of
+ * its own. The build fails if a step names a relation that isn't recorded.
+ */
+const tours = defineCollection({
+  loader: glob({ pattern: '**/*.yaml', base: './src/content/tours' }),
+  schema: z.object({
+    title: z.string(),
+    summary: z.string(),
+    order: z.number(),
+    steps: z
+      .array(
+        z.union([
+          z.object({ from: reference('nodes'), to: reference('nodes') }),
+          z.object({ work: reference('nodes') }),
+        ]),
+      )
+      .min(2),
+  }),
+});
+
+export const collections = { branches, nodes, posts, tours };

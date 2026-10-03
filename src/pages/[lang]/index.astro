@@ -2,7 +2,6 @@
 import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
 import Atlas from '../../components/Atlas.astro';
-import Floors from '../../components/Floors.astro';
 import EdgeGlyph from '../../components/EdgeGlyph.astro';
 import Icon from '../../components/Icon.astro';
 import Sparkline from '../../components/Sparkline.astro';
@@ -81,6 +80,15 @@ const challengeCount = graph.edges.filter((e) => e.type === 'challenges').length
 const waveCount = independentWaves(graph).length;
 const reviveCount = graph.edges.filter((e) => e.type === 'revives').length;
 
+// guided tours: the works each one visits, oldest first
+const shortName = (s: string) => s.replace(/\s*\([^)]*\)\s*$/, '').replace(/\s+(19|20)\d{2}$/, '');
+const tourCards = graph.tours.map((tour) => {
+  const ids = new Set<string>();
+  for (const step of tour.steps) for (const id of 'work' in step ? [step.work] : [step.from, step.to]) ids.add(id);
+  const works = [...ids].map((id) => nodeById.get(id)!).sort((a, b) => a.year - b.year);
+  return { ...tour, path: works.map((n) => shortName(n.short)) };
+});
+
 const posts = (await getCollection('posts'))
   .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
   .slice(0, 3);
@@ -100,6 +108,14 @@ const fmtDate = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', mo
         </p>
         <div class="hero-cta">
           <a class="btn btn-primary" href="#atlas">{t(lang, 'home.explore')} <Icon name="arrow-down" size={16} /></a>
+          {
+            tourCards.length > 0 && (
+              <button type="button" class="btn" data-tour={tourCards[0].id}>
+                <Icon name="route" size={16} />
+                {t(lang, 'home.tour')}
+              </button>
+            )
+          }
           <button type="button" class="btn" data-open-palette>
             <Icon name="search" size={16} />{t(lang, 'home.search')}<span class="hero-kbd"><kbd class="kbd-mod">⌘</kbd><kbd>K</kbd></span>
           </button>
@@ -176,13 +192,29 @@ const fmtDate = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', mo
     </div>
   </section>
 
-  <Floors lang={lang} />
-
   <section class="ways container-wide">
     <div class="section-head">
       <p class="eyebrow">{t(lang, 'home.waysKicker')}</p>
       <h2 set:html={t(lang, 'home.waysTitle')} />
     </div>
+    {
+      tourCards.length > 0 && (
+        <div class="tours-row">
+          {tourCards.map((tour) => (
+            <button type="button" class="card tour-card" data-tour={tour.id}>
+              <span class="eyebrow">
+                <Icon name="route" size={14} />
+                {t(lang, 'tour.label')} · {t(lang, 'tour.stops').replace('{n}', String(tour.steps.length))}
+              </span>
+              <span class="tour-card-title">{tour.title}</span>
+              <span class="tour-card-sum">{tour.summary}</span>
+              <span class="tour-card-path mono">{tour.path.join(' · ')}</span>
+              <span class="arrow-link">{t(lang, 'home.toursStart')}</span>
+            </button>
+          ))}
+        </div>
+      )
+    }
     <div class="ways-grid">
       {
         branchCards.map((b) => (
@@ -251,6 +283,10 @@ const fmtDate = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', mo
       ev.preventDefault();
       window.dispatchEvent(new CustomEvent('atlas:focus', { detail: { id: a.dataset.focus } }));
     });
+  });
+  // tours start in the atlas
+  document.querySelectorAll<HTMLButtonElement>('[data-tour]').forEach((b) => {
+    b.addEventListener('click', () => window.dispatchEvent(new CustomEvent('atlas:tour', { detail: { id: b.dataset.tour } })));
   });
 </script>
 
@@ -482,6 +518,63 @@ const fmtDate = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', mo
     padding-bottom: 3rem;
   }
 
+  .tours-row {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.9rem;
+    margin-bottom: 0.9rem;
+  }
+
+  .tour-card {
+    appearance: none;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 1.4rem 1.5rem 1.3rem;
+    font: inherit;
+    text-align: left;
+    color: var(--ink-2);
+    cursor: pointer;
+    background:
+      radial-gradient(460px 220px at 100% 0%, color-mix(in srgb, var(--award) 11%, transparent), transparent 70%),
+      var(--surface);
+    transition: border-color 0.2s, transform 0.2s var(--ease);
+  }
+
+  .tour-card:hover {
+    border-color: var(--ring-strong);
+    transform: translateY(-2px);
+  }
+
+  .tour-card .eyebrow {
+    gap: 0.45rem;
+  }
+
+  .tour-card-title {
+    margin-top: 0.2rem;
+    font-family: var(--font-serif);
+    font-size: 2rem;
+    line-height: 1.05;
+    color: var(--ink);
+  }
+
+  .tour-card-sum {
+    font-size: 0.92rem;
+    line-height: 1.55;
+  }
+
+  .tour-card-path {
+    font-size: 0.72rem;
+    line-height: 1.6;
+    color: var(--muted);
+  }
+
+  .tour-card .arrow-link {
+    margin-top: 0.4rem;
+    color: var(--accent);
+  }
+
   .ways-grid {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -625,7 +718,8 @@ const fmtDate = (d: Date) => d.toLocaleDateString('en-US', { year: 'numeric', mo
     }
 
     .vocab,
-    .ways-grid {
+    .ways-grid,
+    .tours-row {
       grid-template-columns: 1fr;
     }
 

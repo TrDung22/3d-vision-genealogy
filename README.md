@@ -47,9 +47,19 @@ write-ups drop on the floor.
 - **⌘K search** — jump to any work, author, venue or branch from any page.
 - **A page per work** — its immediate family drawn as a small tree, the
   problem → idea → what-it-left-open story, and every debt in both directions.
-- **Where the branches meet** — the atlas, unfolded in 3D: each branch rises
-  onto its own glass floor (time and lanes keep their places), and every debt
-  that crosses between branches becomes a bridge between floors.
+- **The same atlas in 3D — and 4D.** Hit **3D** and the map you are reading
+  lifts off the page: the capsules collapse into beads and each branch rises
+  onto its own glass floor (every work keeps its place), so every debt that
+  crosses between branches becomes a bridge between floors. Press ▶ there and
+  the building grows year by year — works arrive on their floors, relations
+  draw themselves from the older work to the newer, a pane of light sweeps
+  through time and the camera travels with it
+  ([`?view=3d`](https://trdung22.github.io/3d-vision-genealogy/en/?view=3d)).
+- **Guided tours** — walks through recorded debts, one relation at a time:
+  [*Five roads into NeRF*](https://trdung22.github.io/3d-vision-genealogy/en/?tour=five-roads-into-nerf)
+  and [*From NeRF to Gaussian splatting*](https://trdung22.github.io/3d-vision-genealogy/en/?tour=from-nerf-to-gaussians).
+  Each stop rewinds the years to its moment; every word on it comes from the
+  works and the notes on their relations.
 - **[An index](https://trdung22.github.io/3d-vision-genealogy/en/works/)** — every work as one searchable, sortable list.
 - **[Heresies, rivalries & revivals](https://trdung22.github.io/3d-vision-genealogy/en/heresies/)** —
   a page generated *entirely* from the graph's edges: who proved an entire
@@ -68,20 +78,21 @@ write-ups drop on the floor.
 <table>
   <tr>
     <td width="52%"><img src="docs/heresies.png" alt="The heresies page — challenges, parallel discoveries and revivals, generated from the graph" /></td>
-    <td><img src="docs/floors.png" alt="The 3D view: four glass floors, one per branch, with bridges of light between them for the debts that cross branches" /></td>
+    <td><img src="docs/atlas-3d.png" alt="The atlas in 3D: four glass floors, one per branch, with bridges between them for the debts that cross branches" /></td>
   </tr>
   <tr>
     <td align="center"><sub>The heresies page — generated from the edges, never written by hand</sub></td>
-    <td align="center"><sub>Where the branches meet — the atlas unfolded into floors</sub></td>
+    <td align="center"><sub>The same atlas, lifted — one floor per branch, bridges for the debts between them</sub></td>
   </tr>
 </table>
 
 ## How it works
 
-An [Astro 5](https://astro.build) static site (a D3-drawn atlas + a three.js
-3D view). The whole genealogy is **data, not code**: one YAML file per work, one
-per branch. Every page, the atlas and the 3D floors are generated from it at build time —
-adding a paper, or grafting an entire new branch, is just adding files:
+An [Astro 5](https://astro.build) static site (a D3-drawn atlas that lifts into
+three.js 3D). The whole genealogy is **data, not code**: one YAML file per work,
+one per branch, one per tour. Every page, the atlas (flat and 3D) and the tours
+are generated from it at build time — adding a paper, or grafting an entire new
+branch, is just adding files:
 
 ```yaml
 # src/content/nodes/<id>.yaml
@@ -122,5 +133,6 @@ in [CONTRIBUTING.md](CONTRIBUTING.md).
 - [x] Open the multi-view geometry branch (two-view geometry → SIFT → Photo Tourism → COLMAP → learned matching → DUSt3R → VGGT)
 - [x] Open the dynamic scenes & 4D branch (D-NeRF / Nerfies → HyperNeRF, NSFF → DynIBaR, HexPlane / K-Planes → 4D-GS, PIPs → TAPIR / CoTracker → Shape of Motion / MoSca, MonST3R → MegaSaM, MAV3D → CAT4D)
 - [x] The atlas redesign: lineage tracing, ⌘K search, a family tree on every work's page, an index, a social card
-- [ ] Guided tours through the graph (story mode)
+- [x] The atlas in 3D and 4D: one floor per branch, bridges between them, the years growing the building
+- [x] Guided tours through the graph (story mode) — two so far; more welcome (see CONTRIBUTING)
 - [ ] RSS feed + per-page Open Graph cards

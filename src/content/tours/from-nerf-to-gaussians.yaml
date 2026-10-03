@@ -1,0 +1,12 @@
+title: From NeRF to Gaussian splatting
+summary: The recorded debts between NeRF and 3D Gaussian Splatting, one relation at a time — starting from the 1984 renderer at the root of both.
+order: 2
+steps:
+  - { from: kajiya1984, to: ewa2001 }
+  - { from: nerf2020, to: plenoxels2021 }
+  - { from: nerf2020, to: instantngp2022 }
+  - { from: plenoxels2021, to: instantngp2022 }
+  - { from: instantngp2022, to: 3dgs2023 }
+  - { from: ewa2001, to: 3dgs2023 }
+  - { from: colmap2016, to: 3dgs2023 }
+  - { work: 3dgs2023 }

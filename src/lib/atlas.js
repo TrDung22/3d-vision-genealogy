@@ -1,5 +1,5 @@
 /**
- * The atlas — the genealogy drawn as a timeline map.
+ * The atlas — the genealogy drawn as a timeline map, flat or lifted into 3D.
  *
  * Layout. Rows are research lanes grouped into branch bands; x is time. Each
  * work is a capsule (mark + name) whose left edge sits on its year. The year
@@ -16,21 +16,27 @@
  * ⌘/Ctrl + wheel, pinch, and the toolbar buttons zoom; zoomed far out the
  * names drop away and the map turns into an overview.
  *
+ * 3D. The same map can lift off the page (src/lib/atlas3d.js, loaded on
+ * first use): from straight above, at this very scale, the capsules collapse
+ * into beads and each branch band rises onto its own glass floor, so debts
+ * between branches become bridges. It is one atlas in two modes — selection,
+ * the inspector, filters, search, the time machine (which, in 3D, grows the
+ * building year by year) and the tours are shared.
+ *
  * Interaction. Hover traces a work's direct relations; click (or Enter)
  * selects it — its whole lineage lights up (everything it stands on and
  * everything that descends from it, through fixes / builds-on / challenges /
  * revives; "independent" is kinship, not descent) and the inspector opens.
- * ⌘/Ctrl-click opens the work's page like any link. Filters: branch chips
- * re-layout, kind chips fade, relation chips hide; the time bar replays the
- * field year by year. Everything is shareable through the URL:
- * ?branches= ?kinds= ?edges= ?year= ?focus=.
+ * Click a relation to read its whole note. ⌘/Ctrl-click opens the work's page
+ * like any link. Filters: branch chips re-layout, kind chips fade, relation
+ * chips hide; the time bar replays the field year by year. Guided tours walk
+ * recorded relations one at a time. Everything is shareable through the URL:
+ * ?view= ?branches= ?kinds= ?edges= ?year= ?focus= ?tour= ?step=.
  *
  * Theme. Colors resolve through CSS custom properties (branch colors are
  * swapped on `themechange`), so a theme switch never re-renders.
  */
 import { group, select } from 'd3';
-
-const NS = 'http://www.w3.org/2000/svg';
 
 // geometry in content units — the whole drawing is scaled by k on screen
 const CAP_H = 21; // capsule height
@@ -75,6 +81,7 @@ export const shortLabel = (s) =>
 const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
 const isLight = () => document.documentElement.dataset.theme === 'light';
 const reducedMotion = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+const fill = (s, vars) => s.replace(/\{(\w+)\}/g, (_m, k) => String(vars[k] ?? ''));
 
 export function mountAtlas({ el, data, root, strings: STR }) {
   const $ = (sel) => el.querySelector(sel);
@@ -82,6 +89,7 @@ export function mountAtlas({ el, data, root, strings: STR }) {
   const svg = select(svgEl);
   const scroller = $('.at-scroller');
   const stage = $('.at-stage');
+  const stage3d = $('.at-3d');
   const captions = $('.at-captions');
   const axisSvg = select($('.at-axis svg'));
   const tooltip = $('.at-tooltip');
@@ -93,12 +101,20 @@ export function mountAtlas({ el, data, root, strings: STR }) {
   const range = $('.at-range');
   const histo = select($('.at-histo'));
   const readout = $('.at-readout');
+  const modeBtns = [...el.querySelectorAll('.at-mode-btn')];
+  const bridgesBtn = $('.at-bridges');
+  const toursBtn = $('.at-tours-btn');
+  const toursMenu = $('.at-tours-menu');
+  const fitBtn = $('.at-zoom-fit');
+  const status = $('.at-status');
+  const announce = $('.at-announce');
 
   const branchById = new Map(data.branches.map((b) => [b.id, b]));
   const nodeById = new Map(data.nodes.map((n) => [n.id, n]));
   const laneById = new Map(data.lanes.map((l) => [l.id, l]));
   const shapeOf = (n) => data.nodeKinds?.[n.kind]?.shape ?? 'circle';
   const typeLabel = (t) => data.edgeTypes[t]?.label ?? t;
+  const tours = data.tours ?? [];
 
   // sanitize once on the full set
   const declared = data.edges.length;
@@ -110,6 +126,7 @@ export function mountAtlas({ el, data, root, strings: STR }) {
     e.key = i;
     e.crossBranch = nodeById.get(e.source).branch !== nodeById.get(e.target).branch;
   });
+  const edgeBetween = (from, to) => data.edges.find((e) => e.source === from && e.target === to) ?? null;
 
   // ---- branch colors as CSS variables (swapped per theme, never re-rendered);
   // set on the root so the inspector and tooltip — outside the atlas — see them
@@ -168,13 +185,17 @@ export function mountAtlas({ el, data, root, strings: STR }) {
   let activeKinds = listParam('kinds', kindIds);
   let activeTypes = listParam('edges', typeIds);
   let selectedId = nodeById.has(params.get('focus')) ? params.get('focus') : null;
+  let selectedEdge = null; // a relation pinned with a click
   let hoverId = null;
   let hoverEdge = null;
+  let focusState = { mode: 'none' };
   let k = 1;
   let view = null;
   let currentIdx = 0;
   let firstRender = true;
   let insetRight = 0; // room to scroll out from under the inspector drawer
+  let mode = '2d'; // '2d' | '3d'
+  let tour = null; // { def, i } — i = -1 is the tour's cover
   // focus-driven highlights and focus hand-backs are for keyboard users;
   // a mouse click that happens to focus a work shouldn't leave it lit
   let lastInput = 'pointer';
@@ -313,8 +334,9 @@ export function mountAtlas({ el, data, root, strings: STR }) {
     const { nodes, edges, years, yearIdx, W, H, bands, lanes, laneTop, pos, w } = view;
     // a re-layout can shrink the years axis under the time machine's cursor
     currentIdx = clamp(currentIdx, 0, Math.max(0, years.length - 1));
+    three?.setLayout(view, { animate: mode === '3d' });
     svg.selectAll('*').remove();
-    const intro = firstRender && !reducedMotion() && !params.has('year') && !selectedId;
+    const intro = firstRender && !reducedMotion() && !params.has('year') && !selectedId && !params.has('view') && !params.has('tour');
     svgEl.classList.toggle('at-intro', intro);
 
     const defs = svg.append('defs');
@@ -413,6 +435,10 @@ export function mountAtlas({ el, data, root, strings: STR }) {
         hoverEdge = null;
         paintFocus();
         hideTip();
+      })
+      .on('click', (_ev, e) => {
+        if (dragMoved) return;
+        selectEdge(selectedEdge === e ? null : e);
       });
 
     // works
@@ -494,7 +520,7 @@ export function mountAtlas({ el, data, root, strings: STR }) {
     renderAxis();
     renderHistogram();
     renderChips();
-    applyZoom(k, null);
+    if (mode === '2d') applyZoom(k, null);
     applyYear();
     applyKinds();
     applyTypes();
@@ -550,6 +576,7 @@ export function mountAtlas({ el, data, root, strings: STR }) {
   }
 
   function placeAxis() {
+    if (mode === '3d') return;
     const sl = scroller.scrollLeft;
     const xs = view.years.map((y) => (view.x.get(y) + MARK_X) * k - sl);
     // keep labels apart: walk left → right, skip any that would collide;
@@ -608,9 +635,11 @@ export function mountAtlas({ el, data, root, strings: STR }) {
     scroller.classList.toggle('can-pan', view.W * k + insetRight > scroller.clientWidth + 2);
   }
 
-  $('.at-zoom-in').addEventListener('click', () => applyZoom(k * 1.25, centerAnchor()));
-  $('.at-zoom-out').addEventListener('click', () => applyZoom(k / 1.25, centerAnchor()));
-  $('.at-zoom-fit').addEventListener('click', () => {
+  // in 3D the same buttons move the camera: closer, further, home
+  $('.at-zoom-in').addEventListener('click', () => (mode === '3d' ? three?.zoom(1.25) : applyZoom(k * 1.25, centerAnchor())));
+  $('.at-zoom-out').addEventListener('click', () => (mode === '3d' ? three?.zoom(1 / 1.25) : applyZoom(k / 1.25, centerAnchor())));
+  fitBtn.addEventListener('click', () => {
+    if (mode === '3d') return three?.resetView();
     applyZoom(fitK(), null);
     scroller.scrollLeft = 0;
     el.scrollIntoView({ behavior: reducedMotion() ? 'auto' : 'smooth', block: 'start' });
@@ -662,41 +691,29 @@ export function mountAtlas({ el, data, root, strings: STR }) {
   });
   svgEl.addEventListener('click', (ev) => {
     if (dragMoved) return;
-    if (!ev.target.closest('.at-node, .at-edge-hit') && selectedId) selectNode(null);
+    if (!ev.target.closest('.at-node, .at-edge-hit') && (selectedId || selectedEdge)) selectNode(null);
   });
 
   // ---------------------------------------------------------------- focus
-  // one painter for hover, edge-hover and selection (hover wins while it lasts)
-  function paintFocus() {
-    if (!view) return;
-    const focusing = Boolean(hoverId || hoverEdge || selectedId);
-    svgEl.classList.toggle('is-focusing', focusing);
-    pulseG.selectAll('*').remove();
-    if (!focusing) {
-      nodeSel.attr('data-role', null);
-      edgeSel.attr('data-role', null);
-      return;
-    }
-    if (hoverEdge) {
-      const e = hoverEdge;
-      nodeSel.attr('data-role', (n) => (n.id === e.source || n.id === e.target ? 'near' : 'dim'));
-      edgeSel.attr('data-role', (x) => (x === e ? 'direct' : 'dim'));
-      // the debt itself, flowing from the older work into the newer one
-      if (!reducedMotion()) {
-        pulseG
-          .append('path')
-          .attr('class', 'at-pulse')
-          .attr('d', edgePath(e))
-          .attr('style', `stroke: ${e.type === 'challenges' ? 'var(--danger)' : bVar(nodeById.get(e.target).branch)}`);
-      }
-      return;
+  // One answer to "what is in focus" for both modes: a role for every work
+  // and every relation. Hover wins while it lasts; a relation (hovered, or
+  // pinned with a click) is its own mode; otherwise the selected lineage.
+  function focusRoles() {
+    const roles = new Map();
+    const edgeRoles = new Map();
+    const rel = hoverId && hoverId !== selectedId ? null : (hoverEdge ?? (selectedId ? null : selectedEdge));
+    if (rel) {
+      for (const n of view.nodes) roles.set(n.id, n.id === rel.source || n.id === rel.target ? 'near' : 'dim');
+      for (const e of view.edges) edgeRoles.set(e.key, e === rel ? 'direct' : 'dim');
+      return { mode: 'edge', edge: rel, roles, edgeRoles };
     }
     if (hoverId && hoverId !== selectedId) {
       const near = view.nbr.get(hoverId) ?? new Set([hoverId]);
-      nodeSel.attr('data-role', (n) => (n.id === hoverId ? 'hover' : near.has(n.id) ? 'near' : 'dim'));
-      edgeSel.attr('data-role', (e) => (e.source === hoverId || e.target === hoverId ? 'direct' : 'dim'));
-      return;
+      for (const n of view.nodes) roles.set(n.id, n.id === hoverId ? 'hover' : near.has(n.id) ? 'near' : 'dim');
+      for (const e of view.edges) edgeRoles.set(e.key, e.source === hoverId || e.target === hoverId ? 'direct' : 'dim');
+      return { mode: 'hover', id: hoverId, roles, edgeRoles };
     }
+    if (!selectedId) return { mode: 'none' };
     // lineage of the selected work
     const id = selectedId;
     const { anc, desc } = lineageOf(id);
@@ -705,26 +722,52 @@ export function mountAtlas({ el, data, root, strings: STR }) {
         .filter((e) => e.type === 'independent' && (e.source === id || e.target === id))
         .map((e) => (e.source === id ? e.target : e.source)),
     );
-    nodeSel.attr('data-role', (n) =>
-      n.id === id ? 'sel' : anc.has(n.id) ? 'anc' : desc.has(n.id) ? 'desc' : peers.has(n.id) ? 'peer' : 'dim',
-    );
+    for (const n of view.nodes) {
+      roles.set(n.id, n.id === id ? 'sel' : anc.has(n.id) ? 'anc' : desc.has(n.id) ? 'desc' : peers.has(n.id) ? 'peer' : 'dim');
+    }
     const ancSide = (e) => anc.has(e.source) && (anc.has(e.target) || e.target === id);
     const descSide = (e) => (desc.has(e.source) || e.source === id) && desc.has(e.target);
-    edgeSel.attr('data-role', (e) => {
-      if (e.source === id || e.target === id) return 'direct';
-      if (e.type !== 'independent' && (ancSide(e) || descSide(e))) return 'lit';
-      return 'dim';
-    });
-    // light pulses travel along the selected work's own relations
-    if (!reducedMotion()) {
-      pulseG
-        .selectAll('path')
-        .data(view.edges.filter((e) => (e.source === id || e.target === id) && activeTypes.has(e.type)))
-        .join('path')
-        .attr('class', 'at-pulse')
-        .attr('d', (e) => edgePath(e))
-        .attr('style', `stroke: ${bVar(nodeById.get(id).branch)}`);
+    for (const e of view.edges) {
+      if (e.source === id || e.target === id) edgeRoles.set(e.key, 'direct');
+      else edgeRoles.set(e.key, e.type !== 'independent' && (ancSide(e) || descSide(e)) ? 'lit' : 'dim');
     }
+    return { mode: 'lineage', id, roles, edgeRoles };
+  }
+
+  // one painter for hover, edge focus and selection, in both modes
+  function paintFocus() {
+    if (!view) return;
+    const f = focusRoles();
+    focusState = f;
+    three?.setFocus(f);
+    svgEl.classList.toggle('is-focusing', f.mode !== 'none');
+    pulseG.selectAll('*').remove();
+    nodeSel.attr('data-role', (n) => f.roles?.get(n.id) ?? null);
+    edgeSel.attr('data-role', (e) => f.edgeRoles?.get(e.key) ?? null);
+    // the relation filter hides a kind of debt — except the one in focus
+    const typeOff = (e) => !activeTypes.has(e.type) && !(f.mode === 'edge' && e === f.edge);
+    edgeSel.classed('is-type-off', typeOff);
+    hitSel.classed('is-type-off', typeOff);
+    if (reducedMotion() || mode === '3d') return;
+    // light pulses travel along the relation in focus — the debt itself,
+    // flowing from the older work into the newer one — or along the
+    // selected work's own relations
+    let pulses = [];
+    let color = null;
+    if (f.mode === 'edge') {
+      pulses = [f.edge];
+      color = (e) => (e.type === 'challenges' ? 'var(--danger)' : bVar(nodeById.get(e.target).branch));
+    } else if (f.mode === 'lineage') {
+      pulses = view.edges.filter((e) => (e.source === f.id || e.target === f.id) && activeTypes.has(e.type));
+      color = () => bVar(nodeById.get(f.id).branch);
+    }
+    pulseG
+      .selectAll('path')
+      .data(pulses)
+      .join('path')
+      .attr('class', 'at-pulse')
+      .attr('d', (e) => edgePath(e))
+      .attr('style', (e) => `stroke: ${color(e)}`);
   }
 
   // ---------------------------------------------------------------- tooltip
@@ -754,12 +797,28 @@ export function mountAtlas({ el, data, root, strings: STR }) {
     <span class="tip-meta">${venueHtml(n)}${n.kind !== 'method' ? ` · ${esc(data.nodeKinds[n.kind]?.label ?? n.kind)}` : ''}</span>
     <p>${esc(truncate(n.problem, 150))}</p>
     <span class="tip-hint">${esc(selectedId === n.id ? STR.tipDeselect : STR.tipSelect)}</span>`;
-  const edgeTipHtml = (e) => {
+  const branchTitle = (n) => branchById.get(n.branch)?.title ?? n.branch;
+  // where a relation runs: within one branch, or a bridge from one to another
+  const whereOf = (e) => {
     const s = nodeById.get(e.source);
     const t = nodeById.get(e.target);
-    return `<span class="tip-rel"><strong>${esc(t.short)}</strong> <em>${esc(typeLabel(e.type))}</em> <strong>${esc(s.short)}</strong></span>
-      ${e.note ? `<p>${esc(truncate(e.note, 260))}</p>` : ''}`;
+    return e.crossBranch ? `${STR.bridge} · ${branchTitle(s)} → ${branchTitle(t)}` : `${STR.within} ${branchTitle(s)}`;
   };
+  const relHead = (e) =>
+    `<strong>${esc(labelOf(nodeById.get(e.target)))}</strong> <em class="t-${esc(e.type)}">${esc(typeLabel(e.type))}</em> <strong>${esc(labelOf(nodeById.get(e.source)))}</strong>`;
+  const whenOf = (e) => {
+    const s = nodeById.get(e.source);
+    const t = nodeById.get(e.target);
+    const gap = t.year - s.year;
+    if (!gap) return `${t.year} · ${STR.sameYear}`;
+    return `${s.year} → ${t.year} · ${gap === 1 ? STR.yearLater : fill(STR.yearsLater, { n: gap })}`;
+  };
+  const edgeTipHtml = (e) => `
+    <span class="tip-kicker tip-kicker-rel">${esc(whereOf(e))}</span>
+    <span class="tip-rel">${relHead(e)}</span>
+    <span class="tip-meta">${esc(whenOf(e))}</span>
+    ${e.note ? `<p>${esc(truncate(e.note, 220))}</p>` : ''}
+    <span class="tip-hint">${esc(selectedEdge === e ? STR.tipRelDeselect : STR.tipRel)}</span>`;
 
   // ---------------------------------------------------------------- inspector
   const relGlyph = (type) => {
@@ -780,6 +839,17 @@ export function mountAtlas({ el, data, root, strings: STR }) {
       .join('');
   }
   const LINK_LABELS = { arxiv: 'arXiv', paper: STR.linkPaper, project: STR.linkProject, code: STR.linkCode };
+  const closeIcon = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>`;
+  const dot = (n) => `<span class="dot" style="background:${bVar(n.branch)}"></span>`;
+
+  function showInspector(html, branch) {
+    inspector.innerHTML = `<div class="insp-scroll">${html}</div>`;
+    inspector.hidden = false;
+    inspector.style.setProperty('--bc', bVar(branch));
+    inspector.classList.toggle('is-tour', Boolean(tour));
+    requestAnimationFrame(() => inspector.classList.add('is-open'));
+    inspector.querySelector('.insp-scroll').scrollTop = 0;
+  }
 
   function openInspector(n) {
     const br = branchById.get(n.branch);
@@ -801,11 +871,10 @@ export function mountAtlas({ el, data, root, strings: STR }) {
       .slice(0, 3)
       .map(([key, url]) => `<a class="btn btn-sm" href="${esc(url)}" target="_blank" rel="noopener">${esc(LINK_LABELS[key] ?? key)} ↗</a>`)
       .join('');
-    inspector.innerHTML = `
-      <div class="insp-scroll">
-        <div class="insp-top">
-          <span class="chip"><span class="dot" style="background:${bVar(n.branch)}"></span>${esc(br?.title ?? '')} · ${esc(laneById.get(n.lane)?.title ?? '')}</span>
-          <button type="button" class="icon-btn insp-close" aria-label="${esc(STR.close)}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    showInspector(
+      `<div class="insp-top">
+          <span class="chip">${dot(n)}${esc(br?.title ?? '')} · ${esc(laneById.get(n.lane)?.title ?? '')}</span>
+          <button type="button" class="icon-btn insp-close" aria-label="${esc(STR.close)}">${closeIcon}</button>
         </div>
         <h2 class="insp-title" tabindex="-1">${esc(n.short)}</h2>
         <p class="insp-full">${esc(n.title)}</p>
@@ -824,23 +893,54 @@ export function mountAtlas({ el, data, root, strings: STR }) {
         <p class="insp-problem">${esc(n.problem)}</p>
         ${standsOn.length ? `<h3 class="insp-h">${esc(STR.standsOn)}</h3><ul class="insp-rels">${relList(standsOn)}</ul>` : ''}
         ${followedBy.length ? `<h3 class="insp-h">${esc(STR.followedBy)}</h3><ul class="insp-rels">${relList(followedBy)}</ul>` : ''}
-        ${!standsOn.length && !followedBy.length ? `<p class="muted">${esc(STR.root)}</p>` : ''}
-      </div>`;
-    inspector.hidden = false;
-    inspector.style.setProperty('--bc', bVar(n.branch));
-    requestAnimationFrame(() => inspector.classList.add('is-open'));
-    inspector.querySelector('.insp-scroll').scrollTop = 0;
+        ${!standsOn.length && !followedBy.length ? `<p class="muted">${esc(STR.root)}</p>` : ''}`,
+      n.branch,
+    );
   }
   const kindIsAnalysis = (n) => n.kind === 'analysis';
 
+  // a relation: the debt itself, both works, the whole note
+  const endButton = (n) =>
+    `<li><button type="button" class="insp-rel insp-end" data-goto="${esc(n.id)}" style="--bc: ${bVar(n.branch)}">${dot(n)}<span class="insp-rel-name">${esc(n.short)}</span><span class="insp-end-meta">${n.year} · ${esc(branchTitle(n))}</span></button></li>`;
+  function relationBody(e) {
+    const s = nodeById.get(e.source);
+    const t = nodeById.get(e.target);
+    return `<span class="chip">${dot(s)}${e.crossBranch ? dot(t) : ''}${esc(whereOf(e))}</span>
+      <h2 class="insp-title insp-rel-title" tabindex="-1">${relHead(e)}</h2>
+      <p class="insp-meta">${esc(whenOf(e))}</p>
+      ${e.note ? `<p class="insp-problem insp-relnote">${esc(e.note)}</p>` : ''}`;
+  }
+  function openRelation(e) {
+    const s = nodeById.get(e.source);
+    const t = nodeById.get(e.target);
+    showInspector(
+      `<div class="insp-top insp-top-end">
+          <button type="button" class="icon-btn insp-close" aria-label="${esc(STR.close)}">${closeIcon}</button>
+        </div>
+        ${relationBody(e)}
+        <h3 class="insp-h">${esc(STR.theTwo)}</h3>
+        <ul class="insp-rels">${endButton(t)}${endButton(s)}</ul>
+        <div class="insp-actions">
+          <a class="btn btn-sm btn-primary" href="${root}/nodes/${esc(t.id)}/">${esc(fill(STR.openWork, { name: labelOf(t) }))}</a>
+          <a class="btn btn-sm" href="${root}/nodes/${esc(s.id)}/">${esc(fill(STR.openWork, { name: labelOf(s) }))}</a>
+        </div>`,
+      t.branch,
+    );
+  }
+
   function closeInspector() {
-    inspector.classList.remove('is-open');
+    inspector.classList.remove('is-open', 'is-tour');
     inspector.hidden = true;
     inspector.innerHTML = '';
   }
 
   inspector.addEventListener('click', (ev) => {
-    if (ev.target.closest('.insp-close')) return selectNode(null, { returnFocus: true });
+    if (ev.target.closest('.insp-close')) {
+      if (tour) return endTour();
+      return selectNode(null, { returnFocus: true });
+    }
+    if (ev.target.closest('[data-tour-next]')) return tourStep(1);
+    if (ev.target.closest('[data-tour-prev]')) return tourStep(-1);
     const go = ev.target.closest('[data-goto]');
     if (go) selectNode(go.dataset.goto, { scroll: true, focusInspector: true });
   });
@@ -865,8 +965,10 @@ export function mountAtlas({ el, data, root, strings: STR }) {
   ).observe(el);
 
   // ---------------------------------------------------------------- selection
-  function selectNode(id, { scroll = false, focusInspector = false, returnFocus = false } = {}) {
+  // (a reader's own pick ends a running tour; the tour's own picks don't)
+  function selectNode(id, { scroll = false, focusInspector = false, returnFocus = false, fromTour = false, inspect = true } = {}) {
     if (id && !nodeById.has(id)) return;
+    if (tour && !fromTour) leaveTour({ reshow: false });
     const prev = selectedId;
     // focus that lives in the inspector would vanish with its content
     const focusInside = inspector.contains(document.activeElement) || document.activeElement === document.body;
@@ -878,38 +980,54 @@ export function mountAtlas({ el, data, root, strings: STR }) {
       render();
       const idx = view.years.findLastIndex((y) => y <= keepYear);
       setYearIdx(idx === -1 ? 0 : idx);
-      emitFilter();
     }
     // … and a work beyond the time machine's cursor rewinds it forward
     if (id && view.yearIdx.get(nodeById.get(id).year) > currentIdx) {
       setYearIdx(view.years.length - 1);
     }
     selectedId = id;
+    selectedEdge = null;
     hoverId = null;
     hideTip();
     paintFocus();
-    if (id) openInspector(nodeById.get(id));
-    else closeInspector();
+    if (id && inspect) openInspector(nodeById.get(id));
+    else if (!tour) closeInspector();
     setInset();
     placeDrawer();
     syncUrl();
     // next frame: a smooth scroll started inside the click's own task can be
     // swallowed by the drawer's opening frame
-    if (id) requestAnimationFrame(() => ensureVisible(id, scroll));
+    if (id && !fromTour) requestAnimationFrame(() => ensureVisible(id, scroll));
     if (lastInput === 'keyboard') {
       if (id && focusInspector) inspector.querySelector('.insp-title')?.focus({ preventScroll: true });
-      if (!id && prev && (returnFocus || focusInside)) nodeEl(prev)?.focus({ preventScroll: true });
+      // (in 3D the works are beads, not links: focus goes back to the stage)
+      if (!id && prev && (returnFocus || focusInside)) (mode === '3d' ? stage3d : nodeEl(prev))?.focus({ preventScroll: true });
     }
+  }
+
+  function selectEdge(e, { fromTour = false } = {}) {
+    if (tour && !fromTour) leaveTour({ reshow: false });
+    selectedEdge = e;
+    selectedId = null;
+    hoverEdge = null;
+    hideTip();
+    paintFocus();
+    if (e && !fromTour) openRelation(e);
+    else if (!e && !tour) closeInspector();
+    setInset();
+    placeDrawer();
+    syncUrl();
   }
 
   // The inspector covers part of the chart — a drawer on the right on a desk,
   // a sheet at the bottom on a phone. While it is open the chart gains room
-  // to scroll out from under the drawer, and the selected work is kept in
-  // the part that stays visible.
+  // to scroll out from under the drawer (in 3D, the picture slides out from
+  // under it), and the selected work is kept in the part that stays visible.
   const drawer = () => innerWidth > 900;
   let insetTimer = null;
   function setInset() {
-    const next = selectedId && drawer() && !inspector.hidden ? inspector.offsetWidth + 28 : 0;
+    if (three) three.setInset(inset3d());
+    const next = !inspector.hidden && drawer() ? inspector.offsetWidth + 28 : 0;
     const apply = () => {
       insetRight = next;
       stage.style.width = `${Math.ceil(view.W * k) + insetRight}px`;
@@ -918,12 +1036,20 @@ export function mountAtlas({ el, data, root, strings: STR }) {
     clearTimeout(insetTimer);
     // closing: glide back first, so the room doesn't vanish with a jump
     const max = Math.max(0, Math.ceil(view.W * k) + next - scroller.clientWidth);
-    if (next < insetRight && scroller.scrollLeft > max + 1 && !reducedMotion()) {
+    if (mode === '2d' && next < insetRight && scroller.scrollLeft > max + 1 && !reducedMotion()) {
       scroller.scrollTo({ left: max, behavior: 'smooth' });
       insetTimer = setTimeout(apply, 400);
     } else {
       apply();
     }
+  }
+  // how much of the 3D stage the inspector covers
+  function inset3d() {
+    if (inspector.hidden || mode !== '3d') return { right: 0, bottom: 0 };
+    const s = stage3d.getBoundingClientRect();
+    if (drawer()) return { right: Math.max(0, s.right - (innerWidth - 12 - inspector.offsetWidth) + 16), bottom: 0 };
+    const top = innerHeight - inspector.offsetHeight;
+    return { right: 0, bottom: clamp(s.bottom - top, 0, s.height * 0.62) };
   }
 
   const headerH = () =>
@@ -958,13 +1084,29 @@ export function mountAtlas({ el, data, root, strings: STR }) {
   };
   window.addEventListener('scroll', markScrolling, { passive: true });
   scroller.addEventListener('scroll', markScrolling, { passive: true });
-  window.addEventListener('resize', () => requestAnimationFrame(placeDrawer));
+  window.addEventListener('resize', () =>
+    requestAnimationFrame(() => {
+      placeDrawer();
+      if (mode === '3d') {
+        sizeStage();
+        setInset();
+      }
+    }),
+  );
 
   // center = bring it to the middle of the visible part (search, deep links,
   // walking the inspector); otherwise scroll only as far as it takes. The
   // vertical target is solved for where the sticky head will END UP: it
   // only pins under the site header once the atlas top has scrolled past.
   function ensureVisible(id, center = false, behavior = reducedMotion() ? 'auto' : 'smooth') {
+    if (mode === '3d') {
+      // the stage first (it fills the screen once the head is pinned), then the camera
+      const atlasTop = el.getBoundingClientRect().top + window.scrollY;
+      const pinned = atlasTop - headerH();
+      if (Math.abs(window.scrollY - pinned) > 2 && (center || !stageInView())) window.scrollTo({ top: pinned, behavior });
+      three?.ensureVisible(id, center);
+      return;
+    }
     const p = view.pos.get(id);
     if (!p) return;
     const m = 28;
@@ -1003,13 +1145,34 @@ export function mountAtlas({ el, data, root, strings: STR }) {
       else if (nodeTop - sy < visTop + m) target = nodeTop - (hh + headH + m);
     }
     // with the inspector open, step all the way into the atlas: head pinned
-    if (selectedId && !inspector.hidden) target = Math.max(target, atlasTop - hh);
+    if ((selectedId || selectedEdge) && !inspector.hidden) target = Math.max(target, atlasTop - hh);
     if (Math.abs(target - sy) > 1) window.scrollTo({ top: Math.max(0, target), behavior });
   }
+  const stageInView = () => {
+    const r = stage3d.getBoundingClientRect();
+    return r.top >= headerH() - 2 && r.bottom <= innerHeight + 2;
+  };
 
   window.addEventListener('atlas:focus', (ev) => selectNode(ev.detail?.id, { scroll: true }));
+  window.addEventListener('atlas:tour', (ev) => startTour(ev.detail?.id ?? tours[0]?.id));
   document.addEventListener('keydown', (ev) => {
-    if (ev.key === 'Escape' && selectedId && !document.querySelector('dialog[open]')) selectNode(null);
+    if (document.querySelector('dialog[open]')) return;
+    if (ev.key === 'Escape') {
+      if (toursMenu && !toursMenu.hidden) return closeToursMenu(true);
+      if (tour) return endTour();
+      if (selectedId || selectedEdge) selectNode(null);
+      return;
+    }
+    // a tour turns its pages with the arrow keys — plain ones (Alt+← is the
+    // browser's Back), while the atlas is on screen, unless something in it
+    // wants them (the year slider, the 3D stage)
+    if (!tour || (ev.key !== 'ArrowRight' && ev.key !== 'ArrowLeft')) return;
+    if (ev.altKey || ev.metaKey || ev.ctrlKey || ev.shiftKey || !atlasInView || headLow) return;
+    const t = ev.target;
+    const ours = t === document.body || inspector.contains(t) || (el.contains(t) && !t.closest('input, textarea, select, .at-3d'));
+    if (!ours) return;
+    ev.preventDefault();
+    tourStep(ev.key === 'ArrowRight' ? 1 : -1);
   });
 
   // ---------------------------------------------------------------- time machine
@@ -1030,6 +1193,8 @@ export function mountAtlas({ el, data, root, strings: STR }) {
     range.setAttribute('aria-valuetext', `${years[currentIdx]} — ${shown} / ${nodes.length}`);
     histo.selectAll('.at-histo-col').classed('is-future', (_d, i) => i > currentIdx);
     histo.select('.at-histo-cursor').attr('transform', `translate(${histoX(currentIdx)},0)`);
+    // (a tour stop is a close-up: the time machine moves, its sheet stays out of it)
+    three?.setYear(currentIdx, { playing: isPlaying, quiet: Boolean(tour) });
     placeAxis();
     placeNow();
     syncUrl();
@@ -1043,28 +1208,53 @@ export function mountAtlas({ el, data, root, strings: STR }) {
     nowLine.attr('x1', x).attr('x2', x).classed('is-on', playingOrPast);
   }
 
+  // Replaying the years. Flat, at a steady beat; in 3D, a busy year takes
+  // longer — there is more to watch arrive.
   let playTimer = null;
+  let isPlaying = false;
+  const stepDelay = (idx) => {
+    if (mode !== '3d') return 650;
+    const n = view.nodes.filter((x) => x.year === view.years[idx]).length;
+    return clamp(380 + n * 110, 560, 1800);
+  };
   function stopPlay() {
-    clearInterval(playTimer);
+    clearTimeout(playTimer);
     playTimer = null;
+    if (!isPlaying) return;
+    isPlaying = false;
     playBtn.classList.remove('is-playing');
-    playBtn.setAttribute('aria-label', STR.play);
+    setPlayLabel();
+    three?.setYear(currentIdx, { playing: false, quiet: Boolean(tour) });
   }
-  playBtn.addEventListener('click', () => {
-    if (playTimer) return stopPlay();
-    if (currentIdx >= view.years.length - 1) setYearIdx(0);
+  function setPlayLabel() {
+    const label = isPlaying ? STR.pause : mode === '3d' ? STR.play3d : STR.play;
+    playBtn.setAttribute('aria-label', label);
+    playBtn.title = label;
+  }
+  function startPlay() {
+    if (tour) leaveTour();
+    hideStatus();
+    isPlaying = true;
     playBtn.classList.add('is-playing');
-    playBtn.setAttribute('aria-label', STR.pause);
+    setPlayLabel();
+    if (currentIdx >= view.years.length - 1) setYearIdx(0);
+    else applyYear();
     followYear();
-    playTimer = setInterval(() => {
-      if (currentIdx >= view.years.length - 1) return stopPlay();
-      setYearIdx(currentIdx + 1);
-      followYear();
-    }, 650);
-  });
+    const tick = () => {
+      playTimer = setTimeout(() => {
+        if (currentIdx >= view.years.length - 1) return stopPlay();
+        setYearIdx(currentIdx + 1);
+        followYear();
+        if (currentIdx >= view.years.length - 1) playTimer = setTimeout(stopPlay, 600);
+        else tick();
+      }, stepDelay(currentIdx + 1));
+    };
+    tick();
+  }
+  playBtn.addEventListener('click', () => (isPlaying ? stopPlay() : startPlay()));
   // while replaying, keep the current year in view if the chart overflows
   function followYear() {
-    if (scroller.scrollWidth <= scroller.clientWidth) return;
+    if (mode === '3d' || scroller.scrollWidth <= scroller.clientWidth) return;
     const x = (view.x.get(view.years[currentIdx]) + MARK_X) * k;
     if (x > scroller.scrollLeft + scroller.clientWidth * 0.7 || x < scroller.scrollLeft) {
       scroller.scrollTo({ left: x - scroller.clientWidth * 0.4, behavior: 'smooth' });
@@ -1172,26 +1362,29 @@ export function mountAtlas({ el, data, root, strings: STR }) {
     return next.size ? next : new Set(all);
   }
 
-  el.querySelector('.at-toolbar').addEventListener('click', (ev) => {
+  el.querySelector('.at-filters').addEventListener('click', (ev) => {
     const chip = ev.target.closest('.at-chip');
     if (!chip) return;
     if (chip.dataset.branch) {
       activeBranches = toggle(activeBranches, branchIds, chip.dataset.branch, ev.altKey);
       if (selectedId && !activeBranches.has(nodeById.get(selectedId).branch)) {
         selectedId = null;
-        closeInspector();
+        if (!tour) closeInspector();
+      }
+      if (selectedEdge && !(activeBranches.has(nodeById.get(selectedEdge.source).branch) && activeBranches.has(nodeById.get(selectedEdge.target).branch))) {
+        selectedEdge = null;
+        if (!tour) closeInspector();
       }
       stopPlay();
       const keepYear = view.years[currentIdx] ?? Infinity;
       render();
       const idx = view.years.findLastIndex((y) => y <= keepYear);
       setYearIdx(idx === -1 ? 0 : idx);
-      emitFilter();
+      setInset();
     } else if (chip.dataset.kind) {
       activeKinds = toggle(activeKinds, kindIds, chip.dataset.kind, ev.altKey);
       renderChips();
       applyKinds();
-      emitFilter();
     }
   });
   typeBar.addEventListener('click', (ev) => {
@@ -1206,22 +1399,20 @@ export function mountAtlas({ el, data, root, strings: STR }) {
     const on = (id) => activeKinds.has(nodeById.get(id).kind);
     nodeSel.classed('is-kind-off', (n) => !activeKinds.has(n.kind));
     edgeSel.classed('is-kind-off', (e) => !on(e.source) && !on(e.target));
+    three?.setFilters(filters3d());
     syncUrl();
   }
 
+  // (the classes themselves are set by paintFocus: the relation in focus is exempt)
   function applyTypes() {
-    edgeSel.classed('is-type-off', (e) => !activeTypes.has(e.type));
-    hitSel.classed('is-type-off', (e) => !activeTypes.has(e.type));
+    three?.setFilters(filters3d());
     paintFocus();
     syncUrl();
   }
-
-  // the 3D floors mirror the atlas filters
-  function emitFilter() {
-    window.dispatchEvent(
-      new CustomEvent('atlas:filter', { detail: { branches: new Set(activeBranches), kinds: new Set(activeKinds) } }),
-    );
-  }
+  const filters3d = () => ({
+    kinds: activeKinds.size === kindIds.length ? null : activeKinds,
+    types: activeTypes.size === typeIds.length ? null : activeTypes,
+  });
 
   function syncUrl() {
     if (!view) return;
@@ -1235,10 +1426,439 @@ export function mountAtlas({ el, data, root, strings: STR }) {
     setList('edges', activeTypes, typeIds);
     if (currentIdx < view.years.length - 1) p.set('year', String(view.years[currentIdx]));
     else p.delete('year');
-    if (selectedId) p.set('focus', selectedId);
+    if (selectedId && !tour) p.set('focus', selectedId);
     else p.delete('focus');
+    if (mode === '3d') p.set('view', '3d');
+    else p.delete('view');
+    if (tour) {
+      p.set('tour', tour.def.id);
+      if (tour.i >= 0) p.set('step', String(tour.i + 1));
+      else p.delete('step');
+    } else {
+      p.delete('tour');
+      p.delete('step');
+    }
     const qs = p.toString();
     history.replaceState(null, '', `${location.pathname}${qs ? `?${qs}` : ''}${location.hash}`);
+  }
+
+  // ---------------------------------------------------------------- 3D
+  // three.js is its own chunk: fetched the first time it is asked for (or
+  // as soon as a pointer heads for the 3D button), never for a 2D reader
+  let three = null;
+  let threeLoading = null;
+  let switching = false;
+  let back2d = null; // where the reader was on the flat map, to land there again
+  function loadThree() {
+    if (!threeLoading) {
+      threeLoading = import('./atlas3d.js')
+        .then(({ mountAtlas3d }) => {
+          three = mountAtlas3d({
+            host: stage3d,
+            data,
+            strings: STR,
+            geom: { CAP_H, MARK_X, TEXT_X, PAD_R },
+            labelOf,
+            hooks: {
+              hover(hit, ev) {
+                hoverId = hit?.id ?? null;
+                hoverEdge = hit?.edge ?? null;
+                paintFocus();
+                if (hit?.id) showTip(ev, nodeTipHtml(nodeById.get(hit.id)));
+                else if (hit?.edge) showTip(ev, edgeTipHtml(hit.edge));
+                else hideTip();
+              },
+              move: (ev) => moveTip(ev),
+              click(hit, ev) {
+                hideTip();
+                if (hit?.id && (ev.metaKey || ev.ctrlKey)) {
+                  window.open(`${root}/nodes/${hit.id}/`, '_blank', 'noopener');
+                  return;
+                }
+                if (hit?.id) selectNode(selectedId === hit.id ? null : hit.id);
+                else if (hit?.edge) selectEdge(selectedEdge === hit.edge ? null : hit.edge);
+                else if (selectedId || selectedEdge) selectNode(null);
+              },
+            },
+          });
+          three.setLayout(view);
+          three.setFilters(filters3d());
+          three.setYear(currentIdx, { instant: true });
+          three.setFocus(focusState);
+          window.addEventListener('themechange', () => three.applyTheme());
+          return three;
+        })
+        .catch((err) => {
+          threeLoading = null;
+          throw err;
+        });
+    }
+    return threeLoading;
+  }
+  // (a pointer heading for the 3D button is a fair sign; a keyboard passing by is not)
+  for (const btn of modeBtns) {
+    btn.addEventListener('click', () => setMode(btn.dataset.mode));
+    if (btn.dataset.mode === '3d') btn.addEventListener('pointerenter', () => loadThree().catch(() => {}), { once: true });
+  }
+  // a short, polite word under the toolbar (the 3D view failing to load)
+  let statusTimer = null;
+  function showStatus(text) {
+    if (!status) return;
+    status.textContent = text;
+    status.hidden = false;
+    clearTimeout(statusTimer);
+    statusTimer = setTimeout(hideStatus, 6000);
+  }
+  function hideStatus() {
+    if (!status) return;
+    clearTimeout(statusTimer);
+    status.hidden = true;
+    status.textContent = '';
+  }
+
+  // the stage fills the screen between the pinned head and the time bar
+  let stageH = 0;
+  function sizeStage() {
+    const top = $('.at-head').offsetHeight + headerH();
+    const marginTop = parseFloat(getComputedStyle(stage3d).marginTop) || 0;
+    const time = $('.at-timebar');
+    const timeH = time.offsetHeight + (parseFloat(getComputedStyle(time).marginTop) || 0);
+    const h = Math.max(360, Math.round(innerHeight - top - marginTop - timeH));
+    // a phone's URL bar coming and going is not a reason to re-frame
+    if (Math.abs(h - stageH) < 2 || (stageH && Math.abs(h - stageH) < 90 && innerWidth === lastW)) return;
+    stageH = h;
+    lastW = innerWidth;
+    stage3d.style.height = `${h}px`;
+  }
+  let lastW = 0;
+
+  function setModeButtons(busy = false) {
+    for (const b of modeBtns) b.setAttribute('aria-pressed', String(b.dataset.mode === mode));
+    el.classList.toggle('is-loading-3d', busy);
+    $('.at-mode').setAttribute('aria-busy', String(busy));
+    const three3d = mode === '3d';
+    fitBtn.setAttribute('aria-label', three3d ? STR.resetView : STR.zoomFit);
+    fitBtn.title = three3d ? STR.resetView : STR.zoomFit;
+    setPlayLabel();
+  }
+
+  // The content point under the middle of what the flat chart shows now —
+  // and the chart's screen origin, so 3D can start on the very same picture.
+  function region2d() {
+    const r = svgEl.getBoundingClientRect();
+    const s = scroller.getBoundingClientRect();
+    const top = Math.max(s.top, $('.at-head').getBoundingClientRect().bottom);
+    const bottom = Math.min(s.bottom, $('.at-timebar').getBoundingClientRect().top, innerHeight);
+    const right = s.right - (inspector.hidden || !drawer() ? 0 : inspector.offsetWidth + 24);
+    return {
+      cx: clamp(((s.left + right) / 2 - r.left) / k, 0, view.W),
+      cy: clamp(((top + Math.max(top, bottom)) / 2 - r.top) / k, 0, view.H),
+      origin: { left: r.left, top: r.top },
+    };
+  }
+
+  async function setMode(next, { instant = false, pin = true } = {}) {
+    if (switching || next === mode) return;
+    switching = true;
+    hideTip();
+    hoverId = null;
+    hoverEdge = null;
+    try {
+      if (next === '3d') {
+        setModeButtons(true);
+        await loadThree();
+        hideStatus();
+        // measured after the chunk arrived: the reader may have scrolled meanwhile
+        const before = region2d();
+        const wasPinned = el.getBoundingClientRect().top <= headerH() + 1;
+        const onScreen = el.getBoundingClientRect().top < innerHeight - 120;
+        mode = '3d';
+        el.classList.add('is-3d');
+        stage3d.hidden = false;
+        stageH = 0;
+        sizeStage();
+        // pin the head, so the stage fills the screen (only if the reader is here)
+        if (pin && (wasPinned || onScreen)) window.scrollTo(0, el.getBoundingClientRect().top + window.scrollY - headerH());
+        three.setInset(inset3d());
+        // start on the picture the flat chart was showing, pixel for pixel
+        const s = stage3d.getBoundingClientRect();
+        const lens = inset3d();
+        const from = {
+          cx: (s.left + s.width / 2 - lens.right / 2 - before.origin.left) / k,
+          cy: (s.top + s.height / 2 - lens.bottom / 2 - before.origin.top) / k,
+          k,
+        };
+        if (!wasPinned) Object.assign(from, { cx: before.cx, cy: before.cy });
+        // coming back lands on this very point, under the very same pixel
+        back2d = { cx: from.cx, cy: from.cy };
+        three.setYear(currentIdx, { instant: true, playing: isPlaying, quiet: Boolean(tour) });
+        three.enter(from, { instant: instant || !onScreen });
+        // the room around the building fades in as it rises
+        requestAnimationFrame(() => el.classList.add('is-3d-up'));
+      } else {
+        // land back where the reader was — or on the selected work
+        const s = stage3d.getBoundingClientRect();
+        const lens = inset3d();
+        const X = s.left + s.width / 2 - lens.right / 2;
+        const Y = s.top + s.height / 2 - lens.bottom / 2;
+        const p = selectedId && view.pos.get(selectedId);
+        let to = p ? { cx: p.x + MARK_X, cy: p.y } : (back2d ?? { cx: view.W / 2, cy: 0 });
+        // keep the landing inside what the flat chart can scroll to
+        const maxLeft = Math.max(0, view.W * k + insetRight - s.width);
+        to = {
+          cx: clamp(to.cx, (X - s.left) / k, (X - s.left + maxLeft) / k),
+          cy: Math.max(to.cy, (Y - s.top) / k),
+          k,
+        };
+        el.classList.remove('is-3d-up');
+        const at = await three.exit(to, { instant });
+        mode = '2d';
+        el.classList.remove('is-3d');
+        stage3d.hidden = true;
+        applyZoom(k, null);
+        const r = svgEl.getBoundingClientRect();
+        scroller.scrollLeft += r.left + to.cx * k - at.x;
+        window.scrollBy(0, r.top + to.cy * k - at.y);
+        placeAxis();
+        setInset();
+        placeDrawer();
+        paintFocus();
+      }
+      // a tour carries on in the other mode: frame its stop again there
+      if (tour) frameTourStep();
+    } catch (err) {
+      console.error('atlas 3d:', err);
+      mode = '2d';
+      el.classList.remove('is-3d', 'is-3d-up');
+      stage3d.hidden = true;
+      showStatus(STR.error3d);
+    } finally {
+      switching = false;
+      setModeButtons();
+      setPlayLabel();
+      syncUrl();
+    }
+  }
+
+  bridgesBtn?.addEventListener('click', () => {
+    const on = Boolean(three?.toggleBridges());
+    bridgesBtn.setAttribute('aria-pressed', String(on));
+    el.classList.toggle('is-bridges', on);
+  });
+
+  // ---------------------------------------------------------------- tours
+  // A tour walks relations that are already recorded, one at a time; every
+  // word it shows comes from the works and the notes on their relations.
+  // Each stop sets the time machine to the newer work's year (what came
+  // later is not there yet), frames the stop, and lights it.
+  const fillCount = (s, n) => fill(s, { n });
+  function renderToursMenu() {
+    if (!toursMenu) return;
+    toursMenu.innerHTML = tours
+      .map((t) => {
+        const stops = t.steps.length;
+        return `<button type="button" class="at-tour-pick" data-tour="${esc(t.id)}">
+          <span class="at-tour-pick-title">${esc(t.title)}</span>
+          <span class="at-tour-pick-sum">${esc(t.summary)}</span>
+          <span class="at-tour-pick-n">${esc(fillCount(STR.tourStops, stops))}</span>
+        </button>`;
+      })
+      .join('');
+  }
+  function openToursMenu() {
+    toursMenu.hidden = false;
+    el.classList.add('is-menu-open');
+    toursBtn.setAttribute('aria-expanded', 'true');
+    toursMenu.querySelector('button')?.focus({ preventScroll: true });
+  }
+  function closeToursMenu(returnFocus = false) {
+    toursMenu.hidden = true;
+    el.classList.remove('is-menu-open');
+    toursBtn.setAttribute('aria-expanded', 'false');
+    if (returnFocus) toursBtn.focus({ preventScroll: true });
+  }
+  toursBtn?.addEventListener('click', () => (toursMenu.hidden ? openToursMenu() : closeToursMenu()));
+  toursMenu?.addEventListener('click', (ev) => {
+    const pick = ev.target.closest('[data-tour]');
+    if (!pick) return;
+    closeToursMenu();
+    startTour(pick.dataset.tour);
+  });
+  document.addEventListener('pointerdown', (ev) => {
+    if (toursMenu && !toursMenu.hidden && !ev.target.closest('.at-tours')) closeToursMenu();
+  });
+
+  async function startTour(id, at = -1) {
+    const def = tours.find((t) => t.id === id);
+    if (!def) return;
+    stopPlay();
+    tour = { def, i: clamp(at, -1, def.steps.length - 1) };
+    // the tour shows every branch
+    if (activeBranches.size !== branchIds.length) {
+      activeBranches = new Set(branchIds);
+      render();
+    }
+    el.scrollIntoView({ behavior: 'auto', block: 'start' });
+    // the card at once; the stop is framed once the map has lifted
+    if (mode !== '3d') {
+      showTourStep({ frame: false });
+      await setMode('3d');
+      // (3D could not load, or a switch was already under way: frame it here)
+      if (mode !== '3d') frameTourStep();
+      return;
+    }
+    showTourStep();
+  }
+  function tourStep(d) {
+    if (!tour) return;
+    const i = tour.i + d;
+    if (i >= tour.def.steps.length) return endTour();
+    tour.i = clamp(i, -1, tour.def.steps.length - 1);
+    showTourStep();
+  }
+  // stop touring (a reader's own action took over): the years the tour had
+  // rewound come back; what the stop had in focus stays, in the inspector as
+  // a reader's own pick (unless the reader is picking something else anyway)
+  function leaveTour({ reshow = true } = {}) {
+    if (!tour) return;
+    tour = null;
+    inspector.classList.remove('is-tour');
+    if (currentIdx < view.years.length - 1) setYearIdx(view.years.length - 1);
+    if (reshow) {
+      if (selectedId) openInspector(nodeById.get(selectedId));
+      else if (selectedEdge) openRelation(selectedEdge);
+      else closeInspector();
+      setInset();
+      placeDrawer();
+    }
+    syncUrl();
+  }
+  // stop touring and put everything back (focus returns to the Tours button)
+  function endTour() {
+    if (!tour) return;
+    const focusInside = inspector.contains(document.activeElement) || document.activeElement === document.body;
+    tour = null;
+    selectedId = null;
+    selectedEdge = null;
+    closeInspector();
+    setYearIdx(view.years.length - 1);
+    paintFocus();
+    setInset();
+    placeDrawer();
+    syncUrl();
+    three?.resetView();
+    if (focusInside && lastInput === 'keyboard') toursBtn?.focus({ preventScroll: true });
+  }
+  // a stop's works must be on the map: a branch hidden mid-tour comes back
+  function showBranchesOf(ids) {
+    const hidden = [...new Set(ids.map((id) => nodeById.get(id).branch))].filter((b) => !activeBranches.has(b));
+    if (!hidden.length) return;
+    const keepYear = view.years[currentIdx] ?? Infinity;
+    for (const b of hidden) activeBranches.add(b);
+    render();
+    const idx = view.years.findLastIndex((y) => y <= keepYear);
+    setYearIdx(idx === -1 ? 0 : idx);
+  }
+  // bring the stop into view: the camera in 3D, the page in 2D
+  function frameTourStep() {
+    if (!tour) return;
+    const { def, i } = tour;
+    if (i < 0) {
+      if (mode === '3d') three?.frameIds([...new Set(def.steps.flatMap((s) => (s.work ? [s.work] : [s.from, s.to])))]);
+      return;
+    }
+    const step = def.steps[i];
+    if (step.work) {
+      const { anc, desc } = lineageOf(step.work);
+      if (mode === '3d') three?.frameIds([step.work, ...desc, ...[...anc].filter((a) => edgeBetween(a, step.work))]);
+      else ensureVisible(step.work, true);
+    } else if (mode === '3d') three?.frameIds([step.from, step.to]);
+    else ensureVisible(step.to, true);
+  }
+
+  function showTourStep({ frame = true } = {}) {
+    if (!tour) return;
+    const { def, i } = tour;
+    const n = def.steps.length;
+    const head = `<div class="insp-top">
+        <span class="chip tour-chip"><span class="tour-dot"></span>${esc(STR.tour)} · ${i < 0 ? esc(fillCount(STR.tourStops, n)) : esc(fill(STR.tourStep, { i: i + 1, n }))}</span>
+        <button type="button" class="icon-btn insp-close" aria-label="${esc(STR.tourEnd)}" title="${esc(STR.tourEnd)}">${closeIcon}</button>
+      </div>
+      <p class="tour-title">${esc(def.title)}</p>
+      <div class="tour-progress" aria-hidden="true">${def.steps.map((_s, j) => `<span class="${j <= i ? 'is-done' : ''}"></span>`).join('')}</div>`;
+    const nav = (prevLabel, nextLabel) => `<div class="tour-nav">
+        ${prevLabel ? `<button type="button" class="btn btn-sm" data-tour-prev>← ${esc(prevLabel)}</button>` : '<span></span>'}
+        <button type="button" class="btn btn-sm btn-primary" data-tour-next>${esc(nextLabel)} →</button>
+      </div>`;
+    const last = view.years.length - 1;
+    // (screen readers hear each stop; keyboard focus stays on "Next")
+    const say = (text) => {
+      if (announce) announce.textContent = text;
+    };
+    if (i < 0) {
+      // the cover: what this walk is, and its stops
+      const names = def.steps.map((s) => (s.work ? labelOf(nodeById.get(s.work)) : `${labelOf(nodeById.get(s.to))} ← ${labelOf(nodeById.get(s.from))}`));
+      say(`${def.title}. ${fillCount(STR.tourStops, n)}.`);
+      selectedId = null;
+      selectedEdge = null;
+      setYearIdx(last);
+      paintFocus();
+      showInspector(
+        `${head}<h2 class="insp-title" tabindex="-1">${esc(def.title)}</h2>
+        <p class="insp-problem">${esc(def.summary)}</p>
+        <ol class="tour-stops">${names.map((x) => `<li>${esc(x)}</li>`).join('')}</ol>
+        ${nav(null, STR.tourBegin)}`,
+        nodeById.get(def.steps.at(-1).work ?? def.steps.at(-1).to).branch,
+      );
+    } else {
+      const step = def.steps[i];
+      const prevLabel = STR.tourPrev;
+      const nextLabel = i === n - 1 ? STR.tourFinish : STR.tourNext;
+      if (step.work) {
+        // a work: its whole lineage, with everything recorded after it
+        const w = nodeById.get(step.work);
+        showBranchesOf([w.id]);
+        setYearIdx(view.years.length - 1);
+        selectNode(w.id, { fromTour: true, inspect: false });
+        // the later works that answer to it (descent, not kinship: no "independent")
+        const kids = [...new Set(data.edges.filter((e) => e.source === w.id && e.type !== 'independent').map((e) => e.target))];
+        const kidBranches = new Set(kids.map((id) => nodeById.get(id).branch));
+        say(`${fill(STR.tourStep, { i: i + 1, n })}. ${w.short}.`);
+        showInspector(
+          `${head}<span class="chip">${dot(w)}${esc(branchTitle(w))}</span>
+          <h2 class="insp-title" tabindex="-1">${esc(w.short)}</h2>
+          <p class="insp-meta">${venueHtml(w)}</p>
+          <p class="insp-problem">${esc(w.problem)}</p>
+          ${kids.length ? `<p class="tour-fact">${esc(fill(kids.length === 1 ? STR.tourAnswerOne : kidBranches.size > 1 ? STR.tourAnswerAcross : STR.tourAnswerMany, { n: kids.length, b: kidBranches.size }))}</p>` : ''}
+          <div class="insp-actions"><a class="btn btn-sm" href="${root}/nodes/${esc(w.id)}/">${esc(STR.openPage)}</a></div>
+          ${nav(prevLabel, nextLabel)}`,
+          w.branch,
+        );
+      } else {
+        // a relation: the time machine stops at the newer work's year
+        const e = edgeBetween(step.from, step.to);
+        const t = nodeById.get(step.to);
+        showBranchesOf([step.from, step.to]);
+        const idx = view.years.findLastIndex((y) => y <= t.year);
+        setYearIdx(idx === -1 ? view.years.length - 1 : idx);
+        selectEdge(e, { fromTour: true });
+        say(`${fill(STR.tourStep, { i: i + 1, n })}. ${labelOf(t)} ${typeLabel(e.type)} ${labelOf(nodeById.get(step.from))}.`);
+        showInspector(
+          `${head}${relationBody(e)}
+          <div class="insp-actions">
+            <a class="btn btn-sm" href="${root}/nodes/${esc(t.id)}/">${esc(fill(STR.openWork, { name: labelOf(t) }))}</a>
+            <a class="btn btn-sm" href="${root}/nodes/${esc(step.from)}/">${esc(fill(STR.openWork, { name: labelOf(nodeById.get(step.from)) }))}</a>
+          </div>
+          ${nav(prevLabel, nextLabel)}`,
+          t.branch,
+        );
+      }
+    }
+    setInset();
+    placeDrawer();
+    if (frame) frameTourStep();
+    syncUrl();
+    if (lastInput === 'keyboard') inspector.querySelector('[data-tour-next]')?.focus({ preventScroll: true });
   }
 
   // ---------------------------------------------------------------- boot
@@ -1258,11 +1878,12 @@ export function mountAtlas({ el, data, root, strings: STR }) {
     currentIdx = idx === -1 ? 0 : idx;
   }
   render();
+  renderToursMenu();
   range.value = String(currentIdx);
-  emitFilter();
   // a wide chart opens on the recent years (where most of the field lives)
   if (scroller.scrollWidth > scroller.clientWidth) scroller.scrollLeft = scroller.scrollWidth;
   placeAxis();
+  setModeButtons();
   if (selectedId) {
     openInspector(nodeById.get(selectedId));
     paintFocus();
@@ -1271,17 +1892,27 @@ export function mountAtlas({ el, data, root, strings: STR }) {
     // a shared link lands on its work directly — no scroll show on page load
     ensureVisible(selectedId, true, 'auto');
   }
+  // a shared 3D link or tour opens lifted (without moving the page)
+  const tourParam = tours.find((t) => t.id === params.get('tour'));
+  if (tourParam) {
+    const step = Number(params.get('step'));
+    startTour(tourParam.id, Number.isFinite(step) && step > 0 ? step - 1 : -1);
+  } else if (params.get('view') === '3d') {
+    // (a shared work is brought into view, as in 2D: that pins the stage)
+    setMode('3d', { instant: true, pin: false }).then(() => selectedId && ensureVisible(selectedId, true, 'auto'));
+  }
 
   // refit when the page width changes (rotate, resize) — only if the reader
   // hasn't zoomed away from the default
   let lastDefault = k;
   new ResizeObserver(() => {
-    if (!view) return;
+    // (hidden while in 3D: nothing to measure)
+    if (!view || mode === '3d' || !scroller.clientWidth) return;
     const d = defaultK();
     if (Math.abs(k - lastDefault) < 0.001 && Math.abs(d - k) > 0.001) applyZoom(d, null);
     lastDefault = d;
     setInset();
   }).observe(scroller);
 
-  return { selectNode };
+  return { selectNode, setMode, startTour, get mode() { return mode; }, get three() { return three; } };
 }

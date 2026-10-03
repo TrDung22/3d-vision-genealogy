@@ -1,11 +1,13 @@
 ---
 /**
- * The atlas — the genealogy as a timeline map (logic in src/lib/atlas.js).
- * It reads /<lang>/graph.json, generated from src/content/, so adding
- * branches or nodes needs no change here. UI strings arrive through a data
- * attribute.
+ * The atlas — the genealogy as a timeline map, flat or lifted into 3D
+ * (logic in src/lib/atlas.js; the 3D view in src/lib/atlas3d.js, loaded on
+ * first use). It reads /<lang>/graph.json, generated from src/content/, so
+ * adding branches, nodes or tours needs no change here. UI strings arrive
+ * through a data attribute.
  */
 import Icon from './Icon.astro';
+import { buildGraph } from '../lib/graph';
 import { graphStrings, t, type Lang } from '../lib/i18n';
 
 interface Props {
@@ -15,6 +17,9 @@ interface Props {
 const { lang = 'en' } = Astro.props;
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const root = `${base}/${lang}`;
+const graph = await buildGraph(lang);
+const branchOf = new Map(graph.nodes.map((n) => [n.id, n.branch]));
+const bridges = graph.edges.filter((e) => branchOf.get(e.source) !== branchOf.get(e.target)).length;
 ---
 
 <section class="atlas" id="atlas" aria-label={t(lang, 'atlas.aria')} data-root={root} data-i18n={JSON.stringify(graphStrings(lang))}>
@@ -30,13 +35,46 @@ const root = `${base}/${lang}`;
           <div class="at-chips at-kinds" role="group" aria-label={t(lang, 'atlas.kinds')}></div>
         </div>
       </div>
-      <div class="at-zoom-ctl" role="group" aria-label={t(lang, 'atlas.zoom')}>
-        <button type="button" class="icon-btn at-zoom-out" aria-label={t(lang, 'atlas.zoomOut')} title={t(lang, 'atlas.zoomOut')}><Icon name="minus" size={16} /></button>
-        <button type="button" class="icon-btn at-zoom-fit" aria-label={t(lang, 'atlas.zoomFit')} title={t(lang, 'atlas.zoomFit')}><Icon name="fit" size={16} /></button>
-        <button type="button" class="icon-btn at-zoom-in" aria-label={t(lang, 'atlas.zoomIn')} title={t(lang, 'atlas.zoomIn')}><Icon name="plus" size={16} /></button>
+      <div class="at-tools">
+        {
+          graph.tours.length > 0 && (
+            <div class="at-tours">
+              <button type="button" class="btn btn-sm at-tours-btn" aria-expanded="false" aria-controls="at-tours-menu" title={t(lang, 'tour.menuHint')}>
+                <Icon name="route" size={15} /><span class="at-tools-label">{t(lang, 'tour.menu')}</span>
+              </button>
+              <div class="at-tours-menu" id="at-tours-menu" role="group" aria-label={t(lang, 'tour.menu')} hidden />
+            </div>
+          )
+        }
+        <div class="at-mode" role="group" aria-label={t(lang, 'atlas.view')}>
+          <button type="button" class="at-mode-btn" data-mode="2d" aria-pressed="true" title={t(lang, 'atlas.to2d')}><Icon name="map" size={15} /><span>2D</span></button>
+          <button type="button" class="at-mode-btn" data-mode="3d" aria-pressed="false" title={t(lang, 'atlas.to3d')}><Icon name="layers" size={15} /><span>3D</span></button>
+        </div>
+        <div class="at-zoom-ctl" role="group" aria-label={t(lang, 'atlas.zoom')}>
+          <button type="button" class="icon-btn at-zoom-out" aria-label={t(lang, 'atlas.zoomOut')} title={t(lang, 'atlas.zoomOut')}><Icon name="minus" size={16} /></button>
+          <button type="button" class="icon-btn at-zoom-fit" aria-label={t(lang, 'atlas.zoomFit')} title={t(lang, 'atlas.zoomFit')}><Icon name="fit" size={16} /></button>
+          <button type="button" class="icon-btn at-zoom-in" aria-label={t(lang, 'atlas.zoomIn')} title={t(lang, 'atlas.zoomIn')}><Icon name="plus" size={16} /></button>
+        </div>
+        <p class="at-status" role="status" hidden></p>
       </div>
     </div>
-    <div class="at-pad at-axis" aria-hidden="true"><svg></svg></div>
+    <div class="at-pad at-axis">
+      <svg aria-hidden="true"></svg>
+      <div class="at-hud">
+        <p class="at-hud-caption" aria-live="polite">
+          <span class="at-when-all">{t(lang, 'atlas.caption3d')}</span>
+          <span class="at-when-bridges">{t(lang, 'atlas.captionBridges').replace('{n}', String(bridges))}</span>
+        </p>
+        <button type="button" class="at-chip at-chip-sm at-bridges" aria-pressed="false" title={t(lang, 'atlas.bridgesHint')}>
+          <svg width="22" height="10" viewBox="0 0 22 10" aria-hidden="true"><defs><linearGradient id="at-bridge-grad" x1="0" x2="1"><stop offset="0" stop-color="#3987e5" /><stop offset="1" stop-color="#199e70" /></linearGradient></defs><path d="M1,9 C6,0 16,0 21,9" fill="none" stroke="url(#at-bridge-grad)" stroke-width="2" /></svg>
+          <span>{t(lang, 'atlas.bridgesOnly')}</span>
+        </button>
+        <span class="at-hud-hint">
+          <span class="at-hint-mouse">{t(lang, 'atlas.hint3d')}</span>
+          <span class="at-hint-touch">{t(lang, 'atlas.hint3dTouch')}</span>
+        </span>
+      </div>
+    </div>
   </div>
 
   <div class="at-pad">
@@ -46,6 +84,7 @@ const root = `${base}/${lang}`;
         <svg class="at-svg" role="group" aria-label={t(lang, 'graph.ariaTimeline')}></svg>
       </div>
     </div>
+    <div class="at-3d" role="region" tabindex="0" aria-label={t(lang, 'atlas.aria3d')} hidden></div>
     <noscript>
       <p class="at-noscript">
         {t(lang, 'graph.noscript')} <a href={`${root}/works/`}>{t(lang, 'nav.works')} →</a>
@@ -72,6 +111,7 @@ const root = `${base}/${lang}`;
   </div>
 
   <div class="at-tooltip" role="tooltip" hidden></div>
+  <p class="sr-only at-announce" aria-live="polite"></p>
 </section>
 
 <aside class="inspector" id="inspector" aria-label={t(lang, 'inspector.aria')} hidden></aside>
@@ -92,7 +132,8 @@ const root = `${base}/${lang}`;
       new Promise((r) => setTimeout(r, 2000)),
     ]).catch(() => {});
     const data = await (await fetch(`${root}/graph.json`)).json();
-    mountAtlas({ el, data, root, strings });
+    // (kept on the element: the page's own scripts and the tests reach it there)
+    (el as HTMLElement & { atlas?: unknown }).atlas = mountAtlas({ el, data, root, strings });
   })().catch((err) => console.error('atlas:', err));
 </script>
 
@@ -218,11 +259,157 @@ const root = `${base}/${lang}`;
     color: var(--muted);
   }
 
-  .at-zoom-ctl {
+  /* ---- tools: tours, 2D/3D, zoom ---- */
+  .at-tools {
+    position: relative;
     flex: none;
     margin-left: auto;
     display: flex;
+    align-items: center;
+    gap: 0.55rem;
+  }
+
+  /* while the tours menu is open the head (and the menu in it) rises above
+     the inspector */
+  .atlas.is-menu-open .at-head {
+    z-index: 50;
+  }
+
+  .at-status {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    z-index: 2;
+    margin: 0;
+    max-width: min(320px, calc(100vw - 24px));
+    padding: 0.5rem 0.75rem;
+    border-radius: 10px;
+    background: var(--tooltip-bg);
+    box-shadow: var(--shadow-lg);
+    font-size: 0.8rem;
+    color: var(--ink-2);
+  }
+
+  .at-zoom-ctl {
+    flex: none;
+    display: flex;
     gap: 0.3rem;
+  }
+
+  .at-mode {
+    display: inline-flex;
+    padding: 2px;
+    border-radius: 999px;
+    border: 1px solid var(--ring-strong);
+    background: var(--surface);
+  }
+
+  .at-mode-btn {
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    height: calc(1.95rem - 6px);
+    padding: 0 0.7rem;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--muted);
+    font: inherit;
+    font-size: 0.76rem;
+    font-weight: 650;
+    letter-spacing: 0.03em;
+    cursor: pointer;
+    transition: background-color 0.25s, color 0.25s;
+  }
+
+  .at-mode-btn:hover {
+    color: var(--ink);
+  }
+
+  .at-mode-btn[aria-pressed='true'] {
+    background: var(--ink);
+    color: var(--page);
+  }
+
+  /* three.js is on its way */
+  .atlas.is-loading-3d .at-mode-btn[data-mode='3d'] {
+    animation: at-busy 0.8s ease-in-out infinite alternate;
+  }
+
+  @keyframes at-busy {
+    to {
+      opacity: 0.4;
+    }
+  }
+
+
+  .at-tours-btn {
+    height: 1.95rem;
+    gap: 0.4rem;
+  }
+
+  .at-tours-btn[aria-expanded='true'] {
+    background: var(--surface-2);
+    border-color: var(--muted);
+  }
+
+  .at-tours-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    z-index: 40;
+    width: min(360px, calc(100vw - 24px));
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    padding: 0.45rem;
+    border-radius: 14px;
+    background: var(--surface);
+    box-shadow: var(--shadow-lg);
+  }
+
+  .at-tour-pick {
+    appearance: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.7rem 0.85rem 0.75rem;
+    border-radius: 10px;
+    border: 1px solid var(--ring);
+    background: transparent;
+    color: var(--ink-2);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.2s, border-color 0.2s;
+  }
+
+  .at-tour-pick:hover,
+  .at-tour-pick:focus-visible {
+    background: var(--surface-2);
+    border-color: var(--ring-strong);
+  }
+
+  .at-tour-pick-title {
+    font-family: var(--font-serif);
+    font-size: 1.3rem;
+    line-height: 1.15;
+    color: var(--ink);
+  }
+
+  .at-tour-pick-sum {
+    font-size: 0.8rem;
+    line-height: 1.45;
+  }
+
+  .at-tour-pick-n {
+    margin-top: 0.15rem;
+    font-family: var(--font-mono);
+    font-size: 0.64rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--muted);
   }
 
   .at-zoom-ctl .icon-btn {
@@ -234,6 +421,79 @@ const root = `${base}/${lang}`;
     display: block;
     width: 100%;
     height: 28px;
+  }
+
+  /* in 3D the axis row carries the caption, "bridges only" and the hints */
+  .at-hud {
+    display: none;
+  }
+
+  .atlas.is-3d .at-axis svg {
+    display: none;
+  }
+
+  .atlas.is-3d .at-hud {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    height: 28px;
+  }
+
+  .at-hud-caption {
+    flex: 1 1 auto;
+    min-width: 0;
+    margin: 0;
+    font-family: var(--font-mono);
+    font-size: 0.64rem;
+    line-height: 1;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--muted);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .at-when-bridges,
+  .atlas.is-bridges .at-when-all {
+    display: none;
+  }
+
+  .atlas.is-bridges .at-when-bridges {
+    display: inline;
+    color: var(--ink-2);
+  }
+
+  .at-chip-sm {
+    height: 22px;
+    padding: 0 0.6rem;
+    font-size: 0.72rem;
+  }
+
+  .at-bridges[aria-pressed='true'] {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--page);
+  }
+
+  .at-hud-hint {
+    flex: none;
+    font-size: 0.7rem;
+    color: var(--muted);
+  }
+
+  .at-hint-touch {
+    display: none;
+  }
+
+  @media (hover: none) {
+    .at-hint-mouse {
+      display: none;
+    }
+
+    .at-hint-touch {
+      display: inline;
+    }
   }
 
   .at-year {
@@ -255,6 +515,227 @@ const root = `${base}/${lang}`;
   .at-year.is-now {
     fill: var(--ink);
     font-weight: 700;
+  }
+
+  /* ---- the 3D stage: the same map, lifted (src/lib/atlas3d.js) ---- */
+  .atlas.is-3d .at-scroller {
+    display: none;
+  }
+
+  .at-3d {
+    position: relative;
+    margin-top: 0.9rem;
+    border-radius: var(--radius);
+    overflow: hidden;
+    outline: none;
+  }
+
+  /* the room around the building fades in once it is up — at the moment of
+     the switch the stage looks exactly like the flat chart did */
+  .at-3d::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    background: radial-gradient(70% 62% at 50% 42%, color-mix(in srgb, var(--surface) 72%, transparent), transparent);
+    box-shadow: inset 0 0 0 1px var(--ring);
+    opacity: 0;
+    transition: opacity 1.4s ease;
+  }
+
+  .atlas.is-3d-up .at-3d::before {
+    opacity: 1;
+  }
+
+  .at-3d:focus-visible:not([data-pointer])::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow: inset 0 0 0 2px var(--accent);
+    pointer-events: none;
+    z-index: 3;
+  }
+
+  .a3-gl {
+    position: relative;
+    z-index: 1;
+    display: block;
+    cursor: grab;
+  }
+
+  .a3-gl:active {
+    cursor: grabbing;
+  }
+
+  .a3-labels {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 2;
+    pointer-events: none;
+  }
+
+  /* the names inside the capsules, while the map lies flat: the atlas's own
+     type, at the atlas's own scale */
+  .a3-cap-text {
+    font-family: var(--font-sans);
+    font-size: calc(12px * var(--s, 1));
+    font-weight: 520;
+    line-height: 1;
+    color: var(--ink-2);
+    white-space: nowrap;
+  }
+
+  .a3-label {
+    padding: 1px 7px 2px;
+    border-radius: 7px;
+    border: 1px solid var(--ring);
+    background: color-mix(in srgb, var(--page) 82%, transparent);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 560;
+    white-space: nowrap;
+  }
+
+  .a3-label.is-self {
+    font-weight: 700;
+    border-color: var(--ink-2);
+  }
+
+  .a3-floor {
+    pointer-events: auto;
+    appearance: none;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.45rem;
+    padding: 0.16rem 0.7rem 0.22rem 0.55rem;
+    border-radius: 999px;
+    border: 1px solid color-mix(in srgb, var(--bc) 45%, transparent);
+    background: color-mix(in srgb, var(--page) 76%, transparent);
+    color: var(--ink);
+    font-family: var(--font-serif);
+    font-size: 1.1rem;
+    line-height: 1.1;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: opacity 0.2s;
+  }
+
+  .a3-floor:hover {
+    border-color: var(--bc);
+  }
+
+  .a3-floor.is-dim {
+    opacity: 0.4;
+  }
+
+  .a3-floor-dot {
+    align-self: center;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--bc);
+  }
+
+  .a3-floor-n {
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    color: var(--muted);
+  }
+
+  .a3-lane {
+    font-family: var(--font-sans);
+    font-size: 9.5px;
+    font-weight: 620;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--muted);
+    white-space: nowrap;
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+
+  .a3-lane.is-on {
+    opacity: 0.95;
+  }
+
+  /* flat, the floor and lane names wear the atlas's caption style */
+  .a3-labels.is-flat .a3-lane {
+    padding: 0 0.35rem;
+    border-radius: 4px;
+    font-size: clamp(8.5px, calc(16px * var(--s, 0.7)), 10.5px);
+    line-height: 1.25;
+    background: color-mix(in srgb, var(--page) 60%, transparent);
+  }
+
+  .a3-labels.is-flat .a3-floor {
+    gap: 0.55rem;
+    padding: 0 0.55rem 0.1rem 0.4rem;
+    border-color: transparent;
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--page) 72%, transparent);
+    font-size: clamp(0.95rem, calc(1.7rem * var(--s, 0.7)), 1.5rem);
+    line-height: 1.15;
+  }
+
+  .a3-labels.is-flat .a3-floor-dot {
+    width: 9px;
+    height: 9px;
+  }
+
+  .a3-labels.is-flat .a3-floor-n {
+    font-size: 0.7rem;
+  }
+
+  .a3-year {
+    font-family: var(--font-mono);
+    font-size: 10.5px;
+    color: var(--muted);
+    white-space: nowrap;
+    transition: color 0.2s;
+  }
+
+  .a3-year.is-future {
+    color: color-mix(in srgb, var(--muted) 45%, transparent);
+  }
+
+  .a3-year.is-now {
+    color: var(--ink);
+    font-weight: 700;
+  }
+
+  /* the time machine's year, large over the stage while the years run */
+  .a3-now {
+    position: absolute;
+    top: 0.9rem;
+    right: 1.3rem;
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    line-height: 1;
+    pointer-events: none;
+    opacity: 0;
+  }
+
+  .a3-now b {
+    font-family: var(--font-serif);
+    font-size: clamp(2.2rem, 4vw, 3.4rem);
+    font-weight: 400;
+    color: var(--ink);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .a3-now span {
+    margin-top: 0.35rem;
+    font-family: var(--font-mono);
+    font-size: 0.64rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--muted);
   }
 
   /* ---- the chart ---- */
@@ -720,8 +1201,19 @@ const root = `${base}/${lang}`;
     flex-wrap: nowrap;
   }
 
-  /* below a wide desk: one row of filters that scrolls, labels dropped */
-  @media (max-width: 1359px) {
+  /* below a wide desk: one row of filters that scrolls, labels dropped
+     (and the tours button says it with its icon) */
+  @media (max-width: 1599px) {
+    .at-tools-label {
+      display: none;
+    }
+
+    .at-tours-btn {
+      width: 1.95rem;
+      padding: 0;
+      justify-content: center;
+    }
+
     .at-filters {
       flex-wrap: nowrap;
       overflow-x: auto;
@@ -807,8 +1299,31 @@ const root = `${base}/${lang}`;
     color: var(--muted);
   }
 
-  .tip-rel em {
+  .tip-kicker-rel::before {
+    display: none;
+  }
+
+  .tip-rel {
+    display: block;
+    margin-top: 0.25rem;
+    font-size: 0.95rem;
+    line-height: 1.3;
+    color: var(--ink);
+  }
+
+  .tip-rel em,
+  .insp-rel-title em {
+    font-style: italic;
     color: var(--muted);
+  }
+
+  .tip-rel em.t-challenges,
+  .insp-rel-title em.t-challenges {
+    color: var(--danger);
+  }
+
+  .tip-rel + .tip-meta {
+    margin-top: 0.15rem;
   }
 
   .tip-hint {
@@ -1011,6 +1526,111 @@ const root = `${base}/${lang}`;
     font-weight: 560;
   }
 
+  .insp-top-end {
+    justify-content: flex-end;
+  }
+
+  .insp-title.insp-rel-title {
+    margin-top: 0.75rem;
+    font-size: 1.8rem;
+    line-height: 1.12;
+  }
+
+  .insp-relnote {
+    margin-top: 0.9rem;
+  }
+
+  .inspector .chip .dot + .dot {
+    margin-left: -0.3em;
+  }
+
+  .insp-end {
+    flex-wrap: wrap;
+  }
+
+  .insp-end .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex: none;
+  }
+
+  .insp-end-meta {
+    margin-left: auto;
+    font-family: var(--font-mono);
+    font-size: 0.68rem;
+    color: var(--muted);
+  }
+
+  /* ---- a guided tour, in the inspector's place ---- */
+  .tour-chip .tour-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--award);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--award) 24%, transparent);
+  }
+
+  .tour-title {
+    margin: 0.75rem 0 0.45rem;
+    font-family: var(--font-mono);
+    font-size: 0.66rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .tour-progress {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 1rem;
+  }
+
+  .tour-progress span {
+    flex: 1;
+    height: 3px;
+    border-radius: 2px;
+    background: var(--ring-strong);
+    transition: background-color 0.3s;
+  }
+
+  .tour-progress span.is-done {
+    background: var(--bc);
+  }
+
+  .is-tour .insp-title {
+    margin-top: 0.6rem;
+  }
+
+  .tour-stops {
+    margin: 1rem 0 0;
+    padding-left: 1.3rem;
+    font-size: 0.84rem;
+    line-height: 1.75;
+    color: var(--ink-2);
+  }
+
+  .tour-fact {
+    margin: 0.9rem 0 0;
+    padding: 0.6rem 0.8rem;
+    border-radius: 10px;
+    border: 1px solid var(--ring);
+    background: var(--page);
+    font-size: 0.84rem;
+    color: var(--ink-2);
+  }
+
+  .tour-nav {
+    position: sticky;
+    bottom: -1.6rem;
+    display: flex;
+    justify-content: space-between;
+    gap: 0.5rem;
+    margin: 1.2rem -1.3rem -1.6rem;
+    padding: 0.8rem 1.3rem 1.1rem;
+    background: linear-gradient(to bottom, transparent, var(--surface) 28%);
+  }
+
   .insp-note {
     margin: 0.3rem 0.3rem 0.5rem 2.45rem;
     font-size: 0.78rem;
@@ -1029,6 +1649,28 @@ const root = `${base}/${lang}`;
 
     .at-toolbar {
       gap: 0.6rem;
+    }
+
+    .at-tools {
+      gap: 0.4rem;
+    }
+
+    .at-mode-btn svg,
+    .at-hud-caption {
+      display: none;
+    }
+
+    .at-mode-btn {
+      padding: 0 0.6rem;
+    }
+
+    .atlas.is-3d .at-hud {
+      justify-content: space-between;
+    }
+
+    .a3-floor {
+      font-size: 0.9rem;
+      padding: 0.1rem 0.55rem 0.14rem 0.45rem;
     }
 
     /* the strip runs on past the edge: say so */
@@ -1070,6 +1712,32 @@ const root = `${base}/${lang}`;
 
     .inspector.is-away {
       transform: translateY(24px);
+    }
+
+    /* in 3D the sheet leaves the building room to be seen */
+    .atlas.is-3d + .inspector {
+      max-height: 50vh;
+    }
+  }
+
+  /* a phone: the filters get the whole first row, the tools the second */
+  @media (max-width: 640px) {
+    .at-toolbar {
+      flex-wrap: wrap;
+      row-gap: 0.45rem;
+    }
+
+    .at-filters {
+      flex: 1 0 100%;
+    }
+
+    .at-tools {
+      flex: 1 0 100%;
+      justify-content: flex-end;
+    }
+
+    .at-tours {
+      margin-right: auto;
     }
   }
 </style>

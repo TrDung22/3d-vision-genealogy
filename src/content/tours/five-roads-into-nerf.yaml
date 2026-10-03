@@ -1,0 +1,13 @@
+# A guided tour = a path through relations that already exist in the
+# genealogy. Every word a reader sees comes from the works and the notes
+# on their relations; a tour adds only this title and its one-line summary.
+title: Five roads into NeRF
+summary: The five works NeRF stands on in this genealogy, oldest first — then everything recorded as standing on NeRF.
+order: 1
+steps:
+  - { from: kajiya1984, to: nerf2020 }
+  - { from: deepsdf2019, to: nerf2020 }
+  - { from: srn2019, to: nerf2020 }
+  - { from: neuralvolumes2019, to: nerf2020 }
+  - { from: llff2019, to: nerf2020 }
+  - { work: nerf2020 }
