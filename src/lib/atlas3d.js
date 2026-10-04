@@ -187,7 +187,7 @@ const CAP_FRAG = /* glsl */ `
   }
 `;
 
-export function mountAtlas3d({ host, data, strings: STR, geom: G, labelOf, hooks }) {
+export function mountAtlas3d({ host, data, strings: STR, geom: G, labelOf, sampleRoute, hooks }) {
   // ------------------------------------------------------------- the data
   const nodeById = new Map(data.nodes.map((n) => [n.id, n]));
   const edges = data.edges; // sanitized and keyed by the atlas
@@ -398,6 +398,7 @@ export function mountAtlas3d({ host, data, strings: STR, geom: G, labelOf, hooks
       dT0: 0,
       dDur: 1,
       on: false, // shown under the filters, this frame
+      flat: null, // the atlas's own route for it, sampled (content units)
     };
     line.userData.rel = r;
     return r;
@@ -621,8 +622,6 @@ export function mountAtlas3d({ host, data, strings: STR, geom: G, labelOf, hooks
   const C2 = new THREE.Vector3();
   const A0 = new THREE.Vector3();
   const A1 = new THREE.Vector3();
-  const B1 = new THREE.Vector3();
-  const B2 = new THREE.Vector3();
   const tmp = new THREE.Vector3();
   const OFF = new THREE.Vector3(); // onFloor's own scratch: callers may pass tmp as `out`
   const bez = (p0, c1, c2, p1, t, out) => {
@@ -736,27 +735,7 @@ export function mountAtlas3d({ host, data, strings: STR, geom: G, labelOf, hooks
       const t = workById.get(r.e.target);
       if (!s.shown || !t.shown) continue;
       const u = (beadOf(s.f) + beadOf(t.f)) / 2;
-      // the flat curve, exactly as the atlas draws it
-      const sameYear = s.n.year === t.n.year;
-      if (sameYear) {
-        const dir = t.cy > s.cy ? 1 : -1;
-        const y0 = s.cy + (dir * G.CAP_H) / 2;
-        const y1 = t.cy - dir * (G.CAP_H / 2 + 2);
-        const bow = Math.min(46, 16 + Math.abs(t.cy - s.cy) * 0.2);
-        onFloor(s, s.cx + G.MARK_X, y0, A0);
-        onFloor(t, t.cx + G.MARK_X, y1, A1);
-        B1.copy(A0).add(tmp.set(-bow, 0, dir * 10));
-        B2.copy(A1).add(tmp.set(-bow, 0, -dir * 10));
-      } else {
-        const x0 = s.cx + s.w;
-        const x1 = t.cx - 2;
-        const dx = Math.max(14, (x1 - x0) * 0.5);
-        onFloor(s, x0, s.cy, A0);
-        onFloor(t, x1, t.cy, A1);
-        B1.copy(A0).add(tmp.set(dx, 0, 0));
-        B2.copy(A1).add(tmp.set(-dx, 0, 0));
-      }
-      // … and the same relation in the air
+      // the same relation in the air: an arc over a floor, a bridge between two
       P.copy(s.group.position);
       Q.copy(t.group.position);
       if (!r.bridge) {
@@ -772,12 +751,18 @@ export function mountAtlas3d({ host, data, strings: STR, geom: G, labelOf, hooks
         C1.set(P.x + (Q.x - P.x) * 0.2, P.y + dy * 0.55, P.z + bow);
         C2.set(Q.x - (Q.x - P.x) * 0.2, Q.y - dy * 0.55, Q.z + bow);
       }
-      A0.lerp(P, u);
-      A1.lerp(Q, u);
-      B1.lerp(C1, u);
-      B2.lerp(C2, u);
+      // … blended from the atlas's own route on the flat map (each point of
+      // it riding from the source's floor to the target's along the way)
+      const flat = u < 1 ? r.flat : null;
       for (let i = 0; i < SAMPLES; i++) {
-        bez(A0, B1, B2, A1, i / (SAMPLES - 1), tmp);
+        const ti = i / (SAMPLES - 1);
+        bez(P, C1, C2, Q, ti, tmp);
+        if (flat) {
+          onFloor(s, flat[i * 2], flat[i * 2 + 1], A0);
+          onFloor(t, flat[i * 2], flat[i * 2 + 1], A1);
+          A0.lerp(A1, ti).lerp(tmp, u);
+          tmp.copy(A0);
+        }
         posArr[i * 3] = tmp.x;
         posArr[i * 3 + 1] = tmp.y;
         posArr[i * 3 + 2] = tmp.z;
@@ -1599,6 +1584,10 @@ export function mountAtlas3d({ host, data, strings: STR, geom: G, labelOf, hooks
       w.cy = p.y;
       w.w = V.w.get(w.n.id);
       w.f = floorOfBranch.get(w.n.branch) ?? 0;
+    }
+    for (const r of relations) {
+      const route = V.routes.get(r.e.key);
+      r.flat = route ? sampleRoute(route, SAMPLES) : null;
     }
     relayout = glide ? { t0: performance.now(), dur: 700 } : null;
     if (!glide) for (const w of works) w.from = null;

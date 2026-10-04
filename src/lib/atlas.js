@@ -53,6 +53,15 @@ const MIN_YEAR_GAP = 40;
 const EDGE_GAP = 16; // capsule end → next capsule start, along a relation
 const LANE_GAP = 11; // the same, between neighbours in one lane
 const LABEL_FONT = '520 12px "Inter Variable", system-ui, sans-serif';
+// routing: how relations keep out of each other's way
+const PORT_SPAN = 14; // the ports on a capsule's rounded end share this much height
+const PORT_GAP = 4.5; // … and sit at most this far apart
+const CH_BASE = 10; // a same-year bracket's channel, left of its year's column
+const CH_GAP = 6; // … and the next channels out
+const STEEP_GAP = 9; // steep relations into one column keep their slopes this far apart
+const HOP = 16; // a hop over the works in between, above its row
+const HOP_GAP = 5; // … and a longer hop over a shorter one
+const HOP_RUN = 22; // the rise (and the fall) of a hop
 
 const K_MIN = 0.28;
 const K_MAX = 1.8;
@@ -253,33 +262,10 @@ export function mountAtlas({ el, data, root, strings: STR }) {
     }
     const H = y + 18;
 
-    // horizontal: a year starts once everything pointing into it has ended
+    // vertical order first (it doesn't depend on x): stacks are ordered by
+    // the mean height of their already-placed parents, to cut crossings
     const byYear = group(nodes, (n) => n.year);
     const inbound = group(edges, (e) => e.target);
-    const x = new Map();
-    const lastInLane = new Map();
-    years.forEach((yr, i) => {
-      let v = i === 0 ? LEFT : x.get(years[i - 1]) + MIN_YEAR_GAP;
-      for (const n of byYear.get(yr)) {
-        for (const e of inbound.get(n.id) ?? []) {
-          const s = nodeById.get(e.source);
-          if (s.year < yr) v = Math.max(v, x.get(s.year) + w.get(s.id) + EDGE_GAP);
-        }
-        const py = lastInLane.get(n.lane);
-        if (py !== undefined) {
-          const pw = Math.max(...stacks.get(`${n.lane}@${py}`).map((m) => w.get(m.id)));
-          v = Math.max(v, x.get(py) + pw + LANE_GAP);
-        }
-      }
-      x.set(yr, v);
-      for (const n of byYear.get(yr)) lastInLane.set(n.lane, yr);
-    });
-    const lastYear = years.at(-1);
-    const W = years.length
-      ? x.get(lastYear) + Math.max(...byYear.get(lastYear).map((n) => w.get(n.id))) + RIGHT
-      : 400;
-
-    // stacks ordered by the mean height of their already-placed parents
     const pos = new Map();
     for (const yr of years) {
       for (const [lane, members] of group(byYear.get(yr), (n) => n.lane)) {
@@ -289,37 +275,287 @@ export function mountAtlas({ el, data, root, strings: STR }) {
         };
         const sorted = [...members].sort((a, b) => bary(a) - bary(b) || a.short.localeCompare(b.short));
         sorted.forEach((n, i) => {
-          pos.set(n.id, { x: x.get(yr), y: laneMid.get(lane) + (i - (sorted.length - 1) / 2) * PITCH });
+          pos.set(n.id, { x: 0, y: laneMid.get(lane) + (i - (sorted.length - 1) / 2) * PITCH });
         });
       }
     }
 
+    // horizontal: a year starts once everything pointing into it has ended —
+    // and, on the rows where its channels' stubs run (below), once the works
+    // there have ended too (a channel's long vertical run may pass behind a
+    // work: the works are drawn on top, and that costs no width)
+    const placeColumns = (rooms) => {
+      const x = new Map();
+      const lastInLane = new Map();
+      years.forEach((yr, i) => {
+        let v = i === 0 ? LEFT : x.get(years[i - 1]) + MIN_YEAR_GAP;
+        for (const n of byYear.get(yr)) {
+          for (const e of inbound.get(n.id) ?? []) {
+            const s = nodeById.get(e.source);
+            if (s.year < yr) v = Math.max(v, x.get(s.year) + w.get(s.id) + EDGE_GAP);
+          }
+          const py = lastInLane.get(n.lane);
+          if (py !== undefined) {
+            const pw = Math.max(...stacks.get(`${n.lane}@${py}`).map((m) => w.get(m.id)));
+            v = Math.max(v, x.get(py) + pw + LANE_GAP);
+          }
+        }
+        for (const { y: ry, room } of rooms?.get(yr) ?? []) {
+          for (const m of nodes) {
+            if (m.year < yr && Math.abs(pos.get(m.id).y - ry) < CAP_H) v = Math.max(v, x.get(m.year) + w.get(m.id) + room);
+          }
+        }
+        x.set(yr, v);
+        for (const n of byYear.get(yr)) lastInLane.set(n.lane, yr);
+      });
+      return x;
+    };
+
+    // Channels. A relation within one year is a bracket down the left of its
+    // column, in a channel of its own: the shortest innermost, longer ones
+    // nesting outside — so no two vertical runs lie on top of each other.
+    // A steep relation (far more down than along) keeps its S-curve, but the
+    // relations falling into one column are given different places for their
+    // slopes ("slots", by the same nesting) so they fan out instead of running
+    // as one thick line.
+    const yearOf = (id) => nodeById.get(id).year;
+    const loose = placeColumns(null);
+    const isSteep = (e) => {
+      const s = nodeById.get(e.source);
+      const t = nodeById.get(e.target);
+      if (s.year === t.year) return false;
+      const dy = Math.abs(pos.get(t.id).y - pos.get(s.id).y);
+      const run = loose.get(t.year) - (loose.get(s.year) + w.get(s.id));
+      return dy > 60 && dy > 1.1 * Math.max(run, 1);
+    };
+    const nest = (list) => {
+      const items = list
+        .map((e) => {
+          const a = pos.get(e.source).y;
+          const b = pos.get(e.target).y;
+          return { e, lo: Math.min(a, b), hi: Math.max(a, b) };
+        })
+        .sort((p, q) => p.hi - p.lo - (q.hi - q.lo) || p.lo - q.lo);
+      const tracks = [];
+      const at = new Map();
+      for (const it of items) {
+        let c = 0;
+        while (tracks[c]?.some(([lo, hi]) => it.lo < hi + 6 && lo < it.hi + 6)) c++;
+        (tracks[c] ??= []).push([it.lo, it.hi]);
+        at.set(it.e.key, c);
+      }
+      return { items, at };
+    };
+    const slot = new Map(); // steep edge key → its slot, counted out from its target's column
+    for (const list of group(edges.filter(isSteep), (e) => yearOf(e.target)).values()) {
+      for (const [key, c] of nest(list).at) slot.set(key, c);
+    }
+    const channel = new Map(); // bracket edge key → channel index
+    const rooms = new Map(); // year → the rows its brackets' stubs run on, and the room each needs
+    for (const [yr, list] of group(edges.filter((e) => yearOf(e.source) === yearOf(e.target)), (e) => yearOf(e.target))) {
+      const { items, at } = nest(list);
+      for (const [key, c] of at) channel.set(key, c);
+      rooms.set(
+        yr,
+        items.flatMap((it) => {
+          const room = CH_BASE + channel.get(it.e.key) * CH_GAP + 2;
+          return [
+            { y: it.lo, room },
+            { y: it.hi, room },
+          ];
+        }),
+      );
+    }
+    const x = placeColumns(rooms);
+    for (const n of nodes) pos.get(n.id).x = x.get(n.year);
+    const lastYear = years.at(-1);
+    const W = years.length
+      ? x.get(lastYear) + Math.max(...byYear.get(lastYear).map((n) => w.get(n.id))) + RIGHT
+      : 400;
+
+    const routes = routeRelations({ nodes, edges, pos, w, channel, slot });
     const nbr = new Map(nodes.map((n) => [n.id, new Set([n.id])]));
     for (const e of edges) {
       nbr.get(e.source).add(e.target);
       nbr.get(e.target).add(e.source);
     }
-    return { nodes, lanes, edges, years, yearIdx, x, w, W, H, bands, laneTop, laneMid, pos, nbr };
+    return { nodes, lanes, edges, years, yearIdx, x, loose, rooms, w, W, H, bands, laneTop, laneMid, pos, nbr, routes, paths: new Map() };
   }
 
-  // relation path: forward in time → from the source capsule's end to the
-  // target capsule's start; same year → vertically, edge to edge, bowing left
-  function edgePath(e, v = view) {
-    const s = v.pos.get(e.source);
-    const t = v.pos.get(e.target);
-    if (nodeById.get(e.source).year === nodeById.get(e.target).year) {
-      const dir = t.y > s.y ? 1 : -1;
-      const x0 = s.x + MARK_X;
-      const x1 = t.x + MARK_X;
-      const y0 = s.y + (dir * CAP_H) / 2;
-      const y1 = t.y - dir * (CAP_H / 2 + 2);
-      const bow = Math.min(46, 16 + Math.abs(t.y - s.y) * 0.2);
-      return `M${x0},${y0} C${x0 - bow},${y0 + dir * 10} ${x1 - bow},${y1 - dir * 10} ${x1},${y1}`;
+  // ---------------------------------------------------------------- routes
+  // Where each relation runs, as cubic segments in content units — one answer
+  // for the flat chart (its SVG paths) and the 3D view (its flat state). The
+  // rules that keep relations from crowding one another:
+  //  · forward in time, a relation leaves its work's rounded right end and
+  //    arrives at the next one's rounded left end; when several share an
+  //    end they fan out along it (ports), ordered by where each one heads,
+  //    so they neither cross nor run on top of each other;
+  //  · a same-year relation is a bracket down the left of its year's column,
+  //    in a channel of its own (the layout leaves the channels room);
+  //  · a relation along one row that would pass behind the works in between
+  //    hops over them, a longer hop over a shorter one.
+  const R = CAP_H / 2;
+  const capArc = (dy) => Math.sqrt(Math.max(0, R * R - dy * dy));
+  // straight and rounded pieces, as cubic segments
+  const straight = (a, b) => [a, [a[0] + (b[0] - a[0]) / 3, a[1] + (b[1] - a[1]) / 3], [a[0] + ((b[0] - a[0]) * 2) / 3, a[1] + ((b[1] - a[1]) * 2) / 3], b];
+  const KAPPA = 0.5523; // a quarter circle, as a cubic
+  const turn = (a, corner, b) => [a, [a[0] + (corner[0] - a[0]) * KAPPA, a[1] + (corner[1] - a[1]) * KAPPA], [b[0] + (corner[0] - b[0]) * KAPPA, b[1] + (corner[1] - b[1]) * KAPPA], b];
+
+  function routeRelations({ nodes, edges, pos, w, channel, slot }) {
+    const yearOf = (id) => nodeById.get(id).year;
+    const bracket = (e) => yearOf(e.source) === yearOf(e.target);
+    // hops: a relation along one row with other works on it in between
+    const hops = new Map(); // key → { dir, x0, x1, level }
+    const occupied = (y, x0, x1, skip) =>
+      nodes.some((n) => !skip.has(n.id) && Math.abs(pos.get(n.id).y - y) < 1 && pos.get(n.id).x < x1 && pos.get(n.id).x + w.get(n.id) > x0);
+    for (const e of edges) {
+      if (bracket(e)) continue;
+      const s = pos.get(e.source);
+      const t = pos.get(e.target);
+      if (Math.abs(s.y - t.y) > 0.5) continue;
+      const x0 = s.x + w.get(e.source);
+      const x1 = t.x;
+      const skip = new Set([e.source, e.target]);
+      if (x1 - x0 < HOP_RUN * 2 + 4 || !occupied(s.y, x0, x1, skip)) continue;
+      // over the row if the row above is free there, else under it
+      const dir = occupied(s.y - PITCH, x0, x1, skip) && !occupied(s.y + PITCH, x0, x1, skip) ? 1 : -1;
+      hops.set(e.key, { dir, y: s.y, x0, x1, level: 0 });
     }
-    const x0 = s.x + v.w.get(e.source);
-    const x1 = t.x - 2;
-    const dx = Math.max(14, (x1 - x0) * 0.5);
-    return `M${x0},${s.y} C${x0 + dx},${s.y} ${x1 - dx},${t.y} ${x1},${t.y}`;
+    // a hop that spans another (same row, same side) goes over it
+    const hopList = [...hops.values()].sort((a, b) => a.x1 - a.x0 - (b.x1 - b.x0));
+    for (const h of hopList) {
+      for (const o of hopList) {
+        if (o !== h && o.dir === h.dir && Math.abs(o.y - h.y) < 1 && o.x0 >= h.x0 - 1 && o.x1 <= h.x1 + 1 && o.x1 - o.x0 < h.x1 - h.x0) {
+          h.level = Math.max(h.level, o.level + 1);
+        }
+      }
+    }
+
+    // ports: every end gets an order key (top → bottom), then its offset
+    const ends = new Map(); // `${id}:L|R` → [{ k, slot }]
+    const add = (id, side, k, slot) => {
+      const key = `${id}:${side}`;
+      (ends.get(key) ?? ends.set(key, []).get(key)).push({ k, slot });
+    };
+    const portDy = new Map(); // `${edge key}:s|t` → dy
+    // a channel's end: seen from the work, the run goes up or down from it —
+    // inner channels nearest the middle, so stubs and runs never cross
+    const byChannel = (above, c) => (above ? -2e6 + c : 2e6 - c);
+    for (const e of edges) {
+      const s = pos.get(e.source);
+      const t = pos.get(e.target);
+      if (bracket(e)) {
+        // a bracket leaves and enters on the left
+        const c = channel.get(e.key);
+        add(e.source, 'L', byChannel(t.y < s.y, c), `${e.key}:s`);
+        add(e.target, 'L', byChannel(s.y < t.y, c), `${e.key}:t`);
+        continue;
+      }
+      const h = hops.get(e.key);
+      if (h) {
+        const k = h.dir < 0 ? -1e6 - h.level : 1e6 + h.level;
+        add(e.source, 'R', k, `${e.key}:s`);
+        add(e.target, 'L', k, `${e.key}:t`);
+        continue;
+      }
+      const run = Math.max(1, t.x - (s.x + w.get(e.source)));
+      add(e.source, 'R', (t.y - s.y) / run, `${e.key}:s`);
+      add(e.target, 'L', (s.y - t.y) / run, `${e.key}:t`);
+    }
+    for (const list of ends.values()) {
+      list.sort((a, b) => a.k - b.k);
+      const n = list.length;
+      const gap = n > 1 ? Math.min(PORT_GAP, PORT_SPAN / (n - 1)) : 0;
+      list.forEach((it, i) => portDy.set(it.slot, (i - (n - 1) / 2) * gap));
+    }
+
+    const routes = new Map();
+    for (const e of edges) {
+      const s = pos.get(e.source);
+      const t = pos.get(e.target);
+      const ds = portDy.get(`${e.key}:s`);
+      const dt = portDy.get(`${e.key}:t`);
+      // the arrival point stops 2 short of the capsule, for the arrowhead
+      const end = [t.x + R - capArc(dt) - 2, t.y + dt];
+      if (bracket(e)) {
+        const start = [s.x + R - capArc(ds), s.y + ds];
+        const cx = s.x - CH_BASE - channel.get(e.key) * CH_GAP;
+        const dir = Math.sign(end[1] - start[1]) || 1;
+        const r = Math.min(5, Math.abs(end[1] - start[1]) / 2);
+        const a = [cx + r, start[1]];
+        const b = [cx, start[1] + dir * r];
+        const c = [cx, end[1] - dir * r];
+        const d = [cx + r, end[1]];
+        routes.set(e.key, [straight(start, a), turn(a, [cx, start[1]], b), straight(b, c), turn(c, [cx, end[1]], d), straight(d, end)]);
+        continue;
+      }
+      const start = [s.x + w.get(e.source) - R + capArc(ds), s.y + ds];
+      if (slot.has(e.key)) {
+        // steep: an S-curve whose slope sits at its own place in the gap
+        // (outer slots further from the target), both control points there
+        const x0 = start[0];
+        const x1 = end[0];
+        const span = x1 - x0;
+        const xv = clamp(x1 - 14 - slot.get(e.key) * STEEP_GAP, x0 + span * 0.18, x1 - span * 0.18);
+        const xt = clamp((8 * xv - x0 - x1) / 6, x0, x1);
+        routes.set(e.key, [[start, [xt, start[1]], [xt, end[1]], end]]);
+        continue;
+      }
+      const h = hops.get(e.key);
+      if (h) {
+        const yh = h.y + h.dir * (HOP + h.level * HOP_GAP);
+        const up = [start[0] + HOP_RUN, yh];
+        const down = [end[0] - HOP_RUN, yh];
+        routes.set(e.key, [
+          [start, [start[0] + HOP_RUN / 2, start[1]], [up[0] - HOP_RUN / 2, yh], up],
+          straight(up, down),
+          [down, [down[0] + HOP_RUN / 2, yh], [end[0] - HOP_RUN / 2, end[1]], end],
+        ]);
+        continue;
+      }
+      const dx = Math.max(14, (end[0] - start[0]) * 0.5);
+      routes.set(e.key, [[start, [start[0] + dx, start[1]], [end[0] - dx, end[1]], end]]);
+    }
+    return routes;
+  }
+
+  // a relation's SVG path, from its route
+  function edgePath(e, v = view) {
+    let d = v.paths.get(e.key);
+    if (d) return d;
+    const segs = v.routes.get(e.key);
+    const f = (p) => `${Math.round(p[0] * 100) / 100},${Math.round(p[1] * 100) / 100}`;
+    d = `M${f(segs[0][0])}${segs.map((g) => ` C${f(g[1])} ${f(g[2])} ${f(g[3])}`).join('')}`;
+    v.paths.set(e.key, d);
+    return d;
+  }
+
+  // a route as n points evenly spaced along it (the 3D view's flat state)
+  function sampleRoute(segs, n) {
+    const dense = [];
+    for (const [p0, c1, c2, p1] of segs) {
+      for (let i = dense.length ? 1 : 0; i <= 16; i++) {
+        const t = i / 16;
+        const u = 1 - t;
+        const a = u * u * u;
+        const b = 3 * u * u * t;
+        const c = 3 * u * t * t;
+        const d = t * t * t;
+        dense.push([a * p0[0] + b * c1[0] + c * c2[0] + d * p1[0], a * p0[1] + b * c1[1] + c * c2[1] + d * p1[1]]);
+      }
+    }
+    const run = [0];
+    for (let i = 1; i < dense.length; i++) run.push(run[i - 1] + Math.hypot(dense[i][0] - dense[i - 1][0], dense[i][1] - dense[i - 1][1]));
+    const total = run.at(-1) || 1;
+    const out = new Float32Array(n * 2);
+    for (let i = 0, j = 0; i < n; i++) {
+      const want = (i / (n - 1)) * total;
+      while (j < run.length - 2 && run[j + 1] < want) j++;
+      const k = run[j + 1] > run[j] ? (want - run[j]) / (run[j + 1] - run[j]) : 0;
+      out[i * 2] = dense[j][0] + (dense[j + 1][0] - dense[j][0]) * k;
+      out[i * 2 + 1] = dense[j][1] + (dense[j + 1][1] - dense[j][1]) * k;
+    }
+    return out;
   }
 
   // ---------------------------------------------------------------- render
@@ -1459,6 +1695,7 @@ export function mountAtlas({ el, data, root, strings: STR }) {
             strings: STR,
             geom: { CAP_H, MARK_X, TEXT_X, PAD_R },
             labelOf,
+            sampleRoute,
             hooks: {
               hover(hit, ev) {
                 hoverId = hit?.id ?? null;
@@ -1914,5 +2151,5 @@ export function mountAtlas({ el, data, root, strings: STR }) {
     setInset();
   }).observe(scroller);
 
-  return { selectNode, setMode, startTour, get mode() { return mode; }, get three() { return three; } };
+  return { selectNode, setMode, startTour, get mode() { return mode; }, get three() { return three; }, get view() { return view; } };
 }
