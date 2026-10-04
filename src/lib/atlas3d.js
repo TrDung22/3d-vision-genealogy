@@ -35,6 +35,7 @@ const LIFT = 10; // a bead floats this far above its floor
 const SPREAD = 0.12; // unfolded, floors keep this share of their map offset: terraces, not a stack
 const ZUP = 0.5; // … and their rows close up to half the depth: long glass strips, as a building
 const TOP = 0.0001; // looking straight down (phi), just off the pole
+const TAG_OUT = 24; // lifted, a floor's name hangs this far off the floor's old end
 
 const esc = (s) =>
   String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' })[c]);
@@ -558,7 +559,8 @@ export function mountAtlas3d({ host, data, strings: STR, geom: G, labelOf, sampl
       gridGeo.setAttribute('position', new THREE.Float32BufferAttribute(grid, 3));
       const gridLines = new THREE.LineSegments(gridGeo, new THREE.LineBasicMaterial({ transparent: true }));
       group.add(gridLines);
-      // the floor's name at its back-left corner (where the atlas writes it);
+      // the floor's name at its back-left corner (where the atlas writes it)
+      // while the map lies flat, off the floor's old end once it is lifted;
       // lane names along its left edge
       const br = branchById.get(b.branch);
       const tag = document.createElement('button');
@@ -594,7 +596,7 @@ export function mountAtlas3d({ host, data, strings: STR, geom: G, labelOf, sampl
       scene.add(group);
       const from = old.get(b.branch) ?? null;
       if (from) group.position.copy(from);
-      return { branch: b.branch, f, band: b, depth, mid, group, glass, rim, bar, laneRules, gridLines, tag, tagObj, laneTags, laneObjs, from };
+      return { branch: b.branch, f, band: b, depth, mid, group, glass, rim, bar, laneRules, gridLines, tag, tagObj, laneTags, laneObjs, from, u: 0, side: 1 };
     });
 
     // the year axis
@@ -624,6 +626,8 @@ export function mountAtlas3d({ host, data, strings: STR, geom: G, labelOf, sampl
   const A1 = new THREE.Vector3();
   const tmp = new THREE.Vector3();
   const OFF = new THREE.Vector3(); // onFloor's own scratch: callers may pass tmp as `out`
+  const END0 = new THREE.Vector3(); // cull's own: a floor's two ends on screen
+  const END1 = new THREE.Vector3();
   const bez = (p0, c1, c2, p1, t, out) => {
     const u = 1 - t;
     return out
@@ -671,9 +675,14 @@ export function mountAtlas3d({ host, data, strings: STR, geom: G, labelOf, sampl
       else fl.group.position.copy(tmp);
       fl.group.scale.z = zScale(fl.f);
       // flat, the names sit where the atlas writes its captions: a fixed
-      // number of pixels in from the chart's left edge
+      // number of pixels in from the chart's left edge; lifted, each hangs
+      // off its floor's old end, clear of the oldest works on it (on the
+      // side the floor's end faces — see cull)
       const u = smooth(0, 0.5, tFloor(fl.f));
-      fl.tagObj.position.x = -V.W / 2 + lerp(14 / flatK, 12, u);
+      fl.u = u;
+      fl.tagObj.position.x = -V.W / 2 + lerp(14 / flatK, -TAG_OUT, u);
+      fl.tagObj.position.z = lerp(-fl.depth / 2 + 25, 0, u);
+      fl.tagObj.center.x = u * fl.side;
       for (const o of fl.laneObjs) o.position.x = -V.W / 2 + lerp(20 / flatK, 22, u);
     }
     // the axis follows the lowest floor's front edge
@@ -887,7 +896,8 @@ export function mountAtlas3d({ host, data, strings: STR, geom: G, labelOf, sampl
       w.core.material.opacity = alpha;
       w.glow.material.opacity = (isLight() ? 0.42 : 0.55) * (on ? (rel && on ? 1.15 : 1) : 0.2);
       if (w.ring) w.ring.material.opacity = on ? 1 : 0.15;
-      w.labelObj.visible = named.has(w.n.id) && w.born;
+      // (names over beads are for the floors: flat, the capsules carry their own)
+      w.labelObj.visible = named.has(w.n.id) && w.born && T > 0.45;
       w.label.classList.toggle('is-self', w.n.id === id);
     }
     for (const r of relations) {
@@ -1306,17 +1316,32 @@ export function mountAtlas3d({ host, data, strings: STR, geom: G, labelOf, sampl
   const overlaps = (a, b, pad = 6) =>
     a.width > 0 && b.width > 0 && a.left < b.right + pad && b.left < a.right + pad && a.top < b.bottom + pad && b.top < a.bottom + pad;
   // Names give way to one another, in one pass — every measurement first,
-  // then every change, so the page lays out once. Floor names stick to the
-  // frame's left edge (as the atlas's captions do) and step up out of each
-  // other's way; names over beads keep their places by priority (the work in
-  // focus, the ends of the relation in focus, then the nearest); floor names
-  // give way to those; lane names come last (one cut by the frame's edge
-  // says nothing); the years give way to all of them, the time machine's
-  // year keeping its own place.
+  // then every change, so the page lays out once. Floor names stay inside
+  // the frame (sticking to its left edge, as the atlas's captions do) and
+  // step up out of each other's way; names over beads keep their places by
+  // priority (the work in focus, the ends of the relation in focus, then the
+  // nearest); floor names give way to those; lane names come last (one cut
+  // by the frame's edge says nothing); the years give way to all of them,
+  // the time machine's year keeping its own place. Nothing stays half under
+  // the tooltip (a fragment of a name reads as a stray mark).
   function cull() {
+    // a floor seen from behind runs leftwards on screen: its name hangs off
+    // the other side of the old end (from the next frame on, measured again)
+    for (const fl of floors) {
+      END0.set(-V.W / 2, 0, 0).applyMatrix4(fl.group.matrixWorld).project(camera);
+      END1.set(V.W / 2, 0, 0).applyMatrix4(fl.group.matrixWorld).project(camera);
+      const run = END1.x - END0.x; // (seen end-on it keeps its side)
+      const side = run > 0.04 ? 1 : run < -0.04 ? 0 : fl.side;
+      if (side !== fl.side) {
+        fl.side = side;
+        fl.tagObj.center.x = fl.u * side;
+        cullSoon = true;
+        invalidate();
+      }
+    }
     for (const fl of floors) fl.tag.style.translate = '';
     // — measure
-    const edge = host.getBoundingClientRect().left;
+    const { left: edge, right: edgeR } = host.getBoundingClientRect();
     const ends = focus.mode === 'edge' ? new Set([focus.edge.source, focus.edge.target]) : null;
     const tags = floors.map((fl) => ({ fl, r: fl.tag.getBoundingClientRect() }));
     const names = works
@@ -1331,11 +1356,13 @@ export function mountAtlas3d({ host, data, strings: STR, geom: G, labelOf, sampl
       fl.laneTags.filter((el) => el.classList.contains('is-on')).map((el) => ({ el, r: el.getBoundingClientRect() })),
     );
     const years = axis.visible ? yearTags.map((y) => ({ y, r: y.el.getBoundingClientRect() })) : [];
+    const cover = hooks.cover?.() ?? null;
+    const under = (r) => cover !== null && overlaps(r, cover, 0);
     // — decide
     const boxes = tags
       .filter((t) => t.r.width > 0)
       .map((t) => {
-        const dx = t.r.left < edge + 8 ? edge + 8 - t.r.left : 0;
+        const dx = t.r.left < edge + 8 ? edge + 8 - t.r.left : t.r.right > edgeR - 8 ? edgeR - 8 - t.r.right : 0;
         return { fl: t.fl, dx, dy: 0, left: t.r.left + dx, right: t.r.right + dx, top: t.r.top, bottom: t.r.bottom, width: t.r.width };
       })
       .sort((a, b) => b.bottom - a.bottom);
@@ -1351,16 +1378,16 @@ export function mountAtlas3d({ host, data, strings: STR, geom: G, labelOf, sampl
     names.sort((a, b) => a.pri - b.pri || a.d - b.d);
     const kept = [];
     for (const it of names) {
-      it.ok = it.r.width > 0 && !kept.some((k) => overlaps(it.r, k, 2));
+      it.ok = it.r.width > 0 && !(it.pri > 0 && under(it.r)) && !kept.some((k) => overlaps(it.r, k, 2));
       if (it.ok) kept.push(it.r);
     }
     const taken = [...kept];
     for (const b of stacked) {
-      b.ok = !kept.some((k) => overlaps(b, k, 2));
+      b.ok = !under(b) && !kept.some((k) => overlaps(b, k, 2));
       if (b.ok) taken.push(b);
     }
     for (const it of lanes) {
-      it.ok = it.r.width > 0 && it.r.left >= edge + 4 && !taken.some((k) => overlaps(it.r, k, 3));
+      it.ok = it.r.width > 0 && it.r.left >= edge + 4 && !under(it.r) && !taken.some((k) => overlaps(it.r, k, 3));
       if (it.ok) taken.push(it.r);
     }
     const now = yearActive ? V.years[yearIdx] : null;
@@ -1368,7 +1395,7 @@ export function mountAtlas3d({ host, data, strings: STR, geom: G, labelOf, sampl
     const blockers = [...kept, ...stacked.filter((b) => b.ok)];
     const keptYears = [];
     for (const it of years) {
-      it.ok = !blockers.some((b) => overlaps(it.r, b)) && !keptYears.some((k) => overlaps(it.r, k));
+      it.ok = !under(it.r) && !blockers.some((b) => overlaps(it.r, b)) && !keptYears.some((k) => overlaps(it.r, k));
       if (it.ok) keptYears.push(it.r);
     }
     // — change
@@ -1394,7 +1421,10 @@ export function mountAtlas3d({ host, data, strings: STR, geom: G, labelOf, sampl
         hoverKey = key;
         renderer.domElement.style.cursor = key ? 'pointer' : '';
         hooks.hover(hit, ev);
-      } else if (key) hooks.move?.(ev);
+      } else if (key) {
+        hooks.move?.(ev);
+        cullSoon = true; // (the tooltip moved over the names)
+      }
     }
     // the time machine: appearing works and relations drawing themselves
     const growing = stepGrowth(now);
@@ -1454,14 +1484,20 @@ export function mountAtlas3d({ host, data, strings: STR, geom: G, labelOf, sampl
     // while a move, the sway or the follow drives the camera, the controls sit out
     const moved = anim?.cam || sway || follow ? false : controls.update();
     if (anim || sway || follow || moved || flowing || growing || lensing || sheetMoving || dirty) {
+      // (the flags clear first: what cull asks for is for the next frame)
+      dirty = false;
       renderer.render(scene, camera);
       labels.render(scene, camera);
-      if (T > 0.3 && (cullSoon || now - lastStep > 60)) {
-        cull();
+      if (cullSoon || now - lastStep > 60) {
         cullSoon = false;
         lastStep = now;
+        cull();
       }
-      dirty = false;
+    } else if (cullSoon) {
+      // nothing moved but the tooltip: the names stand where they were drawn
+      cullSoon = false;
+      lastStep = now;
+      cull();
     }
   }
   let needPlace = false;
@@ -1541,7 +1577,8 @@ export function mountAtlas3d({ host, data, strings: STR, geom: G, labelOf, sampl
     }
     sheetTarget = (V.x.get(yr) ?? 0) + G.MARK_X - V.W / 2;
     if (quick && !sheetA) sheetX = sheetTarget;
-    nowTag.innerHTML = `<b>${yr}</b><span>${works.filter((w) => w.born).length} ${esc(STR.worksSoFar)}</span>`;
+    const bornCount = works.filter((w) => w.born).length;
+    nowTag.innerHTML = `<b>${yr}</b><span>${bornCount} ${esc(bornCount === 1 ? STR.workSoFar : STR.worksSoFar)}</span>`;
     nowTag.classList.toggle('is-playing', isPlaying);
     for (const y of yearTags) {
       y.el.classList.toggle('is-future', y.yr > yr && yearActive);

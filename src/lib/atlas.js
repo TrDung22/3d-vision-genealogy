@@ -1706,6 +1706,8 @@ export function mountAtlas({ el, data, root, strings: STR }) {
                 else hideTip();
               },
               move: (ev) => moveTip(ev),
+              // what the tooltip covers (the names under it give way)
+              cover: () => (tooltip.hidden ? null : tooltip.getBoundingClientRect()),
               click(hit, ev) {
                 hideTip();
                 if (hit?.id && (ev.metaKey || ev.ctrlKey)) {
