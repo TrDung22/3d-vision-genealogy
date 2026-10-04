@@ -18,7 +18,7 @@ solution: >
   architectural specialization) and one prediction target (depth-ray),
   handling 1 to N views with or without poses. Teacher-student training keeps
   DA2-level detail; a new visual-geometry benchmark shows it beating VGGT by
-  an average of 35.7% on camera pose and 23.6% on geometric accuracy.
+  an average of 44.3% on camera pose and 25.1% on geometric accuracy.
 limitations: >
   By its own account only "a step toward versatile 3D foundation models":
   extending its reasoning to dynamic scenes, adding language and interaction
@@ -33,9 +33,16 @@ relations:
   - node: vggt2025
     type: fixes
     note: >
-      Fixes the weakness it names in VGGT: accuracy bought with "a
-      multi-stage architecture, and redundancy in design" — point maps plus
-      extra depth heads. One plain transformer with a single depth-ray target
-      beats it by an average of 35.7% on pose and 23.6% on geometry. The depth
-      lane and the scene lane formally merge here.
+      Repairs the limitations DA3 diagnoses in unified models like VGGT, which
+      "often rely on complex, bespoke architectures, are trained via joint
+      optimization over tasks from scratch, and consequently cannot
+      effectively leverage large-scale pretrained models"; of VGGT's mix of
+      pose, point maps and depth it adds that "redundant targets can improve
+      pose accuracy but often introduce entanglement that compromises it".
+      DA3 tests both repairs: at similar scale a VGGT-style backbone "drops to
+      79.8%" of its own, a gap it puts down to VGGT's "two-thirds untrained
+      blocks", and with backbone and training held fixed, depth plus ray beats
+      depth plus point map plus camera on every dataset and metric. On its
+      benchmark it leads VGGT by an average of 44.3% on camera pose and 25.1%
+      on geometry. The depth lane and the scene lane formally merge here.
 status: seed

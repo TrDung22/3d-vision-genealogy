@@ -24,8 +24,10 @@ limitations: >
   A head per task and quadratic attention over views; by its own account it
   fails under substantial non-rigid deformation, degrades under extreme input
   rotations, and does not support fisheye or panoramic images. Its own
-  succession came fast: Depth Anything 3 showed a single plain transformer
-  with one depth-ray target beats the multi-head design decisively.
+  succession came fast: Depth Anything 3 found that its redundant targets
+  "often introduce entanglement" and pinned a 20% gap on its "two-thirds
+  untrained blocks", then beat it with one pretrained transformer and a
+  depth-ray target.
 relations:
   - node: dust3r2023
     type: fixes
